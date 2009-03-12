@@ -1,0 +1,386 @@
+/*
+ * Library to support support (abstracted) basic file IO
+ *
+ * Copyright (c) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations. All rights reserved.
+ *
+ * Refer to AUTHORS for acknowledgements.
+ *
+ * This software is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#if !defined( _LIBBFIO_H )
+#define _LIBBFIO_H
+
+#include <libbfio/definitions.h>
+#include <libbfio/codepage.h>
+#include <libbfio/error.h>
+#include <libbfio/extern.h>
+#include <libbfio/features.h>
+#include <libbfio/types.h>
+
+#include <stdio.h>
+
+#if defined( __cplusplus )
+extern "C" {
+#endif
+
+/* -------------------------------------------------------------------------
+ * Support functions
+ * ------------------------------------------------------------------------- */
+
+/* Returns the library version
+ */
+LIBBFIO_EXTERN const char *libbfio_get_version(
+                            void );
+
+/* Frees the error including elements
+ */
+LIBBFIO_EXTERN void libbfio_error_free(
+                     libbfio_error_t **error );
+
+/* Prints a descriptive string of the error to the stream
+ */
+LIBBFIO_EXTERN void libbfio_error_fprint(
+                     libbfio_error_t *error,
+                     FILE *stream );
+
+/* Set the notify values
+ */
+LIBBFIO_EXTERN void libbfio_set_notify_values(
+                     FILE *stream,
+                     int verbose );
+
+/* -------------------------------------------------------------------------
+ * Handle functions
+ * ------------------------------------------------------------------------- */
+
+/* Initializes the handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_initialize(
+                    libbfio_handle_t **handle,
+                    intptr_t *io_handle,
+                    int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ),
+                    int (*open)( intptr_t *io_handle, int flags, libbfio_error_t **error ),
+                    int (*close)( intptr_t *io_handle, libbfio_error_t **error ),
+                    ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ),
+                    ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ),
+                    off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ),
+                    int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ),
+                    libbfio_error_t **error );
+
+/* Frees the handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_free(
+                    libbfio_handle_t **handle,
+                    libbfio_error_t **error );
+
+
+/* Opens the handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_open(
+                    libbfio_handle_t *handle,
+                    int flags,
+                    libbfio_error_t **error );
+
+/* Reopens the handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_reopen(
+                    libbfio_handle_t *handle,
+                    int flags,
+                    libbfio_error_t **error );
+
+/* Closes the handle
+ * Returns 0 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_close(
+                    libbfio_handle_t *handle,
+                    libbfio_error_t **error );
+
+/* Reads a buffer from the handle
+ * Returns the amount of bytes read if successful, or -1 on errror
+ */
+LIBBFIO_EXTERN ssize_t libbfio_handle_read(
+                        libbfio_handle_t *handle,
+                        uint8_t *buffer,
+                        size_t size,
+                        libbfio_error_t **error );
+
+/* Writes a buffer to the handle
+ * Returns the amount of bytes written if successful, or -1 on errror
+ */
+LIBBFIO_EXTERN ssize_t libbfio_handle_write(
+                        libbfio_handle_t *handle,
+                        uint8_t *buffer,
+                        size_t size,
+                        libbfio_error_t **error );
+
+/* Seeks a certain offset within the handle
+ * Returns the offset if the seek is successful or -1 on error
+ */
+LIBBFIO_EXTERN off64_t libbfio_handle_seek_offset(
+                        libbfio_handle_t *handle,
+                        off64_t offset,
+                        int whence,
+                        libbfio_error_t **error );
+
+/* Check if the handle is open
+ * Returns 1 if open, 0 if not or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_is_open(
+                    libbfio_handle_t *handle,
+                    libbfio_error_t **error );
+
+/* Retrieves the flags
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_get_flags(
+                    libbfio_handle_t *handle,
+                    int *flags,
+                    libbfio_error_t **error );
+
+/* Sets the flags
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_set_flags(
+                    libbfio_handle_t *handle,
+                    int flags,
+                    libbfio_error_t **error );
+
+/* Retrieves the current offset
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_get_offset(
+                    libbfio_handle_t *handle,
+                    off64_t *offset,
+                    libbfio_error_t **error );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+
+/* Retrieves the amount of offsets read
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_get_amount_of_offsets_read(
+                    libbfio_handle_t *handle,
+                    int *amount_of_read_offsets,
+                    libbfio_error_t **error );
+
+/* Retrieves the information of an offset read
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_get_offset_read(
+                    libbfio_handle_t *handle,
+                    int index,
+                    off64_t *offset,
+                    size64_t *size,
+                    libbfio_error_t **error );
+#endif
+
+/* -------------------------------------------------------------------------
+ * File functions
+ * ------------------------------------------------------------------------- */
+
+/* Initializes the handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_initialize(
+                    libbfio_handle_t **handle,
+                    libbfio_error_t **error );
+
+/* Retrieves a name of the handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_get_name(
+                    libbfio_handle_t *handle,
+                    char *name,
+                    size_t name_size,
+                    libbfio_error_t **error );
+
+/* Sets a name for the handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_set_name(
+                    libbfio_handle_t *handle,
+                    const char *name,
+                    size_t name_size,
+                    libbfio_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Retrieves a name of the handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_get_name_wide(
+                    libbfio_handle_t *handle,
+                    wchar_t *name,
+                    size_t name_size,
+                    libbfio_error_t **error );
+
+/* Sets a name for the handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_set_name_wide(
+                    libbfio_handle_t *handle,
+                    const wchar_t *name,
+                    size_t name_size,
+                    libbfio_error_t **error );
+#endif
+
+/* Function to determine if a file exists
+ * Return 1 if file exists, 0 if not or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_exists(
+                    const char *filename,
+                    libbfio_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Function to determine if a file exists
+ * Return 1 if file exists, 0 if not or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_exists_wide(
+                    const wchar_t *filename,
+                    libbfio_error_t **error );
+#endif
+
+/* -------------------------------------------------------------------------
+ * Pool functions
+ * ------------------------------------------------------------------------- */
+
+/* Initialize the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_initialize(
+                    libbfio_pool_t **pool,
+                    int amount_of_handles,
+                    int maximum_amount_of_open_handles,
+                    libbfio_error_t **error );
+
+/* Frees the pool including elements
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_free(
+                    libbfio_pool_t **pool,
+                    libbfio_error_t **error );
+
+/* Resizes the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_resize(
+                    libbfio_pool_t *pool,
+                    int amount_of_handles,
+                    libbfio_error_t **error );
+
+/* Retrieves a certain handle from the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_get_handle(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    libbfio_handle_t **handle,
+                    libbfio_error_t **error );
+
+/* Appends a handle to the pool
+ * Sets the entry
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_add_handle(
+                    libbfio_pool_t *pool,
+                    int *entry,
+                    libbfio_handle_t *handle,
+                    int flags,
+                    libbfio_error_t **error );
+
+/* Opens a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_open(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    int flags,
+                    libbfio_error_t **error );
+
+/* Reopens a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_reopen(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    int flags,
+                    libbfio_error_t **error );
+
+/* Closes a handle in the pool
+ * Returns 0 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_close(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    libbfio_error_t **error );
+
+/* Closes all the files in the pool
+ * Returns 0 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_close_all(
+                    libbfio_pool_t *pool,
+                    libbfio_error_t **error );
+
+/* Read from a handle in the pool
+ * Returns the amount of bytes read or -1 on error
+ */
+LIBBFIO_EXTERN ssize_t libbfio_pool_read(
+                        libbfio_pool_t *pool,
+                        int entry,
+                        uint8_t *buffer,
+                        size_t size,
+                        libbfio_error_t **error );
+
+/* Writes to a handle in the pool
+ * Returns the amount of bytes written or -1 on error
+ */
+LIBBFIO_EXTERN ssize_t libbfio_pool_write(
+                        libbfio_pool_t *pool,
+                        int entry,
+                        uint8_t *buffer,
+                        size_t size,
+                        libbfio_error_t **error );
+
+/* Seeks an offset in a handle in the pool
+ * Returns the amount of bytes written or -1 on error
+ */
+LIBBFIO_EXTERN off64_t libbfio_pool_seek_offset(
+                        libbfio_pool_t *pool,
+                        int entry,
+                        off64_t offset,
+                        int whence,
+                        libbfio_error_t **error );
+
+/* Retrieves the current offset in a handle in the pool
+ * Returns the amount of bytes written or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_get_offset(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    off64_t *offset,
+                    libbfio_error_t **error );
+
+#if defined( __cplusplus )
+}
+#endif
+
+#endif
+

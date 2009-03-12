@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libbfio
+Description: Library to support (abstracted) basic file IO
+Version: @VERSION@
+Libs: -L${libdir} -lbfio
+Libs.private: @libbfio_pc_libs_private_libuna@
+Cflags: -I${includedir}
+

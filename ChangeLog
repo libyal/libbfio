@@ -1,0 +1,12 @@
+TODO
+* implement libbfio_file_get_name_size and libbfio_file_get_name_size_wide
+
+Deployment:
+* check msvscpp
+* check macosx
+* create debian package
+* update libbfio.3
+
+20090312
+* Moved earlier version of libbfio in libpff and libewf into separate package
+
