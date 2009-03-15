@@ -105,6 +105,13 @@ LIBBFIO_EXTERN int libbfio_pool_add_handle(
                     int flags,
                     liberror_error_t **error );
 
+LIBBFIO_EXTERN int libbfio_pool_set_handle(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    libbfio_handle_t *handle,
+                    int flags,
+                    liberror_error_t **error );
+
 LIBBFIO_EXTERN int libbfio_pool_open(
                     libbfio_pool_t *pool,
                     int entry,
@@ -151,6 +158,11 @@ LIBBFIO_EXTERN int libbfio_pool_get_offset(
                     libbfio_pool_t *pool,
                     int entry,
                     off64_t *offset,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
+                    libbfio_pool_t *pool,
+                    int *amount_of_handles,
                     liberror_error_t **error );
 
 #if defined( __cplusplus )

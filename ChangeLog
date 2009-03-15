@@ -1,11 +1,18 @@
 TODO
 * implement libbfio_file_get_name_size and libbfio_file_get_name_size_wide
+* implement pool throtteling on add_handle and set_handle
+* update last used list in pool close functions
 
 Deployment:
 * check msvscpp
 * check macosx
 * create debian package
 * update libbfio.3
+
+20090315
+* added libbfio_pool_get_amount_of_handles
+* added libbfio_pool_set_handle
+* small corrections
 
 20090312
 * Moved earlier version of libbfio in libpff and libewf into separate package

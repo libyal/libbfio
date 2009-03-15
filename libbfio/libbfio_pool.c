@@ -570,7 +570,7 @@ int libbfio_pool_get_handle(
      liberror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
-	static char *function                  = "libbfio_pool_get_file";
+	static char *function                  = "libbfio_pool_get_handle";
 
 	if( pool == NULL )
 	{
@@ -715,6 +715,99 @@ int libbfio_pool_add_handle(
 	internal_pool->handles[ *entry ] = handle;
 
 	internal_pool->amount_of_used_handles++;
+
+	if( is_open == 0 )
+	{
+		/* Set the flags is the handle is not open
+		 */
+		if( libbfio_handle_set_flags(
+		     handle,
+		     flags,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to set flags.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	/* TODO check if an existing open handle should be closed
+	 */
+	return( 1 );
+}
+
+/* Sets a certain handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_set_handle(
+     libbfio_pool_t *pool,
+     int entry,
+     libbfio_handle_t *handle,
+     int flags,
+     liberror_error_t **error )
+{
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_set_handle";
+	int is_open                            = 0;
+
+	if( pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
+	if( internal_pool->handles == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid pool - missing handles.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( entry < 0 )
+	 || ( entry >= internal_pool->amount_of_handles ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
+		 "%s: invalid entry value out of range.",
+		 function );
+
+		return( -1 );
+	}
+	/* Check if the handle is open
+	 */
+	is_open = libbfio_handle_is_open(
+	           handle,
+	           error );
+
+	if( is_open == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if handle is open.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool->handles[ entry ] = handle;
 
 	if( is_open == 0 )
 	{
@@ -979,6 +1072,7 @@ int libbfio_pool_close_all(
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_close_all";
 	int handle_iterator                    = 0;
+	int is_open                            = 0;
 	int result                             = 0;
 
 	if( pool == NULL )
@@ -996,9 +1090,28 @@ int libbfio_pool_close_all(
 
 	for( handle_iterator = 0; handle_iterator < internal_pool->amount_of_handles; handle_iterator++ )
 	{
-		if( libbfio_handle_close(
-		     internal_pool->handles[ handle_iterator ],
-		     error ) != 0 )
+		/* Make sure the handle is open
+		 */
+		is_open = libbfio_handle_is_open(
+			   internal_pool->handles[ handle_iterator ],
+			   error );
+
+		if( is_open == -1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to determine if entry: %d is open.",
+			 function,
+			 handle_iterator );
+
+			result = -1;
+		}
+		else if( ( is_open == 1 )
+		      && ( libbfio_handle_close(
+		            internal_pool->handles[ handle_iterator ],
+		            error ) != 0 ) )
 		{
 			liberror_error_set(
 			 error,
@@ -1264,7 +1377,7 @@ ssize_t libbfio_pool_write(
 }
 
 /* Seeks an offset in a handle in the pool
- * Returns the amount of bytes written or -1 on error
+ * Returns the offset if successful or -1 on error
  */
 off64_t libbfio_pool_seek_offset(
          libbfio_pool_t *pool,
@@ -1388,7 +1501,7 @@ off64_t libbfio_pool_seek_offset(
 }
 
 /* Retrieves the current offset in a handle in the pool
- * Returns the amount of bytes written or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_pool_get_offset(
      libbfio_pool_t *pool,
@@ -1502,6 +1615,46 @@ int libbfio_pool_get_offset(
 
 		return( -1 );
 	}
+	return( 1 );
+}
+
+/* Retrieves the amount of handles in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_get_amount_of_handles(
+     libbfio_pool_t *pool,
+     int *amount_of_handles,
+     liberror_error_t **error )
+{
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_get_amount_of_handles";
+
+	if( pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
+	if( amount_of_handles == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid amount of handles.",
+		 function );
+
+		return( -1 );
+	}
+	*amount_of_handles = internal_pool->amount_of_handles;
+
 	return( 1 );
 }
 

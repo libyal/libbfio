@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20090312],
+  [20090315],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20090312])
+ [20090315])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -691,20 +691,6 @@ AS_IF(
 	AC_CHECK_SIZEOF([wchar_t])
 
 	dnl Check for wide character string functions
-	dnl Wide character string functions used in common/string_conversion.h
-	AC_CHECK_FUNCS(
-	 [btowc],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing functions: btowc],
-	  [1]) ])
-
-	AC_CHECK_FUNCS(
-	 [wctob],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing functions: wctob],
-	  [1]) ])
 
 	dnl Wide character string functions used in common/wide_string.h
 	AC_CHECK_FUNCS(
