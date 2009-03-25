@@ -89,7 +89,11 @@ int libbfio_file_initialize(
 
 			return( -1 );
 		}
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+		io_handle->file_handle     = NULL;
+#else
 		io_handle->file_descriptor = -1;
+#endif
 
 		if( libbfio_handle_initialize(
 		     handle,
@@ -753,9 +757,15 @@ int libbfio_file_open(
      int flags,
      liberror_error_t **error )
 {
-	static char *function = "libbfio_file_open";
-	int file_io_flags     = 0;
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_open";
 
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	DWORD file_io_access_flags               = 0;
+	DWORD file_io_creation_flags             = 0;
+#else
+	int file_io_flags                        = 0;
+#endif
 	if( io_handle == NULL )
 	{
 		liberror_error_set(
@@ -767,7 +777,9 @@ int libbfio_file_open(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->name == NULL )
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -778,6 +790,65 @@ int libbfio_file_open(
 
 		return( -1 );
 	}
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( ( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
+	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
+	{
+		file_io_access_flags   = GENERIC_WRITE | GENERIC_READ;
+		file_io_creation_flags = OPEN_ALWAYS;
+	}
+	else if( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
+	{
+		file_io_access_flags   = GENERIC_READ;
+		file_io_creation_flags = OPEN_EXISTING;
+	}
+	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
+	{
+		file_io_access_flags   = GENERIC_WRITE;
+		file_io_creation_flags = OPEN_ALWAYS;
+	}
+	else
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported flags.\n",
+		 function );
+
+		return( -1 );
+	}
+	if( ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
+	 && ( ( flags & LIBBFIO_FLAG_TRUNCATE ) == LIBBFIO_FLAG_TRUNCATE ) )
+	{
+		file_io_creation_flags = TRUNCATE_EXISTING;
+	}
+
+	if( file_io_handle->file_handle == NULL )
+	{
+		file_io_handle->file_handle = CreateFile(
+		                               (LPCTSTR) file_io_handle->name,
+		                               file_io_access_flags,
+		                               0,
+		                               NULL,
+		                               file_io_creation_flags,
+		                               FILE_ATTRIBUTE_NORMAL,
+		                               NULL );
+
+		if( file_io_handle->file_handle == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+
+			return( -1 );
+		}
+	}
+#else
 	if( ( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
 	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
 	{
@@ -809,21 +880,21 @@ int libbfio_file_open(
 	{
 		file_io_flags |= LIBBFIO_FILE_IO_FLAG_TRUNCATE;
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor == -1 )
+	if( file_io_handle->file_descriptor == -1 )
 	{
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_TYPE )
-		( (libbfio_file_io_handle_t *) io_handle )->file_descriptor = libbfio_file_io_open_wide(
-		                                                               ( (libbfio_file_io_handle_t *) io_handle )->name,
-		                                                               file_io_flags,
-		                                                               error );
+		file_io_handle->file_descriptor = libbfio_file_io_open_wide(
+		                                   file_io_handle->name,
+		                                   file_io_flags,
+		                                   error );
 #else
-		( (libbfio_file_io_handle_t *) io_handle )->file_descriptor = libbfio_file_io_open(
-		                                                               ( (libbfio_file_io_handle_t *) io_handle )->name,
-		                                                               file_io_flags,
-		                                                               error );
+		file_io_handle->file_descriptor = libbfio_file_io_open(
+		                                   file_io_handle->name,
+		                                   file_io_flags,
+		                                   error );
 #endif
 
-		if( ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor == -1 )
+		if( file_io_handle->file_descriptor == -1 )
 		{
 			liberror_error_set(
 			 error,
@@ -831,11 +902,12 @@ int libbfio_file_open(
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
 			 function,
-			 ( (libbfio_file_io_handle_t *) io_handle )->name );
+			 file_io_handle->name );
 
 			return( -1 );
 		}
 	}
+#endif
 	return( 1 );
 }
 
@@ -846,7 +918,8 @@ int libbfio_file_close(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	static char *function = "libbfio_file_close";
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_close";
 
 	if( io_handle == NULL )
 	{
@@ -859,7 +932,9 @@ int libbfio_file_close(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->name == NULL )
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -870,10 +945,11 @@ int libbfio_file_close(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor >= 0 )
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( file_io_handle->file_handle != NULL )
 	{
-		if( libbfio_file_io_close(
-		     ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor ) != 0 )
+		if( CloseHandle(
+		     file_io_handle->file_handle ) == 0 )
 		{
 			liberror_error_set(
 			 error,
@@ -881,12 +957,33 @@ int libbfio_file_close(
 			 LIBERROR_IO_ERROR_CLOSE_FAILED,
 			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
 			 function,
-			 ( (libbfio_file_io_handle_t *) io_handle )->name );
+			 file_io_handle->name );
+
+			/* TODO use GetLastError to get detailed error information */
 
 			return( -1 );
 		}
-		( (libbfio_file_io_handle_t *) io_handle )->file_descriptor = -1;
+		file_io_handle->file_handle = NULL;
 	}
+#else
+	if( file_io_handle->file_descriptor != -1 )
+	{
+		if( libbfio_file_io_close(
+		     file_io_handle->file_descriptor ) != 0 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+
+			return( -1 );
+		}
+		file_io_handle->file_descriptor = -1;
+	}
+#endif
 	return( 0 );
 }
 
@@ -899,8 +996,9 @@ ssize_t libbfio_file_read(
          size_t size,
          liberror_error_t **error )
 {
-	static char *function = "libbfio_file_read";
-	ssize_t read_count    = 0;
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_read";
+	ssize_t read_count                       = 0;
 
 	if( io_handle == NULL )
 	{
@@ -913,7 +1011,9 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->name == NULL )
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -924,7 +1024,20 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor == -1 )
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( file_io_handle->file_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - invalid file handle.",
+		 function );
+
+		return( -1 );
+	}
+#else
+	if( file_io_handle->file_descriptor == -1 )
 	{
 		liberror_error_set(
 		 error,
@@ -935,6 +1048,7 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
+#endif
 	if( buffer == NULL )
 	{
 		liberror_error_set(
@@ -957,12 +1071,22 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( ReadFile(
+	     file_io_handle->file_handle,
+	     buffer,
+	     size,
+	     (LPDWORD) &read_count,
+	     NULL ) == 0 )
+#else
 	read_count = libbfio_file_io_read(
-	              ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor,
+	              file_io_handle->file_descriptor,
 	              buffer,
 	              size );
 
-	if( read_count != (ssize_t) size )
+	if( read_count < 0 )
+#endif
+
 	{
 		liberror_error_set(
 		 error,
@@ -970,7 +1094,7 @@ ssize_t libbfio_file_read(
 		 LIBERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM ".",
 		 function,
-		 ( (libbfio_file_io_handle_t *) io_handle )->name );
+		 file_io_handle->name );
 	}
 	return( read_count );
 }
@@ -984,8 +1108,9 @@ ssize_t libbfio_file_write(
          size_t size,
          liberror_error_t **error )
 {
-	static char *function = "libbfio_file_write";
-	ssize_t write_count   = 0;
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_write";
+	ssize_t write_count                      = 0;
 
 	if( io_handle == NULL )
 	{
@@ -998,7 +1123,9 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->name == NULL )
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -1009,7 +1136,20 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor == -1 )
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( file_io_handle->file_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - invalid file handle.",
+		 function );
+
+		return( -1 );
+	}
+#else
+	if( file_io_handle->file_descriptor == -1 )
 	{
 		liberror_error_set(
 		 error,
@@ -1020,6 +1160,7 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
+#endif
 	if( buffer == NULL )
 	{
 		liberror_error_set(
@@ -1042,12 +1183,21 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( WriteFile(
+	     file_io_handle->file_handle,
+	     buffer,
+	     size,
+	     (LPDWORD) &write_count,
+	     NULL ) == 0 )
+#else
 	write_count = libbfio_file_io_write(
-	               ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor,
+	               file_io_handle->file_descriptor,
 	               buffer,
 	               size );
 
-	if( write_count != (ssize_t) size )
+	if( write_count < 0 )
+#endif
 	{
 		liberror_error_set(
 		 error,
@@ -1055,7 +1205,7 @@ ssize_t libbfio_file_write(
 		 LIBERROR_IO_ERROR_WRITE_FAILED,
 		 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM ".",
 		 function,
-		 ( (libbfio_file_io_handle_t *) io_handle )->name );
+		 file_io_handle->name );
 	}
 	return( write_count );
 }
@@ -1069,7 +1219,13 @@ off64_t libbfio_file_seek_offset(
          int whence,
          liberror_error_t **error )
 {
-	static char *function = "libbfio_file_seek_offset";
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_seek_offset";
+
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	LARGE_INTEGER large_integer_offset	 = { 0, 0 };
+	DWORD move_method                        = 0;
+#endif
 
 	if( io_handle == NULL )
 	{
@@ -1082,7 +1238,9 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->name == NULL )
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -1093,7 +1251,20 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor == -1 )
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( file_io_handle->file_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - invalid file handle.",
+		 function );
+
+		return( -1 );
+	}
+#else
+	if( file_io_handle->file_descriptor == -1 )
 	{
 		liberror_error_set(
 		 error,
@@ -1104,6 +1275,7 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
+#endif
 	if( offset > (off64_t) INT64_MAX )
 	{
 		liberror_error_set(
@@ -1128,10 +1300,33 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( whence == SEEK_SET )
+	{
+		move_method = FILE_BEGIN;
+	}
+	else if( whence == SEEK_CUR )
+	{
+		move_method = FILE_CURRENT;
+	}
+	else if( whence == SEEK_END )
+	{
+		move_method = FILE_END;
+	}
+	large_integer_offset.LowPart  = (DWORD) ( 0x0ffffffff & offset );
+	large_integer_offset.HighPart = (LONG) ( offset >> 32 );
+
+	if( SetFilePointerEx(
+	     file_io_handle->file_handle,
+	     large_integer_offset,
+	     NULL,
+	     move_method ) == 0 )
+#else
 	if( libbfio_file_io_lseek(
-	     ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor,
+	     file_io_handle->file_descriptor,
 	     offset,
 	     whence ) == -1 )
+#endif
 	{
 		liberror_error_set(
 		 error,
@@ -1140,7 +1335,7 @@ off64_t libbfio_file_seek_offset(
 		 "%s: unable to find offset: %" PRIjd " in file: %" PRIs_LIBBFIO_SYSTEM ".",
 		 function,
 		 offset,
-		 ( (libbfio_file_io_handle_t *) io_handle )->name );
+		 file_io_handle->name );
 
 		return( -1 );
 	}
@@ -1154,7 +1349,8 @@ int libbfio_file_is_open(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	static char *function = "libbfio_file_is_open";
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_is_open";
 
 	if( io_handle == NULL )
 	{
@@ -1167,10 +1363,19 @@ int libbfio_file_is_open(
 
 		return( -1 );
 	}
-	if( ( (libbfio_file_io_handle_t *) io_handle )->file_descriptor == -1 )
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+	if( file_io_handle->file_handle == NULL )
 	{
 		return( 0 );
 	}
+#else
+	if( file_io_handle->file_descriptor == -1 )
+	{
+		return( 0 );
+	}
+#endif
 	return( 1 );
 }
 
