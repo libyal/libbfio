@@ -13,6 +13,9 @@ Deployment:
 * create debian package
 * update libbfio.3
 
+20090404
+* fixed offset error in libbfio_handle_seek_offset, due to introduction of whence
+
 20090323
 * fixed error in make dist
 * implemented native WINAPI file function support allows access to windows devices

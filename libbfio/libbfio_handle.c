@@ -84,7 +84,7 @@ int libbfio_handle_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear handle.\n",
+			 "%s: unable to clear handle.",
 			 function );
 
 			memory_free(
@@ -111,7 +111,7 @@ int libbfio_handle_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create offsets read list.\n",
+			 "%s: unable to create offsets read list.",
 			 function );
 
 			memory_free(
@@ -128,7 +128,7 @@ int libbfio_handle_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear offsets read list.\n",
+			 "%s: unable to clear offsets read list.",
 			 function );
 
 			memory_free(
@@ -269,7 +269,7 @@ int libbfio_handle_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.\n",
+		 "%s: unsupported flags.",
 		 function );
 
 		return( -1 );
@@ -283,7 +283,7 @@ int libbfio_handle_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open handle.\n",
+		 "%s: unable to open handle.",
 		 function );
 
 		return( -1 );
@@ -357,7 +357,7 @@ int libbfio_handle_reopen(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.\n",
+		 "%s: unsupported flags.",
 		 function );
 
 		return( -1 );
@@ -375,7 +375,7 @@ int libbfio_handle_reopen(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open handle.\n",
+			 "%s: unable to open handle.",
 			 function );
 
 			return( -1 );
@@ -396,7 +396,7 @@ int libbfio_handle_reopen(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_SEEK_FAILED,
-				 "%s: unable to seek offset in handle.\n",
+				 "%s: unable to seek offset in handle.",
 				 function );
 
 				return( -1 );
@@ -459,7 +459,7 @@ int libbfio_handle_close(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close handle.\n",
+		 "%s: unable to close handle.",
 		 function );
 
 		return( -1 );
@@ -511,7 +511,7 @@ ssize_t libbfio_handle_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing offsets read table.\n",
+		 "%s: invalid handle - missing offsets read table.",
 		 function );
 
 		return( -1 );
@@ -551,7 +551,7 @@ ssize_t libbfio_handle_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read from handle.\n",
+		 "%s: unable to read from handle.",
 		 function );
 
 		return( -1 );
@@ -567,7 +567,7 @@ ssize_t libbfio_handle_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to add offset range to offsets read table.\n",
+		 "%s: unable to add offset range to offsets read table.",
 		 function );
 
 		return( -1 );
@@ -649,7 +649,7 @@ ssize_t libbfio_handle_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to write to handle.\n",
+		 "%s: unable to write to handle.",
 		 function );
 
 		return( -1 );
@@ -721,17 +721,19 @@ off64_t libbfio_handle_seek_offset(
 	}
 	if( internal_handle->offset != offset )
 	{
-		if( internal_handle->seek_offset(
-		     internal_handle->io_handle,
-		     offset,
-		     whence,
-		     error ) == -1 )
+		offset = internal_handle->seek_offset(
+		          internal_handle->io_handle,
+		          offset,
+		          whence,
+		          error );
+
+		if( offset == -1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to find offset: %" PRIjd " in handle.\n",
+			 "%s: unable to find offset: %" PRIjd " in handle.",
 			 function,
 			 offset );
 
@@ -798,7 +800,7 @@ int libbfio_handle_is_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if handle is open.\n",
+		 "%s: unable to determine if handle is open.",
 		 function );
 
 		return( -1 );
@@ -877,7 +879,7 @@ int libbfio_handle_set_flags(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.\n",
+		 "%s: unsupported flags.",
 		 function );
 
 		return( -1 );
@@ -959,7 +961,7 @@ int libbfio_handle_get_amount_of_offsets_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing offsets read table.\n",
+		 "%s: invalid handle - missing offsets read table.",
 		 function );
 
 		return( -1 );
@@ -1012,7 +1014,7 @@ int libbfio_handle_get_offset_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing offsets read table.\n",
+		 "%s: invalid handle - missing offsets read table.",
 		 function );
 
 		return( -1 );

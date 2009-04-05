@@ -28,17 +28,20 @@
 #include <types.h>
 #include <wide_string.h>
 
+#include "libbfio_error_string.h"
 #include "libbfio_libuna.h"
 
 #if defined( _cplusplus )
 extern "C" {
 #endif
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-#define LIBBFIO_WIDE_SYSTEM_CHARACTER_TYPE
+/* Detect if the code is being compiled with Windows Unicode support
+ */
+#if defined( WINAPI ) && ( defined( _UNICODE ) || defined( UNICODE ) )
+#define LIBBFIO_WIDE_SYSTEM_CHARACTER_T		1
 #endif
 
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_TYPE )
+#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 
 typedef wchar_t libbfio_system_character_t;
 
@@ -100,6 +103,9 @@ typedef wchar_t libbfio_system_character_t;
 #error Unsupported size of wchar_t
 #endif
 
+#define libbfio_system_string_from_error_number( error_string, error_string_size, error_number, error ) \
+	libbfio_error_string_from_error_number_wide( error_string, error_string_size, error_number, error )
+
 /* The system string type contains UTF-8 or ASCII with a codepage
  */
 #else
@@ -144,7 +150,7 @@ typedef char libbfio_system_character_t;
 
 /* wide string conversion functions
  */
-#define libbfio_system_string_size_from_wide_string( wide_string, wide_string_size, string_size, error ) \
+#define libbfio_system_string_size_from_wide_string( wide_string, wide_string_size, system_string_size, error ) \
 	libuna_utf8_string_size_from_utf16( (libuna_utf16_character_t *) wide_string, wide_string_size, system_string_size, error )
 
 #define libbfio_system_string_copy_from_wide_string( system_string, system_string_size, wide_string, wide_string_size, error ) \
@@ -161,6 +167,9 @@ typedef char libbfio_system_character_t;
 #endif
 
 #endif
+
+#define libbfio_system_string_from_error_number( error_string, error_string_size, error_number, error ) \
+	libbfio_error_string_from_error_number( error_string, error_string_size, error_number, error )
 
 #endif
 

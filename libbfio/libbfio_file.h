@@ -30,7 +30,7 @@
 
 #include <liberror.h>
 
-#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 #include <winbase.h>
 #endif
 
@@ -54,7 +54,7 @@ struct libbfio_file_io_handle
 	 */
 	size_t name_size;
 
-#if defined( WINAPI ) && defined( HAVE_NATIVE_WINAPI_FILE_ACCESS )
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	/* The file handle
 	 */
 	HANDLE file_handle;
