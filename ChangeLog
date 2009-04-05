@@ -15,6 +15,7 @@ Deployment:
 
 20090404
 * fixed offset error in libbfio_handle_seek_offset, due to introduction of whence
+* added libbfio_get_file_name_size and libbfio_get_file_name_size_wide functions
 
 20090323
 * fixed error in make dist

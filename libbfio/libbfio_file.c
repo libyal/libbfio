@@ -177,7 +177,89 @@ int libbfio_file_free_io_handle(
 	return( 1 );
 }
 
-/* Retrieves a name of the handle
+/* Retrieves the name size of the handle
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_get_name_size(
+     libbfio_handle_t *handle,
+     size_t *name_size,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	libbfio_file_io_handle_t *io_handle        = NULL;
+	static char *function                      = "libbfio_file_get_name_size";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
+
+	if( io_handle->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - invalid IO handle - missing name.",
+		 function );
+
+		return( -1 );
+	}
+	if( name_size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid name size.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+	if( narrow_string_size_from_libbfio_system_string(
+	     io_handle->name,
+	     io_handle->name_size,
+	     name_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to determine name size.",
+		 function );
+
+		return( -1 );
+	}
+#else
+	*name_size = io_handle->name_size;
+#endif
+	return( 1 );
+}
+
+/* Retrieves the name of the handle
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_get_name(
@@ -306,7 +388,7 @@ int libbfio_file_get_name(
 	return( 1 );
 }
 
-/* Sets a name for the handle
+/* Sets the name for the handle
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_set_name(
@@ -474,7 +556,89 @@ int libbfio_file_set_name(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Retrieves a name of the handle
+/* Retrieves the name size of the handle
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_get_name_size_wide(
+     libbfio_handle_t *handle,
+     size_t *name_size,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	libbfio_file_io_handle_t *io_handle        = NULL;
+	static char *function                      = "libbfio_file_get_name_size_wide";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
+
+	if( io_handle->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - invalid IO handle - missing name.",
+		 function );
+
+		return( -1 );
+	}
+	if( name_size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid name size.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+	*name_size = io_handle->name_size;
+#else
+	if( wide_string_size_from_libbfio_system_string(
+	     io_handle->name,
+	     io_handle->name_size,
+	     name_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to determine name size.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( 1 );
+}
+
+/* Retrieves the name of the handle
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_get_name_wide(
@@ -603,7 +767,7 @@ int libbfio_file_get_name_wide(
 	return( 1 );
 }
 
-/* Sets a name for the handle
+/* Sets the name for the handle
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_set_name_wide(
