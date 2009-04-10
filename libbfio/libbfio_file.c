@@ -128,6 +128,7 @@ int libbfio_file_initialize(
 		     libbfio_file_write,
 		     libbfio_file_seek_offset,
 		     libbfio_file_is_open,
+		     libbfio_file_get_size,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -1980,6 +1981,114 @@ int libbfio_file_is_open(
 	{
 		return( 0 );
 	}
+#endif
+	return( 1 );
+}
+
+/* Retrieves the file size
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_file_get_size(
+     intptr_t *io_handle,
+     size64_t *size,
+     liberror_error_t **error )
+{
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_get_size";
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	LARGE_INTEGER large_integer              = { 0, 0 };
+#elif defined( WINAPI )
+	struct __stat64 file_stat;
+#else
+	struct stat file_stat;
+#endif
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - invalid file handle.",
+		 function );
+
+		return( -1 );
+	}
+#else
+	if( file_io_handle->file_descriptor == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - invalid file descriptor.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid size.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	if( GetFileSizeEx(
+	     file_io_handle->file_handle,
+	     &large_integer ) == 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file size.",
+		 function );
+
+		return( -1 );
+	}
+	*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
+#else
+#if defined( WINAPI )
+	if( _fstat64(
+	     file_io_handle->file_descriptor,
+	     &file_stat ) != 0 )
+#else
+	if( fstat(
+	     file_io_handle->file_descriptor,
+	     &file_stat ) != 0 )
+#endif
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: file stat failed.",
+		 function );
+
+		return( -1 );
+	}
+	*size = (size64_t) file_stat.st_size;
 #endif
 	return( 1 );
 }

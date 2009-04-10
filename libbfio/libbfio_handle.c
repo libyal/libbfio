@@ -43,6 +43,7 @@ int libbfio_handle_initialize(
       ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
       off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, liberror_error_t **error ),
       int (*is_open)( intptr_t *io_handle, liberror_error_t **error ),
+      int (*get_size)( intptr_t *io_handle, size64_t *size, liberror_error_t **error ),
       liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
@@ -100,6 +101,7 @@ int libbfio_handle_initialize(
 		internal_handle->write          = write;
 		internal_handle->seek_offset    = seek_offset;
 		internal_handle->is_open        = is_open;
+		internal_handle->get_size       = get_size;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		internal_handle->offsets_read = (libbfio_list_t *) memory_allocate(
@@ -885,6 +887,86 @@ int libbfio_handle_set_flags(
 		return( -1 );
 	}
 	internal_handle->flags = flags;
+
+	return( 1 );
+}
+
+/* Returns the size of the data of the handle
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_handle_get_size(
+     libbfio_handle_t *handle,
+     size64_t *size,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_get_size";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid size",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_handle->size_set == 0 )
+	{
+		if( internal_handle->get_size == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid handle - missing is open function.",
+			 function );
+
+			return( -1 );
+		}
+		if( internal_handle->get_size(
+		     internal_handle->io_handle,
+		     &( internal_handle->size ),
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve size.",
+			 function );
+
+			return( -1 );
+		}
+		internal_handle->size_set = 1;
+	}
+	*size = internal_handle->size;
 
 	return( 1 );
 }

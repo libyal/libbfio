@@ -154,6 +154,12 @@ LIBBFIO_EXTERN off64_t libbfio_pool_seek_offset(
                         int whence,
                         liberror_error_t **error );
 
+LIBBFIO_EXTERN int libbfio_pool_get_size(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    size64_t *size,
+                    liberror_error_t **error );
+
 LIBBFIO_EXTERN int libbfio_pool_get_offset(
                     libbfio_pool_t *pool,
                     int entry,

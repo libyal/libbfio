@@ -161,6 +161,14 @@ LIBBFIO_EXTERN int libbfio_handle_set_flags(
                     int flags,
                     libbfio_error_t **error );
 
+/* Returns the size of the data of the handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_get_size(
+                    libbfio_handle_t *handle,
+                    size64_t *size,
+                    liberror_error_t **error );
+
 /* Retrieves the current offset
  * Returns 1 if successful or -1 on error
  */
@@ -393,6 +401,15 @@ LIBBFIO_EXTERN off64_t libbfio_pool_seek_offset(
                         off64_t offset,
                         int whence,
                         libbfio_error_t **error );
+
+/* Retrieves the size of a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_get_size(
+                    libbfio_pool_t *pool,
+                    int entry,
+                    size64_t *size,
+                    libbfio_error_t **error );
 
 /* Retrieves the current offset in a handle in the pool
  * Returns 1 if successful or -1 on error

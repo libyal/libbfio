@@ -52,6 +52,14 @@ struct libbfio_internal_handle
 	 */
 	off64_t offset;
 
+	/* The size
+	 */
+	size64_t size;
+
+	/* Value to indicate the size was set
+	 */
+	uint8_t size_set;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	/* The offset ranges that were read
 	 */
@@ -106,6 +114,13 @@ struct libbfio_internal_handle
 	int (*is_open)(
 	       intptr_t *io_handle,
 	       liberror_error_t **error );
+
+	/* The get size function
+	 */
+	int (*get_size)(
+	       intptr_t *io_handle,
+	       size64_t *size,
+	       liberror_error_t **error );
 };
 
 LIBBFIO_EXTERN int libbfio_handle_initialize(
@@ -118,6 +133,7 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
                     ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
                     off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, liberror_error_t **error ),
                     int (*is_open)( intptr_t *io_handle, liberror_error_t **error ),
+                    int (*get_size)( intptr_t *io_handle, size64_t *size, liberror_error_t **error ),
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_free(
@@ -168,6 +184,11 @@ LIBBFIO_EXTERN int libbfio_handle_get_flags(
 LIBBFIO_EXTERN int libbfio_handle_set_flags(
                     libbfio_handle_t *handle,
                     int flags,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_handle_get_size(
+                    libbfio_handle_t *handle,
+                    size64_t *size,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_get_offset(

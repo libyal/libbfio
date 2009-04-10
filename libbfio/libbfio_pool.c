@@ -1500,6 +1500,124 @@ off64_t libbfio_pool_seek_offset(
 	return( seek_offset );
 }
 
+/* Retrieves the size of  a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_get_size(
+     libbfio_pool_t *pool,
+     int entry,
+     size64_t *size,
+     liberror_error_t **error )
+{
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_get_size";
+	int flags                              = 0;
+	int is_open                            = 0;
+
+	if( pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
+	if( internal_pool->handles == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid pool - missing handles.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( entry < 0 )
+	 || ( entry >= internal_pool->amount_of_handles ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
+		 "%s: invalid entry.",
+		 function );
+
+		return( -1 );
+	}
+	/* Make sure the handle is open
+	 */
+	is_open = libbfio_handle_is_open(
+	           internal_pool->handles[ entry ],
+	           error );
+
+	if( is_open == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if entry: %d is open.",
+		 function,
+	         entry );
+
+		return( -1 );
+	}
+	else if( is_open == 0 )
+	{
+		if( libbfio_handle_get_flags(
+		     internal_pool->handles[ entry ],
+		     &flags,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve flags.",
+			 function );
+
+			return( -1 );
+		}
+		if( libbfio_pool_open_handle(
+		     internal_pool,
+		     internal_pool->handles[ entry ],
+		     flags,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open entry: %d.",
+			 function,
+			 entry );
+
+			return( -1 );
+		}
+	}
+	if( libbfio_handle_get_size(
+	     internal_pool->handles[ entry ],
+	     size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve size.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
 /* Retrieves the current offset in a handle in the pool
  * Returns 1 if successful or -1 on error
  */

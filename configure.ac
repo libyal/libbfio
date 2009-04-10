@@ -94,13 +94,6 @@ AC_CHECK_HEADER(
 dnl Headers included in common/types.h
 AC_CHECK_HEADERS([limits.h])
 
-dnl Headers included in common/directory_io.h and common/file_io.h
-AC_CHECK_HEADERS([sys/stat.h])
-
-dnl Headers included in common/file_io.h
-AC_CHECK_HEADERS([fcntl.h])
-AC_CHECK_HEADERS([unistd.h])
-
 dnl Headers included in common/narrow_string.h
 AC_CHECK_HEADERS([string.h])
 
@@ -111,16 +104,10 @@ dnl Headers included in common/notify.c
 AC_CHECK_HEADERS([stdarg.h])
 AC_CHECK_HEADERS([varargs.h])
 
-dnl Headers included in and bfiotools/glob.h
-AC_CHECK_HEADERS([glob.h])
-
-dnl Headers included in and bfiotools/bfiosignal.h
-AC_CHECK_HEADERS([signal.h])
-AC_CHECK_HEADERS([sys/signal.h])
-
-dnl Other headers
-AC_CHECK_HEADERS([langinfo.h])
-AC_CHECK_HEADERS([locale.h])
+dnl Headers included in libbfio/libbfio_file.h
+AC_CHECK_HEADERS([sys/stat.h])
+AC_CHECK_HEADERS([fcntl.h])
+AC_CHECK_HEADERS([unistd.h])
 
 dnl Check for declarations and type definitions
 AC_TYPE_OFF_T
@@ -220,86 +207,6 @@ AC_CHECK_FUNCS(
   [Missing function: realloc],
   [1]) ])
 
-dnl File input/output functions used in common/file_io.h
-AC_CHECK_FUNCS(
- [close],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: close],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [lseek],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: lseek],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [open],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: open],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [read],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: read],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [write],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: write],
-  [1]) ])
-
-dnl File input/output functions used in common/file_stream_io.h
-AC_CHECK_FUNCS(
- [fclose],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fclose],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [feof],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: feof],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fopen],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fopen],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fread],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fread],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fwrite],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fwrite],
-  [1]) ])
-
-dnl Directory functions used in common/directory_io.h
-AC_CHECK_FUNCS(
- [mkdir],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: mkdir],
-  [1]) ])
-
 dnl Narrow character string functions used in common/narrow_string.h
 AC_CHECK_FUNCS(
  [fgets],
@@ -390,7 +297,50 @@ AC_CHECK_FUNCS(
    [Missing functions: strtoull and atoll],
    [1]) ]) ])
 
-dnl Check for error string functions used in common/error_string.h
+dnl File input/output functions used in libbfio/libbfio_file.h
+AC_CHECK_FUNCS(
+ [close],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing functions: close],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [lseek],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing functions: lseek],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [open],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing functions: open],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [read],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing functions: read],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [write],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing functions: write],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [fstat],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fstat],
+  [1]) ])
+
+dnl Check for error string functions used in libbfio/libbfio_error_string.h
 AC_FUNC_STRERROR_R(
  [],
  [AC_CHECK_FUNCS(
@@ -399,21 +349,6 @@ AC_FUNC_STRERROR_R(
   [AC_MSG_FAILURE(
    [Missing functions: strerror_r and strerror],
    [1]) ]) ])
-
-dnl Commandline argument/option parsing functions
-AC_CHECK_FUNCS([getopt])
-
-dnl Check for locale functions
-AC_CHECK_FUNCS(
- [setlocale],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: setlocale],
-  [1]) ])
-
-LIBBFIO_LANGINFO_CODESET
-
-dnl System functions
 
 dnl Check for printf conversion specifier support
 LIBBFIO_PRINTF_JD
