@@ -7,6 +7,9 @@ TODO
 * refactor libbfio_file_io into libbfio_file
 * SetFilePointerEx offset correction for SEEK_CUR
 
+* what about automatic close of file with WRITE TRUNCATE flags
+  should be reopened without the TRUNCATE flags
+
 Deployment:
 * check msvscpp
 * check macosx
