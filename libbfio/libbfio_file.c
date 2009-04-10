@@ -121,7 +121,7 @@ int libbfio_file_initialize(
 		if( libbfio_handle_initialize(
 		     handle,
 		     (intptr_t *) io_handle,
-		     libbfio_file_free_io_handle,
+		     libbfio_file_io_handle_free,
 		     libbfio_file_open,
 		     libbfio_file_close,
 		     libbfio_file_read,
@@ -149,11 +149,11 @@ int libbfio_file_initialize(
 /* Frees the file IO handle and its attributes
  * Returns 1 if succesful or -1 on error
  */
-int libbfio_file_free_io_handle(
+int libbfio_file_io_handle_free(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	static char *function = "libbfio_file_free_io_handle";
+	static char *function = "libbfio_file_io_handle_free";
 
 	if( io_handle == NULL )
 	{
@@ -980,7 +980,7 @@ int libbfio_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing name.",
+		 "%s: invalid IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -1022,7 +1022,7 @@ int libbfio_file_open(
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		file_io_handle->file_handle = CreateFile(
-		                               (LPCTSTR) file_io_handle->name,
+		                               (LPCTSTR) io_handle->name,
 		                               file_io_access_flags,
 		                               0,
 		                               NULL,
@@ -1408,54 +1408,73 @@ int libbfio_file_close(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing name.",
+		 "%s: invalid IO handle - missing name.",
 		 function );
 
 		return( -1 );
 	}
-#if defined( WINAPI ) &&  defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	if( file_io_handle->file_handle != INVALID_HANDLE_VALUE )
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
-		if( CloseHandle(
-		     file_io_handle->file_handle ) == 0 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - invalid file handle.",
+		 function );
 
-			/* TODO use GetLastError to get detailed error information */
-
-			return( -1 );
-		}
-		file_io_handle->file_handle = INVALID_HANDLE_VALUE;
+		return( -1 );
 	}
 #else
-	if( file_io_handle->file_descriptor != -1 )
+	if( file_io_handle->file_descriptor == -1 )
 	{
-#if defined( WINAPI )
-		if( _close(
-		     file_io_handle->file_descriptor ) != 0 )
-#else
-		if( close(
-		     file_io_handle->file_descriptor ) != 0 )
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - invalid file descriptor.",
+		 function );
+
+		return( -1 );
+	}
 #endif
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
+#if defined( WINAPI ) &&  defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	if( CloseHandle(
+	     file_io_handle->file_handle ) == 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
 
-			return( -1 );
-		}
-		file_io_handle->file_descriptor = -1;
+		/* TODO use GetLastError to get detailed error information */
+
+		return( -1 );
 	}
+	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
+#else
+#if defined( WINAPI )
+	if( _close(
+	     file_io_handle->file_descriptor ) != 0 )
+#else
+	if( close(
+	     file_io_handle->file_descriptor ) != 0 )
+#endif
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
+
+		return( -1 );
+	}
+	file_io_handle->file_descriptor = -1;
 #endif
 	return( 0 );
 }
@@ -1492,7 +1511,7 @@ ssize_t libbfio_file_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing name.",
+		 "%s: invalid IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -1504,7 +1523,7 @@ ssize_t libbfio_file_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid file handle.",
+		 "%s: invalid IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -1516,7 +1535,7 @@ ssize_t libbfio_file_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid file descriptor.",
+		 "%s: invalid IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );
@@ -1643,7 +1662,7 @@ ssize_t libbfio_file_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing name.",
+		 "%s: invalid IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -1655,7 +1674,7 @@ ssize_t libbfio_file_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid file handle.",
+		 "%s: invalid IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -1667,7 +1686,7 @@ ssize_t libbfio_file_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid file descriptor.",
+		 "%s: invalid IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );
@@ -1798,7 +1817,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing name.",
+		 "%s: invalid IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -1810,7 +1829,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid file handle.",
+		 "%s: invalid IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -1822,7 +1841,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid file descriptor.",
+		 "%s: invalid IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );
@@ -1918,9 +1937,8 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBBFIO_SYSTEM ".",
+		 "%s: unable to seek offset in file: %" PRIs_LIBBFIO_SYSTEM ".",
 		 function,
-		 offset,
 		 file_io_handle->name );
 
 		return( -1 );

@@ -73,7 +73,7 @@ LIBBFIO_EXTERN int libbfio_file_initialize(
                     libbfio_handle_t **handle,
                     liberror_error_t **error );
 
-int libbfio_file_free_io_handle(
+int libbfio_file_io_handle_free(
      intptr_t *io_handle,
      liberror_error_t **error );
 

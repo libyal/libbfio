@@ -88,7 +88,6 @@ LIBBFIO_EXTERN int libbfio_handle_free(
                     libbfio_handle_t **handle,
                     libbfio_error_t **error );
 
-
 /* Opens the handle
  * Returns 1 if successful or -1 on error
  */
@@ -202,6 +201,14 @@ LIBBFIO_EXTERN int libbfio_file_initialize(
                     libbfio_handle_t **handle,
                     libbfio_error_t **error );
 
+/* Retrieves a name size of the handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_get_name_size(
+                    libbfio_handle_t *handle,
+                    size_t *name_size,
+                    libbfio_error_t **error );
+
 /* Retrieves a name of the handle
  * Returns 1 if succesful or -1 on error
  */
@@ -221,6 +228,14 @@ LIBBFIO_EXTERN int libbfio_file_set_name(
                     libbfio_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Retrieves a name size of the handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_get_name_size_wide(
+                    libbfio_handle_t *handle,
+                    size_t *name_size,
+                    libbfio_error_t **error );
 
 /* Retrieves a name of the handle
  * Returns 1 if succesful or -1 on error
