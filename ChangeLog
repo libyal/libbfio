@@ -16,6 +16,9 @@ Deployment:
 * create debian package
 * update libbfio.3
 
+20090412
+* added check to determine if handle exists in pool close all
+
 20090405
 * small adjustments
 * added libbfio_handle_get_size function

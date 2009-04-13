@@ -1090,38 +1090,41 @@ int libbfio_pool_close_all(
 
 	for( handle_iterator = 0; handle_iterator < internal_pool->amount_of_handles; handle_iterator++ )
 	{
-		/* Make sure the handle is open
-		 */
-		is_open = libbfio_handle_is_open(
-			   internal_pool->handles[ handle_iterator ],
-			   error );
-
-		if( is_open == -1 )
+		if( internal_pool->handles[ handle_iterator ] != NULL )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine if entry: %d is open.",
-			 function,
-			 handle_iterator );
+			/* Make sure the handle is open
+			 */
+			is_open = libbfio_handle_is_open(
+				   internal_pool->handles[ handle_iterator ],
+				   error );
 
-			result = -1;
-		}
-		else if( ( is_open == 1 )
-		      && ( libbfio_handle_close(
-		            internal_pool->handles[ handle_iterator ],
-		            error ) != 0 ) )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close handle: %d.",
-			 function,
-			 handle_iterator );
+			if( is_open == -1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to determine if entry: %d is open.",
+				 function,
+				 handle_iterator );
 
-			result = -1;
+				result = -1;
+			}
+			else if( ( is_open == 1 )
+			      && ( libbfio_handle_close(
+				    internal_pool->handles[ handle_iterator ],
+				    error ) != 0 ) )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_IO,
+				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close handle: %d.",
+				 function,
+				 handle_iterator );
+
+				result = -1;
+			}
 		}
 	}
 	/* TODO update last used list */
