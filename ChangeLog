@@ -16,6 +16,10 @@ Deployment:
 * create debian package
 * update libbfio.3
 
+20090419
+* fixed handle reopen no closing open file
+* updated common/endian.h
+
 20090412
 * added check to determine if handle exists in pool close all
 

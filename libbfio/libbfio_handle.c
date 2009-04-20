@@ -330,6 +330,17 @@ int libbfio_handle_reopen(
 
 		return( -1 );
 	}
+	if( internal_handle->close == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing close function.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_handle->open == NULL )
 	{
 		liberror_error_set(
@@ -368,6 +379,19 @@ int libbfio_handle_reopen(
 	 */
 	if( internal_handle->flags != flags )
 	{
+		if( internal_handle->close(
+		     internal_handle->io_handle,
+		     error ) != 0 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 "%s: unable to close handle.",
+			 function );
+
+			return( -1 );
+		}
 		if( internal_handle->open(
 		     internal_handle->io_handle,
 		     flags,

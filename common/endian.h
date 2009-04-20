@@ -30,8 +30,8 @@
 extern "C" {
 #endif
 
-#define LIBBFIO_ENDIAN_BIG      (uint8_t) 'b'
-#define LIBBFIO_ENDIAN_LITTLE   (uint8_t) 'l'
+#define _ENDIAN_BIG      (uint8_t) 'b'
+#define _ENDIAN_LITTLE   (uint8_t) 'l'
 
 #define endian_big_convert_16bit( value, bytes ) \
 	value = ( (uint16_t) ( bytes[ 0 ] ) << 8 ) \
