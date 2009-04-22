@@ -16,6 +16,9 @@ Deployment:
 * create debian package
 * update libbfio.3
 
+20090422
+* added extra dist of libbfio_definitions.h.in
+
 20090419
 * fixed handle reopen no closing open file
 * updated common/endian.h

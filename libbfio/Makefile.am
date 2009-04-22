@@ -19,6 +19,9 @@ libbfio_la_SOURCES = \
 	libbfio_system_string.h \
 	libbfio_types.h
 
+EXTRA_DIST = \
+	libbfio_definitions.h.in
+
 distclean: clean
 	/bin/rm -f Makefile
 
