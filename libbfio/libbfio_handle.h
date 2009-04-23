@@ -109,6 +109,12 @@ struct libbfio_internal_handle
 	           int whence,
 	           liberror_error_t **error );
 
+	/* The exists function
+	 */
+	int (*exists)(
+	       intptr_t *io_handle,
+	       liberror_error_t **error );
+
 	/* The is open function
 	 */
 	int (*is_open)(
@@ -121,6 +127,7 @@ struct libbfio_internal_handle
 	       intptr_t *io_handle,
 	       size64_t *size,
 	       liberror_error_t **error );
+
 };
 
 LIBBFIO_EXTERN int libbfio_handle_initialize(
@@ -132,6 +139,7 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
                     ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
                     ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
                     off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, liberror_error_t **error ),
+                    int (*exists)( intptr_t *io_handle, liberror_error_t **error ),
                     int (*is_open)( intptr_t *io_handle, liberror_error_t **error ),
                     int (*get_size)( intptr_t *io_handle, size64_t *size, liberror_error_t **error ),
                     liberror_error_t **error );
@@ -171,6 +179,10 @@ LIBBFIO_EXTERN off64_t libbfio_handle_seek_offset(
                         off64_t offset,
                         int whence,
                         liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_handle_exists(
+                    libbfio_handle_t *handle,
+                    liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_is_open(
                     libbfio_handle_t *handle,

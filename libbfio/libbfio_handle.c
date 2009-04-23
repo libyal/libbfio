@@ -42,6 +42,7 @@ int libbfio_handle_initialize(
       ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
       ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
       off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, liberror_error_t **error ),
+      int (*exists)( intptr_t *io_handle, liberror_error_t **error ),
       int (*is_open)( intptr_t *io_handle, liberror_error_t **error ),
       int (*get_size)( intptr_t *io_handle, size64_t *size, liberror_error_t **error ),
       liberror_error_t **error )
@@ -100,6 +101,7 @@ int libbfio_handle_initialize(
 		internal_handle->read           = read;
 		internal_handle->write          = write;
 		internal_handle->seek_offset    = seek_offset;
+		internal_handle->exists         = exists;
 		internal_handle->is_open        = is_open;
 		internal_handle->get_size       = get_size;
 
@@ -1145,4 +1147,68 @@ int libbfio_handle_get_offset_read(
 }
 
 #endif
+
+/* Function to determine if a file object exists
+ * Return 1 if file object exists, 0 if not or -1 on error
+ */
+int libbfio_handle_exists(
+     libbfio_handle_t *handle,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_exists";
+	int result                                 = 0;
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_handle->exists == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing exists function.",
+		 function );
+
+		return( -1 );
+	}
+	result = internal_handle->exists(
+	          internal_handle->io_handle,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if handle exists.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
 

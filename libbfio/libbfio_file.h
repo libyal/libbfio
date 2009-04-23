@@ -140,6 +140,10 @@ off64_t libbfio_file_seek_offset(
          int whence,
          liberror_error_t **error );
 
+int libbfio_file_exists(
+     intptr_t *io_handle,
+     liberror_error_t **error );
+
 int libbfio_file_is_open(
      intptr_t *io_handle,
      liberror_error_t **error );
@@ -148,16 +152,6 @@ int libbfio_file_get_size(
      intptr_t *io_handle,
      size64_t *size,
      liberror_error_t **error );
-
-LIBBFIO_EXTERN int libbfio_file_exists(
-                    const char *filename,
-                    liberror_error_t **error );
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-LIBBFIO_EXTERN int libbfio_file_exists_wide(
-                    const wchar_t *filename,
-                    liberror_error_t **error );
-#endif
 
 #if defined( __cplusplus )
 }

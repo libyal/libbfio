@@ -16,6 +16,9 @@ Deployment:
 * create debian package
 * update libbfio.3
 
+20090423
+* worked on abstracted exists function
+
 20090422
 * added extra dist of libbfio_definitions.h.in
 

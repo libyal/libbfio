@@ -127,6 +127,7 @@ int libbfio_file_initialize(
 		     libbfio_file_read,
 		     libbfio_file_write,
 		     libbfio_file_seek_offset,
+		     libbfio_file_exists,
 		     libbfio_file_is_open,
 		     libbfio_file_get_size,
 		     error ) != 1 )
@@ -1948,6 +1949,328 @@ off64_t libbfio_file_seek_offset(
 	return( offset );
 }
 
+/* Function to determine if a file exists
+ * Return 1 if file exists, 0 if not or -1 on error
+ */
+int libbfio_file_exists(
+     intptr_t *io_handle,
+     liberror_error_t **error )
+{
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	libbfio_system_character_t *error_string = NULL;
+	static char *function                    = "libbfio_file_exists";
+	int result                               = 1;
+	size_t error_string_size                 = 0;
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	HANDLE file_handle                       = INVALID_HANDLE_VALUE;
+	DWORD error_code                         = 0;
+#else
+	int file_descriptor                      = 0;
+#endif
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE ) && !defined( WINAPI )
+	char *narrow_filename                    = NULL;
+	size_t narrow_filename_size              = 0;
+#endif
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle - missing name.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+	/* Must use CreateFileW here because filename is a 
+	 * wide character string and CreateFile is dependent
+	 * on UNICODE directives
+	 */
+	file_handle = CreateFileW(
+		       (LPCTSTR) file_io_handle->name,
+		       GENERIC_READ,
+		       0,
+		       NULL,
+		       OPEN_EXISTING,
+		       FILE_ATTRIBUTE_NORMAL,
+		       NULL );
+#else
+	/* Must use CreateFileA here because filename is a 
+	 * narrow character string and CreateFile is dependent
+	 * on UNICODE directives
+	 */
+	file_handle = CreateFileA(
+		       (LPCTSTR) file_io_handle->name,
+		       GENERIC_READ,
+		       0,
+		       NULL,
+		       OPEN_EXISTING,
+		       FILE_ATTRIBUTE_NORMAL,
+		       NULL );
+#endif
+
+	if( file_handle == INVALID_HANDLE_VALUE )
+	{
+		error_code = GetLastError();
+
+		switch( error_code )
+		{
+			case ERROR_ACCESS_DENIED:
+				result = 1;
+
+				break;
+
+			case ERROR_FILE_NOT_FOUND:
+			case ERROR_PATH_NOT_FOUND:
+				result = 0;
+
+				break;
+
+			default:
+				if( libbfio_system_string_from_error_number(
+				     &error_string,
+				     &error_string_size,
+				     error_code,
+				     error ) != 0 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 function,
+					 file_io_handle->name,
+					 error_string );
+
+					memory_free(
+					 error_string );
+				}
+				else
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 function,
+					 file_io_handle->name );
+				}
+				result = -1;
+
+				break;
+		}
+	}
+	else if( CloseHandle(
+	          file_handle ) == 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close file: %s.",
+		 function,
+		 file_io_handle->name );
+
+		return( -1 );
+	}
+#else
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+#if defined( WINAPI )
+	if( _wsopen_s(
+	     &file_descriptor,
+	     file_io_handle->name,
+	     _O_RDONLY | _O_BINARY,
+	     _SH_DENYRW,
+	     _S_IREAD | _S_IWRITE ) != 0 )
+	{
+		file_descriptor = -1;
+	}
+#else
+	/* Assumed here that the narrow open function can handle UTF-8
+	 */
+#if SIZEOF_WCHAR_T == 4
+	if( libuna_utf8_string_size_from_utf32(
+	     (libuna_utf32_character_t *) file_io_handle->name,
+	     file_io_handle->name_size,
+	     &narrow_filename_size,
+	     error ) != 1 )
+#elif SIZEOF_WCHAR_T == 2
+	if( libuna_utf8_string_size_from_utf16(
+	     (libuna_utf16_character_t *) file_io_handle->name,
+	     file_io_handle->name_size,
+	     &narrow_filename_size,
+	     error ) != 2 )
+#else
+#error Unsupported size of wchar_t
+#endif
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to determine narrow character filename size.",
+		 function );
+
+		return( -1 );
+	}
+	narrow_filename = (char *) memory_allocate(
+	                            sizeof( char ) * narrow_filename_size );
+
+	if( narrow_filename == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create narrow character filename.",
+		 function );
+
+		return( -1 );
+	}
+#if SIZEOF_WCHAR_T == 4
+	if( libuna_utf8_string_copy_from_utf32(
+	     (libuna_utf8_character_t *) narrow_filename,
+	     narrow_filename_size,
+	     (libuna_utf32_character_t *) file_io_handle->name,
+	     file_io_handle->name_size,
+	     error ) != 1 )
+#elif SIZEOF_WCHAR_T == 2
+	if( libuna_utf8_string_copy_from_utf16(
+	     (libuna_utf8_character_t *) narrow_filename,
+	     narrow_filename_size,
+	     (libuna_utf16_character_t *) file_io_handle->name,
+	     file_io_handle->name_size,
+	     error ) != 1 )
+#else
+#error Unsupported size of wchar_t
+#endif
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to set narrow character filename.",
+		 function );
+
+		memory_free(
+		 narrow_filename );
+
+		return( -1 );
+	}
+	file_descriptor = open(
+	                   narrow_filename,
+	                   O_RDONLY,
+	                   0644 );
+
+	memory_free(
+	 narrow_filename );
+#endif
+#else
+#if defined( WINAPI )
+	if( _sopen_s(
+	     &file_descriptor,
+	     file_io_handle->name,
+	     _O_RDONLY | _O_BINARY,
+	     _SH_DENYRW,
+	     _S_IREAD | _S_IWRITE ) != 0 )
+	{
+		file_descriptor = -1;
+	}
+#else
+	file_descriptor = open(
+	                   file_io_handle->name,
+	                   O_RDONLY,
+	                   0644 );
+#endif
+#endif
+	if( file_descriptor == -1 )
+	{
+		switch( errno )
+		{
+			case EACCES:
+				result = 1;
+
+				break;
+
+			case ENOENT:
+				result = 0;
+
+				break;
+
+			default:
+				if( libbfio_system_string_from_error_number(
+				     &error_string,
+				     &error_string_size,
+				     errno,
+				     error ) != 0 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 function,
+					 file_io_handle->name,
+					 error_string );
+
+					memory_free(
+					 error_string );
+				}
+				else
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 function,
+					 file_io_handle->name );
+				}
+				result = -1;
+
+				break;
+		}
+	}
+#if defined( WINAPI )
+	else if( _close(
+		  file_descriptor ) != 0 )
+#else
+	else if( close(
+		  file_descriptor ) != 0 )
+#endif
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close file: %s.",
+		 function,
+		 file_io_handle->name );
+
+		return( -1 );
+	}
+#endif
+	return( result );
+}
+
 /* Check if the file is open
  * Returns 1 if open, 0 if not or -1 on error
  */
@@ -2092,481 +2415,4 @@ int libbfio_file_get_size(
 #endif
 	return( 1 );
 }
-
-/* Function to determine if a file exists
- * Return 1 if file exists, 0 if not or -1 on error
- */
-int libbfio_file_exists(
-     const char *filename,
-     liberror_error_t **error )
-{
-	libbfio_system_character_t *error_string = NULL;
-	static char *function                    = "libbfio_file_exists";
-	int result                               = 1;
-	size_t error_string_size                 = 0;
-
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	HANDLE file_handle                       = INVALID_HANDLE_VALUE;
-	DWORD error_code                         = 0;
-#else
-	int file_descriptor                      = 0;
-#endif
-
-	if( filename == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	/* Must use CreateFileA here because filename is a 
-	 * narrow character string and CreateFile is dependent
-	 * on UNICODE directives
-	 */
-	file_handle = CreateFileA(
-		       (LPCTSTR) filename,
-		       GENERIC_READ,
-		       0,
-		       NULL,
-		       OPEN_EXISTING,
-		       FILE_ATTRIBUTE_NORMAL,
-		       NULL );
-
-	if( file_handle == INVALID_HANDLE_VALUE )
-	{
-		error_code = GetLastError();
-
-		switch( error_code )
-		{
-			case ERROR_ACCESS_DENIED:
-				result = 1;
-
-				break;
-
-			case ERROR_FILE_NOT_FOUND:
-			case ERROR_PATH_NOT_FOUND:
-				result = 0;
-
-				break;
-
-			default:
-				if( libbfio_system_string_from_error_number(
-				     &error_string,
-				     &error_string_size,
-				     error_code,
-				     error ) != 0 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %s with error: %" PRIs_LIBBFIO_SYSTEM "",
-					 function,
-					 filename,
-					 error_string );
-
-					memory_free(
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %s.",
-					 function,
-					 filename );
-				}
-				result = -1;
-
-				break;
-		}
-	}
-	else if( CloseHandle(
-	          file_handle ) == 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %s.",
-		 function,
-		 filename );
-
-		return( -1 );
-	}
-#else
-#if defined( WINAPI )
-	if( _sopen_s(
-	     &file_descriptor,
-	     filename,
-	     _O_RDONLY | _O_BINARY,
-	     _SH_DENYRW,
-	     _S_IREAD | _S_IWRITE ) != 0 )
-	{
-		file_descriptor = -1;
-	}
-#else
-	file_descriptor = open(
-	                   filename,
-	                   O_RDONLY,
-	                   0644 );
-#endif
-	if( file_descriptor == -1 )
-	{
-		switch( errno )
-		{
-			case EACCES:
-				result = 1;
-
-				break;
-
-			case ENOENT:
-				result = 0;
-
-				break;
-
-			default:
-				if( libbfio_system_string_from_error_number(
-				     &error_string,
-				     &error_string_size,
-				     errno,
-				     error ) != 0 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %s with error: %" PRIs_LIBBFIO_SYSTEM "",
-					 function,
-					 filename,
-					 error_string );
-
-					memory_free(
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %s.",
-					 function,
-					 filename );
-				}
-				result = -1;
-
-				break;
-		}
-	}
-#if defined( WINAPI )
-	else if( _close(
-		  file_descriptor ) != 0 )
-#else
-	else if( close(
-		  file_descriptor ) != 0 )
-#endif
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %s.",
-		 function,
-		 filename );
-
-		return( -1 );
-	}
-#endif
-	return( result );
-}
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-/* Function to determine if a file exists
- * Return 1 if file exists, 0 if not or -1 on error
- */
-int libbfio_file_exists_wide(
-     const wchar_t *filename,
-     liberror_error_t **error )
-{
-	libbfio_system_character_t *error_string = NULL;
-	static char *function                    = "libbfio_file_exists_wide";
-	size_t error_string_size                 = 0;
-	int result                               = 1;
-
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	HANDLE file_handle                       = INVALID_HANDLE_VALUE;
-	DWORD error_code                         = 0;
-#else
-	int file_descriptor                      = 0;
-#endif
-#if !defined( WINAPI )
-	char *narrow_filename                    = NULL;
-	size_t filename_size                     = 0;
-	size_t narrow_filename_size              = 0;
-#endif
-
-	if( filename == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	/* Must use CreateFileW here because filename is a 
-	 * wide character string and CreateFile is dependent
-	 * on UNICODE directives
-	 */
-	file_handle = CreateFileW(
-		       (LPCTSTR) filename,
-		       GENERIC_READ,
-		       0,
-		       NULL,
-		       OPEN_EXISTING,
-		       FILE_ATTRIBUTE_NORMAL,
-		       NULL );
-
-	if( file_handle == INVALID_HANDLE_VALUE )
-	{
-		error_code = GetLastError();
-
-		switch( error_code )
-		{
-			case ERROR_ACCESS_DENIED:
-				result = 1;
-
-				break;
-
-			case ERROR_FILE_NOT_FOUND:
-			case ERROR_PATH_NOT_FOUND:
-				result = 0;
-
-				break;
-
-			default:
-				if( libbfio_system_string_from_error_number(
-				     &error_string,
-				     &error_string_size,
-				     error_code,
-				     error ) != 0 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %ls with error: %" PRIs_LIBBFIO_SYSTEM "",
-					 function,
-					 filename,
-					 error_string );
-
-					memory_free(
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %ls.",
-					 function,
-					 filename );
-				}
-				result = -1;
-
-				break;
-		}
-	}
-	else if( CloseHandle(
-	          file_handle ) == 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %ls.",
-		 function,
-		 filename );
-
-		return( -1 );
-	}
-#else
-#if defined( WINAPI )
-	if( _wsopen_s(
-	     &file_descriptor,
-	     filename,
-	     _O_RDONLY | _O_BINARY,
-	     _SH_DENYRW,
-	     _S_IREAD | _S_IWRITE ) != 0 )
-	{
-		file_descriptor = -1;
-	}
-#else
-	/* Assumed here that the narrow open function can handle UTF-8
-	 */
-	filename_size = 1 + wide_string_length(
-	                     filename );
-
-#if SIZEOF_WCHAR_T == 4
-	if( libuna_utf8_string_size_from_utf32(
-	     (libuna_utf32_character_t *) filename,
-	     filename_size,
-	     &narrow_filename_size,
-	     error ) != 1 )
-#elif SIZEOF_WCHAR_T == 2
-	if( libuna_utf8_string_size_from_utf16(
-	     (libuna_utf16_character_t *) filename,
-	     filename_size,
-	     &narrow_filename_size,
-	     error ) != 2 )
-#else
-#error Unsupported size of wchar_t
-#endif
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
-		 "%s: unable to determine narrow character filename size.",
-		 function );
-
-		return( -1 );
-	}
-	narrow_filename = (char *) memory_allocate(
-	                            sizeof( char ) * narrow_filename_size );
-
-	if( narrow_filename == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create narrow character filename.",
-		 function );
-
-		return( -1 );
-	}
-#if SIZEOF_WCHAR_T == 4
-	if( libuna_utf8_string_copy_from_utf32(
-	     (libuna_utf8_character_t *) narrow_filename,
-	     narrow_filename_size,
-	     (libuna_utf32_character_t *) filename,
-	     filename_size,
-	     error ) != 1 )
-#elif SIZEOF_WCHAR_T == 2
-	if( libuna_utf8_string_copy_from_utf16(
-	     (libuna_utf8_character_t *) narrow_filename,
-	     narrow_filename_size,
-	     (libuna_utf16_character_t *) filename,
-	     filename_size,
-	     error ) != 1 )
-#else
-#error Unsupported size of wchar_t
-#endif
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
-		 "%s: unable to set narrow character filename.",
-		 function );
-
-		memory_free(
-		 narrow_filename );
-
-		return( -1 );
-	}
-	file_descriptor = open(
-	                   narrow_filename,
-	                   O_RDONLY,
-	                   0644 );
-
-	memory_free(
-	 narrow_filename );
-#endif
-
-	if( file_descriptor == -1 )
-	{
-		switch( errno )
-		{
-			case EACCES:
-				result = 1;
-
-				break;
-
-			case ENOENT:
-				result = 0;
-
-				break;
-
-			default:
-				if( libbfio_system_string_from_error_number(
-				     &error_string,
-				     &error_string_size,
-				     errno,
-				     error ) != 0 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %ls with error: %" PRIs_LIBBFIO_SYSTEM "",
-					 function,
-					 filename,
-					 error_string );
-
-					memory_free(
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %ls.",
-					 function,
-					 filename );
-				}
-				result = -1;
-
-				break;
-		}
-	}
-#if defined( WINAPI )
-	else if( _close(
-		  file_descriptor ) != 0 )
-#else
-	else if( close(
-		  file_descriptor ) != 0 )
-#endif
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %ls.",
-		 function,
-		 filename );
-
-		return( -1 );
-	}
-#endif
-	return( result );
-}
-
-#endif
 
