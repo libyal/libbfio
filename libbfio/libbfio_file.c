@@ -32,7 +32,7 @@
 
 #if defined( WINAPI )
 #if defined( USE_NATIVE_WINAPI_FUNCTIONS )
-#include <winbase.h>
+#include <windows.h>
 #else
 #include <io.h>
 #include <share.h>

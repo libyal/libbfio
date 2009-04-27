@@ -31,7 +31,7 @@
 #include <liberror.h>
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-#include <winbase.h>
+#include <windows.h>
 #endif
 
 #include "libbfio_extern.h"

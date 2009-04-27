@@ -10,11 +10,17 @@ TODO
 * what about automatic close of file with WRITE TRUNCATE flags
   should be reopened without the TRUNCATE flags
 
+Windows:
+* add WIN32_LEAN_AND_MEAN or VC_EXTRALEAN to msvscpp
+
 Deployment:
 * check msvscpp
 * check macosx
 * create debian package
 * update libbfio.3
+
+20090426
+* changed winbase.h into windows.h
 
 20090425
 * worked on abstracted exists function
