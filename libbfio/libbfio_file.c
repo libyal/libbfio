@@ -180,6 +180,7 @@ int libbfio_file_io_handle_free(
 }
 
 /* Retrieves the name size of the handle
+ * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_get_name_size(
@@ -262,6 +263,7 @@ int libbfio_file_get_name_size(
 }
 
 /* Retrieves the name of the handle
+ * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_get_name(
@@ -396,7 +398,7 @@ int libbfio_file_get_name(
 int libbfio_file_set_name(
      libbfio_handle_t *handle,
      const char *name,
-     size_t name_size,
+     size_t name_length,
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
@@ -429,18 +431,6 @@ int libbfio_file_set_name(
 	}
 	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
 
-	if( io_handle->name != NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: name already set: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 io_handle->name );
-
-		return( -1 );
-	}
 	if( name == NULL )
 	{
 		liberror_error_set(
@@ -452,32 +442,56 @@ int libbfio_file_set_name(
 
 		return( -1 );
 	}
-	if( name_size == 0 )
+	if( name_length == 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid name size is zero.",
+		 "%s: invalid name length is zero.",
 		 function );
 
 		return( -1 );
 	}
-	if( name_size >= (size_t) SSIZE_MAX )
+	if( name_length >= (size_t) SSIZE_MAX )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid name size value exceeds maximum.",
+		 "%s: invalid name length value exceeds maximum.",
 		 function );
 
 		return( -1 );
 	}
+	if( io_handle->name != NULL )
+	{
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+		if( io_handle->file_handle != INVALID_HANDLE_VALUE )
+#else
+		if( io_handle->file_descriptor != -1 )
+#endif
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+			 "%s: name already set: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 io_handle->name );
+
+			return( -1 );
+		}
+		memory_free(
+		  io_handle->name );
+
+		 io_handle->name      = NULL;
+		 io_handle->name_size = 0;
+	}
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 	if( libbfio_system_string_size_from_narrow_string(
 	     name,
-	     name_size,
+	     name_length + 1,
 	     &( io_handle->name_size ),
 	     error ) != 1 )
 	{
@@ -491,7 +505,7 @@ int libbfio_file_set_name(
 		return( -1 );
 	}
 #else
-	io_handle->name_size = name_size;
+	io_handle->name_size = name_length + 1;
 #endif
 	io_handle->name = (libbfio_system_character_t *) memory_allocate(
 	                                                  sizeof( libbfio_system_character_t ) * io_handle->name_size );
@@ -512,7 +526,7 @@ int libbfio_file_set_name(
 	     io_handle->name,
 	     io_handle->name_size,
 	     name,
-	     name_size,
+	     name_lnegth + 1,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -534,7 +548,7 @@ int libbfio_file_set_name(
 	if( libbfio_system_string_copy(
 	     io_handle->name,
 	     name,
-	     name_size ) == NULL )
+	     name_length + 1 ) == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -551,7 +565,7 @@ int libbfio_file_set_name(
 
 		return( -1 );
 	}
-	io_handle->name[ name_size - 1 ] = 0;
+	io_handle->name[ name_length ] = 0;
 #endif
 	return( 1 );
 }
@@ -559,6 +573,7 @@ int libbfio_file_set_name(
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 /* Retrieves the name size of the handle
+ * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_get_name_size_wide(
@@ -641,6 +656,7 @@ int libbfio_file_get_name_size_wide(
 }
 
 /* Retrieves the name of the handle
+ * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_get_name_wide(
@@ -775,7 +791,7 @@ int libbfio_file_get_name_wide(
 int libbfio_file_set_name_wide(
      libbfio_handle_t *handle,
      const wchar_t *name,
-     size_t name_size,
+     size_t name_length,
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
@@ -808,18 +824,6 @@ int libbfio_file_set_name_wide(
 	}
 	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
 
-	if( io_handle->name != NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: name already set: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 io_handle->name );
-
-		return( -1 );
-	}
 	if( name == NULL )
 	{
 		liberror_error_set(
@@ -831,35 +835,59 @@ int libbfio_file_set_name_wide(
 
 		return( -1 );
 	}
-	if( name_size == 0 )
+	if( name_length == 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid name size is zero.",
+		 "%s: invalid name length is zero.",
 		 function );
 
 		return( -1 );
 	}
-	if( name_size >= (size_t) SSIZE_MAX )
+	if( name_length >= (size_t) SSIZE_MAX )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid name size value exceeds maximum.",
+		 "%s: invalid name length value exceeds maximum.",
 		 function );
 
 		return( -1 );
 	}
+	if( io_handle->name != NULL )
+	{
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+		if( io_handle->file_handle != INVALID_HANDLE_VALUE )
+#else
+		if( io_handle->file_descriptor != -1 )
+#endif
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+			 "%s: name already set: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 io_handle->name );
+
+			return( -1 );
+		}
+		memory_free(
+		  io_handle->name );
+
+		 io_handle->name      = NULL;
+		 io_handle->name_size = 0;
+	}
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
-	io_handle->name_size = name_size;
+	io_handle->name_size = name_length + 1;
 #else
 
 	if( libbfio_system_string_size_from_wide_string(
 	     name,
-	     name_size,
+	     name_length + 1,
 	     &( io_handle->name_size ),
 	     error ) != 1 )
 	{
@@ -891,7 +919,7 @@ int libbfio_file_set_name_wide(
 	if( libbfio_system_string_copy(
 	     io_handle->name,
 	     name,
-	     name_size ) == NULL )
+	     name_length + 1 ) == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -908,13 +936,13 @@ int libbfio_file_set_name_wide(
 
 		return( -1 );
 	}
-	io_handle->name[ name_size - 1 ] = 0;
+	io_handle->name[ name_length ] = 0;
 #else
 	if( libbfio_system_string_copy_from_wide_string(
 	     io_handle->name,
 	     io_handle->name_size,
 	     name,
-	     name_size,
+	     name_length + 1,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1147,14 +1175,14 @@ int libbfio_file_open(
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 		if( _wsopen_s(
 		     &( file_io_handle->file_descriptor ),
-		     file_io_handle->name,
+		     (wchar_t *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
 		     _SH_DENYRW,
 		     _S_IREAD | _S_IWRITE ) != 0 )
 #else
 		if( _sopen_s(
 		     &( file_io_handle->file_descriptor ),
-		     file_io_handle->name,
+		     (char *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
 		     _SH_DENYRW,
 		     _S_IREAD | _S_IWRITE ) != 0 )
@@ -1963,13 +1991,10 @@ int libbfio_file_exists(
 	size_t error_string_size                 = 0;
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	HANDLE file_handle                       = INVALID_HANDLE_VALUE;
 	DWORD error_code                         = 0;
-#else
-	int file_descriptor                      = 0;
 #endif
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE ) && !defined( WINAPI )
+#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T ) && !defined( WINAPI )
 	char *narrow_filename                    = NULL;
 	size_t narrow_filename_size              = 0;
 #endif
@@ -1999,35 +2024,35 @@ int libbfio_file_exists(
 		return( -1 );
 	}
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
+#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 	/* Must use CreateFileW here because filename is a 
 	 * wide character string and CreateFile is dependent
 	 * on UNICODE directives
 	 */
-	file_handle = CreateFileW(
-		       (LPCTSTR) file_io_handle->name,
-		       GENERIC_READ,
-		       0,
-		       NULL,
-		       OPEN_EXISTING,
-		       FILE_ATTRIBUTE_NORMAL,
-		       NULL );
+	file_io_handle->file_handle = CreateFileW(
+	                               (LPCTSTR) file_io_handle->name,
+	                               GENERIC_READ,
+	                               0,
+	                               NULL,
+	                               OPEN_EXISTING,
+	                               FILE_ATTRIBUTE_NORMAL,
+	                               NULL );
 #else
 	/* Must use CreateFileA here because filename is a 
 	 * narrow character string and CreateFile is dependent
 	 * on UNICODE directives
 	 */
-	file_handle = CreateFileA(
-		       (LPCTSTR) file_io_handle->name,
-		       GENERIC_READ,
-		       0,
-		       NULL,
-		       OPEN_EXISTING,
-		       FILE_ATTRIBUTE_NORMAL,
-		       NULL );
+	file_io_handle->file_handle = CreateFileA(
+	                               (LPCTSTR) file_io_handle->name,
+	                               GENERIC_READ,
+	                               0,
+	                               NULL,
+	                               OPEN_EXISTING,
+	                               FILE_ATTRIBUTE_NORMAL,
+	                               NULL );
 #endif
 
-	if( file_handle == INVALID_HANDLE_VALUE )
+	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		error_code = GetLastError();
 
@@ -2079,7 +2104,7 @@ int libbfio_file_exists(
 		}
 	}
 	else if( CloseHandle(
-	          file_handle ) == 0 )
+	          file_io_handle->file_handle ) == 0 )
 	{
 		liberror_error_set(
 		 error,
@@ -2091,17 +2116,18 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
+	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
 #else
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
+#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 #if defined( WINAPI )
 	if( _wsopen_s(
-	     &file_descriptor,
-	     file_io_handle->name,
+	     &( file_io_handle->file_descriptor ),
+	     (wchar_t *) file_io_handle->name,
 	     _O_RDONLY | _O_BINARY,
 	     _SH_DENYRW,
 	     _S_IREAD | _S_IWRITE ) != 0 )
 	{
-		file_descriptor = -1;
+		file_io_handle->file_descriptor = -1;
 	}
 #else
 	/* Assumed here that the narrow open function can handle UTF-8
@@ -2175,10 +2201,10 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
-	file_descriptor = open(
-	                   narrow_filename,
-	                   O_RDONLY,
-	                   0644 );
+	file_io_handle->file_descriptor = open(
+	                                   narrow_filename,
+	                                   O_RDONLY,
+	                                   0644 );
 
 	memory_free(
 	 narrow_filename );
@@ -2186,22 +2212,22 @@ int libbfio_file_exists(
 #else
 #if defined( WINAPI )
 	if( _sopen_s(
-	     &file_descriptor,
-	     file_io_handle->name,
+	     &( file_io_handle->file_descriptor ),
+	     (char *) file_io_handle->name,
 	     _O_RDONLY | _O_BINARY,
 	     _SH_DENYRW,
 	     _S_IREAD | _S_IWRITE ) != 0 )
 	{
-		file_descriptor = -1;
+		file_io_handle->file_descriptor = -1;
 	}
 #else
-	file_descriptor = open(
-	                   file_io_handle->name,
-	                   O_RDONLY,
-	                   0644 );
+	file_io_handle->file_descriptor = open(
+	                                   file_io_handle->name,
+	                                   O_RDONLY,
+	                                   0644 );
 #endif
 #endif
-	if( file_descriptor == -1 )
+	if( file_io_handle->file_descriptor == -1 )
 	{
 		switch( errno )
 		{
@@ -2251,10 +2277,10 @@ int libbfio_file_exists(
 	}
 #if defined( WINAPI )
 	else if( _close(
-		  file_descriptor ) != 0 )
+		  file_io_handle->file_descriptor ) != 0 )
 #else
 	else if( close(
-		  file_descriptor ) != 0 )
+		  file_io_handle->file_descriptor ) != 0 )
 #endif
 	{
 		liberror_error_set(
@@ -2267,6 +2293,7 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
+	file_io_handle->file_descriptor = -1;	
 #endif
 	return( result );
 }

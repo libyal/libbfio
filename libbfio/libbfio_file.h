@@ -91,7 +91,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name(
 LIBBFIO_EXTERN int libbfio_file_set_name(
                     libbfio_handle_t *handle,
                     const char *name,
-                    size_t name_size,
+                    size_t name_length,
                     liberror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
@@ -109,7 +109,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name_wide(
 LIBBFIO_EXTERN int libbfio_file_set_name_wide(
                     libbfio_handle_t *handle,
                     const wchar_t *name,
-                    size_t name_size,
+                    size_t name_length,
                     liberror_error_t **error );
 #endif
 

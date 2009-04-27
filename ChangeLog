@@ -16,6 +16,10 @@ Deployment:
 * create debian package
 * update libbfio.3
 
+20090425
+* worked on abstracted exists function
+* changed behavior of set name function in file
+
 20090423
 * worked on abstracted exists function
 

@@ -219,6 +219,7 @@ LIBBFIO_EXTERN int libbfio_file_initialize(
                     libbfio_error_t **error );
 
 /* Retrieves a name size of the handle
+ * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_file_get_name_size(
@@ -227,6 +228,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name_size(
                     libbfio_error_t **error );
 
 /* Retrieves a name of the handle
+ * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_file_get_name(
@@ -241,12 +243,13 @@ LIBBFIO_EXTERN int libbfio_file_get_name(
 LIBBFIO_EXTERN int libbfio_file_set_name(
                     libbfio_handle_t *handle,
                     const char *name,
-                    size_t name_size,
+                    size_t name_length,
                     libbfio_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 /* Retrieves a name size of the handle
+ * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_file_get_name_size_wide(
@@ -255,6 +258,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name_size_wide(
                     libbfio_error_t **error );
 
 /* Retrieves a name of the handle
+ * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_file_get_name_wide(
@@ -269,7 +273,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name_wide(
 LIBBFIO_EXTERN int libbfio_file_set_name_wide(
                     libbfio_handle_t *handle,
                     const wchar_t *name,
-                    size_t name_size,
+                    size_t name_length,
                     libbfio_error_t **error );
 #endif
 
