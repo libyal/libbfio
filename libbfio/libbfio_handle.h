@@ -60,6 +60,10 @@ struct libbfio_internal_handle
 	 */
 	uint8_t size_set;
 
+	/* Reference to the pool last used list element
+	 */
+	libbfio_list_element_t *pool_last_used_list_element;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	/* The offset ranges that were read
 	 */

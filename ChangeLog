@@ -1,15 +1,18 @@
-TODO
-* implement libbfio_file_get_name_size and libbfio_file_get_name_size_wide
-* implement pool throtteling on add_handle and set_handle
+Pool
+* implement pool throttling on add_handle and set_handle
 * update last used list in pool close functions
 
-* update file exists with native WINAPI functions
-* refactor libbfio_file_io into libbfio_file
-* SetFilePointerEx offset correction for SEEK_CUR
+File
+* add errno error strings to liberror notifications
 
+API
 * what about disk full on write errno = ENOSPC
+* what about debug functions in API
 
-Windows:
+Test
+* pool throttling
+
+Windows
 * add WIN32_LEAN_AND_MEAN or VC_EXTRALEAN to msvscpp
 
 Deployment:
@@ -19,10 +22,12 @@ Deployment:
 * check if libbfio.3 is up to date
 
 20090509
-* added automatic handle close function in pool with removal of truncate flag
 * refactored libbfio support and error
 * updated libuna
-* update libbfio.3 man page
+* updated libbfio.3 man page
+* removed libbfio file io
+* worked on pool throttling
+  - pool throttling now removes of truncate flag after close
 
 20090426
 * changed winbase.h into windows.h
