@@ -1,6 +1,6 @@
 Pool
 * implement pool throttling on add_handle and set_handle
-* update last used list in pool close functions
+  - move elements to front of list on read/write/seek
 
 File
 * add errno error strings to liberror notifications
@@ -20,6 +20,10 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20090510
+* worked on pool throttling
+  - last used list is now updated in pool close function
 
 20090509
 * refactored libbfio support and error
