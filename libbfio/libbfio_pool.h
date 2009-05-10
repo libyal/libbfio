@@ -92,6 +92,11 @@ int libbfio_pool_open_handle(
      int flags,
      liberror_error_t **error );
 
+int libbfio_pool_close_handle(
+     libbfio_internal_pool_t *internal_pool,
+     libbfio_handle_t *handle,
+     liberror_error_t **error );
+
 LIBBFIO_EXTERN int libbfio_pool_get_handle(
                     libbfio_pool_t *pool,
                     int entry,

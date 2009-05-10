@@ -31,6 +31,7 @@
 #include "libbfio_support.h"
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
+
 /* Returns the library version as a string
  */
 const char *libbfio_get_version(
@@ -39,35 +40,5 @@ const char *libbfio_get_version(
 	return( (const char *) LIBBFIO_VERSION_STRING );
 }
 
-/* Free an error and its elements
- */
-void libbfio_error_free(
-      libbfio_error_t **error )
-{
-	liberror_error_free(
-	 (liberror_error_t **) error );
-}
-
-/* Prints a descriptive string of the error to the stream
- */
-void libbfio_error_fprint(
-     libbfio_error_t *error,
-     FILE *stream )
-{
-	liberror_error_fprint(
-	 (liberror_error_t *) error,
-	 stream );
-}
-
-/* Prints a backtrace of the error to the stream
- */
-void libbfio_error_backtrace_fprint(
-     libbfio_error_t *error,
-     FILE *stream )
-{
-	liberror_error_backtrace_fprint(
-	 (liberror_error_t *) error,
-	 stream );
-}
 #endif
 

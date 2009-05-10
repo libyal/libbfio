@@ -560,6 +560,108 @@ int libbfio_pool_open_handle(
 	return( 1 );
 }
 
+/* Closes the handle
+ * Returns 0 if successful or -1 on error
+ */
+int libbfio_pool_close_handle(
+     libbfio_internal_pool_t *internal_pool,
+     libbfio_handle_t *handle,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_pool_open_handle";
+	int flags             = 0;
+	int is_open           = 0;
+
+	if( internal_pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	is_open = libbfio_handle_is_open(
+	           handle,
+	           error );
+
+	if( is_open == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if handle is open.",
+		 function );
+
+		return( -1 );
+	}
+	else if( is_open == 0 )
+	{
+		return( 0 );
+	}
+	if( libbfio_handle_get_flags(
+	     handle,
+	     &flags,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve flags.",
+		 function );
+
+		return( -1 );
+	}
+	/* TODO update last used list */
+	if( libbfio_handle_close(
+	     handle,
+	     error ) != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close handle.",
+		 function );
+
+		return( -1 );
+	}
+	/* Make sure truncate flags are removed from the file handle
+	 */
+	flags &= ~LIBBFIO_FLAG_TRUNCATE;
+
+	if( libbfio_handle_set_flags(
+	     handle,
+	     flags,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set flags.",
+		 function );
+
+		return( -1 );
+	}
+	return( 0 );
+}
+
 /* Retrieves a certain handle from the pool
  * Returns 1 if successful or -1 on error
  */

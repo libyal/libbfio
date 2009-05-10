@@ -24,9 +24,33 @@
 #define _LIBBFIO_INTERNAL_ERROR_H
 
 #include <common.h>
+#include <types.h>
+
+#include <stdio.h>
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 #include <libbfio/error.h>
+#endif
+
+#include "libbfio_extern.h"
+
+#if defined( __cplusplus )
+extern "C" {
+#endif
+
+#if !defined( HAVE_LOCAL_LIBBFIO )
+
+LIBBFIO_EXTERN void libbfio_error_free(
+                     libbfio_error_t **error );
+
+LIBBFIO_EXTERN void libbfio_error_fprint(
+                     libbfio_error_t *error,
+                     FILE *stream );
+
+LIBBFIO_EXTERN void libbfio_error_backtrace_fprint(
+                     libbfio_error_t *error,
+                     FILE *stream );
+
 #endif
 
 #if defined( __cplusplus )

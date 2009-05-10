@@ -45,6 +45,20 @@ extern "C" {
 LIBBFIO_EXTERN const char *libbfio_get_version(
                             void );
 
+/* -------------------------------------------------------------------------
+ * Notify functions
+ * ------------------------------------------------------------------------- */
+
+/* Set the notify values
+ */
+LIBBFIO_EXTERN void libbfio_set_notify_values(
+                     FILE *stream,
+                     int verbose );
+
+/* -------------------------------------------------------------------------
+ * Error functions
+ * ------------------------------------------------------------------------- */
+
 /* Frees the error including elements
  */
 LIBBFIO_EXTERN void libbfio_error_free(
@@ -56,11 +70,11 @@ LIBBFIO_EXTERN void libbfio_error_fprint(
                      libbfio_error_t *error,
                      FILE *stream );
 
-/* Set the notify values
+/* Prints a backtrace of the error to the stream
  */
-LIBBFIO_EXTERN void libbfio_set_notify_values(
-                     FILE *stream,
-                     int verbose );
+LIBBFIO_EXTERN void libbfio_error_backtrace_fprint(
+                     libbfio_error_t *error,
+                     FILE *stream );
 
 /* -------------------------------------------------------------------------
  * Handle functions
@@ -246,7 +260,7 @@ LIBBFIO_EXTERN int libbfio_file_set_name(
                     size_t name_length,
                     libbfio_error_t **error );
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
+#if defined( LIBBFIO_WIDE_CHARACTER_TYPE )
 
 /* Retrieves a name size of the handle
  * The name size includes the end of string character

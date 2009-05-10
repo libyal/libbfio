@@ -1,5 +1,5 @@
 /*
- * Library to support (abstracted) basic file IO
+ * Error functions
  *
  * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
@@ -21,48 +21,46 @@
  */
 
 #include <common.h>
+#include <types.h>
 
-#if defined( WINAPI )
-#include <windows.h>
-#endif
+#include <liberror.h>
 
-/* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
- */
+#include <stdio.h>
+
+#include "libbfio_error.h"
+
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
-#if defined( WINAPI )
-
-#if defined( _MANAGED )
-#pragma managed( push, off )
-#endif
-
-/* Defines the entry point for the DLL
+/* Free an error and its elements
  */
-BOOL WINAPI DllMain(
-             HINSTANCE hinstDLL,
-             DWORD fdwReason,
-             LPVOID lpvReserved )
+void libbfio_error_free(
+      libbfio_error_t **error )
 {
-	switch( fdwReason )
-	{
-		case DLL_PROCESS_ATTACH:
-			DisableThreadLibraryCalls(
-			 hinstDLL );
-		break;
-
-		case DLL_THREAD_ATTACH:
-			break;
-
-		case DLL_THREAD_DETACH:
-			break;
-
-		case DLL_PROCESS_DETACH:
-			break;
-	}
-	return( TRUE );
+	liberror_error_free(
+	 (liberror_error_t **) error );
 }
 
-#endif
+/* Prints a descriptive string of the error to the stream
+ */
+void libbfio_error_fprint(
+     libbfio_error_t *error,
+     FILE *stream )
+{
+	liberror_error_fprint(
+	 (liberror_error_t *) error,
+	 stream );
+}
+
+/* Prints a backtrace of the error to the stream
+ */
+void libbfio_error_backtrace_fprint(
+     libbfio_error_t *error,
+     FILE *stream )
+{
+	liberror_error_backtrace_fprint(
+	 (liberror_error_t *) error,
+	 stream );
+}
 
 #endif
 

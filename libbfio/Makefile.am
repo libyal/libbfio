@@ -5,7 +5,7 @@ noinst_LTLIBRARIES = libbfio.la
 libbfio_la_SOURCES = \
 	libbfio.c \
 	libbfio_definitions.h \
-	libbfio_error.h \
+	libbfio_error.c libbfio_error.h \
 	libbfio_error_string.c libbfio_error_string.h \
 	libbfio_extern.h \
 	libbfio_file.c libbfio_file.h \

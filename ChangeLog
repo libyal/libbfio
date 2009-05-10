@@ -7,8 +7,7 @@ TODO
 * refactor libbfio_file_io into libbfio_file
 * SetFilePointerEx offset correction for SEEK_CUR
 
-* what about automatic close of file with WRITE TRUNCATE flags
-  should be reopened without the TRUNCATE flags
+* what about disk full on write errno = ENOSPC
 
 Windows:
 * add WIN32_LEAN_AND_MEAN or VC_EXTRALEAN to msvscpp
@@ -17,7 +16,13 @@ Deployment:
 * check msvscpp
 * check macosx
 * create debian package
-* update libbfio.3
+* check if libbfio.3 is up to date
+
+20090509
+* added automatic handle close function in pool with removal of truncate flag
+* refactored libbfio support and error
+* updated libuna
+* update libbfio.3 man page
 
 20090426
 * changed winbase.h into windows.h

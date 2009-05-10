@@ -26,9 +26,6 @@
 #include <common.h>
 #include <types.h>
 
-#include <stdio.h>
-
-#include "libbfio_error.h"
 #include "libbfio_extern.h"
 
 #if defined( __cplusplus )
@@ -36,19 +33,10 @@ extern "C" {
 #endif
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
+
 LIBBFIO_EXTERN const char *libbfio_get_version(
                            void );
 
-LIBBFIO_EXTERN void libbfio_error_free(
-                    libbfio_error_t **error );
-
-LIBBFIO_EXTERN void libbfio_error_fprint(
-                    libbfio_error_t *error,
-                    FILE *stream );
-
-LIBBFIO_EXTERN void libbfio_error_backtrace_fprint(
-                    libbfio_error_t *error,
-                    FILE *stream );
 #endif
 
 #if defined( __cplusplus )

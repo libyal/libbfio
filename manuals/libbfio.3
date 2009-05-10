@@ -1,9 +1,9 @@
-.Dd March 12, 2009
+.Dd May 9, 2009
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
 .Nm libbfio.h
-.Nd Library to support (abstracted) basic file IO
+.Nd Library to support (abstracted) basic file input/output (IO)
 .Sh LIBRARY
 .Lb libbfio
 .Sh SYNOPSIS
@@ -12,18 +12,106 @@
 Support functions
 .Ft const char *
 .Fn libbfio_get_version "void"
+.Pp
+Notify functions
+.Ft void
+.Fn libbfio_set_notify_values "FILE *stream, uint8_t verbose"
+.Pp
+Error functions
 .Ft void
 .Fn libbfio_error_free "libbfio_error_t **error"
 .Ft void
 .Fn libbfio_error_fprint "libbfio_error_t *error, FILE *stream"
 .Ft void
-.Fn libbfio_set_notify_values "FILE *stream, uint8_t verbose"
+.Fn libbfio_error_backtrace_fprint "libbfio_error_t *error, FILE *stream"
 .Pp
 Handle functions
+.Ft int
+.Fn libbfio_handle_initialize "libbfio_handle_t **handle, intptr_t *io_handle, int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ), int (*open)( intptr_t *io_handle, int flags, libbfio_error_t **error ), int (*close)( intptr_t *io_handle, libbfio_error_t **error ), ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ), int (*exists)( intptr_t *io_handle, libbfio_error_t **error ), int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ), int (*get_size)( intptr_t *io_handle, size64_t *size, liberror_error_t **error ), libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_free "libbfio_handle_t **handle, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_open "libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_reopen "libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_close "libbfio_handle_t *handle, libbfio_error_t **error"
+.Ft ssize_t
+.Fn libbfio_handle_read "libbfio_handle_t *handle, uint8_t *buffer, size_t size, libbfio_error_t **error"
+.Ft ssize_t
+.Fn libbfio_handle_write "libbfio_handle_t *handle, uint8_t *buffer, size_t size, libbfio_error_t **error"
+.Ft off64_t
+.Fn libbfio_handle_seek_offset "libbfio_handle_t *handle, off64_t offset, int whence, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_exists "libbfio_handle_t *handle, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_is_open "libbfio_handle_t *handle, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_get_flags "libbfio_handle_t *handle, int *flags, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_set_flags "libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_get_size "libbfio_handle_t *handle, size64_t *size, liberror_error_t **error"
+.Ft int
+.Fn libbfio_handle_get_offset "libbfio_handle_t *handle, off64_t *offset, libbfio_error_t **error"
+.Pp
+Available when compiled with debug output support:
+.Ft int
+.Fn libbfio_handle_get_amount_of_offsets_read "libbfio_handle_t *handle, int *amount_of_read_offsets, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_get_offset_read "libbfio_handle_t *handle, int index, off64_t *offset, size64_t *size, libbfio_error_t **error"
 .Pp
 File functions
+.Ft int
+.Fn libbfio_file_initialize "libbfio_handle_t **handle, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_file_get_name_size "libbfio_handle_t *handle, size_t *name_size, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_file_get_name "libbfio_handle_t *handle, char *name, size_t name_size, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_file_set_name "libbfio_handle_t *handle, const char *name, size_t name_length, libbfio_error_t **error"
+.Pp
+Available when compiled with wide character string support:
+.Ft int
+.Fn libbfio_file_get_name_size_wide "libbfio_handle_t *handle, size_t *name_size, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_file_get_name_wide "libbfio_handle_t *handle, wchar_t *name, size_t name_size, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_file_set_name_wide "libbfio_handle_t *handle, const wchar_t *name, size_t name_length, libbfio_error_t **error"
 .Pp
 Pool functions
+.Ft int
+.Fn libbfio_pool_initialize "libbfio_pool_t **pool, int amount_of_handles, int maximum_amount_of_open_handles, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_free "libbfio_pool_t **pool, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_resize "libbfio_pool_t *pool, int amount_of_handles, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_get_handle "libbfio_pool_t *pool, int entry, libbfio_handle_t **handle, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_add_handle "libbfio_pool_t *pool, int *entry, libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_set_handle "libbfio_pool_t *pool, int entry, libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Ft int
+.Ft libbfio_pool_open "libbfio_pool_t *pool, int entry, int flags, libbfio_error_t **error"
+.Ft int
+.Ft libbfio_pool_reopen "libbfio_pool_t *pool, int entry, int flags, libbfio_error_t **error"
+.Ft int
+.Ft libbfio_pool_close "libbfio_pool_t *pool, int entry, libbfio_error_t **error"
+.Ft int
+.Ft libbfio_pool_close_all "libbfio_pool_t *pool, libbfio_error_t **error"
+.Ft ssize_t
+.Ft libbfio_pool_read "libbfio_pool_t *pool, int entry, uint8_t *buffer, size_t size, libbfio_error_t **error"
+.Ft ssize_t
+.Ft libbfio_pool_write "libbfio_pool_t *pool, int entry, uint8_t *buffer, size_t size, libbfio_error_t **error"
+.Ft off64_t
+.Fn libbfio_pool_seek_offset "libbfio_pool_t *pool, int entry, off64_t offset, int whence, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_get_size "libbfio_pool_t *pool, int entry, size64_t *size, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_get_offset "libbfio_pool_t *pool, int entry, off64_t *offset, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_get_amount_of_handles "libbfio_pool_t *pool, int *amount_of_handles, liberror_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libbfio_get_version
