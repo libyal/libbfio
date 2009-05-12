@@ -21,6 +21,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090512
+* updated liberror and libuna
+
 20090510
 * worked on pool throttling
   - last used list is now updated in pool close function
