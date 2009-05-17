@@ -1,7 +1,7 @@
 /*
  * List type functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (C) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -31,6 +31,13 @@
 #if defined( __cplusplus )
 extern "C" {
 #endif
+
+enum LIBBFIO_LIST_COMPARE_DEFINITIONS
+{
+	LIBBFIO_LIST_COMPARE_LESS,
+	LIBBFIO_LIST_COMPARE_EQUAL,
+	LIBBFIO_LIST_COMPARE_GREATER
+};
 
 typedef struct libbfio_list_element libbfio_list_element_t;
 
@@ -68,12 +75,18 @@ struct libbfio_list
 
 int libbfio_list_free(
      libbfio_list_t *list,
-     int (*value_free_function)( intptr_t *value ),
+     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libbfio_list_empty(
      libbfio_list_t *list,
-     int (*value_free_function)( intptr_t *value ),
+     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
+     liberror_error_t **error );
+
+int libbfio_list_clone(
+     libbfio_list_t **destination,
+     libbfio_list_t *source,
+     int (*value_clone_function)( intptr_t **destination, intptr_t *source, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libbfio_list_prepend_element(
@@ -99,13 +112,13 @@ int libbfio_list_append_value(
 int libbfio_list_insert_element(
      libbfio_list_t *list,
      libbfio_list_element_t *element,
-     int (*value_compare_function)( intptr_t *first, intptr_t *second ),
+     int (*value_compare_function)( intptr_t *first, intptr_t *second, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libbfio_list_insert_value(
      libbfio_list_t *list,
      intptr_t *value,
-     int (*value_compare_function)( intptr_t *first, intptr_t *second ),
+     int (*value_compare_function)( intptr_t *first, intptr_t *second, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libbfio_list_remove_element(

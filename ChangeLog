@@ -21,6 +21,13 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090516
+* added error to list callback functions
+* added memwatch CPPFLAGS
+* fixed error in handling duplicate offsets in offset list for
+  debug output
+* fixed error in libbfio_list_insert_value
+
 20090512
 * updated liberror and libuna
 

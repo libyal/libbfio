@@ -48,11 +48,13 @@ struct libbfio_offset_list_values
 };
 
 int libbfio_offset_list_values_free(
-     intptr_t *values );
+     intptr_t *values,
+     liberror_error_t **error );
 
 int libbfio_offset_list_values_compare(
      intptr_t *first,
-     intptr_t *second );
+     intptr_t *second,
+     liberror_error_t **error );
 
 int libbfio_offset_list_add_offset(
      libbfio_list_t *offset_list,

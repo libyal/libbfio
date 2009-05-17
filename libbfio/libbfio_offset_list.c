@@ -32,7 +32,8 @@
 /* Frees offset list values
  */
 int libbfio_offset_list_values_free(
-     intptr_t *values )
+     intptr_t *values,
+     liberror_error_t **error )
 {
 	if( values != NULL )
 	{
@@ -43,29 +44,46 @@ int libbfio_offset_list_values_free(
 }
 
 /* Compares two offset list values
- * Returns -1 if the first < second or the first is empty, 0 if equal, 1 if first > second or the second is emtpy
+ * Returns LIBBFIO_LIST_COMPARE_LESS, LIBBFIO_LIST_COMPARE_EQUAL, LIBBFIO_LIST_COMPARE_GREATER if successful or -1 on error
  */
 int libbfio_offset_list_values_compare(
      intptr_t *first,
-     intptr_t *second )
+     intptr_t *second,
+     liberror_error_t **error )
 {
+	static char *function = "libbfio_offset_list_values_compare";
+
 	if( first == NULL )
 	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid first offset list value.",
+		 function );
+
 		return( -1 );
 	}
 	if( second == NULL )
 	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid second offset list value.",
+		 function );
+
 		return( 1 );
 	}
 	if( ( (libbfio_offset_list_values_t *) first )->offset < ( (libbfio_offset_list_values_t *) second )->offset )
 	{
-		return( -1 );
+		return( LIBBFIO_LIST_COMPARE_LESS );
 	}
 	else if( ( (libbfio_offset_list_values_t *) first )->offset > ( (libbfio_offset_list_values_t *) second )->offset )
 	{
-		return( 1 );
+		return( LIBBFIO_LIST_COMPARE_GREATER );
 	}
-	return( 0 );
+	return( LIBBFIO_LIST_COMPARE_EQUAL );
 }
 
 /* Add an offset
@@ -87,6 +105,7 @@ int libbfio_offset_list_add_offset(
 	int create_list_element                    = 1;
 	int merge_next_list_element_check          = 0;
 	int merge_previous_list_element_check      = 0;
+	int result                                 = 0;
 
 	if( offset_list == NULL )
 	{
@@ -333,11 +352,18 @@ int libbfio_offset_list_add_offset(
 		offset_values->offset = offset;
 		offset_values->size   = size;
 
-		if( libbfio_list_insert_value(
-		     offset_list,
-		     (intptr_t *) offset_values,
-		     &libbfio_offset_list_values_compare,
-		     error ) != 1 )
+		result = libbfio_list_insert_value(
+		          offset_list,
+		          (intptr_t *) offset_values,
+		          &libbfio_offset_list_values_compare,
+		          error );
+
+		if( result != 1 )
+		{
+			memory_free(
+			 offset_values );
+		}
+		if( result == -1 )
 		{
 			liberror_error_set(
 			 error,
@@ -345,9 +371,6 @@ int libbfio_offset_list_add_offset(
 			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to insert offset values in offset list.",
 			 function );
-
-			memory_free(
-			 offset_values );
 
 			return( -1 );
 		}
