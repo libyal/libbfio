@@ -7,10 +7,10 @@ File
 
 API
 * what about disk full on write errno = ENOSPC
-* what about debug functions in API
 
 Test
 * pool throttling
+* chained IO (e.g. OLE in PST)
 
 Windows
 * add WIN32_LEAN_AND_MEAN or VC_EXTRALEAN to msvscpp
@@ -20,6 +20,12 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20090522
+* added function to toggle track offsets read
+* implemented generation of common/types.h
+* removed verbose and debug output from configure
+* updated list type
 
 20090516
 * added error to list callback functions

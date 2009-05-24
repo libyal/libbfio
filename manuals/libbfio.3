@@ -1,4 +1,4 @@
-.Dd May 9, 2009
+.Dd May 22, 2009
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -54,8 +54,8 @@ Handle functions
 .Fn libbfio_handle_get_size "libbfio_handle_t *handle, size64_t *size, liberror_error_t **error"
 .Ft int
 .Fn libbfio_handle_get_offset "libbfio_handle_t *handle, off64_t *offset, libbfio_error_t **error"
-.Pp
-Available when compiled with debug output support:
+.Ft int
+.Fn libbfio_handle_set_track_offsets_read "libbfio_handle_t *handle, uint8_t track_offsets_read, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_get_amount_of_offsets_read "libbfio_handle_t *handle, int *amount_of_read_offsets, libbfio_error_t **error"
 .Ft int

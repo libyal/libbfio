@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20090516],
+  [20090522],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20090516])
+ [20090522])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -23,16 +23,6 @@ LIBBFIO_TEST_ENABLE(
  [wide-character-type],
  [wide_character_type],
  [enable wide character type support],
- [no])
-LIBBFIO_TEST_ENABLE(
- [verbose-output],
- [verbose_output],
- [enable verbose output],
- [no])
-LIBBFIO_TEST_ENABLE(
- [debug-output],
- [debug_output],
- [enable debug output],
  [no])
 
 dnl Check for libtool DLL support
@@ -784,6 +774,7 @@ AC_CONFIG_FILES([include/libbfio/features.h])
 AC_CONFIG_FILES([include/libbfio/types.h])
 AC_CONFIG_FILES([libbfio/libbfio_definitions.h])
 dnl Have configure make distribution specific files
+AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libbfio.pc])
 AC_CONFIG_FILES([libbfio.spec])
@@ -799,8 +790,6 @@ Building:
 
 Features:
    Wide character type support: $ac_cv_libbfio_enable_wide_character_type
-   Verbose output:              $ac_cv_libbfio_enable_verbose_output
-   Debug output:                $ac_cv_libbfio_enable_debug_output
 ]);
 
 

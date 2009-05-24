@@ -28,12 +28,71 @@
 
 #include "libbfio_list_type.h"
 
+/* Creates a list
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_list_initialize(
+     libbfio_list_t **list,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_list_initialize";
+
+	if( list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid list.",
+		 function );
+
+		return( -1 );
+	}
+	if( *list == NULL )
+	{
+		*list = (libbfio_list_t *) memory_allocate(
+		                            sizeof( libbfio_list_t ) );
+
+		if( *list == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create list.",
+			 function );
+
+			return( -1 );
+		}
+		if( memory_set(
+		     *list,
+		     0,
+		     sizeof( libbfio_list_t ) ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear list.",
+			 function );
+
+			memory_free(
+			 *list );
+
+			*list = NULL;
+
+			return( -1 );
+		}
+	}
+	return( 1 );
+}
+
 /* Frees a list including the elements
  * Uses the value_free_function to free the element value
  * Returns 1 if successful or -1 on error
  */
 int libbfio_list_free(
-     libbfio_list_t *list,
+     libbfio_list_t **list,
      int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
      liberror_error_t **error )
 {
@@ -51,23 +110,27 @@ int libbfio_list_free(
 
 		return( -1 );
 	}
-	result = libbfio_list_empty(
-	          list,
-	          value_free_function,
-	          error );
-
-	if( result != 1 )
+	if( *list != NULL )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to empty list.",
-		 function );
-	}
-	memory_free(
-	 list );
+		result = libbfio_list_empty(
+		          *list,
+		          value_free_function,
+		          error );
 
+		if( result != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to empty list.",
+			 function );
+		}
+		memory_free(
+		 *list );
+
+		*list = NULL;
+	}
 	return( result );
 }
 
@@ -666,7 +729,7 @@ int libbfio_list_insert_element(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to compare element: %d.",
+				 "%s: unable to compare list element: %d.",
 				 function,
 				 iterator + 1 );
 

@@ -92,9 +92,6 @@ int libbfio_pool_initialize(
 
 			return( -1 );
 		}
-		internal_pool = (libbfio_internal_pool_t *) memory_allocate(
-		                                             sizeof( libbfio_internal_pool_t ) );
-
 		if( internal_pool == NULL )
 		{
 			liberror_error_set(
@@ -123,37 +120,17 @@ int libbfio_pool_initialize(
 
 			return( -1 );
 		}
-		internal_pool->last_used_list = (libbfio_list_t *) memory_allocate(
-		                                                    sizeof( libbfio_list_t ) );
-
-		if( internal_pool->last_used_list == NULL )
+		if( libbfio_list_initialize(
+		     &( internal_pool->last_used_list ),
+		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create last used list.",
 			 function );
 
-			memory_free(
-			 internal_pool );
-
-			return( -1 );
-		}
-		if( memory_set(
-		     internal_pool->last_used_list,
-		     0,
-		     sizeof( libbfio_list_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear last used list.",
-			 function );
-
-			memory_free(
-			 internal_pool->last_used_list );
 			memory_free(
 			 internal_pool );
 
@@ -173,8 +150,10 @@ int libbfio_pool_initialize(
 				 "%s: unable to create handles.",
 				 function );
 
-				memory_free(
-				 internal_pool->last_used_list );
+				libbfio_list_free(
+				 &( internal_pool->last_used_list ),
+				 NULL,
+				 NULL );
 				memory_free(
 				 internal_pool );
 
@@ -194,8 +173,10 @@ int libbfio_pool_initialize(
 
 				memory_free(
 				 internal_pool->handles );
-				memory_free(
-				 internal_pool->last_used_list );
+				libbfio_list_free(
+				 &( internal_pool->last_used_list ),
+				 NULL,
+				 NULL );
 				memory_free(
 				 internal_pool );
 
@@ -262,7 +243,7 @@ int libbfio_pool_free(
 		}
 		if( ( internal_pool->last_used_list != NULL )
 		 && ( libbfio_list_free(
-		       internal_pool->last_used_list,
+		       &( internal_pool->last_used_list ),
 		       NULL,
 		       error ) != 1 ) )
 		{

@@ -64,11 +64,13 @@ struct libbfio_internal_handle
 	 */
 	libbfio_list_element_t *pool_last_used_list_element;
 
-#if defined( HAVE_DEBUG_OUTPUT )
+	/* Value to indicate to track offsets read
+	 */
+	uint8_t track_offsets_read;
+
 	/* The offset ranges that were read
 	 */
 	libbfio_list_t *offsets_read;
-#endif
 
 	/* The free io handle function
 	 */
@@ -212,7 +214,11 @@ LIBBFIO_EXTERN int libbfio_handle_get_offset(
                     off64_t *offset,
                     liberror_error_t **error );
 
-#if defined( HAVE_DEBUG_OUTPUT )
+LIBBFIO_EXTERN int libbfio_handle_set_track_offsets_read(
+                    libbfio_handle_t *handle,
+                    uint8_t track_offsets_read,
+                    liberror_error_t **error );
+
 LIBBFIO_EXTERN int libbfio_handle_get_amount_of_offsets_read(
                     libbfio_handle_t *handle,
                     int *amount_of_read_offsets,
@@ -224,7 +230,6 @@ LIBBFIO_EXTERN int libbfio_handle_get_offset_read(
                     off64_t *offset,
                     size64_t *size,
                     liberror_error_t **error );
-#endif
 
 #if defined( __cplusplus )
 }

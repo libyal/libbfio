@@ -105,16 +105,14 @@ int libbfio_handle_initialize(
 		internal_handle->is_open        = is_open;
 		internal_handle->get_size       = get_size;
 
-#if defined( HAVE_DEBUG_OUTPUT )
-		internal_handle->offsets_read = (libbfio_list_t *) memory_allocate(
-		                                                    sizeof( libbfio_list_t ) );
-
-		if( internal_handle->offsets_read == NULL )
+		if( libbfio_list_initialize(
+		     &( internal_handle->offsets_read ),
+		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create offsets read list.",
 			 function );
 
@@ -123,26 +121,6 @@ int libbfio_handle_initialize(
 
 			return( -1 );
 		}
-		if( memory_set(
-		     internal_handle->offsets_read,
-		     0,
-		     sizeof( libbfio_list_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear offsets read list.",
-			 function );
-
-			memory_free(
-			 internal_handle->offsets_read );
-			memory_free(
-			 internal_handle );
-
-			return( -1 );
-		}
-#endif
 		*handle = (libbfio_handle_t *) internal_handle;
 	}
 	return( 1 );
@@ -195,10 +173,9 @@ int libbfio_handle_free(
 				result = -1;
 			}
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
 		if( ( internal_handle->offsets_read != NULL )
 		 && ( libbfio_list_free(
-		       internal_handle->offsets_read,
+		       &( internal_handle->offsets_read ),
 		       &libbfio_offset_list_values_free,
 		       error ) != 1 ) )
 		{
@@ -211,7 +188,6 @@ int libbfio_handle_free(
 
 			result = -1;
 		}
-#endif
 		memory_free(
 		 internal_handle );
 
@@ -532,19 +508,6 @@ ssize_t libbfio_handle_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( internal_handle->offsets_read == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing offsets read table.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	if( internal_handle->read == NULL )
 	{
 		liberror_error_set(
@@ -584,23 +547,35 @@ ssize_t libbfio_handle_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libbfio_offset_list_add_offset(
-	     internal_handle->offsets_read,
-	     internal_handle->offset,
-	     read_count,
-	     error ) != 1 )
+	if( internal_handle->track_offsets_read != 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to add offset range to offsets read table.",
-		 function );
+		if( internal_handle->offsets_read == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid handle - missing offsets read table.",
+			 function );
 
-		return( -1 );
+			return( -1 );
+		}
+		if( libbfio_offset_list_add_offset(
+		     internal_handle->offsets_read,
+		     internal_handle->offset,
+		     read_count,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to add offset range to offsets read table.",
+			 function );
+
+			return( -1 );
+		}
 	}
-#endif
 	internal_handle->offset += (off64_t) read_count;
 
 	return( read_count );
@@ -770,6 +745,70 @@ off64_t libbfio_handle_seek_offset(
 		internal_handle->offset = offset;
 	}
 	return( offset );
+}
+
+/* Function to determine if a file object exists
+ * Return 1 if file object exists, 0 if not or -1 on error
+ */
+int libbfio_handle_exists(
+     libbfio_handle_t *handle,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_exists";
+	int result                                 = 0;
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_handle->exists == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing exists function.",
+		 function );
+
+		return( -1 );
+	}
+	result = internal_handle->exists(
+	          internal_handle->io_handle,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if handle exists.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
 }
 
 /* Check if the handle is open
@@ -1037,7 +1076,46 @@ int libbfio_handle_get_offset(
 	return( 1 );
 }
 
-#if defined( HAVE_DEBUG_OUTPUT )
+/* Set the value to have the library track the offsets read
+ * 0 disables tracking any other value enables tracking
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_handle_set_track_offsets_read(
+     libbfio_handle_t *handle,
+     uint8_t track_offsets_read,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_set_track_offsets_read";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->offsets_read == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing offsets read table.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle->track_offsets_read = track_offsets_read;
+
+	return( 1 );
+}
 
 /* Retrieves the amount of offsets read
  * Returns 1 if successful or -1 on error
@@ -1144,71 +1222,5 @@ int libbfio_handle_get_offset_read(
 		return( -1 );
 	}
 	return( 1 );
-}
-
-#endif
-
-/* Function to determine if a file object exists
- * Return 1 if file object exists, 0 if not or -1 on error
- */
-int libbfio_handle_exists(
-     libbfio_handle_t *handle,
-     liberror_error_t **error )
-{
-	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_exists";
-	int result                                 = 0;
-
-	if( handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	internal_handle = (libbfio_internal_handle_t *) handle;
-
-	if( internal_handle->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_handle->exists == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing exists function.",
-		 function );
-
-		return( -1 );
-	}
-	result = internal_handle->exists(
-	          internal_handle->io_handle,
-	          error );
-
-	if( result == -1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if handle exists.",
-		 function );
-
-		return( -1 );
-	}
-	return( result );
 }
 

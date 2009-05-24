@@ -192,6 +192,15 @@ LIBBFIO_EXTERN int libbfio_handle_get_size(
                     size64_t *size,
                     liberror_error_t **error );
 
+/* Set the value to have the library track the offsets read
+ * 0 disables tracking any other value enables tracking
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_set_track_offsets_read(
+                    libbfio_handle_t *handle,
+                    uint8_t track_offsets_read,
+                    libbfio_error_t **error );
+
 /* Retrieves the current offset
  * Returns 1 if successful or -1 on error
  */
@@ -199,8 +208,6 @@ LIBBFIO_EXTERN int libbfio_handle_get_offset(
                     libbfio_handle_t *handle,
                     off64_t *offset,
                     libbfio_error_t **error );
-
-#if defined( HAVE_DEBUG_OUTPUT )
 
 /* Retrieves the amount of offsets read
  * Returns 1 if successful or -1 on error
@@ -219,7 +226,6 @@ LIBBFIO_EXTERN int libbfio_handle_get_offset_read(
                     off64_t *offset,
                     size64_t *size,
                     libbfio_error_t **error );
-#endif
 
 /* -------------------------------------------------------------------------
  * File functions
