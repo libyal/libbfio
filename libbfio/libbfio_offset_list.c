@@ -632,12 +632,12 @@ int libbfio_offset_list_range_is_present(
 		offset_values = (libbfio_offset_list_values_t *) list_element->value;
 
 		if( ( offset >= offset_values->offset )
-		 && ( offset <= (off64_t) ( offset_values->offset + offset_values->size ) ) )
+		 && ( offset < (off64_t) ( offset_values->offset + offset_values->size ) ) )
 		{
 			return( 1 );
 		}
 		if( ( offset_values->offset >= offset )
-		 && ( offset_values->offset <= last_offset ) )
+		 && ( offset_values->offset < last_offset ) )
 		{
 			return( 1 );
 		}
