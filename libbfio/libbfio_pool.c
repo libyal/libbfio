@@ -79,19 +79,9 @@ int libbfio_pool_initialize(
 	}
 	if( *pool == NULL )
 	{
-		handles_size = sizeof( libbfio_handle_t * ) * amount_of_handles;
+		internal_pool = (libbfio_internal_pool_t *) memory_allocate(
+		                                             sizeof( libbfio_internal_pool_t ) );
 
-		if( handles_size > (size_t) SSIZE_MAX )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-			 "%s: invalid handles size value exceeds maximum.",
-			 function );
-
-			return( -1 );
-		}
 		if( internal_pool == NULL )
 		{
 			liberror_error_set(
@@ -138,6 +128,19 @@ int libbfio_pool_initialize(
 		}
 		if( amount_of_handles > 0 )
 		{
+			handles_size = sizeof( libbfio_handle_t * ) * amount_of_handles;
+
+			if( handles_size > (size_t) SSIZE_MAX )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+				 "%s: invalid handles size value exceeds maximum.",
+				 function );
+
+				return( -1 );
+			}
 			internal_pool->handles = (libbfio_handle_t **) memory_allocate(
 			                                                handles_size );
 

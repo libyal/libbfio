@@ -21,6 +21,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090528
+* corrected missing code error in pool
+
 20090524
 * fixed last offset inclusion in libbfio_offset_list_range_is_present
 
