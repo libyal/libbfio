@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/common -I$(top_srcdir)/liberror @LIBUNA_CPPFLAGS@ @MEMWATCH_CPPFLAGS@
 
-noinst_LTLIBRARIES = libbfio.la
+lib_LTLIBRARIES = libbfio.la
 
 libbfio_la_SOURCES = \
 	libbfio.c \

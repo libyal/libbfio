@@ -1,3 +1,6 @@
+Fix
+* conversion error for ASCII to UNICODE and vice versa
+
 Pool
 * implement pool throttling on add_handle and set_handle
   - move elements to front of list on read/write/seek
@@ -20,6 +23,9 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20090623
+* corrected non-install error libbfio/Makefile.am
 
 20090528
 * corrected missing code error in pool
