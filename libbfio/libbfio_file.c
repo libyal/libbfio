@@ -1052,7 +1052,7 @@ int libbfio_file_open(
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		file_io_handle->file_handle = CreateFile(
-		                               (LPCTSTR) io_handle->name,
+		                               (LPCTSTR) file_io_handle->name,
 		                               file_io_access_flags,
 		                               FILE_SHARE_READ,
 		                               NULL,
@@ -1629,7 +1629,7 @@ ssize_t libbfio_file_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_READ_FAILED,
-		 "%s: invalid read count: %" PRIzd " returned.".
+		 "%s: invalid read count: %" PRIzd " returned.",
 		 function,
 		 read_count );
 	}
@@ -1780,9 +1780,9 @@ ssize_t libbfio_file_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: invalid write count: %" PRIzd " returned.".
+		 "%s: invalid write count: %" PRIzd " returned.",
 		 function,
-		 read_count );
+		 write_count );
 	}
 #else
 #if defined( WINAPI )
@@ -2347,7 +2347,7 @@ int libbfio_file_get_size(
 	static char *function                    = "libbfio_file_get_size";
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	LARGE_INTEGER large_integer              = { 0, 0 };
+	LARGE_INTEGER large_integer_size         = { 0, 0 };
 #elif defined( WINAPI )
 	struct __stat64 file_stat;
 #else
@@ -2406,7 +2406,7 @@ int libbfio_file_get_size(
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	if( GetFileSizeEx(
 	     file_io_handle->file_handle,
-	     &large_integer ) == 0 )
+	     &large_integer_size ) == 0 )
 	{
 		liberror_error_set(
 		 error,

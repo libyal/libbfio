@@ -54,6 +54,10 @@ int libbfio_error_string_from_error_number(
 	char *static_error_string = NULL;
 #endif
 
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	DWORD error_code          = 0;
+#endif
+
 	if( error_string == NULL )
 	{
 		liberror_error_set(
@@ -227,6 +231,10 @@ int libbfio_error_string_from_error_number_wide(
 #if !defined( WINAPI )
 	char *narrow_error_string       = NULL;
 	size_t narrow_error_string_size = 0;
+#endif
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	DWORD error_code                = 0;
 #endif
 
 	if( error_string == NULL )
