@@ -24,6 +24,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090624
+* changed Windows file access to only deny shared write access
+
 20090623
 * corrected non-install error libbfio/Makefile.am
 

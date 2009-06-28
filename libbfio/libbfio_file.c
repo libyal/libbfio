@@ -1054,7 +1054,7 @@ int libbfio_file_open(
 		file_io_handle->file_handle = CreateFile(
 		                               (LPCTSTR) io_handle->name,
 		                               file_io_access_flags,
-		                               0,
+		                               FILE_SHARE_READ,
 		                               NULL,
 		                               file_io_creation_flags,
 		                               FILE_ATTRIBUTE_NORMAL,
@@ -1177,14 +1177,14 @@ int libbfio_file_open(
 		     &( file_io_handle->file_descriptor ),
 		     (wchar_t *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
-		     _SH_DENYRW,
+		     _SH_DENYWR,
 		     _S_IREAD | _S_IWRITE ) != 0 )
 #else
 		if( _sopen_s(
 		     &( file_io_handle->file_descriptor ),
 		     (char *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
-		     _SH_DENYRW,
+		     _SH_DENYWR,
 		     _S_IREAD | _S_IWRITE ) != 0 )
 #endif
 		{
@@ -2030,9 +2030,9 @@ int libbfio_file_exists(
 	 * on UNICODE directives
 	 */
 	file_io_handle->file_handle = CreateFileW(
-	                               (LPCTSTR) file_io_handle->name,
+	                               (LPCWSTR) file_io_handle->name,
 	                               GENERIC_READ,
-	                               0,
+	                               FILE_SHARE_READ,
 	                               NULL,
 	                               OPEN_EXISTING,
 	                               FILE_ATTRIBUTE_NORMAL,
@@ -2043,9 +2043,9 @@ int libbfio_file_exists(
 	 * on UNICODE directives
 	 */
 	file_io_handle->file_handle = CreateFileA(
-	                               (LPCTSTR) file_io_handle->name,
+	                               (LPCSTR) file_io_handle->name,
 	                               GENERIC_READ,
-	                               0,
+	                               FILE_SHARE_READ,
 	                               NULL,
 	                               OPEN_EXISTING,
 	                               FILE_ATTRIBUTE_NORMAL,
@@ -2124,7 +2124,7 @@ int libbfio_file_exists(
 	     &( file_io_handle->file_descriptor ),
 	     (wchar_t *) file_io_handle->name,
 	     _O_RDONLY | _O_BINARY,
-	     _SH_DENYRW,
+	     _SH_DENYWR,
 	     _S_IREAD | _S_IWRITE ) != 0 )
 	{
 		file_io_handle->file_descriptor = -1;
@@ -2215,7 +2215,7 @@ int libbfio_file_exists(
 	     &( file_io_handle->file_descriptor ),
 	     (char *) file_io_handle->name,
 	     _O_RDONLY | _O_BINARY,
-	     _SH_DENYRW,
+	     _SH_DENYWR,
 	     _S_IREAD | _S_IWRITE ) != 0 )
 	{
 		file_io_handle->file_descriptor = -1;
