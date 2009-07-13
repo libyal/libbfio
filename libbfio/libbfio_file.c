@@ -983,7 +983,11 @@ int libbfio_file_open(
 	DWORD error_code                         = 0;
 	DWORD file_io_access_flags               = 0;
 	DWORD file_io_creation_flags             = 0;
+	DWORD file_io_shared_flags               = 0;
 #else
+#if defined( WINAPI )
+	int file_io_shared_flags                 = 0;
+#endif
 	int file_io_flags                        = 0;
 #endif
 #if !defined( WINAPI ) && defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
@@ -1021,16 +1025,19 @@ int libbfio_file_open(
 	{
 		file_io_access_flags   = GENERIC_WRITE | GENERIC_READ;
 		file_io_creation_flags = OPEN_ALWAYS;
+		file_io_shared_flags   = FILE_SHARE_READ;
 	}
 	else if( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
 	{
 		file_io_access_flags   = GENERIC_READ;
 		file_io_creation_flags = OPEN_EXISTING;
+		file_io_shared_flags   = FILE_SHARE_READ;
 	}
 	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
 	{
 		file_io_access_flags   = GENERIC_WRITE;
 		file_io_creation_flags = OPEN_ALWAYS;
+		file_io_shared_flags   = 0;
 	}
 	else
 	{
@@ -1054,7 +1061,7 @@ int libbfio_file_open(
 		file_io_handle->file_handle = CreateFile(
 		                               (LPCTSTR) file_io_handle->name,
 		                               file_io_access_flags,
-		                               FILE_SHARE_READ,
+		                               file_io_shared_flags,
 		                               NULL,
 		                               file_io_creation_flags,
 		                               FILE_ATTRIBUTE_NORMAL,
@@ -1094,7 +1101,7 @@ int libbfio_file_open(
 					     &error_string,
 					     &error_string_size,
 					     error_code,
-					     error ) != 0 )
+					     error ) != 1 )
 					{
 						liberror_error_set(
 						 error,
@@ -1128,7 +1135,8 @@ int libbfio_file_open(
 	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
 	{
 #if defined( WINAPI )
-		file_io_flags = _O_RDWR | _O_CREAT;
+		file_io_flags        = _O_RDWR | _O_CREAT;
+		file_io_shared_flags = _SH_DENYWR;
 #else
 		file_io_flags = O_RDWR | O_CREAT;
 #endif
@@ -1136,7 +1144,8 @@ int libbfio_file_open(
 	else if( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
 	{
 #if defined( WINAPI )
-		file_io_flags = _O_RDONLY;
+		file_io_flags        = _O_RDONLY;
+		file_io_shared_flags = _SH_DENYWR;
 #else
 		file_io_flags = O_RDONLY;
 #endif
@@ -1144,7 +1153,8 @@ int libbfio_file_open(
 	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
 	{
 #if defined( WINAPI )
-		file_io_flags = _O_WRONLY | _O_CREAT;
+		file_io_flags        = _O_WRONLY | _O_CREAT;
+		file_io_shared_flags = _SH_DENYRW;
 #else
 		file_io_flags = O_WRONLY | O_CREAT;
 #endif
@@ -1171,20 +1181,20 @@ int libbfio_file_open(
 	}
 	if( file_io_handle->file_descriptor == -1 )
 	{
-#if defined( WINAPI )&& !defined( __BORLANDC__ )
+#if defined( WINAPI ) && !defined( __BORLANDC__ )
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 		if( _wsopen_s(
 		     &( file_io_handle->file_descriptor ),
 		     (wchar_t *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
-		     _SH_DENYWR,
+		     file_io_shared_flags,
 		     _S_IREAD | _S_IWRITE ) != 0 )
 #else
 		if( _sopen_s(
 		     &( file_io_handle->file_descriptor ),
 		     (char *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
-		     _SH_DENYWR,
+		     file_io_shared_flags,
 		     _S_IREAD | _S_IWRITE ) != 0 )
 #endif
 		{
@@ -1217,7 +1227,7 @@ int libbfio_file_open(
 					     &error_string,
 					     &error_string_size,
 					     errno,
-					     error ) != 0 )
+					     error ) != 1 )
 					{
 						liberror_error_set(
 						 error,
@@ -1375,7 +1385,7 @@ int libbfio_file_open(
 					     &error_string,
 					     &error_string_size,
 					     errno,
-					     error ) != 0 )
+					     error ) != 1 )
 					{
 						liberror_error_set(
 						 error,
@@ -1518,9 +1528,15 @@ ssize_t libbfio_file_read(
          size_t size,
          liberror_error_t **error )
 {
+	libbfio_system_character_t *error_string = NULL;
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_read";
 	ssize_t read_count                       = 0;
+	size_t error_string_size                 = 0;
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	DWORD error_code                         = 0;
+#endif
 
 	if( io_handle == NULL )
 	{
@@ -1615,13 +1631,45 @@ ssize_t libbfio_file_read(
 	     (LPDWORD) &read_count,
 	     NULL ) == 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 file_io_handle->name );
+		error_code = GetLastError();
+
+		switch( error_code )
+		{
+			case ERROR_HANDLE_EOF::
+				break;
+
+			default:
+				if( libbfio_system_string_from_error_number(
+				     &error_string,
+				     &error_string_size,
+				     error_code,
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 function,
+					 file_io_handle->name,
+					 error_string );
+
+					memory_free(
+					 error_string );
+				}
+				else
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 function,
+					 file_io_handle->name );
+				}
+				break;
+		}
+		return( -1 );
 	}
 	if( read_count < 0 )
 	{
@@ -1648,13 +1696,35 @@ ssize_t libbfio_file_read(
 
 	if( read_count < 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 file_io_handle->name );
+		if( libbfio_system_string_from_error_number(
+		     &error_string,
+		     &error_string_size,
+		     errno,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+
+			memory_free(
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
+		return( -1 );
 	}
 #endif
 	return( read_count );
@@ -1669,9 +1739,15 @@ ssize_t libbfio_file_write(
          size_t size,
          liberror_error_t **error )
 {
+	libbfio_system_character_t *error_string = NULL;
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_write";
 	ssize_t write_count                      = 0;
+	size_t error_string_size                 = 0;
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	DWORD error_code                         = 0;
+#endif
 
 	if( io_handle == NULL )
 	{
@@ -1766,13 +1842,37 @@ ssize_t libbfio_file_write(
 	     (LPDWORD) &write_count,
 	     NULL ) == 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 file_io_handle->name );
+		error_code = GetLastError();
+
+		if( libbfio_system_string_from_error_number(
+		     &error_string,
+		     &error_string_size,
+		     error_code,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+
+			memory_free(
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
+		return( -1 );
 	}
 	if( write_count < 0 )
 	{
@@ -1799,13 +1899,35 @@ ssize_t libbfio_file_write(
 
 	if( write_count < 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 file_io_handle->name );
+		if( libbfio_system_string_from_error_number(
+		     &error_string,
+		     &error_string_size,
+		     errno,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+
+			memory_free(
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
+		return( -1 );
 	}
 #endif
 	return( write_count );
@@ -2074,7 +2196,7 @@ int libbfio_file_exists(
 				     &error_string,
 				     &error_string_size,
 				     error_code,
-				     error ) != 0 )
+				     error ) != 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -2246,7 +2368,7 @@ int libbfio_file_exists(
 				     &error_string,
 				     &error_string_size,
 				     errno,
-				     error ) != 0 )
+				     error ) != 1 )
 				{
 					liberror_error_set(
 					 error,

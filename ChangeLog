@@ -26,6 +26,11 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090629
+* fixed issue checking wrong return value of libbfio_system_string_from_error_number
+* added read and write error string
+* added handling of EOF in WinAPI ReadFile
+
 20090628
 * several fixes based on  Borland compiler patches by Peter Van Hove of IsoBuster
 
