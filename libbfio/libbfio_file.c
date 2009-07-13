@@ -526,7 +526,7 @@ int libbfio_file_set_name(
 	     io_handle->name,
 	     io_handle->name_size,
 	     name,
-	     name_lnegth + 1,
+	     name_length + 1,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1171,7 +1171,7 @@ int libbfio_file_open(
 	}
 	if( file_io_handle->file_descriptor == -1 )
 	{
-#if defined( WINAPI )
+#if defined( WINAPI )&& !defined( __BORLANDC__ )
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 		if( _wsopen_s(
 		     &( file_io_handle->file_descriptor ),
@@ -1824,7 +1824,7 @@ off64_t libbfio_file_seek_offset(
 	static char *function                    = "libbfio_file_seek_offset";
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	LARGE_INTEGER large_integer_offset	 = { 0, 0 };
+	LARGE_INTEGER large_integer_offset	 = LIBBFIO_LARGE_INTEGER_ZERO;
 	DWORD move_method                        = 0;
 #endif
 
@@ -2119,7 +2119,7 @@ int libbfio_file_exists(
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
 #else
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
-#if defined( WINAPI )
+#if defined( WINAPI ) && !defined( __BORLANDC__ )
 	if( _wsopen_s(
 	     &( file_io_handle->file_descriptor ),
 	     (wchar_t *) file_io_handle->name,
@@ -2210,7 +2210,7 @@ int libbfio_file_exists(
 	 narrow_filename );
 #endif
 #else
-#if defined( WINAPI )
+#if defined( WINAPI ) && !defined( __BORLANDC__ )
 	if( _sopen_s(
 	     &( file_io_handle->file_descriptor ),
 	     (char *) file_io_handle->name,
@@ -2347,7 +2347,7 @@ int libbfio_file_get_size(
 	static char *function                    = "libbfio_file_get_size";
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	LARGE_INTEGER large_integer_size         = { 0, 0 };
+	LARGE_INTEGER large_integer_size         = LIBBFIO_LARGE_INTEGER_ZERO;
 #elif defined( WINAPI )
 	struct __stat64 file_stat;
 #else

@@ -1,5 +1,7 @@
 Fix
 * conversion error for ASCII to UNICODE and vice versa
+* remove _sopen functions from libbfio CreateFile is
+  supported by a larger number of WINAPI compilers
 
 Pool
 * implement pool throttling on add_handle and set_handle
@@ -23,6 +25,9 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20090628
+* several fixes based on  Borland compiler patches by Peter Van Hove of IsoBuster
 
 20090627
 * fixed several errors in libbfio native winapi mode

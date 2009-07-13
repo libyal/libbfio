@@ -80,5 +80,15 @@
 
 #endif
 
+/* Platform specific macros
+ */
+#if defined( WINAPI )
+#if defined( __BORLANDC__ )
+#define LIBBFIO_LARGE_INTEGER_ZERO      { 0 }
+#else
+#define LIBBFIO_LARGE_INTEGER_ZERO      { 0, 0 }
+#endif
+#endif
+
 #endif
 

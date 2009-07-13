@@ -54,10 +54,6 @@ int libbfio_error_string_from_error_number(
 	char *static_error_string = NULL;
 #endif
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	DWORD error_code          = 0;
-#endif
-
 	if( error_string == NULL )
 	{
 		liberror_error_set(
@@ -133,7 +129,7 @@ int libbfio_error_string_from_error_number(
 	if( FormatMessageA(
 	     FORMAT_MESSAGE_FROM_SYSTEM,
 	     NULL,
-	     (DWORD) error_code,
+	     (DWORD) error_number,
 	     MAKELANGID(
 	      LANG_NEUTRAL,
 	      SUBLANG_DEFAULT ),
@@ -233,10 +229,6 @@ int libbfio_error_string_from_error_number_wide(
 	size_t narrow_error_string_size = 0;
 #endif
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	DWORD error_code                = 0;
-#endif
-
 	if( error_string == NULL )
 	{
 		liberror_error_set(
@@ -293,7 +285,7 @@ int libbfio_error_string_from_error_number_wide(
 	if( FormatMessageW(
 	     FORMAT_MESSAGE_FROM_SYSTEM,
 	     NULL,
-	     (DWORD) error_code,
+	     (DWORD) error_number,
 	     MAKELANGID(
 	      LANG_NEUTRAL,
 	      SUBLANG_DEFAULT ),
