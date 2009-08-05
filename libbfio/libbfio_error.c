@@ -1,7 +1,7 @@
 /*
  * Error functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -41,25 +41,55 @@ void libbfio_error_free(
 }
 
 /* Prints a descriptive string of the error to the stream
+ * Returns the amount of printed characters if successful or -1 on error
  */
-void libbfio_error_fprint(
+int libbfio_error_fprint(
      libbfio_error_t *error,
      FILE *stream )
 {
-	liberror_error_fprint(
-	 (liberror_error_t *) error,
-	 stream );
+	return( liberror_error_fprint(
+	         (liberror_error_t *) error,
+	         stream ) );
+}
+
+/* Prints a descriptive string of the error to the string
+ * Returns the amount of printed characters if successful or -1 on error
+ */
+int libbfio_error_sprint(
+     libbfio_error_t *error,
+     char *string,
+     size_t size )
+{
+	return( liberror_error_sprint(
+	         (liberror_error_t *) error,
+	         string,
+	         size ) );
 }
 
 /* Prints a backtrace of the error to the stream
+ * Returns the amount of printed characters if successful or -1 on error
  */
-void libbfio_error_backtrace_fprint(
+int libbfio_error_backtrace_fprint(
      libbfio_error_t *error,
-     FILE *stream )
+      FILE *stream )
 {
-	liberror_error_backtrace_fprint(
-	 (liberror_error_t *) error,
-	 stream );
+	return( liberror_error_backtrace_fprint(
+	         (liberror_error_t *) error,
+	         stream ) );
+}
+
+/* Prints a backtrace of the error to the string
+ * Returns the amount of printed characters if successful or -1 on error
+ */
+int libbfio_error_backtrace_sprint(
+     libbfio_error_t *error,
+     char *string,
+     size_t size )
+{
+	return( liberror_error_backtrace_sprint(
+	         (liberror_error_t *) error,
+	         string,
+	         size ) );
 }
 
 #endif

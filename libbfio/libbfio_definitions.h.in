@@ -25,26 +25,6 @@
 
 #include <common.h>
 
-#if defined( HAVE_IO_H )
-#include <io.h>
-#endif
-
-#if defined( HAVE_SHARE_H )
-#include <share.h>
-#endif
-
-#if defined( HAVE_SYS_STAT_H )
-#include <sys/stat.h>
-#endif
-
-#if defined( HAVE_FCNTL_H )
-#include <fcntl.h>
-#endif
-
-#if defined( HAVE_UNISTD_H )
-#include <unistd.h>
-#endif
-
 /* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
  */
 #if !defined( HAVE_LOCAL_LIBBFIO )
@@ -78,16 +58,16 @@
 #define LIBBFIO_OPEN_WRITE_TRUNCATE		( LIBBFIO_FLAG_WRITE | LIBBFIO_FLAG_TRUNCATE )
 #define LIBBFIO_OPEN_READ_WRITE_TRUNCATE	( LIBBFIO_FLAG_READ | LIBBFIO_FLAG_WRITE | LIBBFIO_FLAG_TRUNCATE )
 
-#endif
+#endif /* HAVE_LOCAL_LIBBFIO */
 
 /* Platform specific macros
  */
-#if defined( WINAPI )
-#if defined( __BORLANDC__ )
-#define LIBBFIO_LARGE_INTEGER_ZERO      { 0 }
-#else
+#if defined( _MSC_VER )
 #define LIBBFIO_LARGE_INTEGER_ZERO      { 0, 0 }
-#endif
+
+#elif defined( __BORLANDC__ )
+#define LIBBFIO_LARGE_INTEGER_ZERO      { 0 }
+
 #endif
 
 #endif

@@ -30,25 +30,21 @@
 
 #include <errno.h>
 
-#if defined( WINAPI )
-#if defined( USE_NATIVE_WINAPI_FUNCTIONS )
-#include <windows.h>
-#else
-#include <io.h>
-#include <share.h>
-#endif
-#endif
-
-#if defined( HAVE_SYS_STAT_H )
+#if defined( HAVE_SYS_STAT_H ) || defined( WINAPI )
 #include <sys/stat.h>
 #endif
 
-#if defined( HAVE_FCNTL_H )
+#if defined( HAVE_FCNTL_H ) || defined( WINAPI )
 #include <fcntl.h>
 #endif
 
 #if defined( HAVE_UNISTD_H )
 #include <unistd.h>
+#endif
+
+#if defined( WINAPI ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#include <io.h>
+#include <share.h>
 #endif
 
 #include "libbfio_definitions.h"
@@ -1181,7 +1177,8 @@ int libbfio_file_open(
 	}
 	if( file_io_handle->file_descriptor == -1 )
 	{
-#if defined( WINAPI ) && !defined( __BORLANDC__ )
+#if defined( WINAPI )
+#if defined( _MSC_VER )
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 		if( _wsopen_s(
 		     &( file_io_handle->file_descriptor ),
@@ -1196,6 +1193,20 @@ int libbfio_file_open(
 		     file_io_flags | _O_BINARY,
 		     file_io_shared_flags,
 		     _S_IREAD | _S_IWRITE ) != 0 )
+#endif /* LIBBFIO_WIDE_SYSTEM_CHARACTER_T */
+#else
+#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+		file_io_handle->file_descriptor = _wsopen(
+		                                   (wchar_t *) file_io_handle->name,
+		                                   file_io_flags | _O_BINARY,
+		                                   _S_IREAD | _S_IWRITE );
+#else
+		file_io_handle->file_descriptor = _sopen(
+		                                   (char *) file_io_handle->name,
+		                                   file_io_flags | _O_BINARY,
+		                                   _S_IREAD | _S_IWRITE );
+#endif /* LIBBFIO_WIDE_SYSTEM_CHARACTER_T */
+		if( file_io_handle->file_descriptor == -1 )
 #endif
 		{
 			switch( errno )
@@ -1255,6 +1266,7 @@ int libbfio_file_open(
 			}
 			return( -1 );
 		}
+#if defined( _MSC_VER )
 		if( file_io_handle->file_descriptor == -1 )
 		{
 			liberror_error_set(
@@ -1267,6 +1279,7 @@ int libbfio_file_open(
 
 			return( -1 );
 		}
+#endif
 #else
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
 		/* Assumed here that the narrow open function can handle UTF-8
@@ -2241,7 +2254,7 @@ int libbfio_file_exists(
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
 #else
 #if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
-#if defined( WINAPI ) && !defined( __BORLANDC__ )
+#if defined( _MSC_VER )
 	if( _wsopen_s(
 	     &( file_io_handle->file_descriptor ),
 	     (wchar_t *) file_io_handle->name,
@@ -2251,6 +2264,11 @@ int libbfio_file_exists(
 	{
 		file_io_handle->file_descriptor = -1;
 	}
+#elif defined( WINAPI )
+	file_io_handle->file_descriptor = _wsopen(
+	                                   (wchar_t *) file_io_handle->name,
+	                                   _O_RDONLY | _O_BINARY,
+	                                   _S_IREAD | _S_IWRITE );
 #else
 	/* Assumed here that the narrow open function can handle UTF-8
 	 */
@@ -2332,7 +2350,7 @@ int libbfio_file_exists(
 	 narrow_filename );
 #endif
 #else
-#if defined( WINAPI ) && !defined( __BORLANDC__ )
+#if defined( _MSC_VER )
 	if( _sopen_s(
 	     &( file_io_handle->file_descriptor ),
 	     (char *) file_io_handle->name,
@@ -2342,6 +2360,11 @@ int libbfio_file_exists(
 	{
 		file_io_handle->file_descriptor = -1;
 	}
+#elif defined( WINAPI )
+	file_io_handle->file_descriptor = _sopen(
+					   (char *) file_io_handle->name,
+					   _O_RDONLY | _O_BINARY,
+					   _S_IREAD | _S_IWRITE );
 #else
 	file_io_handle->file_descriptor = open(
 	                                   file_io_handle->name,
