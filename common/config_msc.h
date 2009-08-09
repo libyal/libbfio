@@ -1,5 +1,5 @@
 /*
- * Common include file
+ * Configuration file for Microsoft Visual Studio C++ compiler
  *
  * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
@@ -20,36 +20,44 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _COMMON_H )
-#define _COMMON_H
+#if !defined( _CONFIG_MSC_H )
+#define _CONFIG_MSC_H
 
-#if defined( HAVE_CONFIG_H )
-#include <config.h>
-#endif
-
-/* Check to see if the Microsoft Visual Studio C++ compiler is used
+/* Define to the address where bug reports for this package should be sent.
  */
-#if defined( _MSC_VER )
-#include <config_msc.h>
+#define PACKAGE_BUGREPORT "forensics@hoffmannbv.nl"
+
+/* Use the safe size and offset types
+ */
+#define HAVE_SIZE32_T   0
+#define HAVE_SSIZE32_T  0
+#define HAVE_SIZE64_T   0
+#define HAVE_SSIZE64_T  0
+#define HAVE_OFF64_T    0
+
+/* Define the wide character type
+ */
+#if !defined( HAVE_WCHAR_H )
+#define HAVE_WCHAR_H		1
 #endif
 
-/* Check to see if the Borland/CodeGear C++ Builder compiler is used
- */
-#if defined( __BORLANDC__ )
-#include <config_borlandc.h>
+#if defined( SIZEOF_WCHAR_T )
+#undef SIZEOF_WCHAR_T
 #endif
 
-/* Make sure WINAPI is defined
- */
-#if defined( _MSC_VER ) || defined( __BORLANDC__ )
-#include <windows.h>
-#endif
+#define SIZEOF_WCHAR_T		2
 
-/* Make sure the WINAPI version is build with both the narrow and wide character functions
+/* Use the native WINAPI functions instead of the POSIX like functions
+#define USE_NATIVE_WINAPI_FUNCTIONS	1
  */
-#if defined( WINAPI) && !defined( HAVE_WIDE_CHARACTER_TYPE )
-#define HAVE_WIDE_CHARACTER_TYPE	1
-#endif
+
+/* Enable verbose output
+#define HAVE_VERBOSE_OUTPUT     1
+ */
+
+/* Enable debug output
+#define HAVE_DEBUG_OUTPUT       1
+ */
 
 #endif
 

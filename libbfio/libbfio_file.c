@@ -1131,28 +1131,34 @@ int libbfio_file_open(
 	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
 	{
 #if defined( WINAPI )
-		file_io_flags        = _O_RDWR | _O_CREAT;
-		file_io_shared_flags = _SH_DENYWR;
+		file_io_flags = _O_RDWR | _O_CREAT;
 #else
 		file_io_flags = O_RDWR | O_CREAT;
+#endif
+#if defined( _MSC_VER )
+		file_io_shared_flags = _SH_DENYWR;
 #endif
 	}
 	else if( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
 	{
 #if defined( WINAPI )
-		file_io_flags        = _O_RDONLY;
-		file_io_shared_flags = _SH_DENYWR;
+		file_io_flags = _O_RDONLY;
 #else
 		file_io_flags = O_RDONLY;
+#endif
+#if defined( _MSC_VER )
+		file_io_shared_flags = _SH_DENYWR;
 #endif
 	}
 	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
 	{
 #if defined( WINAPI )
-		file_io_flags        = _O_WRONLY | _O_CREAT;
-		file_io_shared_flags = _SH_DENYRW;
+		file_io_flags = _O_WRONLY | _O_CREAT;
 #else
 		file_io_flags = O_WRONLY | O_CREAT;
+#endif
+#if defined( _MSC_VER )
+		file_io_shared_flags = _SH_DENYRW;
 #endif
 	}
 	else
@@ -1207,7 +1213,7 @@ int libbfio_file_open(
 		                                   _S_IREAD | _S_IWRITE );
 #endif /* LIBBFIO_WIDE_SYSTEM_CHARACTER_T */
 		if( file_io_handle->file_descriptor == -1 )
-#endif
+#endif /* _MSC_VER */
 		{
 			switch( errno )
 			{
@@ -1612,6 +1618,7 @@ ssize_t libbfio_file_read(
 		return( -1 );
 	}
 #if defined( WINAPI )
+#if UINT_MAX < SIZE_MAX
 	if( size > (size_t) UINT_MAX )
 	{
 		liberror_error_set(
@@ -1623,6 +1630,7 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
+#endif
 #else
 	if( size > (size_t) SSIZE_MAX )
 	{
@@ -1823,6 +1831,7 @@ ssize_t libbfio_file_write(
 		return( -1 );
 	}
 #if defined( WINAPI )
+#if UINT_MAX < SIZE_MAX
 	if( size > (size_t) UINT_MAX )
 	{
 		liberror_error_set(
@@ -1834,6 +1843,7 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
+#endif
 #else
 	if( size > (size_t) SSIZE_MAX )
 	{
@@ -2493,8 +2503,10 @@ int libbfio_file_get_size(
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	LARGE_INTEGER large_integer_size         = LIBBFIO_LARGE_INTEGER_ZERO;
-#elif defined( WINAPI )
+#elif defined( _MSC_VER )
 	struct __stat64 file_stat;
+#elif defined( __BORLANDC__ )
+	struct stati64 file_stat;
 #else
 	struct stat file_stat;
 #endif
@@ -2564,10 +2576,14 @@ int libbfio_file_get_size(
 	}
 	*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
 #else
-#if defined( WINAPI )
+#if defined( _MSC_VER )
 	if( _fstat64(
-	     file_io_handle->file_descriptor,
-	     &file_stat ) != 0 )
+		 file_io_handle->file_descriptor,
+		 &file_stat ) != 0 )
+#elif defined( __BORLANDC__ )
+	if( _fstati64(
+		 file_io_handle->file_descriptor,
+		 &file_stat ) != 0 )
 #else
 	if( fstat(
 	     file_io_handle->file_descriptor,

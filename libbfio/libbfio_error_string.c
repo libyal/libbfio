@@ -43,14 +43,14 @@
  * Returns 1 if successful or -1 on error
  */
 int libbfio_error_string_from_error_number(
-       char **error_string,
-       size_t *error_string_size,
-       int error_number,
-       liberror_error_t **error )
+	   char **error_string,
+	   size_t *error_string_size,
+	   int error_number,
+	   liberror_error_t **error )
 {
 	static char *function     = "libbfio_error_string_from_error_number";
 
-#if defined( HAVE_STRERROR ) && !defined( HAVE_STRERROR_R ) && !defined( WINAPI )
+#if !defined( HAVE_STRERROR_R ) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	char *static_error_string = NULL;
 #endif
 
@@ -87,7 +87,7 @@ int libbfio_error_string_from_error_number(
 
 		return( -1 );
 	}
-#if defined( HAVE_STRERROR ) && !defined( HAVE_STRERROR_R ) && !defined( WINAPI )
+#if !defined( HAVE_STRERROR_R ) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	static_error_string = strerror(
 	                       error_number );
 
@@ -124,24 +124,38 @@ int libbfio_error_string_from_error_number(
 
 		return( -1 );
 	}
-#if defined( WINAPI )
-#if defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	if( FormatMessageA(
 	     FORMAT_MESSAGE_FROM_SYSTEM,
 	     NULL,
 	     (DWORD) error_number,
 	     MAKELANGID(
-	      LANG_NEUTRAL,
-	      SUBLANG_DEFAULT ),
+	     LANG_NEUTRAL,
+	     SUBLANG_DEFAULT ),
 	     *error_string,
 	     *error_string_size,
 	     NULL ) != 0 )
-#else
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set error string.",
+		 function );
+
+		memory_free(
+		 *error_string );
+
+		*error_string      = NULL;
+		*error_string_size = 0;
+
+		return( -1 );
+	}
+#elif defined( _MSC_VER )
 	if( strerror_s(
 	     *error_string,
 	     *error_string_size,
 	     error_number ) != 0 )
-#endif
 	{
 		liberror_error_set(
 		 error,
@@ -186,11 +200,11 @@ int libbfio_error_string_from_error_number(
 
 		return( -1 );
 	}
-#elif defined( HAVE_STRERROR )
+#elif defined( HAVE_STRERROR ) || defined( WINAPI )
 	if( memory_copy(
 	     *error_string,
 	     static_error_string,
-	     *error_string_size ) == NULL )
+	     sizeof( char ) * *error_string_size ) == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -223,6 +237,10 @@ int libbfio_error_string_from_error_number_wide(
        liberror_error_t **error )
 {
 	static char *function           = "libbfio_error_string_from_error_number_wide";
+
+#if defined( WINAPI ) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	wchar_t *static_error_string    = NULL;
+#endif
 
 #if !defined( WINAPI )
 	char *narrow_error_string       = NULL;
@@ -263,7 +281,26 @@ int libbfio_error_string_from_error_number_wide(
 		return( -1 );
 	}
 #if defined( WINAPI )
+#if !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	static_error_string = _wcserror(
+	                       error_number );
+
+	if( static_error_string == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve static error string.",
+		 function );
+
+		return( -1 );
+	}
+	*error_string_size = 1 + wide_string_length(
+	                          static_error_string );
+#else
 	*error_string_size = LIBBFIO_ERROR_STRING_DEFAULT_SIZE;
+#endif
 
 	*error_string = (wchar_t *) memory_allocate(
 	                             sizeof( wchar_t ) * *error_string_size );
@@ -287,17 +324,32 @@ int libbfio_error_string_from_error_number_wide(
 	     NULL,
 	     (DWORD) error_number,
 	     MAKELANGID(
-	      LANG_NEUTRAL,
-	      SUBLANG_DEFAULT ),
+	     LANG_NEUTRAL,
+	     SUBLANG_DEFAULT ),
 	     *error_string,
 	     *error_string_size,
 	     NULL ) != 0 )
-#else
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set error string.",
+		 function );
+
+		memory_free(
+		 *error_string );
+
+		*error_string      = NULL;
+		*error_string_size = 0;
+
+		return( -1 );
+	}
+#elif defined( _MSC_VER )
 	if( _wcserror_s(
 	     *error_string,
 	     *error_string_size,
 	     error_number ) != 0 )
-#endif
 	{
 		liberror_error_set(
 		 error,
@@ -315,24 +367,29 @@ int libbfio_error_string_from_error_number_wide(
 		return( -1 );
 	}
 #else
-#if defined( HAVE_STRERROR ) && !defined( HAVE_STRERROR_R ) && !defined( WINAPI )
-	narrow_error_string = strerror(
-	                       error_number );
-
-	if( narrow_error_string == NULL )
+	if( memory_copy(
+	     *error_string,
+	     static_error_string,
+	     sizeof( wchar_t ) * *error_string_size ) == NULL )
 	{
 		liberror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve static narrow error string.",
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to set error string.",
 		 function );
+
+		memory_free(
+		 *error_string );
+
+		*error_string      = NULL;
+		*error_string_size = 0;
 
 		return( -1 );
 	}
-	narrow_error_string_size = 1 + narrow_string_length(
-	                                narrow_static_error_string );
-#elif defined( HAVE_STRERROR_R )
+#endif
+#else
+#if defined( HAVE_STRERROR_R )
 	narrow_error_string_size = LIBBFIO_ERROR_STRING_DEFAULT_SIZE;
 
 	narrow_error_string = (char *) memory_allocate(
@@ -373,6 +430,23 @@ int libbfio_error_string_from_error_number_wide(
 
 		return( -1 );
 	}
+#elif defined( HAVE_STRERROR )
+	narrow_error_string = strerror(
+	                       error_number );
+
+	if( narrow_error_string == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve static narrow error string.",
+		 function );
+
+		return( -1 );
+	}
+	narrow_error_string_size = 1 + narrow_string_length(
+	                                narrow_static_error_string );
 #endif
 
 	/* Assume the narrow error string is in UTF-8
