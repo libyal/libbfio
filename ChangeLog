@@ -26,6 +26,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090815
+* encapsulated errno.h in defines
+* removed string.h include from libbfio_error_string.c
+
 20090808
 * worked on Borland C++ compiler support
 

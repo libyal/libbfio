@@ -32,10 +32,6 @@
 #include <stdlib.h>
 #endif
 
-#if defined( HAVE_STRING_H ) || defined( WINAPI )
-#include <string.h>
-#endif
-
 #include "libbfio_error_string.h"
 #include "libbfio_libuna.h"
 

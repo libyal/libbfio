@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20090808],
+  [20090815],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20090808])
+ [20090815])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -98,6 +98,7 @@ AC_CHECK_HEADERS([varargs.h])
 
 dnl Headers included in libbfio/libbfio_file.h
 AC_CHECK_HEADERS([sys/stat.h])
+AC_CHECK_HEADERS([errno.h])
 AC_CHECK_HEADERS([fcntl.h])
 AC_CHECK_HEADERS([unistd.h])
 

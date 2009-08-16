@@ -28,7 +28,9 @@
 
 #include <liberror.h>
 
+#if defined( HAVE_ERRNO_H ) || defined( WINAPI )
 #include <errno.h>
+#endif
 
 #if defined( HAVE_SYS_STAT_H ) || defined( WINAPI )
 #include <sys/stat.h>
