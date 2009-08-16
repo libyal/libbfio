@@ -77,6 +77,10 @@ Available when compiled with wide character string support:
 .Ft int
 .Fn libbfio_file_set_name_wide "libbfio_handle_t *handle, const wchar_t *name, size_t name_length, libbfio_error_t **error"
 .Pp
+Memory range functions
+.Ft int
+.Fn libbfio_memory_range_initialize "libbfio_handle_t **handle, libbfio_error_t **error"
+.Pp
 Pool functions
 .Ft int
 .Fn libbfio_pool_initialize "libbfio_pool_t **pool, int amount_of_handles, int maximum_amount_of_open_handles, libbfio_error_t **error"

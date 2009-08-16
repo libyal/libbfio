@@ -121,7 +121,7 @@ int libbfio_file_io_handle_initialize(
 	return( 1 );
 }
 
-/* Initializes the handle
+/* Initializes the file handle
  * Returns 1 if successful or -1 on error
  */
 int libbfio_file_initialize(
@@ -422,7 +422,7 @@ int libbfio_file_io_handle_clone(
 	return( 1 );
 }
 
-/* Retrieves the name size of the handle
+/* Retrieves the name size of the file handle
  * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -505,7 +505,7 @@ int libbfio_file_get_name_size(
 	return( 1 );
 }
 
-/* Retrieves the name of the handle
+/* Retrieves the name of the file handle
  * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -635,7 +635,7 @@ int libbfio_file_get_name(
 	return( 1 );
 }
 
-/* Sets the name for the handle
+/* Sets the name for the file handle
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_set_name(
@@ -815,7 +815,7 @@ int libbfio_file_set_name(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Retrieves the name size of the handle
+/* Retrieves the name size of the file handle
  * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -898,7 +898,7 @@ int libbfio_file_get_name_size_wide(
 	return( 1 );
 }
 
-/* Retrieves the name of the handle
+/* Retrieves the name of the file handle
  * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -1028,7 +1028,7 @@ int libbfio_file_get_name_wide(
 	return( 1 );
 }
 
-/* Sets the name for the handle
+/* Sets the name for the file handle
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_set_name_wide(
@@ -1209,7 +1209,7 @@ int libbfio_file_set_name_wide(
 
 #endif
 
-/* Opens the handle
+/* Opens the file handle
  * Returns 1 if successful or -1 on error
  */
 int libbfio_file_open(
@@ -1685,7 +1685,7 @@ int libbfio_file_open(
 	return( 1 );
 }
 
-/* Closes the handle
+/* Closes the file handle
  * Returns 0 if successful or -1 on error
  */
 int libbfio_file_close(
@@ -1785,7 +1785,7 @@ int libbfio_file_close(
 	return( 0 );
 }
 
-/* Reads a buffer from the handle
+/* Reads a buffer from the file handle
  * Returns the amount of bytes read if successful, or -1 on errror
  */
 ssize_t libbfio_file_read(
@@ -1998,7 +1998,7 @@ ssize_t libbfio_file_read(
 	return( read_count );
 }
 
-/* Writes a buffer to the handle
+/* Writes a buffer to the file handle
  * Returns the amount of bytes written if successful, or -1 on errror
  */
 ssize_t libbfio_file_write(
@@ -2203,7 +2203,7 @@ ssize_t libbfio_file_write(
 	return( write_count );
 }
 
-/* Seeks a certain offset within the handle
+/* Seeks a certain offset within the file handle
  * Returns the offset if the seek is successful or -1 on error
  */
 off64_t libbfio_file_seek_offset(

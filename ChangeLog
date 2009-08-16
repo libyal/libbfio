@@ -1,5 +1,5 @@
 Fix
-* conversion error for ASCII to UNICODE and vice versa
+* conversion error for ASCII to UNICODE and vice versa ?
 * remove _sopen functions from libbfio CreateFile is
   supported by a larger number of WINAPI compilers
 
@@ -10,28 +10,35 @@ Pool
 File
 * add errno error strings to liberror notifications
 
+MemoryRange
+* add callback function to resize memory range if needed?
+
 API
 * what about disk full on write errno = ENOSPC
 
 Test
 * pool throttling
-* chained IO (e.g. OLE in PST)
+* chained IO (e.g. OLECF in PST)
 
 Windows
 * add WIN32_LEAN_AND_MEAN or VC_EXTRALEAN to msvscpp
 
 Deployment:
-* check msvscpp
+* update msvscpp
+* add codegear project files
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20090816
+* worked on integrating memory range patches by Xavier Roche
 
 20090815
 * encapsulated errno.h in defines
 * removed string.h include from libbfio_error_string.c
 * added duplicate function
 * removed libbfio_set_notify_values
-* worked on integrating libbfio_memory patches by Xavier Roche
+* worked on integrating memory range patches by Xavier Roche
 
 20090808
 * worked on Borland C++ compiler support

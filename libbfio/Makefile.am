@@ -12,6 +12,7 @@ libbfio_la_SOURCES = \
 	libbfio_handle.c libbfio_handle.h \
 	libbfio_libuna.h \
 	libbfio_list_type.c libbfio_list_type.h \
+	libbfio_memory_range.c libbfio_memory_range.h \
 	libbfio_offset_list.c libbfio_offset_list.h \
 	libbfio_pool.c libbfio_pool.h \
 	libbfio_support.c libbfio_support.h \

@@ -231,14 +231,14 @@ LIBBFIO_EXTERN int libbfio_handle_get_offset_read(
  * File functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes the handle
+/* Initializes the file handle
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_file_initialize(
                     libbfio_handle_t **handle,
                     libbfio_error_t **error );
 
-/* Retrieves a name size of the handle
+/* Retrieves a name size of the file handle
  * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -247,7 +247,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name_size(
                     size_t *name_size,
                     libbfio_error_t **error );
 
-/* Retrieves a name of the handle
+/* Retrieves a name of the file handle
  * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -257,7 +257,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name(
                     size_t name_size,
                     libbfio_error_t **error );
 
-/* Sets a name for the handle
+/* Sets a name for the file handle
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_file_set_name(
@@ -268,7 +268,7 @@ LIBBFIO_EXTERN int libbfio_file_set_name(
 
 #if defined( LIBBFIO_WIDE_CHARACTER_TYPE )
 
-/* Retrieves a name size of the handle
+/* Retrieves a name size of the file handle
  * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -277,7 +277,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name_size_wide(
                     size_t *name_size,
                     libbfio_error_t **error );
 
-/* Retrieves a name of the handle
+/* Retrieves a name of the file handle
  * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
@@ -287,7 +287,7 @@ LIBBFIO_EXTERN int libbfio_file_get_name_wide(
                     size_t name_size,
                     libbfio_error_t **error );
 
-/* Sets a name for the handle
+/* Sets a name for the file handle
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_file_set_name_wide(
@@ -296,6 +296,35 @@ LIBBFIO_EXTERN int libbfio_file_set_name_wide(
                     size_t name_length,
                     libbfio_error_t **error );
 #endif
+
+/* -------------------------------------------------------------------------
+ * Memory range functions
+ * ------------------------------------------------------------------------- */
+
+/* Initializes the memory range handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_memory_range_initialize(
+                    libbfio_handle_t **handle,
+                    libbfio_error_t **error );
+
+/* Retrieves the range the memory range handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_memory_range_get(
+                    libbfio_handle_t *handle,
+                    uint8_t **start,
+                    size_t *size,
+                    liberror_error_t **error );
+
+/* Sets the range the memory range handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_memory_range_set(
+                    libbfio_handle_t *handle,
+                    uint8_t *start,
+                    size_t size,
+                    liberror_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Pool functions
