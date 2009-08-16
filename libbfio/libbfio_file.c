@@ -56,6 +56,71 @@
 #include "libbfio_system_string.h"
 #include "libbfio_types.h"
 
+
+/* Initializes the file IO handle
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_file_io_handle_initialize(
+     libbfio_file_io_handle_t **file_io_handle,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_file_io_handle_initialize";
+
+	if( file_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( *file_io_handle == NULL )
+	{
+		*file_io_handle = (libbfio_file_io_handle_t *) memory_allocate(
+		                                                sizeof( libbfio_file_io_handle_t ) );
+
+		if( *file_io_handle == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create file IO handle.",
+			 function );
+
+			return( -1 );
+		}
+		if( memory_set(
+		     *file_io_handle,
+		     0,
+		     sizeof( libbfio_file_io_handle_t ) ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear file IO handle.",
+			 function );
+
+			memory_free(
+			 *file_io_handle );
+
+			*file_io_handle = NULL;
+
+			return( -1 );
+		}
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+		( *file_io_handle )->file_handle     = INVALID_HANDLE_VALUE;
+#else
+		( *file_io_handle )->file_descriptor = -1;
+#endif
+	}
+	return( 1 );
+}
+
 /* Initializes the handle
  * Returns 1 if successful or -1 on error
  */
@@ -79,47 +144,24 @@ int libbfio_file_initialize(
 	}
 	if( *handle == NULL )
 	{
-		io_handle = (libbfio_file_io_handle_t *) memory_allocate(
-		                                          sizeof( libbfio_file_io_handle_t ) );
-
-		if( io_handle == NULL )
+		if( libbfio_file_io_handle_initialize(
+		     &io_handle,
+		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create IO handle.",
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create handle.",
 			 function );
 
 			return( -1 );
 		}
-		if( memory_set(
-		     io_handle,
-		     0,
-		     sizeof( libbfio_file_io_handle_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear IO handle.",
-			 function );
-
-			memory_free(
-			 io_handle );
-
-			return( -1 );
-		}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-		io_handle->file_handle     = INVALID_HANDLE_VALUE;
-#else
-		io_handle->file_descriptor = -1;
-#endif
-
 		if( libbfio_handle_initialize(
 		     handle,
 		     (intptr_t *) io_handle,
 		     libbfio_file_io_handle_free,
+		     libbfio_file_io_handle_clone,
 		     libbfio_file_open,
 		     libbfio_file_close,
 		     libbfio_file_read,
@@ -173,6 +215,209 @@ int libbfio_file_io_handle_free(
 	}
 	memory_free(
 	 io_handle );
+
+	return( 1 );
+}
+
+/* Clones (duplicates) the file IO handle and its attributes
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_io_handle_clone(
+     intptr_t **destination_io_handle,
+     intptr_t *source_io_handle,
+     liberror_error_t **error )
+{
+	libbfio_system_character_t *error_string = NULL;
+	static char *function                    = "libbfio_file_io_handle_clone";
+	size_t error_string_size                 = 0;
+
+	if( destination_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid destination IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: destination IO handle already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid source IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_io_handle_initialize(
+	     (libbfio_file_io_handle_t **) destination_io_handle,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create handle.",
+		 function );
+
+		return( -1 );
+	}
+	( (libbfio_file_io_handle_t *) *destination_io_handle )->name = (libbfio_system_character_t *) memory_allocate(
+	                                                                                                sizeof( libbfio_system_character_t ) * ( (libbfio_file_io_handle_t *) source_io_handle )->name_size );
+
+	if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create name.",
+		 function );
+
+		libbfio_file_io_handle_free(
+		 *destination_io_handle,
+		 NULL );
+
+		*destination_io_handle = NULL;
+
+		return( -1 );
+	}
+	if( libbfio_system_string_copy(
+	     ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
+	     ( (libbfio_file_io_handle_t *) source_io_handle )->name,
+	     ( (libbfio_file_io_handle_t *) source_io_handle )->name_size ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to set name.",
+		 function );
+
+		libbfio_file_io_handle_free(
+		 *destination_io_handle,
+		 NULL );
+
+		*destination_io_handle = NULL;
+
+		return( -1 );
+	}
+	( (libbfio_file_io_handle_t *) *destination_io_handle )->name[ ( (libbfio_file_io_handle_t *) source_io_handle )->name_size - 1 ] = 0;
+
+	( (libbfio_file_io_handle_t *) *destination_io_handle )->name_size = ( (libbfio_file_io_handle_t *) source_io_handle )->name_size;
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	if( DuplicateHandle(
+	     GetCurrentProcess(),
+	     ( (libbfio_file_io_handle_t *) source_io_handle )->file_handle,
+	     GetCurrentProcess(),
+	     ( (libbfio_file_io_handle_t *) *destination_io_handle )->file_handle,
+	     0,
+	     FALSE,
+	     DUPLICATE_SAME_ACCESS ) == 0 )
+	{
+		error_code = GetLastError();
+
+		if( libbfio_system_string_from_error_number(
+		     &error_string,
+		     &error_string_size,
+		     error_code,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+
+			memory_free(
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
+		libbfio_file_io_handle_free(
+		 *destination_io_handle,
+		 NULL );
+
+		*destination_io_handle = NULL;
+
+		return( -1 );
+	}
+#else
+#if defined( WINAPI )
+	( (libbfio_file_io_handle_t *) *destination_io_handle )->file_descriptor = _dup(
+	                                                                            ( (libbfio_file_io_handle_t *) source_io_handle )->file_descriptor );
+#else
+	( (libbfio_file_io_handle_t *) *destination_io_handle )->file_descriptor = dup(
+	                                                                            ( (libbfio_file_io_handle_t *) source_io_handle )->file_descriptor );
+#endif
+
+	if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->file_descriptor == -1 )
+	{
+		if( libbfio_system_string_from_error_number(
+		     &error_string,
+		     &error_string_size,
+		     errno,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to duplicate file descriptor for file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 function,
+			 ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
+			 error_string );
+
+			memory_free(
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to duplicate file descriptor for file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 ( (libbfio_file_io_handle_t *) *destination_io_handle )->name );
+		}
+		libbfio_file_io_handle_free(
+		 *destination_io_handle,
+		 NULL );
+
+		*destination_io_handle = NULL;
+
+		return( -1 );
+	}
+#endif
+	( (libbfio_file_io_handle_t *) *destination_io_handle )->flags = ( (libbfio_file_io_handle_t *) source_io_handle )->flags;
 
 	return( 1 );
 }

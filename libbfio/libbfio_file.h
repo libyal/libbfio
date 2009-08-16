@@ -69,12 +69,21 @@ struct libbfio_file_io_handle
 	int flags;
 };
 
+int libbfio_file_io_handle_initialize(
+     libbfio_file_io_handle_t **file_io_handle,
+     liberror_error_t **error );
+
 LIBBFIO_EXTERN int libbfio_file_initialize(
                     libbfio_handle_t **handle,
                     liberror_error_t **error );
 
 int libbfio_file_io_handle_free(
      intptr_t *io_handle,
+     liberror_error_t **error );
+
+int libbfio_file_io_handle_clone(
+     intptr_t **destination_io_handle,
+     intptr_t *source_io_handle,
      liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_file_get_name_size(

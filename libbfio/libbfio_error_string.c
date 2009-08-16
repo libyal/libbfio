@@ -126,8 +126,8 @@ int libbfio_error_string_from_error_number(
 	     NULL,
 	     (DWORD) error_number,
 	     MAKELANGID(
-	     LANG_NEUTRAL,
-	     SUBLANG_DEFAULT ),
+	      LANG_NEUTRAL,
+	      SUBLANG_DEFAULT ),
 	     *error_string,
 	     *error_string_size,
 	     NULL ) != 0 )
@@ -320,8 +320,8 @@ int libbfio_error_string_from_error_number_wide(
 	     NULL,
 	     (DWORD) error_number,
 	     MAKELANGID(
-	     LANG_NEUTRAL,
-	     SUBLANG_DEFAULT ),
+	      LANG_NEUTRAL,
+	      SUBLANG_DEFAULT ),
 	     *error_string,
 	     *error_string_size,
 	     NULL ) != 0 )

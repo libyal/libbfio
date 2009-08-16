@@ -78,6 +78,13 @@ struct libbfio_internal_handle
 	       intptr_t *io_handle,
 	       liberror_error_t **error );
 
+	/* The clone (duplicate) io handle function
+	 */
+	int (*clone_io_handle)(
+	       intptr_t **destination_io_handle,
+	       intptr_t *source_io_handle,
+	       liberror_error_t **error );
+
 	/* The open function
 	 */
 	int (*open)(
@@ -140,6 +147,7 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
                     libbfio_handle_t **handle,
                     intptr_t *io_handle,
                     int (*free_io_handle)( intptr_t *io_handle, liberror_error_t **error ),
+                    int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, liberror_error_t **error ),
                     int (*open)( intptr_t *io_handle, int flags, liberror_error_t **error ),
                     int (*close)( intptr_t *io_handle, liberror_error_t **error ),
                     ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
@@ -152,6 +160,11 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
 
 LIBBFIO_EXTERN int libbfio_handle_free(
                     libbfio_handle_t **handle,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_handle_clone(
+                    libbfio_handle_t **destination_handle,
+                    libbfio_handle_t *source_handle,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_open(

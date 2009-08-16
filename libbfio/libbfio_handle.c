@@ -37,6 +37,7 @@ int libbfio_handle_initialize(
       libbfio_handle_t **handle,
       intptr_t *io_handle,
       int (*free_io_handle)( intptr_t *io_handle, liberror_error_t **error ),
+      int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, liberror_error_t **error ),
       int (*open)( intptr_t *io_handle, int flags, liberror_error_t **error ),
       int (*close)( intptr_t *io_handle, liberror_error_t **error ),
       ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, liberror_error_t **error ),
@@ -94,16 +95,17 @@ int libbfio_handle_initialize(
 
 			return( -1 );
 		}
-		internal_handle->io_handle      = io_handle;
-		internal_handle->free_io_handle = free_io_handle;
-		internal_handle->open           = open;
-		internal_handle->close          = close;
-		internal_handle->read           = read;
-		internal_handle->write          = write;
-		internal_handle->seek_offset    = seek_offset;
-		internal_handle->exists         = exists;
-		internal_handle->is_open        = is_open;
-		internal_handle->get_size       = get_size;
+		internal_handle->io_handle       = io_handle;
+		internal_handle->free_io_handle  = free_io_handle;
+		internal_handle->clone_io_handle = clone_io_handle;
+		internal_handle->open            = open;
+		internal_handle->close           = close;
+		internal_handle->read            = read;
+		internal_handle->write           = write;
+		internal_handle->seek_offset     = seek_offset;
+		internal_handle->exists          = exists;
+		internal_handle->is_open         = is_open;
+		internal_handle->get_size        = get_size;
 
 		if( libbfio_list_initialize(
 		     &( internal_handle->offsets_read ),
@@ -194,6 +196,132 @@ int libbfio_handle_free(
 		*handle = NULL;
 	}
 	return( result );
+}
+
+/* Clones (duplicates) the handle
+ * The values in the offsets read list are not duplicated
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_handle_clone(
+     libbfio_handle_t **destination_handle,
+     libbfio_handle_t *source_handle,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_source_handle = NULL;
+	intptr_t *destination_io_handle                   = NULL;
+	static char *function                             = "libbfio_handle_clone";
+
+	if( destination_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid destination handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: destination handle already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid source handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_source_handle = (libbfio_internal_handle_t *) source_handle;
+
+	if( internal_source_handle->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid source handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_source_handle->free_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing free IO handle function.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_source_handle->clone_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing clone IO handle function.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_source_handle->clone_io_handle(
+	     &destination_io_handle,
+	     internal_source_handle->io_handle,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to clone IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_handle_initialize(
+	     destination_handle,
+	     destination_io_handle,
+	     internal_source_handle->free_io_handle,
+	     internal_source_handle->clone_io_handle,
+	     internal_source_handle->open,
+	     internal_source_handle->close,
+	     internal_source_handle->read,
+	     internal_source_handle->write,
+	     internal_source_handle->seek_offset,
+	     internal_source_handle->exists,
+	     internal_source_handle->is_open,
+	     internal_source_handle->get_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create destination handle.",
+		 function );
+
+		internal_source_handle->free_io_handle(
+		 destination_io_handle,
+		 NULL );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
 /* Opens the handle
