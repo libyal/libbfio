@@ -2194,7 +2194,7 @@ off64_t libbfio_file_seek_offset(
 	static char *function                    = "libbfio_file_seek_offset";
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	LARGE_INTEGER large_integer_offset	 = LIBBFIO_LARGE_INTEGER_ZERO;
+	LARGE_INTEGER large_integer_offset       = LIBBFIO_LARGE_INTEGER_ZERO;
 	DWORD move_method                        = 0;
 #endif
 
