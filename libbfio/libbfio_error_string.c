@@ -35,18 +35,21 @@
 #include "libbfio_error_string.h"
 #include "libbfio_libuna.h"
 
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+#endif
+
 /* Create a narrow character error string from the error number
  * Returns 1 if successful or -1 on error
  */
-int libbfio_error_string_from_error_number(
-	   char **error_string,
-	   size_t *error_string_size,
-	   int error_number,
-	   liberror_error_t **error )
+int libbfio_error_string_copy_from_error_number(
+     libbfio_system_character_t *error_string,
+     size_t error_string_size,
+     int error_number,
+     liberror_error_t **error )
 {
-	static char *function     = "libbfio_error_string_from_error_number";
+	static char *function     = "libbfio_error_string_copy_from_error_number";
 
-#if !defined( HAVE_STRERROR_R ) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if ( defined( HAVE_STRERROR ) && !defined( HAVE_STRERROR_R ) ) || ( defined( WINAPI) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS ) )
 	char *static_error_string = NULL;
 #endif
 
@@ -83,7 +86,7 @@ int libbfio_error_string_from_error_number(
 
 		return( -1 );
 	}
-#if !defined( HAVE_STRERROR_R ) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if ( defined( HAVE_STRERROR ) && !defined( HAVE_STRERROR_R ) ) || ( defined( WINAPI) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS ) )
 	static_error_string = strerror(
 	                       error_number );
 
@@ -196,7 +199,7 @@ int libbfio_error_string_from_error_number(
 
 		return( -1 );
 	}
-#elif defined( HAVE_STRERROR ) || defined( WINAPI )
+#else
 	if( memory_copy(
 	     *error_string,
 	     static_error_string,

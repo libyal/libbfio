@@ -30,25 +30,19 @@
 
 #include <liberror.h>
 
+#include "libbfio_system_string.h"
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-#define LIBBFIO_ERROR_STRING_DEFAULT_SIZE	512
+#define LIBBFIO_ERROR_STRING_DEFAULT_SIZE	128
 
-int libbfio_error_string_from_error_number(
-       char **error_string,
-       size_t *error_string_size,
-       int error_number,
-       liberror_error_t **error );
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-int libbfio_error_string_from_error_number_wide(
-       wchar_t **error_string,
-       size_t *error_string_size,
-       int error_number,
-       liberror_error_t **error );
-#endif
+int libbfio_error_string_copy_from_error_number(
+     libbfio_system_character_T *error_string,
+     size_t error_string_size,
+     int error_number,
+     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

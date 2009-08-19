@@ -28,7 +28,6 @@
 #include <types.h>
 #include <wide_string.h>
 
-#include "libbfio_error_string.h"
 #include "libbfio_libuna.h"
 
 #if defined( _cplusplus )
@@ -88,7 +87,7 @@ typedef wchar_t libbfio_system_character_t;
 /* narrow string conversion functions
  */
 #define libbfio_system_string_size_from_narrow_string( narrow_string, narrow_string_size, system_string_size, error ) \
-	libuna_utf16_string_size_from_utf8( narrow_string, (libuna_utf8_character_t *) narrow_string_size, system_string_size, error )
+	libuna_utf16_string_size_from_utf8( (libuna_utf8_character_t *) narrow_string, narrow_string_size, system_string_size, error )
 
 #define libbfio_system_string_copy_from_narrow_string( system_string, system_string_size, narrow_string, narrow_string_size, error ) \
 	libuna_utf16_string_copy_from_utf8( (libuna_utf16_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) narrow_string, narrow_string_size, error )
@@ -102,9 +101,6 @@ typedef wchar_t libbfio_system_character_t;
 #else
 #error Unsupported size of wchar_t
 #endif
-
-#define libbfio_system_string_from_error_number( error_string, error_string_size, error_number, error ) \
-	libbfio_error_string_from_error_number_wide( error_string, error_string_size, error_number, error )
 
 /* The system string type contains UTF-8 or ASCII with a codepage
  */
@@ -167,9 +163,6 @@ typedef char libbfio_system_character_t;
 #endif
 
 #endif
-
-#define libbfio_system_string_from_error_number( error_string, error_string_size, error_number, error ) \
-	libbfio_error_string_from_error_number( error_string, error_string_size, error_number, error )
 
 #endif
 

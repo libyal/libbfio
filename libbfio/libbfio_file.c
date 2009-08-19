@@ -1279,7 +1279,7 @@ int libbfio_file_open(
 	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
 	{
 		file_io_access_flags   = GENERIC_WRITE;
-		file_io_creation_flags = OPEN_ALWAYS;
+		file_io_creation_flags = CREATE_ALWAYS;
 		file_io_shared_flags   = 0;
 	}
 	else
@@ -1903,7 +1903,7 @@ ssize_t libbfio_file_read(
 
 		switch( error_code )
 		{
-			case ERROR_HANDLE_EOF::
+			case ERROR_HANDLE_EOF:
 				break;
 
 			default:
