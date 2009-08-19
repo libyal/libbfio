@@ -37,10 +37,10 @@ extern "C" {
 /* Detect if the code is being compiled with Windows Unicode support
  */
 #if defined( WINAPI ) && ( defined( _UNICODE ) || defined( UNICODE ) )
-#define LIBBFIO_WIDE_SYSTEM_CHARACTER_T		1
+#define LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER		1
 #endif
 
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 
 typedef wchar_t libbfio_system_character_t;
 

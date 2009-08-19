@@ -39,7 +39,7 @@ extern "C" {
 #define LIBBFIO_ERROR_STRING_DEFAULT_SIZE	128
 
 int libbfio_error_string_copy_from_error_number(
-     libbfio_system_character_T *error_string,
+     libbfio_system_character_t *error_string,
      size_t error_string_size,
      int error_number,
      liberror_error_t **error );

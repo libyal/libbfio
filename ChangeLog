@@ -33,6 +33,7 @@ Deployment:
 20090817
 * fixed error in 16-bit libbfio_system_string_size_from_narrow_string macro
 * fixed wide character error string
+* fixed write flags for native winapi functions
 
 20090816
 * worked on integrating memory range patches by Xavier Roche

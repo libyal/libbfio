@@ -50,6 +50,7 @@
 #endif
 
 #include "libbfio_definitions.h"
+#include "libbfio_error_string.h"
 #include "libbfio_file.h"
 #include "libbfio_handle.h"
 #include "libbfio_libuna.h"
@@ -227,9 +228,13 @@ int libbfio_file_io_handle_clone(
      intptr_t *source_io_handle,
      liberror_error_t **error )
 {
-	libbfio_system_character_t *error_string = NULL;
-	static char *function                    = "libbfio_file_io_handle_clone";
-	size_t error_string_size                 = 0;
+	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
+	static char *function = "libbfio_file_io_handle_clone";
+
+#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+	DWORD error_code      = 0;
+#endif
 
 	if( destination_io_handle == NULL )
 	{
@@ -333,9 +338,9 @@ int libbfio_file_io_handle_clone(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_system_string_from_error_number(
-		     &error_string,
-		     &error_string_size,
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     error_code,
 		     error ) != 1 )
 		{
@@ -343,12 +348,9 @@ int libbfio_file_io_handle_clone(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 "%s: unable to duplicate file handle for file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 			 function,
-			 file_io_handle->name,
-			 error_string );
-
-			memory_free(
+			 ( (libbfio_file_io_handle_t *) source_io_handle )->name,
 			 error_string );
 		}
 		else
@@ -357,9 +359,9 @@ int libbfio_file_io_handle_clone(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: unable to duplicate file handle for file: %" PRIs_LIBBFIO_SYSTEM ".",
 			 function,
-			 file_io_handle->name );
+			 ( (libbfio_file_io_handle_t *) source_io_handle )->name );
 		}
 		libbfio_file_io_handle_free(
 		 *destination_io_handle,
@@ -380,9 +382,9 @@ int libbfio_file_io_handle_clone(
 
 	if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->file_descriptor == -1 )
 	{
-		if( libbfio_system_string_from_error_number(
-		     &error_string,
-		     &error_string_size,
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     errno,
 		     error ) != 1 )
 		{
@@ -393,9 +395,6 @@ int libbfio_file_io_handle_clone(
 			 "%s: unable to duplicate file descriptor for file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 			 function,
 			 ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
-			 error_string );
-
-			memory_free(
 			 error_string );
 		}
 		else
@@ -483,7 +482,7 @@ int libbfio_file_get_name_size(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( narrow_string_size_from_libbfio_system_string(
 	     io_handle->name,
 	     io_handle->name_size,
@@ -568,7 +567,7 @@ int libbfio_file_get_name(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( narrow_string_size_from_libbfio_system_string(
 	     io_handle->name,
 	     io_handle->name_size,
@@ -598,7 +597,7 @@ int libbfio_file_get_name(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( narrow_string_copy_from_libbfio_system_string(
 	     name,
 	     name_size,
@@ -731,7 +730,7 @@ int libbfio_file_set_name(
 		 io_handle->name      = NULL;
 		 io_handle->name_size = 0;
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_system_string_size_from_narrow_string(
 	     name,
 	     name_length + 1,
@@ -764,7 +763,7 @@ int libbfio_file_set_name(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_system_string_copy_from_narrow_string(
 	     io_handle->name,
 	     io_handle->name_size,
@@ -876,7 +875,7 @@ int libbfio_file_get_name_size_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	*name_size = io_handle->name_size;
 #else
 	if( wide_string_size_from_libbfio_system_string(
@@ -961,7 +960,7 @@ int libbfio_file_get_name_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	wide_name_size = io_handle->name_size;
 #else
 	if( wide_string_size_from_libbfio_system_string(
@@ -991,7 +990,7 @@ int libbfio_file_get_name_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_system_string_copy(
 	     name,
 	     io_handle->name,
@@ -1124,7 +1123,7 @@ int libbfio_file_set_name_wide(
 		 io_handle->name      = NULL;
 		 io_handle->name_size = 0;
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	io_handle->name_size = name_length + 1;
 #else
 
@@ -1158,7 +1157,7 @@ int libbfio_file_set_name_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_system_string_copy(
 	     io_handle->name,
 	     name,
@@ -1217,10 +1216,10 @@ int libbfio_file_open(
      int flags,
      liberror_error_t **error )
 {
-	libbfio_system_character_t *error_string = NULL;
+	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_open";
-	size_t error_string_size                 = 0;
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	DWORD error_code                         = 0;
@@ -1233,7 +1232,7 @@ int libbfio_file_open(
 #endif
 	int file_io_flags                        = 0;
 #endif
-#if !defined( WINAPI ) && defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if !defined( WINAPI ) && defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	char *narrow_filename                    = NULL;
 	size_t narrow_filename_size              = 0;
 #endif
@@ -1279,7 +1278,7 @@ int libbfio_file_open(
 	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
 	{
 		file_io_access_flags   = GENERIC_WRITE;
-		file_io_creation_flags = CREATE_ALWAYS;
+		file_io_creation_flags = OPEN_ALWAYS;
 		file_io_shared_flags   = 0;
 	}
 	else
@@ -1296,7 +1295,7 @@ int libbfio_file_open(
 	if( ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
 	 && ( ( flags & LIBBFIO_FLAG_TRUNCATE ) == LIBBFIO_FLAG_TRUNCATE ) )
 	{
-		file_io_creation_flags = TRUNCATE_EXISTING;
+		file_io_creation_flags = CREATE_ALWAYS;
 	}
 
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
@@ -1340,9 +1339,9 @@ int libbfio_file_open(
 					break;
 
 				default:
-					if( libbfio_system_string_from_error_number(
-					     &error_string,
-					     &error_string_size,
+					if( libbfio_error_string_copy_from_error_number(
+					     error_string,
+					     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 					     error_code,
 					     error ) != 1 )
 					{
@@ -1353,9 +1352,6 @@ int libbfio_file_open(
 						 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 						 function,
 						 file_io_handle->name,
-						 error_string );
-
-						memory_free(
 						 error_string );
 					}
 					else
@@ -1432,7 +1428,7 @@ int libbfio_file_open(
 	{
 #if defined( WINAPI )
 #if defined( _MSC_VER )
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 		if( _wsopen_s(
 		     &( file_io_handle->file_descriptor ),
 		     (wchar_t *) file_io_handle->name,
@@ -1446,9 +1442,9 @@ int libbfio_file_open(
 		     file_io_flags | _O_BINARY,
 		     file_io_shared_flags,
 		     _S_IREAD | _S_IWRITE ) != 0 )
-#endif /* LIBBFIO_WIDE_SYSTEM_CHARACTER_T */
+#endif /* LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER */
 #else
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 		file_io_handle->file_descriptor = _wsopen(
 		                                   (wchar_t *) file_io_handle->name,
 		                                   file_io_flags | _O_BINARY,
@@ -1458,7 +1454,7 @@ int libbfio_file_open(
 		                                   (char *) file_io_handle->name,
 		                                   file_io_flags | _O_BINARY,
 		                                   _S_IREAD | _S_IWRITE );
-#endif /* LIBBFIO_WIDE_SYSTEM_CHARACTER_T */
+#endif /* LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER */
 		if( file_io_handle->file_descriptor == -1 )
 #endif /* _MSC_VER */
 		{
@@ -1487,9 +1483,9 @@ int libbfio_file_open(
 					break;
 
 				default:
-					if( libbfio_system_string_from_error_number(
-					     &error_string,
-					     &error_string_size,
+					if( libbfio_error_string_copy_from_error_number(
+					     error_string,
+					     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 					     errno,
 					     error ) != 1 )
 					{
@@ -1500,9 +1496,6 @@ int libbfio_file_open(
 						 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 						 function,
 						 file_io_handle->name,
-						 error_string );
-
-						memory_free(
 						 error_string );
 					}
 					else
@@ -1534,7 +1527,7 @@ int libbfio_file_open(
 		}
 #endif
 #else
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 		/* Assumed here that the narrow open function can handle UTF-8
 		 */
 #if SIZEOF_WCHAR_T == 4
@@ -1647,9 +1640,9 @@ int libbfio_file_open(
 					break;
 
 				default:
-					if( libbfio_system_string_from_error_number(
-					     &error_string,
-					     &error_string_size,
+					if( libbfio_error_string_copy_from_error_number(
+					     error_string,
+					     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 					     errno,
 					     error ) != 1 )
 					{
@@ -1660,9 +1653,6 @@ int libbfio_file_open(
 						 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 						 function,
 						 file_io_handle->name,
-						 error_string );
-
-						memory_free(
 						 error_string );
 					}
 					else
@@ -1794,11 +1784,11 @@ ssize_t libbfio_file_read(
          size_t size,
          liberror_error_t **error )
 {
-	libbfio_system_character_t *error_string = NULL;
+	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_read";
 	ssize_t read_count                       = 0;
-	size_t error_string_size                 = 0;
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	DWORD error_code                         = 0;
@@ -1907,9 +1897,9 @@ ssize_t libbfio_file_read(
 				break;
 
 			default:
-				if( libbfio_system_string_from_error_number(
-				     &error_string,
-				     &error_string_size,
+				if( libbfio_error_string_copy_from_error_number(
+				     error_string,
+				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     error_code,
 				     error ) != 1 )
 				{
@@ -1920,9 +1910,6 @@ ssize_t libbfio_file_read(
 					 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 					 function,
 					 file_io_handle->name,
-					 error_string );
-
-					memory_free(
 					 error_string );
 				}
 				else
@@ -1964,9 +1951,9 @@ ssize_t libbfio_file_read(
 
 	if( read_count < 0 )
 	{
-		if( libbfio_system_string_from_error_number(
-		     &error_string,
-		     &error_string_size,
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     errno,
 		     error ) != 1 )
 		{
@@ -1977,9 +1964,6 @@ ssize_t libbfio_file_read(
 			 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 			 function,
 			 file_io_handle->name,
-			 error_string );
-
-			memory_free(
 			 error_string );
 		}
 		else
@@ -2007,11 +1991,11 @@ ssize_t libbfio_file_write(
          size_t size,
          liberror_error_t **error )
 {
-	libbfio_system_character_t *error_string = NULL;
+	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_write";
 	ssize_t write_count                      = 0;
-	size_t error_string_size                 = 0;
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	DWORD error_code                         = 0;
@@ -2114,9 +2098,9 @@ ssize_t libbfio_file_write(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_system_string_from_error_number(
-		     &error_string,
-		     &error_string_size,
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     error_code,
 		     error ) != 1 )
 		{
@@ -2127,9 +2111,6 @@ ssize_t libbfio_file_write(
 			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 			 function,
 			 file_io_handle->name,
-			 error_string );
-
-			memory_free(
 			 error_string );
 		}
 		else
@@ -2169,9 +2150,9 @@ ssize_t libbfio_file_write(
 
 	if( write_count < 0 )
 	{
-		if( libbfio_system_string_from_error_number(
-		     &error_string,
-		     &error_string_size,
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     errno,
 		     error ) != 1 )
 		{
@@ -2182,9 +2163,6 @@ ssize_t libbfio_file_write(
 			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 			 function,
 			 file_io_handle->name,
-			 error_string );
-
-			memory_free(
 			 error_string );
 		}
 		else
@@ -2376,17 +2354,17 @@ int libbfio_file_exists(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
+	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
 	libbfio_file_io_handle_t *file_io_handle = NULL;
-	libbfio_system_character_t *error_string = NULL;
 	static char *function                    = "libbfio_file_exists";
 	int result                               = 1;
-	size_t error_string_size                 = 0;
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	DWORD error_code                         = 0;
 #endif
 
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T ) && !defined( WINAPI )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER ) && !defined( WINAPI )
 	char *narrow_filename                    = NULL;
 	size_t narrow_filename_size              = 0;
 #endif
@@ -2416,7 +2394,7 @@ int libbfio_file_exists(
 		return( -1 );
 	}
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	/* Must use CreateFileW here because filename is a 
 	 * wide character string and CreateFile is dependent
 	 * on UNICODE directives
@@ -2462,9 +2440,9 @@ int libbfio_file_exists(
 				break;
 
 			default:
-				if( libbfio_system_string_from_error_number(
-				     &error_string,
-				     &error_string_size,
+				if( libbfio_error_string_copy_from_error_number(
+				     error_string,
+				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     error_code,
 				     error ) != 1 )
 				{
@@ -2475,9 +2453,6 @@ int libbfio_file_exists(
 					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 					 function,
 					 file_io_handle->name,
-					 error_string );
-
-					memory_free(
 					 error_string );
 				}
 				else
@@ -2510,7 +2485,7 @@ int libbfio_file_exists(
 	}
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
 #else
-#if defined( LIBBFIO_WIDE_SYSTEM_CHARACTER_T )
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 #if defined( _MSC_VER )
 	if( _wsopen_s(
 	     &( file_io_handle->file_descriptor ),
@@ -2644,9 +2619,9 @@ int libbfio_file_exists(
 				break;
 
 			default:
-				if( libbfio_system_string_from_error_number(
-				     &error_string,
-				     &error_string_size,
+				if( libbfio_error_string_copy_from_error_number(
+				     error_string,
+				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     errno,
 				     error ) != 1 )
 				{
@@ -2657,9 +2632,6 @@ int libbfio_file_exists(
 					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
 					 function,
 					 file_io_handle->name,
-					 error_string );
-
-					memory_free(
 					 error_string );
 				}
 				else
