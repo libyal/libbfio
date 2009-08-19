@@ -2722,6 +2722,8 @@ int libbfio_file_get_size(
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	LARGE_INTEGER large_integer_size         = LIBBFIO_LARGE_INTEGER_ZERO;
+	DWORD dword_size                         = 0;
+	DWORD windows_version                    = 0;
 #elif defined( _MSC_VER )
 	struct __stat64 file_stat;
 #elif defined( __BORLANDC__ )
@@ -2780,29 +2782,53 @@ int libbfio_file_get_size(
 		return( -1 );
 	}
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	if( GetFileSizeEx(
-	     file_io_handle->file_handle,
-	     &large_integer_size ) == 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve file size.",
-		 function );
+	windows_version = GetVersion();
 
-		return( -1 );
+	if( windows_version >= 0x80000000 )
+	{
+		/* Use the GetFileSize function on Windows 95, 98 and ME
+		 */
+		if( GetFileSize(
+		     file_io_handle->file_handle,
+		     &dword_size ) == 0 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve file size.",
+			 function );
+
+			return( -1 );
+		}
+		*size = (size64_t) dword_size;
 	}
-	*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
+	else
+	{
+		if( GetFileSizeEx(
+		     file_io_handle->file_handle,
+		     &large_integer_size ) == 0 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve file size.",
+			 function );
+
+			return( -1 );
+		}
+		*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
+	}
 #else
 #if defined( _MSC_VER )
 	if( _fstat64(
-		 file_io_handle->file_descriptor,
-		 &file_stat ) != 0 )
+	     file_io_handle->file_descriptor,
+	     &file_stat ) != 0 )
 #elif defined( __BORLANDC__ )
 	if( _fstati64(
-		 file_io_handle->file_descriptor,
-		 &file_stat ) != 0 )
+	     file_io_handle->file_descriptor,
+	     &file_stat ) != 0 )
 #else
 	if( fstat(
 	     file_io_handle->file_descriptor,
