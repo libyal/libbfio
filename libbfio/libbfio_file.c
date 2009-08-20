@@ -2709,6 +2709,69 @@ int libbfio_file_is_open(
 	return( 1 );
 }
 
+#if defined( WINAPI ) && !defined( HAVE_GETFILESIZEEX )
+
+/* Cross Windows safe version of GetFileSizeEx
+ * Returns TRUE if successful or FALSE on error
+ */
+BOOL SafeGetFileSizeEx(
+      HANDLE file_handle,
+      LARGE_INTEGER *large_integer )
+{
+	FARPROC function       = NULL;
+	HMODULE library_handle = NULL;
+	DWORD file_size_upper  = 0;
+	DWORD file_size_lower  = 0;
+	BOOL result            = FALSE;
+
+	if( file_handle == NULL )
+	{
+		return( FALSE );
+	}
+	if( large_integer == NULL )
+	{
+		return( FALSE );
+	}
+	library_handle = LoadLibrary(
+	                  _LIBBFIO_SYSTEM_STRING( "kernel32.dll" ) );
+
+	if( library_handle != NULL )
+	{
+		function = GetProcAddress(
+			    library_handle,
+			    (LPCSTR) "GetFileSizeEx" );
+
+		if( function != NULL )
+		{
+			result = function(
+				  file_handle,
+				  large_integer );
+		}
+		if( FreeLibrary(
+		     library_handle ) != TRUE )
+		{
+			result = FALSE;
+		}
+	}
+	else
+	{
+		file_size_lower = GetFileSize(
+		                   file_handle,
+		                   &file_size_upper );
+
+		if( file_size_lower != INVALID_FILE_SIZE )
+		{
+			large_integer->HighPart = file_size_upper;
+			large_integer->LowPart  = file_size_lower;
+
+			result = TRUE;
+		}
+	}
+	return( result );
+}
+
+#endif
+
 /* Retrieves the file size
  * Returns 1 if successful or -1 on error
  */
@@ -2722,8 +2785,6 @@ int libbfio_file_get_size(
 
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
 	LARGE_INTEGER large_integer_size         = LIBBFIO_LARGE_INTEGER_ZERO;
-	DWORD dword_size                         = 0;
-	DWORD windows_version                    = 0;
 #elif defined( _MSC_VER )
 	struct __stat64 file_stat;
 #elif defined( __BORLANDC__ )
@@ -2782,44 +2843,26 @@ int libbfio_file_get_size(
 		return( -1 );
 	}
 #if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	windows_version = GetVersion();
-
-	if( windows_version >= 0x80000000 )
+#if defined( HAVE_GETFILESIZEEX )
+	if( GetFileSizeEx(
+	     file_io_handle->file_handle,
+	     &large_integer_size ) == 0 )
+#else
+	if( SafeGetFileSizeEx(
+	     file_io_handle->file_handle,
+	     &large_integer_size ) == 0 )
+#endif
 	{
-		/* Use the GetFileSize function on Windows 95, 98 and ME
-		 */
-		if( GetFileSize(
-		     file_io_handle->file_handle,
-		     &dword_size ) == 0 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve file size.",
-			 function );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file size.",
+		 function );
 
-			return( -1 );
-		}
-		*size = (size64_t) dword_size;
+		return( -1 );
 	}
-	else
-	{
-		if( GetFileSizeEx(
-		     file_io_handle->file_handle,
-		     &large_integer_size ) == 0 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve file size.",
-			 function );
-
-			return( -1 );
-		}
-		*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
-	}
+	*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
 #else
 #if defined( _MSC_VER )
 	if( _fstat64(

@@ -433,7 +433,7 @@ int libbfio_memory_range_open(
 		return( -1 );
 	}
 	memory_range_io_handle->range_offset = 0;
-	memory_range_io_handle->access_flags = flags;
+	memory_range_io_handle->access_flags = (uint8_t) flags;
 
 	return( 1 );
 }

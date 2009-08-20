@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="libbfio_dll"
 	ProjectGUID="{B5225323-AC67-411D-8FBA-199E9467FAB5}"
 	RootNamespace="libbfio"
@@ -20,6 +20,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -97,39 +98,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_allocation_table.c"
+				RelativePath="..\..\libbfio\libbfio_error.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_array_type.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_attachment.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_crc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_data_array.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_debug.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_descriptor.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_email.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_encryption.c"
+				RelativePath="..\..\libbfio\libbfio_error_string.c"
 				>
 			</File>
 			<File
@@ -137,39 +110,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_folder.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_guid.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_index.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_io_handle.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item_descriptor.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item_tree.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item_values.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_list.c"
+				RelativePath="..\..\libbfio\libbfio_handle.c"
 				>
 			</File>
 			<File
@@ -177,19 +118,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_lzfu.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_message_store.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_name_to_id_map.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_notify.c"
+				RelativePath="..\..\libbfio\libbfio_memory_range.c"
 				>
 			</File>
 			<File
@@ -197,15 +126,11 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libbfio\libbfio_pool.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libbfio\libbfio_support.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_table.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_tree_type.c"
 				>
 			</File>
 		</Filter>
@@ -215,47 +140,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libbfio\libbfio_allocation_table.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_array_type.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_attachment.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_crc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_data_array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_debug.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libbfio\libbfio_definitions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_descriptor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_email.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_encryption.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libbfio\libbfio_error.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_error_string.h"
 				>
 			</File>
 			<File
@@ -267,39 +160,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_folder.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_guid.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_index.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_io_handle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item_descriptor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item_tree.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_item_values.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_libbfio.h"
+				RelativePath="..\..\libbfio\libbfio_handle.h"
 				>
 			</File>
 			<File
@@ -307,27 +168,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_list.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libbfio\libbfio_list_type.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_lzfu.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_message_store.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_name_to_id_map.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_notify.h"
+				RelativePath="..\..\libbfio\libbfio_memory_range.h"
 				>
 			</File>
 			<File
@@ -335,7 +180,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_string.h"
+				RelativePath="..\..\libbfio\libbfio_pool.h"
 				>
 			</File>
 			<File
@@ -343,39 +188,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_table.h"
+				RelativePath="..\..\libbfio\libbfio_system_string.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_tree_type.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\bfio_allocation_table.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\bfio_array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\bfio_file_header.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\bfio_index_node.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\bfio_list.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\bfio_table.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\bfio_value_data.h"
+				RelativePath="..\..\libbfio\libbfio_types.h"
 				>
 			</File>
 		</Filter>

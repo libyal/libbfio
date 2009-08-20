@@ -157,6 +157,12 @@ int libbfio_file_is_open(
      intptr_t *io_handle,
      liberror_error_t **error );
 
+#if defined( WINAPI ) && !defined( HAVE_GETFILESIZEEX )
+BOOL SafeGetFileSizeEx(
+      HANDLE file_handle,
+      LARGE_INTEGER *large_integer );
+#endif
+
 int libbfio_file_get_size(
      intptr_t *io_handle,
      size64_t *size,

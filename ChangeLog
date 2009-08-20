@@ -30,8 +30,11 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090819
+* Worked on non WINNT GetFileSizeEx
+
 20090818
-* Added GetVersion check 
+* Worked on non WINNT GetFileSizeEx
 
 20090817
 * fixed error in 16-bit libbfio_system_string_size_from_narrow_string macro
