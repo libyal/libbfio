@@ -85,7 +85,7 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
                     off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ),
                     int (*exists)( intptr_t *io_handle, libbfio_error_t **error ),
                     int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ),
-                    int (*get_size)( intptr_t *io_handle, size64_t *size, liberror_error_t **error ),
+                    int (*get_size)( intptr_t *io_handle, size64_t *size, libbfio_error_t **error ),
                     libbfio_error_t **error );
 
 /* Frees the handle
@@ -190,7 +190,7 @@ LIBBFIO_EXTERN int libbfio_handle_set_flags(
 LIBBFIO_EXTERN int libbfio_handle_get_size(
                     libbfio_handle_t *handle,
                     size64_t *size,
-                    liberror_error_t **error );
+                    libbfio_error_t **error );
 
 /* Set the value to have the library track the offsets read
  * 0 disables tracking any other value enables tracking
@@ -315,7 +315,7 @@ LIBBFIO_EXTERN int libbfio_memory_range_get(
                     libbfio_handle_t *handle,
                     uint8_t **start,
                     size_t *size,
-                    liberror_error_t **error );
+                    libbfio_error_t **error );
 
 /* Sets the range the memory range handle
  * Returns 1 if succesful or -1 on error
@@ -324,7 +324,7 @@ LIBBFIO_EXTERN int libbfio_memory_range_set(
                     libbfio_handle_t *handle,
                     uint8_t *start,
                     size_t size,
-                    liberror_error_t **error );
+                    libbfio_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Pool functions
@@ -471,7 +471,7 @@ LIBBFIO_EXTERN int libbfio_pool_get_offset(
 LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
                     libbfio_pool_t *pool,
                     int *amount_of_handles,
-                    liberror_error_t **error );
+                    libbfio_error_t **error );
 
 #if defined( __cplusplus )
 }

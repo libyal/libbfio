@@ -51,6 +51,11 @@
 #define USE_NATIVE_WINAPI_FUNCTIONS	1
  */
 
+/* Disables a Windows 98 safe version of GetFileSizeEx
+ * uses a hardcoded version
+#define HAVE_GETFILESIZEEX	1
+ */
+
 /* Enable verbose output
 #define HAVE_VERBOSE_OUTPUT     1
  */

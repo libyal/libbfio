@@ -8,6 +8,7 @@ SUBDIRS = \
 	libbfio \
 	manuals \
 	macosx \
+	borland \
 	msvscpp
 
 REDHAT_FILES = \

@@ -24,14 +24,15 @@ Windows
 * add WIN32_LEAN_AND_MEAN or VC_EXTRALEAN to msvscpp
 
 Deployment:
-* update msvscpp
-* add codegear project files
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
 
 20090819
 * Worked on non WINNT GetFileSizeEx
+* Updated msvscpp solution files
+* Added codegear project files
+* Updated include file
 
 20090818
 * Worked on non WINNT GetFileSizeEx

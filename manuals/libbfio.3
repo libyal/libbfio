@@ -23,7 +23,7 @@ Error functions
 .Pp
 Handle functions
 .Ft int
-.Fn libbfio_handle_initialize "libbfio_handle_t **handle, intptr_t *io_handle, int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ), int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, libbfio_error_t **error ), int (*open)( intptr_t *io_handle, int flags, libbfio_error_t **error ), int (*close)( intptr_t *io_handle, libbfio_error_t **error ), ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ), int (*exists)( intptr_t *io_handle, libbfio_error_t **error ), int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ), int (*get_size)( intptr_t *io_handle, size64_t *size, liberror_error_t **error ), libbfio_error_t **error"
+.Fn libbfio_handle_initialize "libbfio_handle_t **handle, intptr_t *io_handle, int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ), int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, libbfio_error_t **error ), int (*open)( intptr_t *io_handle, int flags, libbfio_error_t **error ), int (*close)( intptr_t *io_handle, libbfio_error_t **error ), ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ), int (*exists)( intptr_t *io_handle, libbfio_error_t **error ), int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ), int (*get_size)( intptr_t *io_handle, size64_t *size, libbfio_error_t **error ), libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_free "libbfio_handle_t **handle, libbfio_error_t **error"
 .Ft int
@@ -49,7 +49,7 @@ Handle functions
 .Ft int
 .Fn libbfio_handle_set_flags "libbfio_handle_t *handle, int flags, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_handle_get_size "libbfio_handle_t *handle, size64_t *size, liberror_error_t **error"
+.Fn libbfio_handle_get_size "libbfio_handle_t *handle, size64_t *size, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_get_offset "libbfio_handle_t *handle, off64_t *offset, libbfio_error_t **error"
 .Ft int
@@ -80,6 +80,10 @@ Available when compiled with wide character string support:
 Memory range functions
 .Ft int
 .Fn libbfio_memory_range_initialize "libbfio_handle_t **handle, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_memory_range_get "libbfio_handle_t *handle, uint8_t **start, size_t *size, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_memory_range_set "libbfio_handle_t *handle, uint8_t *start, size_t size, libbfio_error_t **error"
 .Pp
 Pool functions
 .Ft int
@@ -113,7 +117,7 @@ Pool functions
 .Ft int
 .Fn libbfio_pool_get_offset "libbfio_pool_t *pool, int entry, off64_t *offset, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_pool_get_amount_of_handles "libbfio_pool_t *pool, int *amount_of_handles, liberror_error_t **error"
+.Fn libbfio_pool_get_amount_of_handles "libbfio_pool_t *pool, int *amount_of_handles, libbfio_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libbfio_get_version
