@@ -32,20 +32,22 @@
 #error Missing system type definitions (sys/types.h)
 #endif
 
+/* Type definitions for the Microsoft Visual Studio C++ compiler
+ */
 #if defined( _MSC_VER )
 
-/* Define LIBBFIO_DEFINITION_INTEGER_TYPES to avoid conflict if types are already defined
+/* Define LIBBFIO_DEFINITION_INTEGER_TYPES to avoid conflict
  */
 #if !defined( LIBBFIO_DEFINITION_INTEGER_TYPES )
-
 #define LIBBFIO_DEFINITION_INTEGER_TYPES
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Windows does not have <inttypes.h> or <stdint.h> and therefore does not support the
- * (u)int#_t type definitions it has __int# defintions instead
+/* The Microsoft Visual Studio C++ compiler does not have <inttypes.h> or <stdint.h>
+ * therefore it does not support the (u)int#_t type definitions
+ * it has __int# defintions instead
  */
 typedef __int8			int8_t;
 typedef unsigned __int8		uint8_t;
@@ -66,7 +68,7 @@ typedef __int32			ssize_t;
 }
 #endif
 
-#endif /* LIBUNA_DEFINITION_INTEGER_TYPES */
+#endif /* LIBBFIO_DEFINITION_INTEGER_TYPES */
 
 #elif defined( __BORLANDC__ )
 
@@ -75,11 +77,10 @@ typedef __int32			ssize_t;
 
 #else
 
-/* Define LIBUNA_DEFINITION_INTEGER_TYPES to avoid conflict
- * if types are already defined
+/* Define LIBBFIO_DEFINITION_INTEGER_TYPES to avoid conflict
  */
-#if !defined( LIBUNA_DEFINITION_INTEGER_TYPES )
-#define LIBUNA_DEFINITION_INTEGER_TYPES
+#if !defined( LIBBFIO_DEFINITION_INTEGER_TYPES )
+#define LIBBFIO_DEFINITION_INTEGER_TYPES
 
 #ifdef __cplusplus
 extern "C" {
@@ -98,10 +99,13 @@ typedef unsigned __int32	intptr_t;
 }
 #endif
 
-#endif /* LIBUNA_DEFINITION_INTEGER_TYPES */
+#endif /* LIBBFIO_DEFINITION_INTEGER_TYPES */
 
 #endif /* __BORLANDC__ >= 0x0560 */
 
+/* Type definitions for compilers that have access to
+ * <inttypes.h> or <stdint.h>
+ */
 #elif @HAVE_INTTYPES_H@ || defined( HAVE_INTTYPES_H )
 #include <inttypes.h>
 

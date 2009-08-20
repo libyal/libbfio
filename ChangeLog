@@ -28,6 +28,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090820
+* small corrections in include/libbfio/types.h.in
+
 20090819
 * Worked on non WINNT GetFileSizeEx
 * Updated msvscpp solution files
