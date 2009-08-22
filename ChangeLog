@@ -16,6 +16,9 @@ MemoryRange
 API
 * what about disk full on write errno = ENOSPC
 
+Other
+* add glib.h support
+
 Test
 * pool throttling
 * chained IO (e.g. OLECF in PST)
@@ -27,6 +30,9 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20090821
+* added SafeSetFilePointerEx
 
 20090820
 * small corrections in include/libbfio/types.h.in

@@ -2181,6 +2181,85 @@ ssize_t libbfio_file_write(
 	return( write_count );
 }
 
+#if defined( WINAPI ) && !defined( HAVE_SETFILEPOINTEREX )
+
+/* Cross Windows safe version of SetFilePointerEx
+ * Returns TRUE if successful or FALSE on error
+ */
+BOOL SafeSetFilePointerEx(
+      HANDLE file_handle,
+      LARGE_INTEGER distance_to_move_large_integer,
+      LARGE_INTEGER *new_file_pointer_large_integer,
+      DWORD move_method )
+{
+	FARPROC function                 = NULL;
+	HMODULE library_handle           = NULL;
+	LONG distance_to_move_lower_long = 0;
+	LONG distance_to_move_upper_long = 0;
+	DWORD error_number               = 0;
+	BOOL result                      = FALSE;
+
+	if( file_handle == NULL )
+	{
+		return( FALSE );
+	}
+	if( new_file_pointer_large_integer == NULL )
+	{
+		return( FALSE );
+	}
+	library_handle = LoadLibrary(
+	                  _LIBBFIO_SYSTEM_STRING( "kernel32.dll" ) );
+
+	if( library_handle != NULL )
+	{
+		function = GetProcAddress(
+			    library_handle,
+			    (LPCSTR) "SetFilePointerEx" );
+
+		if( function != NULL )
+		{
+			result = function(
+				  file_handle,
+				  distance_to_move_large_integer,
+				  new_file_pointer_large_integer,
+				  move_method );
+		}
+		if( FreeLibrary(
+		     library_handle ) != TRUE )
+		{
+			result = FALSE;
+		}
+	}
+	else
+	{
+		distance_to_move_lower_long = distance_to_move_large_integer.LowPart;
+		distance_to_move_upper_long = distance_to_move_large_integer.HighPart;
+
+		distance_to_move_lower_long = SetFilePointer(
+		                               file_handle,
+		                               distance_to_move_lower_long,
+		                               &distance_to_move_lower_long,
+		                               move_method );
+
+		error_number = GetLastError();
+
+		if( ( distance_to_move_lower_long == INVALID_SET_FILE_POINTER )
+		 && ( error_number != NO_ERROR ) )
+		{
+		}
+		else
+		{
+			new_file_pointer_large_integer->HighPart = distance_to_move_upper_long;
+			new_file_pointer_large_integer->LowPart  = distance_to_move_lower_long;
+
+			result = TRUE;
+		}
+	}
+	return( result );
+}
+
+#endif
+
 /* Seeks a certain offset within the file handle
  * Returns the offset if the seek is successful or -1 on error
  */
@@ -2287,11 +2366,19 @@ off64_t libbfio_file_seek_offset(
 	large_integer_offset.LowPart  = (DWORD) ( 0x0ffffffff & offset );
 	large_integer_offset.HighPart = (LONG) ( offset >> 32 );
 
+#if defined( HAVE_SETFILEPOINTEREX )
 	if( SetFilePointerEx(
 	     file_io_handle->file_handle,
 	     large_integer_offset,
 	     &large_integer_offset,
 	     move_method ) == 0 )
+#else
+	if( SafeSetFilePointerEx(
+	     file_io_handle->file_handle,
+	     large_integer_offset,
+	     &large_integer_offset,
+	     move_method ) == 0 )
+#endif
 	{
 		liberror_error_set(
 		 error,
@@ -2716,19 +2803,20 @@ int libbfio_file_is_open(
  */
 BOOL SafeGetFileSizeEx(
       HANDLE file_handle,
-      LARGE_INTEGER *large_integer )
+      LARGE_INTEGER *file_size_large_integer )
 {
-	FARPROC function       = NULL;
-	HMODULE library_handle = NULL;
-	DWORD file_size_upper  = 0;
-	DWORD file_size_lower  = 0;
-	BOOL result            = FALSE;
+	FARPROC function            = NULL;
+	HMODULE library_handle      = NULL;
+	DWORD error_number          = 0;
+	DWORD file_size_upper_dword = 0;
+	DWORD file_size_lower_dword = 0;
+	BOOL result                 = FALSE;
 
 	if( file_handle == NULL )
 	{
 		return( FALSE );
 	}
-	if( large_integer == NULL )
+	if( file_size_large_integer == NULL )
 	{
 		return( FALSE );
 	}
@@ -2745,7 +2833,7 @@ BOOL SafeGetFileSizeEx(
 		{
 			result = function(
 				  file_handle,
-				  large_integer );
+				  file_size_large_integer );
 		}
 		if( FreeLibrary(
 		     library_handle ) != TRUE )
@@ -2755,14 +2843,20 @@ BOOL SafeGetFileSizeEx(
 	}
 	else
 	{
-		file_size_lower = GetFileSize(
-		                   file_handle,
-		                   &file_size_upper );
+		file_size_lower_dword = GetFileSize(
+		                         file_handle,
+		                         &file_size_upper_dword );
 
-		if( file_size_lower != INVALID_FILE_SIZE )
+		error_number = GetLastError();
+
+		if( ( file_size_lower_dword == INVALID_FILE_SIZE )
+		 && ( error_number != NO_ERROR ) )
 		{
-			large_integer->HighPart = file_size_upper;
-			large_integer->LowPart  = file_size_lower;
+		}
+		else
+		{
+			file_size_large_integer->HighPart = file_size_upper_dword;
+			file_size_large_integer->LowPart  = file_size_lower_dword;
 
 			result = TRUE;
 		}
