@@ -9,6 +9,8 @@ Pool
 
 File
 * add errno error strings to liberror notifications
+* convert filename for open to UTF-8 or ASCII with codepage
+* convert filename for g_open to UTF-8
 
 MemoryRange
 * add callback function to resize memory range if needed?
@@ -33,6 +35,7 @@ Deployment:
 
 20090821
 * added SafeSetFilePointerEx
+* added support for g_open
 
 20090820
 * small corrections in include/libbfio/types.h.in

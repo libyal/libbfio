@@ -205,7 +205,7 @@ AC_CHECK_FUNCS(
  [fgets],
  [],
  [AC_MSG_FAILURE(
-  [Missing functions: fgets],
+  [Missing function: fgets],
   [1]) ])
 
 AC_CHECK_FUNCS(
@@ -217,6 +217,13 @@ AC_CHECK_FUNCS(
   [AC_MSG_FAILURE(
    [Missing functions: snprintf and sprintf],
    [1]) ]) ])
+
+AC_CHECK_FUNCS(
+ [sscanf],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: sscanf],
+  [1]) ])
 
 AC_CHECK_FUNCS(
  [strlen],

@@ -44,6 +44,11 @@
 #include <unistd.h>
 #endif
 
+#if defined( HAVE_GLIB_H )
+#include <glib.h>
+#include <glib/gstdio.h>
+#endif
+
 #if defined( WINAPI ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
 #include <io.h>
 #include <share.h>
@@ -1599,18 +1604,32 @@ int libbfio_file_open(
 
 			return( -1 );
 		}
+#if defined( HAVE_GLIB_H )
+		file_io_handle->file_descriptor = g_open(
+		                                   narrow_filename,
+		                                   file_io_flags,
+		                                   0644 );
+#else
 		file_io_handle->file_descriptor = open(
 		                                   narrow_filename,
 		                                   file_io_flags,
 		                                   0644 );
+#endif /* HAVE_GLIB_H */
 
 		memory_free(
 		 narrow_filename );
+#else
+#if defined( HAVE_GLIB_H )
+		file_io_handle->file_descriptor = g_open(
+		                                   file_io_handle->name,
+		                                   file_io_flags,
+		                                   0644 );
 #else
 		file_io_handle->file_descriptor = open(
 		                                   file_io_handle->name,
 		                                   file_io_flags,
 		                                   0644 );
+#endif /* HAVE_GLIB_H */
 #endif
 
 		if( file_io_handle->file_descriptor == -1 )
