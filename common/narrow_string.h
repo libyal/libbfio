@@ -26,8 +26,12 @@
 #include "common.h"
 #include "types.h"
 
-#if defined( HAVE_STRING_H )
+#if defined( HAVE_STRING_H ) || defined( WINAPI )
 #include <string.h>
+#endif
+
+#if defined( HAVE_STDLIBG_H ) || defined( WINAPI )
+#include <stdlib.h>
 #endif
 
 #if defined( __cplusplus )
