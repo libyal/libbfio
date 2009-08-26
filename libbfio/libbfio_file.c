@@ -2257,7 +2257,7 @@ BOOL SafeSetFilePointerEx(
 		distance_to_move_lower_long = SetFilePointer(
 		                               file_handle,
 		                               distance_to_move_lower_long,
-		                               &distance_to_move_lower_long,
+		                               &distance_to_move_upper_long,
 		                               move_method );
 
 		error_number = GetLastError();
