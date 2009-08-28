@@ -38,8 +38,6 @@
 extern "C" {
 #endif
 
-#define LIBBFIO_POOL_UNLIMITED_AMOUNT_OF_OPEN_HANDLES	0
-
 typedef struct libbfio_internal_pool libbfio_internal_pool_t;
 
 struct libbfio_internal_pool

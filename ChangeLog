@@ -36,6 +36,10 @@ Deployment:
 20090828
 * worked on error in SafeSetFilePointerEx
 * updated libuna
+* updated common
+* fixed genation of spec file
+* small updates necessary for distribution of shared library
+* moved unlimited amount of handles definitions to global definitions
 
 20090826
 * worked on error in SafeSetFilePointerEx
