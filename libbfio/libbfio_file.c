@@ -2229,25 +2229,26 @@ BOOL SafeSetFilePointerEx(
 	library_handle = LoadLibrary(
 	                  _LIBBFIO_SYSTEM_STRING( "kernel32.dll" ) );
 
-	if( library_handle != NULL )
+	if( library_handle == NULL )
 	{
-		function = GetProcAddress(
-			    library_handle,
-			    (LPCSTR) "SetFilePointerEx" );
+		return( FALSE ):
+	}
+	function = GetProcAddress(
+		    library_handle,
+		    (LPCSTR) "SetFilePointerEx" );
 
-		if( function != NULL )
-		{
-			result = function(
-				  file_handle,
-				  distance_to_move_large_integer,
-				  new_file_pointer_large_integer,
-				  move_method );
-		}
-		if( FreeLibrary(
-		     library_handle ) != TRUE )
-		{
-			result = FALSE;
-		}
+	if( FreeLibrary(
+	     library_handle ) != TRUE )
+	{
+		result = FALSE;
+	}
+	if( function != NULL )
+	{
+		result = function(
+			  file_handle,
+			  distance_to_move_large_integer,
+			  new_file_pointer_large_integer,
+			  move_method );
 	}
 	else
 	{
@@ -2255,10 +2256,10 @@ BOOL SafeSetFilePointerEx(
 		distance_to_move_upper_long = distance_to_move_large_integer.HighPart;
 
 		distance_to_move_lower_long = SetFilePointer(
-		                               file_handle,
-		                               distance_to_move_lower_long,
-		                               &distance_to_move_upper_long,
-		                               move_method );
+					       file_handle,
+					       distance_to_move_lower_long,
+					       &distance_to_move_upper_long,
+					       move_method );
 
 		error_number = GetLastError();
 
@@ -2842,23 +2843,24 @@ BOOL SafeGetFileSizeEx(
 	library_handle = LoadLibrary(
 	                  _LIBBFIO_SYSTEM_STRING( "kernel32.dll" ) );
 
-	if( library_handle != NULL )
+	if( library_handle == NULL )
 	{
-		function = GetProcAddress(
-			    library_handle,
-			    (LPCSTR) "GetFileSizeEx" );
+		return( FALSE );
+	}
+	function = GetProcAddress(
+		    library_handle,
+		    (LPCSTR) "GetFileSizeEx" );
 
-		if( function != NULL )
-		{
-			result = function(
-				  file_handle,
-				  file_size_large_integer );
-		}
-		if( FreeLibrary(
-		     library_handle ) != TRUE )
-		{
-			result = FALSE;
-		}
+	if( FreeLibrary(
+	     library_handle ) != TRUE )
+	{
+		result = FALSE;
+	}
+	if( function != NULL )
+	{
+		result = function(
+			  file_handle,
+			  file_size_large_integer );
 	}
 	else
 	{
