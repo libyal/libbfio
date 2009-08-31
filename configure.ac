@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20090828],
+  [20090830],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20090828])
+ [20090830])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -629,14 +629,8 @@ AS_IF(
 	 [libbfio_pc_libs_private_libuna],
 	 [-luna])
 	AC_SUBST(
-	 [libbfio_spec_requires],
-	 [Requires:])
-	AC_SUBST(
 	 [libbfio_spec_requires_libuna],
 	 [libuna])
-	AC_SUBST(
-	 [libbfio_spec_build_requires],
-	 [BuildRequires:])
 	AC_SUBST(
 	 [libbfio_spec_build_requires_libuna],
 	 [libuna-devel])
@@ -658,13 +652,7 @@ AS_IF(
 	 [libbfio_pc_libs_private_libuna],
 	 [])
 	AC_SUBST(
-	 [libbfio_spec_requires],
-	 [])
-	AC_SUBST(
 	 [libbfio_spec_requires_libuna],
-	 [])
-	AC_SUBST(
-	 [libbfio_spec_build_requires],
 	 [])
 	AC_SUBST(
 	 [libbfio_spec_build_requires_libuna],
@@ -823,6 +811,23 @@ AS_IF(
 	 [1],
 	 [Defines if debug output should be used] )
 	ac_cv_libbfio_enable_debug_output=yes])
+
+dnl Check if requires and build requires should be set in spec file
+AS_IF(
+	[test "x$ac_libbfio_have_libuna" = xyes],
+	[AC_SUBST(
+	 [libbfio_spec_requires],
+	 [Requires:])
+	AC_SUBST(
+	 [libbfio_spec_build_requires],
+	 [BuildRequires:]) ],
+	[AC_SUBST(
+	 [libbfio_spec_requires],
+	 [])
+	AC_SUBST(
+	 [libbfio_spec_build_requires],
+	 [])
+	ac_libbfio_dummy=yes])
 
 dnl Set memwatch support
 ac_libbfio_have_memwatch=no

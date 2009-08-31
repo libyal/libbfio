@@ -33,6 +33,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090829
+* small adjustment to configure.ac
+
 20090828
 * worked on error in SafeSetFilePointerEx
 * updated libuna
