@@ -33,6 +33,11 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090901
+* updated common/file_stream.h
+* fixes for winapi build
+* updated libuna
+
 20090829
 * small adjustment to configure.ac
 

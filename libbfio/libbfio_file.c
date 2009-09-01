@@ -2231,7 +2231,7 @@ BOOL SafeSetFilePointerEx(
 
 	if( library_handle == NULL )
 	{
-		return( FALSE ):
+		return( FALSE );
 	}
 	function = GetProcAddress(
 		    library_handle,
@@ -2263,7 +2263,7 @@ BOOL SafeSetFilePointerEx(
 
 		error_number = GetLastError();
 
-		if( ( distance_to_move_lower_long == INVALID_SET_FILE_POINTER )
+		if( ( distance_to_move_lower_long == (LONG) INVALID_SET_FILE_POINTER )
 		 && ( error_number != NO_ERROR ) )
 		{
 		}
