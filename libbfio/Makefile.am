@@ -20,7 +20,7 @@ libbfio_la_SOURCES = \
 	libbfio_types.h
 
 libbfio_la_LIBADD  = ../liberror/liberror.la @LIBUNA_LIBADD@
-libbfio_la_LDFLAGS = -no-undefined -version-info 1:4:0
+libbfio_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
 EXTRA_DIST = \
 	libbfio_definitions.h.in

@@ -33,6 +33,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20090906
+* fixed libtool version of libbfio
+* updated error functions in include file
+
 20090901
 * updated common/file_stream.h
 * fixes for winapi build

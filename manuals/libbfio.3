@@ -1,4 +1,4 @@
-.Dd August 15, 2009
+.Dd September 6, 2009
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -16,10 +16,14 @@ Support functions
 Error functions
 .Ft void
 .Fn libbfio_error_free "libbfio_error_t **error"
-.Ft void
+.Ft int
 .Fn libbfio_error_fprint "libbfio_error_t *error, FILE *stream"
-.Ft void
+.Ft int
+.Fn libbfio_error_sprint "libbfio_error_t *error, char *string, size_t size"
+.Ft int
 .Fn libbfio_error_backtrace_fprint "libbfio_error_t *error, FILE *stream"
+.Ft int
+.Fn libbfio_error_backtrace_sprint "libbfio_error_t *error, char *string, size_t size"
 .Pp
 Handle functions
 .Ft int
