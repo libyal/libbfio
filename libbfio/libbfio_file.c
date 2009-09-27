@@ -1234,6 +1234,7 @@ int libbfio_file_open(
 #else
 #if defined( WINAPI )
 	int file_io_shared_flags                 = 0;
+	int file_io_persmission_flags            = 0;
 #endif
 	int file_io_flags                        = 0;
 #endif
@@ -1379,7 +1380,8 @@ int libbfio_file_open(
 	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
 	{
 #if defined( WINAPI )
-		file_io_flags = _O_RDWR | _O_CREAT;
+		file_io_flags             = _O_RDWR | _O_CREAT;
+		file_io_persmission_flags = _S_IREAD | _S_IWRITE;
 #else
 		file_io_flags = O_RDWR | O_CREAT;
 #endif
@@ -1401,7 +1403,8 @@ int libbfio_file_open(
 	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
 	{
 #if defined( WINAPI )
-		file_io_flags = _O_WRONLY | _O_CREAT;
+		file_io_flags             = _O_WRONLY | _O_CREAT;
+		file_io_persmission_flags = _S_IREAD | _S_IWRITE;
 #else
 		file_io_flags = O_WRONLY | O_CREAT;
 #endif
@@ -1439,26 +1442,26 @@ int libbfio_file_open(
 		     (wchar_t *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
 		     file_io_shared_flags,
-		     _S_IREAD | _S_IWRITE ) != 0 )
+		     file_io_persmission_flags ) != 0 )
 #else
 		if( _sopen_s(
 		     &( file_io_handle->file_descriptor ),
 		     (char *) file_io_handle->name,
 		     file_io_flags | _O_BINARY,
 		     file_io_shared_flags,
-		     _S_IREAD | _S_IWRITE ) != 0 )
+		     file_io_persmission_flags ) != 0 )
 #endif /* LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER */
 #else
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 		file_io_handle->file_descriptor = _wsopen(
 		                                   (wchar_t *) file_io_handle->name,
 		                                   file_io_flags | _O_BINARY,
-		                                   _S_IREAD | _S_IWRITE );
+		                                   file_io_persmission_flags );
 #else
 		file_io_handle->file_descriptor = _sopen(
 		                                   (char *) file_io_handle->name,
 		                                   file_io_flags | _O_BINARY,
-		                                   _S_IREAD | _S_IWRITE );
+		                                   file_io_persmission_flags );
 #endif /* LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER */
 		if( file_io_handle->file_descriptor == -1 )
 #endif /* _MSC_VER */
@@ -2599,7 +2602,7 @@ int libbfio_file_exists(
 	     (wchar_t *) file_io_handle->name,
 	     _O_RDONLY | _O_BINARY,
 	     _SH_DENYWR,
-	     _S_IREAD | _S_IWRITE ) != 0 )
+	     0 ) != 0 )
 	{
 		file_io_handle->file_descriptor = -1;
 	}
@@ -2607,7 +2610,7 @@ int libbfio_file_exists(
 	file_io_handle->file_descriptor = _wsopen(
 	                                   (wchar_t *) file_io_handle->name,
 	                                   _O_RDONLY | _O_BINARY,
-	                                   _S_IREAD | _S_IWRITE );
+	                                   0 );
 #else
 	/* Assumed here that the narrow open function can handle UTF-8
 	 */
@@ -2695,7 +2698,7 @@ int libbfio_file_exists(
 	     (char *) file_io_handle->name,
 	     _O_RDONLY | _O_BINARY,
 	     _SH_DENYWR,
-	     _S_IREAD | _S_IWRITE ) != 0 )
+	     0 ) != 0 )
 	{
 		file_io_handle->file_descriptor = -1;
 	}
@@ -2703,7 +2706,7 @@ int libbfio_file_exists(
 	file_io_handle->file_descriptor = _sopen(
 					   (char *) file_io_handle->name,
 					   _O_RDONLY | _O_BINARY,
-					   _S_IREAD | _S_IWRITE );
+					   0 );
 #else
 	file_io_handle->file_descriptor = open(
 	                                   file_io_handle->name,
