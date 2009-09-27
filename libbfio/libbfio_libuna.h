@@ -38,6 +38,7 @@
 #include <libuna_utf16_string.h>
 #include <libuna_utf32_stream.h>
 #include <libuna_utf32_string.h>
+#include <libuna_types.h>
 
 #elif defined( HAVE_LIBUNA_H )
 

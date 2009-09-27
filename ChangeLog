@@ -1,7 +1,5 @@
 Fix
 * conversion error for ASCII to UNICODE and vice versa ?
-* remove _sopen functions from libbfio CreateFile is
-  supported by a larger number of WINAPI compilers
 
 Pool
 * implement pool throttling on add_handle and set_handle
@@ -12,7 +10,7 @@ File
 * convert filename for open to UTF-8 or ASCII with codepage
 * convert filename for g_open to UTF-8
 
-MemoryRange
+Memory range
 * add callback function to resize memory range if needed?
 
 API
@@ -36,6 +34,8 @@ Deployment:
 20090927
 * fixed error in setting permission flags in Windows CRT open functions
   which throws of the CodeGear compiler in thinking it has to create files
+* changed USE_NATIVE_WINAPI_FUNCTIONS into USE_CRT_FUNCTIONS
+* updated list type
 
 20090906
 * fixed libtool version of libbfio

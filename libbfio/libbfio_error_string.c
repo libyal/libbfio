@@ -46,7 +46,7 @@ int libbfio_error_string_copy_from_error_number(
 {
 	static char *function              = "libbfio_error_string_copy_from_error_number";
 
-#if ( defined( HAVE_STRERROR ) && !defined( HAVE_STRERROR_R ) ) || ( defined( WINAPI ) && !defined( _MSC_VER ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS ) )
+#if ( defined( HAVE_STRERROR ) && !defined( HAVE_STRERROR_R ) ) || ( defined( WINAPI ) && defined( USE_CRT_FUNCTIONS ) && !defined( _MSC_VER ) )
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *static_error_string = NULL;
 #else
@@ -77,9 +77,9 @@ int libbfio_error_string_copy_from_error_number(
 
 		return( -1 );
 	}
-/* Use the native WINAPI error string function
+/* Use the WINAPI error string function
  */
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( FormatMessageW(
 	     FORMAT_MESSAGE_FROM_SYSTEM,
@@ -114,9 +114,9 @@ int libbfio_error_string_copy_from_error_number(
 		return( -1 );
 	}
 
-/* Use the MSVSC++ specific error string function
+/* Use MSVSC++ specific CRT error string functions
  */
-#elif defined( _MSC_VER )
+#elif defined( USE_CRT_FUNCTIONS ) && defined( _MSC_VER )
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( _wcserror_s(
 	     string,
@@ -139,7 +139,7 @@ int libbfio_error_string_copy_from_error_number(
 		return( -1 );
 	}
 
-/* Use the POSIX specific error string function
+/* Use POSIX specific error string functions
  */
 #elif defined( HAVE_STRERROR_R )
 /* Sanity check

@@ -73,6 +73,15 @@ struct libbfio_list
 	libbfio_list_element_t *last;
 };
 
+int libbfio_list_element_initialize(
+     libbfio_list_element_t **list_element,
+     liberror_error_t **error );
+
+int libbfio_list_element_free(
+     libbfio_list_element_t **list_element,
+     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
+     liberror_error_t **error );
+
 int libbfio_list_initialize(
      libbfio_list_t **list,
      liberror_error_t **error );
@@ -132,6 +141,7 @@ int libbfio_list_remove_element(
 
 int libbfio_list_get_amount_of_elements(
      libbfio_list_t *list,
+     int *amount_of_elements,
      liberror_error_t **error );
 
 int libbfio_list_get_element(

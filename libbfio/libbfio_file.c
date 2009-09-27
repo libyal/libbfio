@@ -49,7 +49,7 @@
 #include <glib/gstdio.h>
 #endif
 
-#if defined( WINAPI ) && !defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && defined( USE_CRT_FUNCTIONS )
 #include <io.h>
 #include <share.h>
 #endif
@@ -118,7 +118,7 @@ int libbfio_file_io_handle_initialize(
 
 			return( -1 );
 		}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 		( *file_io_handle )->file_handle     = INVALID_HANDLE_VALUE;
 #else
 		( *file_io_handle )->file_descriptor = -1;
@@ -237,7 +237,7 @@ int libbfio_file_io_handle_clone(
 
 	static char *function = "libbfio_file_io_handle_clone";
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	DWORD error_code      = 0;
 #endif
 
@@ -331,7 +331,7 @@ int libbfio_file_io_handle_clone(
 
 	( (libbfio_file_io_handle_t *) *destination_io_handle )->name_size = ( (libbfio_file_io_handle_t *) source_io_handle )->name_size;
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( DuplicateHandle(
 	     GetCurrentProcess(),
 	     ( (libbfio_file_io_handle_t *) source_io_handle )->file_handle,
@@ -713,7 +713,7 @@ int libbfio_file_set_name(
 	}
 	if( io_handle->name != NULL )
 	{
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 		if( io_handle->file_handle != INVALID_HANDLE_VALUE )
 #else
 		if( io_handle->file_descriptor != -1 )
@@ -1106,7 +1106,7 @@ int libbfio_file_set_name_wide(
 	}
 	if( io_handle->name != NULL )
 	{
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 		if( io_handle->file_handle != INVALID_HANDLE_VALUE )
 #else
 		if( io_handle->file_descriptor != -1 )
@@ -1226,7 +1226,7 @@ int libbfio_file_open(
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_open";
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	DWORD error_code                         = 0;
 	DWORD file_io_access_flags               = 0;
 	DWORD file_io_creation_flags             = 0;
@@ -1267,7 +1267,7 @@ int libbfio_file_open(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( ( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
 	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
 	{
@@ -1704,115 +1704,12 @@ int libbfio_file_close(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_close";
-
-	if( io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
-	if( file_io_handle->name == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing name.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file handle.",
-		 function );
-
-		return( -1 );
-	}
-#else
-	if( file_io_handle->file_descriptor == -1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file descriptor.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-#if defined( WINAPI ) &&  defined( USE_NATIVE_WINAPI_FUNCTIONS )
-	if( CloseHandle(
-	     file_io_handle->file_handle ) == 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 file_io_handle->name );
-
-		/* TODO use GetLastError to get detailed error information */
-
-		return( -1 );
-	}
-	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
-#else
-#if defined( WINAPI )
-	if( _close(
-	     file_io_handle->file_descriptor ) != 0 )
-#else
-	if( close(
-	     file_io_handle->file_descriptor ) != 0 )
-#endif
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
-		 function,
-		 file_io_handle->name );
-
-		return( -1 );
-	}
-	file_io_handle->file_descriptor = -1;
-#endif
-	return( 0 );
-}
-
-/* Reads a buffer from the file handle
- * Returns the amount of bytes read if successful, or -1 on errror
- */
-ssize_t libbfio_file_read(
-         intptr_t *io_handle,
-         uint8_t *buffer,
-         size_t size,
-         liberror_error_t **error )
-{
 	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_read";
-	ssize_t read_count                       = 0;
+	static char *function                    = "libbfio_file_close";
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	DWORD error_code                         = 0;
 #endif
 
@@ -1840,7 +1737,150 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
+	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - invalid file handle.",
+		 function );
+
+		return( -1 );
+	}
+#else
+	if( file_io_handle->file_descriptor == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - invalid file descriptor.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
+	if( CloseHandle(
+	     file_io_handle->file_handle ) == 0 )
+	{
+		error_code = GetLastError();
+
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     error_code,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
+		return( -1 );
+	}
+	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
+#else
+#if defined( WINAPI )
+	if( _close(
+	     file_io_handle->file_descriptor ) != 0 )
+#else
+	if( close(
+	     file_io_handle->file_descriptor ) != 0 )
+#endif
+	{
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     errno,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
+		return( -1 );
+	}
+	file_io_handle->file_descriptor = -1;
+#endif
+	return( 0 );
+}
+
+/* Reads a buffer from the file handle
+ * Returns the amount of bytes read if successful, or -1 on errror
+ */
+ssize_t libbfio_file_read(
+         intptr_t *io_handle,
+         uint8_t *buffer,
+         size_t size,
+         liberror_error_t **error )
+{
+	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_read";
+	ssize_t read_count                       = 0;
+
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
+	DWORD error_code                         = 0;
+#endif
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - missing name.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		liberror_error_set(
@@ -1903,7 +1943,7 @@ ssize_t libbfio_file_read(
 		return( -1 );
 	}
 #endif
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( ReadFile(
 	     file_io_handle->file_handle,
 	     buffer,
@@ -2019,7 +2059,7 @@ ssize_t libbfio_file_write(
 	static char *function                    = "libbfio_file_write";
 	ssize_t write_count                      = 0;
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	DWORD error_code                         = 0;
 #endif
 
@@ -2047,7 +2087,7 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		liberror_error_set(
@@ -2110,7 +2150,7 @@ ssize_t libbfio_file_write(
 		return( -1 );
 	}
 #endif
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( WriteFile(
 	     file_io_handle->file_handle,
 	     buffer,
@@ -2295,7 +2335,7 @@ off64_t libbfio_file_seek_offset(
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_seek_offset";
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	LARGE_INTEGER large_integer_offset       = LIBBFIO_LARGE_INTEGER_ZERO;
 	DWORD move_method                        = 0;
 #endif
@@ -2324,7 +2364,7 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		liberror_error_set(
@@ -2373,7 +2413,7 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( whence == SEEK_SET )
 	{
 		move_method = FILE_BEGIN;
@@ -2386,7 +2426,7 @@ off64_t libbfio_file_seek_offset(
 	{
 		move_method = FILE_END;
 	}
-	large_integer_offset.LowPart  = (DWORD) ( 0x0ffffffff & offset );
+	large_integer_offset.LowPart  = (DWORD) ( 0x0ffffffffUL & offset );
 	large_integer_offset.HighPart = (LONG) ( offset >> 32 );
 
 #if defined( HAVE_SETFILEPOINTEREX )
@@ -2470,7 +2510,7 @@ int libbfio_file_exists(
 	static char *function                    = "libbfio_file_exists";
 	int result                               = 1;
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	DWORD error_code                         = 0;
 #endif
 
@@ -2503,7 +2543,7 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	/* Must use CreateFileW here because filename is a 
 	 * wide character string and CreateFile is dependent
@@ -2805,7 +2845,7 @@ int libbfio_file_is_open(
 	}
 	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		return( 0 );
@@ -2901,7 +2941,7 @@ int libbfio_file_get_size(
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_get_size";
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	LARGE_INTEGER large_integer_size         = LIBBFIO_LARGE_INTEGER_ZERO;
 #elif defined( _MSC_VER )
 	struct __stat64 file_stat;
@@ -2924,7 +2964,7 @@ int libbfio_file_get_size(
 	}
 	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
 
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
 		liberror_error_set(
@@ -2960,7 +3000,7 @@ int libbfio_file_get_size(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && defined( USE_NATIVE_WINAPI_FUNCTIONS )
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 #if defined( HAVE_GETFILESIZEEX )
 	if( GetFileSizeEx(
 	     file_io_handle->file_handle,
