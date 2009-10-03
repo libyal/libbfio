@@ -7,16 +7,16 @@
  * Refer to AUTHORS for acknowledgements.
  *
  * This software is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -389,7 +389,7 @@ int libbfio_list_clone(
 	else
 	{
 		*destination = (libbfio_list_t *) memory_allocate(
-		                                  sizeof( libbfio_list_t ) );
+		                                   sizeof( libbfio_list_t ) );
 
 		if( *destination == NULL )
 		{
@@ -473,6 +473,194 @@ int libbfio_list_clone(
 			}
 			source_list_element = source_list_element->next;
 		}
+	}
+	return( 1 );
+}
+
+/* Retrieves the amount of elements in the list
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_list_get_amount_of_elements(
+     libbfio_list_t *list,
+     int *amount_of_elements,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_list_get_amount_of_elements";
+
+	if( list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid list.",
+		 function );
+
+		return( -1 );
+	}
+	if( amount_of_elements == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid amount of elements.",
+		 function );
+
+		return( -1 );
+	}
+	*amount_of_elements = list->amount_of_elements;
+
+	return( 1 );
+}
+
+/* Retrieves a specific element from the list
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libbfio_list_get_element(
+     libbfio_list_t *list,
+     int element_index,
+     libbfio_list_element_t **element,
+     liberror_error_t **error )
+{
+	libbfio_list_element_t *list_element = NULL;
+	static char *function                = "libbfio_list_get_element";
+	int iterator                         = 0;
+
+	if( list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid list.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( element_index < 0 )
+	 || ( element_index >= list->amount_of_elements ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
+		 "%s: invalid element index out of range.",
+		 function );
+
+		return( -1 );
+	}
+	if( element == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid element.",
+		 function );
+
+		return( -1 );
+	}
+	if( element_index < ( list->amount_of_elements / 2 ) )
+	{
+		list_element = list->first;
+
+		for( iterator = 0;
+		     iterator < element_index;
+		     iterator++ )
+		{
+			if( list_element == NULL )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: corruption detected in element: %d.",
+				 function,
+				 iterator + 1 );
+
+				return( -1 );
+			}
+			list_element = list_element->next;
+		}
+	}
+	else
+	{
+		list_element = list->last;
+
+		for( iterator = ( list->amount_of_elements - 1 );
+		     iterator > element_index;
+		     iterator-- )
+		{
+			if( list_element == NULL )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: corruption detected in element: %d.",
+				 function,
+				 iterator + 1 );
+
+				return( -1 );
+			}
+			list_element = list_element->previous;
+		}
+	}
+	*element = list_element;
+
+	if( list_element == NULL )
+	{
+		return( 0 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific value from the list
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libbfio_list_get_value(
+     libbfio_list_t *list,
+     int element_index,
+     intptr_t **value,
+     liberror_error_t **error )
+{
+	libbfio_list_element_t *list_element = NULL;
+	static char *function                = "libbfio_list_get_value";
+	int result                           = 0;
+
+	if( value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value.",
+		 function );
+
+		return( -1 );
+	}
+	result = libbfio_list_get_element(
+	          list,
+	          element_index,
+	          &list_element,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve list element for index: %d.",
+		 function,
+		 element_index );
+
+		return( -1 );
+	}
+	else if( result != 0 )
+	{
+		*value = list_element->value;
 	}
 	return( 1 );
 }
@@ -1040,145 +1228,6 @@ int libbfio_list_remove_element(
 	element->previous         = NULL;
 	list->amount_of_elements -= 1;
 
-	return( 1 );
-}
-
-/* Retrieves the amount of elements in the list
- * Returns 1 if successful or -1 on error
- */
-int libbfio_list_get_amount_of_elements(
-     libbfio_list_t *list,
-     int *amount_of_elements,
-     liberror_error_t **error )
-{
-	static char *function = "libbfio_list_get_amount_of_elements";
-
-	if( list == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid list.",
-		 function );
-
-		return( -1 );
-	}
-	if( amount_of_elements == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid amount of elements.",
-		 function );
-
-		return( -1 );
-	}
-	*amount_of_elements = list->amount_of_elements;
-
-	return( 1 );
-}
-
-/* Retrieves a specific element from the list
- * Returns 1 if successful, 0 if not available or -1 on error
- */
-int libbfio_list_get_element(
-     libbfio_list_t *list,
-     int element_index,
-     libbfio_list_element_t **element,
-     liberror_error_t **error )
-{
-	libbfio_list_element_t *list_element = NULL;
-	static char *function               = "libbfio_list_get_element";
-	int iterator                        = 0;
-
-	if( list == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid list.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( element_index < 0 )
-	 || ( element_index >= list->amount_of_elements ) )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
-		 "%s: invalid element index out of range.",
-		 function );
-
-		return( -1 );
-	}
-	if( element == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid element.",
-		 function );
-
-		return( -1 );
-	}
-	if( element_index < ( list->amount_of_elements / 2 ) )
-	{
-		list_element = list->first;
-
-		for( iterator = 0;
-		     iterator < element_index;
-		     iterator++ )
-		{
-			if( list_element == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: corruption detected in element: %d.",
-				 function,
-				 iterator + 1 );
-
-				return( -1 );
-			}
-			list_element = list_element->next;
-		}
-	}
-	else
-	{
-		list_element = list->last;
-
-		for( iterator = ( list->amount_of_elements - 1 );
-		     iterator > element_index;
-		     iterator-- )
-		{
-			if( list_element == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: corruption detected in element: %d.",
-				 function,
-				 iterator + 1 );
-
-				return( -1 );
-			}
-			list_element = list_element->previous;
-		}
-	}
-	*element = list_element;
-
-	if( list_element == NULL )
-	{
-		return( 0 );
-	}
 	return( 1 );
 }
 

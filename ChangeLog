@@ -31,6 +31,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20091003
+* updated libuna
+* updated list type
+
 20090927
 * fixed error in setting permission flags in Windows CRT open functions
   which throws of the CodeGear compiler in thinking it has to create files

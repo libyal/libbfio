@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20090927],
+  [20091003],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20090927])
+ [20091003])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -777,7 +777,7 @@ AS_IF(
 	AC_DEFINE(
 	 [HAVE_WIDE_CHARACTER_TYPE],
 	 [1],
-	 [Defines if wide character type should be used])
+	 [Define to 1 if wide character type should be used.])
 	AC_SUBST(
 	 [HAVE_WIDE_CHARACTER_TYPE],
 	 [1])
@@ -800,7 +800,7 @@ AS_IF(
 	[AC_DEFINE(
 	 [HAVE_VERBOSE_OUTPUT],
 	 [1],
-	 [Defines if verbose output should be used] )
+	 [Define to 1 if verbose output should be used.])
 	ac_cv_libbfio_enable_verbose_output=yes])
 
 dnl Check if libbfio should be build with debug output
@@ -809,7 +809,7 @@ AS_IF(
 	[AC_DEFINE(
 	 [HAVE_DEBUG_OUTPUT],
 	 [1],
-	 [Defines if debug output should be used] )
+	 [Define to 1 if debug output should be used.])
 	ac_cv_libbfio_enable_debug_output=yes])
 
 dnl Check if requires and build requires should be set in spec file
@@ -857,7 +857,7 @@ AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([macosx/Makefile])
-AC_CONFIG_FILES([borland/Makefile])
+AC_CONFIG_FILES([borlandc/Makefile])
 AC_CONFIG_FILES([msvscpp/Makefile])
 dnl Have configure make the include files
 AC_CONFIG_FILES([include/libbfio.h])
