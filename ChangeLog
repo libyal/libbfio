@@ -31,7 +31,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
-20091016
+20091028
+* added additional checks to memory range
+
+20091026
 * updated libuna
 * updated narrow_string.h
 * changed endian.h into byte_stream.h

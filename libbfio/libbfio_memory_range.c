@@ -1,5 +1,5 @@
 /*
- * File functions
+ * Memory range functions
  *
  * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
@@ -22,9 +22,7 @@
 
 #include <common.h>
 #include <memory.h>
-#include <narrow_string.h>
 #include <types.h>
-#include <wide_string.h>
 
 #include <liberror.h>
 
@@ -418,6 +416,17 @@ int libbfio_memory_range_open(
 
 		return( -1 );
 	}
+	if( memory_range_io_handle->access_flags != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: IO handle already open.",
+		 function );
+
+		return( -1 );
+	}
 	/* Either read or write flag should be set
 	 */
 	if( ( ( flags & LIBBFIO_FLAG_READ ) == 0 )
@@ -738,6 +747,17 @@ off64_t libbfio_memory_range_seek_offset(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid IO handle - invalid range start.",
+		 function );
+
+		return( -1 );
+	}
+	if( memory_range_io_handle->access_flags == 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid IO handle - no access.",
 		 function );
 
 		return( -1 );
