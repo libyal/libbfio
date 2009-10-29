@@ -31,6 +31,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20091029
+* added additional checks to open file
+
 20091028
 * added additional checks to memory range
 
