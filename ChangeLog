@@ -31,6 +31,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20091031
+* updated common, libuna
+* removed All rights reserved
+
 20091029
 * added additional checks to open file
 
