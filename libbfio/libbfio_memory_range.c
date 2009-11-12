@@ -204,7 +204,7 @@ int libbfio_memory_range_io_handle_clone(
 
 		return( -1 );
 	}
-	if( *destination_io_handle == NULL )
+	if( *destination_io_handle != NULL )
 	{
 		liberror_error_set(
 		 error,

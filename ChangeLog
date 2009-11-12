@@ -31,6 +31,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20091112
+* fixed error in libbfio_handle_clone and back-end clone functions
+
 20091031
 * updated common, libuna
 * removed All rights reserved

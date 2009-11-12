@@ -222,7 +222,7 @@ int libbfio_handle_clone(
 
 		return( -1 );
 	}
-	if( *destination_handle == NULL )
+	if( *destination_handle != NULL )
 	{
 		liberror_error_set(
 		 error,
