@@ -54,7 +54,7 @@ struct libbfio_memory_range_io_handle
 
 	/* Value to indicate the current access flags
 	 */
-	uint8_t access_flags;
+	int access_flags;
 };
 
 int libbfio_memory_range_io_handle_initialize(

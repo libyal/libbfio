@@ -233,13 +233,7 @@ int libbfio_file_io_handle_clone(
      intptr_t *source_io_handle,
      liberror_error_t **error )
 {
-	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
-
 	static char *function = "libbfio_file_io_handle_clone";
-
-#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	DWORD error_code      = 0;
-#endif
 
 	if( destination_io_handle == NULL )
 	{
@@ -331,43 +325,18 @@ int libbfio_file_io_handle_clone(
 
 	( (libbfio_file_io_handle_t *) *destination_io_handle )->name_size = ( (libbfio_file_io_handle_t *) source_io_handle )->name_size;
 
-#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	if( DuplicateHandle(
-	     GetCurrentProcess(),
-	     ( (libbfio_file_io_handle_t *) source_io_handle )->file_handle,
-	     GetCurrentProcess(),
-	     ( (libbfio_file_io_handle_t *) *destination_io_handle )->file_handle,
-	     0,
-	     FALSE,
-	     DUPLICATE_SAME_ACCESS ) == 0 )
+	if( libbfio_file_open(
+	     *destination_io_handle,
+	     ( (libbfio_file_io_handle_t *) source_io_handle )->access_flags,
+	     error ) != 1 )
 	{
-		error_code = GetLastError();
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open file.",
+		 function );
 
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
-		     error_code,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to duplicate file handle for file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
-			 function,
-			 ( (libbfio_file_io_handle_t *) source_io_handle )->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to duplicate file handle for file: %" PRIs_LIBBFIO_SYSTEM ".",
-			 function,
-			 ( (libbfio_file_io_handle_t *) source_io_handle )->name );
-		}
 		libbfio_file_io_handle_free(
 		 *destination_io_handle,
 		 NULL );
@@ -376,53 +345,6 @@ int libbfio_file_io_handle_clone(
 
 		return( -1 );
 	}
-#else
-#if defined( WINAPI )
-	( (libbfio_file_io_handle_t *) *destination_io_handle )->file_descriptor = _dup(
-	                                                                            ( (libbfio_file_io_handle_t *) source_io_handle )->file_descriptor );
-#else
-	( (libbfio_file_io_handle_t *) *destination_io_handle )->file_descriptor = dup(
-	                                                                            ( (libbfio_file_io_handle_t *) source_io_handle )->file_descriptor );
-#endif
-
-	if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->file_descriptor == -1 )
-	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
-		     errno,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to duplicate file descriptor for file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
-			 function,
-			 ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to duplicate file descriptor for file: %" PRIs_LIBBFIO_SYSTEM ".",
-			 function,
-			 ( (libbfio_file_io_handle_t *) *destination_io_handle )->name );
-		}
-		libbfio_file_io_handle_free(
-		 *destination_io_handle,
-		 NULL );
-
-		*destination_io_handle = NULL;
-
-		return( -1 );
-	}
-#endif
-	( (libbfio_file_io_handle_t *) *destination_io_handle )->flags = ( (libbfio_file_io_handle_t *) source_io_handle )->flags;
-
 	return( 1 );
 }
 
@@ -1293,8 +1215,9 @@ int libbfio_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
-		 function );
+		 "%s: unsupported flags: 0x%02x.",
+		 function,
+		 flags );
 
 		return( -1 );
 	}
@@ -1479,6 +1402,7 @@ int libbfio_file_open(
 					   file_io_flags | _O_BINARY,
 					   file_io_persmission_flags );
 #endif /* LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER */
+
 	if( file_io_handle->file_descriptor == -1 )
 #endif /* _MSC_VER */
 	{
@@ -1709,6 +1633,8 @@ int libbfio_file_open(
 	}
 #endif
 #endif
+	file_io_handle->access_flags = flags;
+
 	return( 1 );
 }
 
@@ -1849,6 +1775,8 @@ int libbfio_file_close(
 	}
 	file_io_handle->file_descriptor = -1;
 #endif
+	file_io_handle->access_flags = 0;
+
 	return( 0 );
 }
 

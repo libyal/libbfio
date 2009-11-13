@@ -60,9 +60,9 @@ struct libbfio_file_io_handle
 	int file_descriptor;
 #endif
 
-	/* The flags
+	/* The access flags
 	 */
-	int flags;
+	int access_flags;
 };
 
 int libbfio_file_io_handle_initialize(

@@ -436,13 +436,13 @@ int libbfio_memory_range_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
+		 "%s: unsupported flags: 0x%02x.",
 		 function );
 
 		return( -1 );
 	}
 	memory_range_io_handle->range_offset = 0;
-	memory_range_io_handle->access_flags = (uint8_t) flags;
+	memory_range_io_handle->access_flags = flags;
 
 	return( 1 );
 }

@@ -321,6 +321,25 @@ int libbfio_handle_clone(
 
 		return( -1 );
 	}
+	if( libbfio_handle_seek_offset(
+	     *destination_handle,
+	     internal_source_handle->offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek offset in destination handle.",
+		 function );
+
+		internal_source_handle->free_io_handle(
+		 destination_io_handle,
+		 NULL );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 
