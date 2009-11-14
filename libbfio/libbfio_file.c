@@ -325,26 +325,6 @@ int libbfio_file_io_handle_clone(
 
 	( (libbfio_file_io_handle_t *) *destination_io_handle )->name_size = ( (libbfio_file_io_handle_t *) source_io_handle )->name_size;
 
-	if( libbfio_file_open(
-	     *destination_io_handle,
-	     ( (libbfio_file_io_handle_t *) source_io_handle )->access_flags,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file.",
-		 function );
-
-		libbfio_file_io_handle_free(
-		 *destination_io_handle,
-		 NULL );
-
-		*destination_io_handle = NULL;
-
-		return( -1 );
-	}
 	return( 1 );
 }
 

@@ -60,6 +60,11 @@ struct libbfio_internal_handle
 	 */
 	uint8_t size_set;
 
+	/* Value to indicate to open and close
+	 * the systems file descriptor or handle on demand
+	 */
+	uint8_t open_on_demand;
+
 	/* Reference to the pool last used list element
 	 */
 	libbfio_list_element_t *pool_last_used_list_element;
@@ -225,6 +230,11 @@ LIBBFIO_EXTERN int libbfio_handle_get_size(
 LIBBFIO_EXTERN int libbfio_handle_get_offset(
                     libbfio_handle_t *handle,
                     off64_t *offset,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_handle_set_open_on_demand(
+                    libbfio_handle_t *handle,
+                    uint8_t open_on_demand,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_set_track_offsets_read(

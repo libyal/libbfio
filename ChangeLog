@@ -1,9 +1,10 @@
 Fix
 * conversion error for ASCII to UNICODE and vice versa ?
+  - currently assumed that the narrow string is UTF-8
 
 Pool
 * implement pool throttling on add_handle and set_handle
-  - move elements to front of list on read/write/seek
+  - move elements to front of (last used) list on read/write/seek
 
 File
 * add errno error strings to liberror notifications
@@ -17,7 +18,6 @@ API
 * what about disk full on write errno = ENOSPC
 
 Other
-* add glib.h support
 
 Test
 * pool throttling
@@ -30,6 +30,9 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20091114
+* worked on open/close on demand
 
 20091113
 * changed dup into open, dup does not create an entirely separate file descriptor
