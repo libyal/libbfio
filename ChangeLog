@@ -31,6 +31,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20091128
+* updated byte stream
+* moved free library handle in safe windows functions after function call
+
 20091114
 * worked on open/close on demand
 

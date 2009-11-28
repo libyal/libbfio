@@ -2203,11 +2203,6 @@ BOOL SafeSetFilePointerEx(
 		    library_handle,
 		    (LPCSTR) "SetFilePointerEx" );
 
-	if( FreeLibrary(
-	     library_handle ) != TRUE )
-	{
-		result = FALSE;
-	}
 	if( function != NULL )
 	{
 		result = function(
@@ -2240,6 +2235,14 @@ BOOL SafeSetFilePointerEx(
 
 			result = TRUE;
 		}
+	}
+	/* This call should be after using the function
+	 * in most cases kernel32.dll will still be available after free
+	 */
+	if( FreeLibrary(
+	     library_handle ) != TRUE )
+	{
+		result = FALSE;
 	}
 	return( result );
 }
@@ -2817,11 +2820,6 @@ BOOL SafeGetFileSizeEx(
 		    library_handle,
 		    (LPCSTR) "GetFileSizeEx" );
 
-	if( FreeLibrary(
-	     library_handle ) != TRUE )
-	{
-		result = FALSE;
-	}
 	if( function != NULL )
 	{
 		result = function(
@@ -2847,6 +2845,14 @@ BOOL SafeGetFileSizeEx(
 
 			result = TRUE;
 		}
+	}
+	/* This call should be after using the function
+	 * in most cases kernel32.dll will still be available after free
+	 */
+	if( FreeLibrary(
+	     library_handle ) != TRUE )
+	{
+		result = FALSE;
 	}
 	return( result );
 }
