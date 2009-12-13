@@ -31,6 +31,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20091213
+* worked on CreateFile filename limitation work-around
+
 20091128
 * updated byte stream
 * moved free library handle in safe windows functions after function call
