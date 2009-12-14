@@ -31,6 +31,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20091214
+* updated libuna
+
 20091213
 * worked on CreateFile filename limitation work-around
 

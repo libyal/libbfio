@@ -1232,7 +1232,7 @@ int libbfio_file_open(
 		safe_filename_size += 4;
 	}
 	safe_filename = (libbfio_system_character_t *) memory_allocate(
-	                                                safe_filename_size );
+	                                                sizeof( libbfio_system_character_t ) * safe_filename_size );
 
 	if( safe_filename == NULL )
 	{
@@ -1271,8 +1271,9 @@ int libbfio_file_open(
 	}
 	safe_filename[ safe_filename_size - 1 ] = 0;
 
+	/* TODO safe filename */
 	file_io_handle->file_handle = CreateFile(
-				       (LPCTSTR) safe_filename,
+				       (LPCTSTR) file_io_handle->name,
 				       file_io_access_flags,
 				       file_io_shared_flags,
 				       NULL,
@@ -2544,7 +2545,7 @@ int libbfio_file_exists(
 		safe_filename_size += 4;
 	}
 	safe_filename = (libbfio_system_character_t *) memory_allocate(
-	                                                safe_filename_size );
+	                                                sizeof( libbfio_system_character_t ) * safe_filename_size );
 
 	if( safe_filename == NULL )
 	{
@@ -2583,13 +2584,14 @@ int libbfio_file_exists(
 	}
 	safe_filename[ safe_filename_size - 1 ] = 0;
 
+	/* TODO safe filename */
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	/* Must use CreateFileW here because filename is a 
 	 * wide character string and CreateFile is dependent
 	 * on UNICODE directives
 	 */
 	file_io_handle->file_handle = CreateFileW(
-	                               (LPCWSTR) safe_filename,
+	                               (LPCWSTR) file_io_handle->name,
 	                               GENERIC_READ,
 	                               FILE_SHARE_READ,
 	                               NULL,
@@ -2602,7 +2604,7 @@ int libbfio_file_exists(
 	 * on UNICODE directives
 	 */
 	file_io_handle->file_handle = CreateFileA(
-	                               (LPCSTR) safe_filename,
+	                               (LPCSTR) file_io_handle->name,
 	                               GENERIC_READ,
 	                               FILE_SHARE_READ,
 	                               NULL,
