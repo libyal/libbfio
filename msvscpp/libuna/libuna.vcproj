@@ -229,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libuna\libuna_utf7_stream.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libuna\libuna_utf8_stream.c"
 				>
 			</File>
@@ -416,6 +420,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libuna\libuna_utf32_string.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libuna\libuna_utf7_stream.h"
 				>
 			</File>
 			<File

@@ -113,15 +113,21 @@ extern "C" {
 	(wchar_t *) wmemrchr( (void *) string, (wchar_t) character, size )
 #endif
 
-/* String formatted print (snprinf)
+/* String formatted print (swprintf)
  */
 #if defined( _MSC_VER )
 #define wide_string_snprintf( target, size, ... ) \
 	swprintf_s( target, size, __VA_ARGS__ )
 
 #elif defined( __BORLANDC__ )
+#if __BORLANDC__ >= 0x0560
 #define wide_string_snprintf( target, size, ... ) \
 	swprintf( target, __VA_ARGS__ )
+
+#else
+#define wide_string_snprintf \
+	swprintf
+#endif
 
 #elif defined( HAVE_SWPRINTF ) || defined( WINAPI )
 #define wide_string_snprintf( target, size, ... ) \

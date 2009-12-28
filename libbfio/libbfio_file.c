@@ -62,7 +62,6 @@
 #include "libbfio_system_string.h"
 #include "libbfio_types.h"
 
-
 /* Initializes the file IO handle
  * Returns 1 if successful or -1 on error
  */
@@ -2228,6 +2227,10 @@ ssize_t libbfio_file_write(
 
 #if defined( WINAPI ) && !defined( HAVE_SETFILEPOINTEREX )
 
+#if !defined( INVALID_SET_FILE_POINTER )
+#define INVALID_SET_FILE_POINTER	((LONG) -1)
+#endif
+
 /* Cross Windows safe version of SetFilePointerEx
  * Returns TRUE if successful or FALSE on error
  */
@@ -2273,8 +2276,13 @@ BOOL SafeSetFilePointerEx(
 	}
 	else
 	{
+#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+		distance_to_move_lower_long = distance_to_move_large_integer.QuadPart & 0xffffffffUL;
+		distance_to_move_upper_long = distance_to_move_large_integer.QuadPart >> 32;
+#else
 		distance_to_move_lower_long = distance_to_move_large_integer.LowPart;
 		distance_to_move_upper_long = distance_to_move_large_integer.HighPart;
+#endif
 
 		distance_to_move_lower_long = SetFilePointer(
 					       file_handle,
@@ -2290,8 +2298,14 @@ BOOL SafeSetFilePointerEx(
 		}
 		else
 		{
+#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+			new_file_pointer_large_integer->QuadPart   = distance_to_move_upper_long;
+			new_file_pointer_large_integer->QuadPart <<= 32;
+			new_file_pointer_large_integer->QuadPart  += distance_to_move_lower_long;
+#else
 			new_file_pointer_large_integer->HighPart = distance_to_move_upper_long;
 			new_file_pointer_large_integer->LowPart  = distance_to_move_lower_long;
+#endif
 
 			result = TRUE;
 		}
@@ -2412,8 +2426,12 @@ off64_t libbfio_file_seek_offset(
 	{
 		move_method = FILE_END;
 	}
+#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+	large_integer_offset.QuadPart = (LONGLONG) offset;
+#else
 	large_integer_offset.LowPart  = (DWORD) ( 0x0ffffffffUL & offset );
 	large_integer_offset.HighPart = (LONG) ( offset >> 32 );
+#endif
 
 #if defined( HAVE_SETFILEPOINTEREX )
 	if( SetFilePointerEx(
@@ -2440,7 +2458,11 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
+#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+	offset = (off64_t) large_integer_offset.QuadPart;
+#else
 	offset = ( (off64_t) large_integer_offset.HighPart << 32 ) + large_integer_offset.LowPart;
+#endif
 
 	if( offset < 0 )
 	{
@@ -2961,8 +2983,14 @@ BOOL SafeGetFileSizeEx(
 		}
 		else
 		{
+#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+			file_size_large_integer->QuadPart   = file_size_upper_dword;
+			file_size_large_integer->QuadPart <<= 32;
+			file_size_large_integer->QuadPart  += file_size_lower_dword;
+#else
 			file_size_large_integer->HighPart = file_size_upper_dword;
 			file_size_large_integer->LowPart  = file_size_lower_dword;
+#endif
 
 			result = TRUE;
 		}
@@ -3070,7 +3098,11 @@ int libbfio_file_get_size(
 
 		return( -1 );
 	}
+#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+	*size = (size64_t) large_integer_size.QuadPart;
+#else
 	*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
+#endif
 #else
 #if defined( _MSC_VER )
 	if( _fstat64(
