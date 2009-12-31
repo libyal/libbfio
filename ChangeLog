@@ -1,6 +1,4 @@
 Fix
-* conversion error for ASCII to UNICODE and vice versa ?
-  - currently assumed that the narrow string is UTF-8
 
 Pool
 * implement pool throttling on add_handle and set_handle
@@ -30,6 +28,11 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20100101
+* updated common, liberror, libuna
+* 2010 update
+* worked on support of extended ASCII string to UNICODE string conversion
 
 20091228
 * updated common, liberror, libuna

@@ -1,9 +1,7 @@
 /*
- * The extern definition
- * This header should be included in header files that export or import
- * library functions
+ * System character type string functions
  *
- * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -12,33 +10,29 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBBFIO_EXTERN_H )
-#define _LIBBFIO_EXTERN_H
+#include <common.h>
+#include <types.h>
 
-/* To export functions from the libbfio DLL define LIBBFIO_DLL_EXPORT
- * To import functions from the libbfio DLL define LIBBFIO_DLL_IMPORT
- * Otherwise use default extern statement
- */
-#if defined( LIBBFIO_DLL_EXPORT )
-#define LIBBFIO_EXTERN __declspec(dllexport)
+#include "libbfio_codepage.h"
+#include "libbfio_system_string.h"
 
-#elif defined( LIBBFIO_DLL_IMPORT )
-#define LIBBFIO_EXTERN extern __declspec(dllimport)
-
-#else
-#define LIBBFIO_EXTERN extern
-
+#if defined( _cplusplus )
+extern "C" {
 #endif
 
+#if defined( WINAPI )
+int libbfio_system_narrow_string_codepage = LIBBFIO_CODEPAGE_WINDOWS_1252;
+#else
+int libbfio_system_narrow_string_codepage = 0;
 #endif
 

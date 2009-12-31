@@ -1,7 +1,7 @@
 /*
  * Support functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -26,6 +26,8 @@
 #include <common.h>
 #include <types.h>
 
+#include <liberror.h>
+
 #include "libbfio_extern.h"
 
 #if defined( __cplusplus )
@@ -36,6 +38,14 @@ extern "C" {
 
 LIBBFIO_EXTERN const char *libbfio_get_version(
                            void );
+
+LIBBFIO_EXTERN int libbfio_get_codepage(
+                    int *codepage,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_set_codepage(
+                    int codepage,
+                    liberror_error_t **error );
 
 #endif
 

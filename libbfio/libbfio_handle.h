@@ -1,7 +1,7 @@
 /*
  * The internal handle functions
  *
- * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -76,6 +76,10 @@ struct libbfio_internal_handle
 	/* The offset ranges that were read
 	 */
 	libbfio_list_t *offsets_read;
+
+	/* The narrow string codepage
+	 */
+	int narrow_string_codepage;
 
 	/* The free io handle function
 	 */

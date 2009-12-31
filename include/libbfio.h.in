@@ -1,7 +1,7 @@
 /*
  * Library to support support (abstracted) basic file IO
  *
- * Copyright (c) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -44,6 +44,24 @@ extern "C" {
  */
 LIBBFIO_EXTERN const char *libbfio_get_version(
                             void );
+
+/* Retrieves the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_get_codepage(
+     libbfio_t *file,
+     int *codepage,
+     libbfio_error_t **error );
+
+/* Sets the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_set_codepage(
+     libbfio_t *file,
+     int codepage,
+     libbfio_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Error functions

@@ -1,7 +1,7 @@
 /*
  * Support functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -27,8 +27,10 @@
 
 #include <stdio.h>
 
+#include "libbfio_codepage.h"
 #include "libbfio_definitions.h"
 #include "libbfio_support.h"
+#include "libbfio_system_string.h"
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
@@ -41,4 +43,68 @@ const char *libbfio_get_version(
 }
 
 #endif
+
+/* Retrieves the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_get_codepage(
+     libbfio_t *file,
+     int *codepage,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_get_codepage";
+
+	if( codepage == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid codepage.",
+		 function );
+
+		return( -1 );
+	}
+	*codepage = libbfio_system_narrow_string_codepage;
+
+	return( 1 );
+}
+
+/* Sets the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_set_codepage(
+     libbfio_t *file,
+     int codepage,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_set_codepage";
+
+	if( ( codepage != LIBBFIO_CODEPAGE_ASCII )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_874 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1250 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1251 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1252 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1253 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1254 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1256 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1257 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1258 )
+	 && ( codepage != 0 ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported codepage.",
+		 function );
+
+		return( -1 );
+	}
+	libbfio_system_narrow_string_codepage = codepage;
+
+	return( 1 );
+}
 

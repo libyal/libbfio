@@ -1,7 +1,7 @@
 /*
  * System character type string functions
  *
- * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -66,37 +66,65 @@ typedef wchar_t libbfio_system_character_t;
  */
 #if SIZEOF_WCHAR_T == 4
 
-/* narrow string conversion functions
+/* byte stream conversion functions
  */
-#define libbfio_system_string_size_from_narrow_string( narrow_string, narrow_string_size, system_string_size, error ) \
-	libuna_utf32_string_size_from_utf8( (libuna_utf8_character_t *) narrow_string, narrow_string_size, system_string_size, error )
+#define libbfio_system_string_size_from_byte_stream( byte_stream, byte_stream_size, system_string_size, error ) \
+	libuna_utf32_string_size_from_utf8( (libuna_utf8_character_t *) byte_stream, byte_stream_size, system_string_size, error )
 
-#define libbfio_system_string_copy_from_narrow_string( system_string, system_string_size, narrow_string, narrow_string_size, error ) \
-	libuna_utf32_string_copy_from_utf8( (libuna_utf32_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) narrow_string, narrow_string_size, error )
+#define libbfio_system_string_copy_from_byte_stream( system_string, system_string_size, byte_stream, byte_stream_size, error ) \
+	libuna_utf32_string_copy_from_utf8( (libuna_utf32_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) byte_stream, byte_stream_size, error )
 
-#define narrow_string_size_from_libbfio_system_string( system_string, system_string_size, narrow_string_size, error ) \
-	libuna_utf8_string_size_from_utf32( (libuna_utf32_character_t *) system_string, system_string_size, narrow_string_size, error )
+#define byte_stream_size_from_libbfio_system_string( system_string, system_string_size, byte_stream_size, error ) \
+	libuna_byte_stream_size_from_utf32( (libuna_utf32_character_t *) system_string, system_string_size, byte_stream_size, error )
 
-#define narrow_string_copy_from_libbfio_system_string( narrow_string, narrow_string_size, system_string, system_string_size, error ) \
-	libuna_utf8_string_copy_from_utf32( (libuna_utf8_character_t *) narrow_string, narrow_string_size, (libuna_utf32_character_t *) system_string, system_string_size, error )
+#define byte_stream_copy_from_libbfio_system_string( byte_stream, byte_stream_size, system_string, system_string_size, error ) \
+	libuna_byte_stream_copy_from_utf32( (libuna_utf8_character_t *) byte_stream, byte_stream_size, (libuna_utf32_character_t *) system_string, system_string_size, error )
+
+/* UTF-8 string conversion functions
+ */
+#define libbfio_system_string_size_from_utf8_string( utf8_string, utf8_string_size, system_string_size, error ) \
+	libuna_utf32_string_size_from_utf8( (libuna_utf8_character_t *) utf8_string, utf8_string_size, system_string_size, error )
+
+#define libbfio_system_string_copy_from_utf8_string( system_string, system_string_size, utf8_string, utf8_string_size, error ) \
+	libuna_utf32_string_copy_from_utf8( (libuna_utf32_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) utf8_string, utf8_string_size, error )
+
+#define utf8_string_size_from_libbfio_system_string( system_string, system_string_size, utf8_string_size, error ) \
+	libuna_utf8_string_size_from_utf32( (libuna_utf32_character_t *) system_string, system_string_size, utf8_string_size, error )
+
+#define utf8_string_copy_from_libbfio_system_string( utf8_string, utf8_string_size, system_string, system_string_size, error ) \
+	libuna_utf8_string_copy_from_utf32( (libuna_utf8_character_t *) utf8_string, utf8_string_size, (libuna_utf32_character_t *) system_string, system_string_size, error )
 
 /* The wide character string type contains UTF-16
  */
 #elif SIZEOF_WCHAR_T == 2
 
-/* narrow string conversion functions
+/* byte stream conversion functions
  */
-#define libbfio_system_string_size_from_narrow_string( narrow_string, narrow_string_size, system_string_size, error ) \
-	libuna_utf16_string_size_from_utf8( (libuna_utf8_character_t *) narrow_string, narrow_string_size, system_string_size, error )
+#define libbfio_system_string_size_from_byte_stream( byte_stream, byte_stream_size, system_string_size, error ) \
+	libuna_utf16_string_size_from_utf8( (libuna_utf8_character_t *) byte_stream, byte_stream_size, system_string_size, error )
 
-#define libbfio_system_string_copy_from_narrow_string( system_string, system_string_size, narrow_string, narrow_string_size, error ) \
-	libuna_utf16_string_copy_from_utf8( (libuna_utf16_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) narrow_string, narrow_string_size, error )
+#define libbfio_system_string_copy_from_byte_stream( system_string, system_string_size, byte_stream, byte_stream_size, error ) \
+	libuna_utf16_string_copy_from_utf8( (libuna_utf16_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) byte_stream, byte_stream_size, error )
 
-#define narrow_string_size_from_libbfio_system_string( system_string, system_string_size, narrow_string_size, error ) \
-	libuna_utf8_string_size_from_utf16( (libuna_utf16_character_t *) system_string, system_string_size, narrow_string_size, error )
+#define byte_stream_size_from_libbfio_system_string( system_string, system_string_size, byte_stream_size, error ) \
+	libuna_byte_stream_size_from_utf16( (libuna_utf16_character_t *) system_string, system_string_size, byte_stream_size, error )
 
-#define narrow_string_copy_from_libbfio_system_string( narrow_string, narrow_string_size, system_string, system_string_size, error ) \
-	libuna_utf8_string_copy_from_utf16( (libuna_utf8_character_t *) narrow_string, narrow_string_size, (libuna_utf16_character_t *) system_string, system_string_size, error )
+#define byte_stream_copy_from_libbfio_system_string( byte_stream, byte_stream_size, system_string, system_string_size, error ) \
+	libuna_byte_stream_copy_from_utf16( (libuna_utf8_character_t *) byte_stream, byte_stream_size, (libuna_utf16_character_t *) system_string, system_string_size, error )
+
+/* UTF-8 string conversion functions
+ */
+#define libbfio_system_string_size_from_utf8_string( utf8_string, utf8_string_size, system_string_size, error ) \
+	libuna_utf16_string_size_from_utf8( (libuna_utf8_character_t *) utf8_string, utf8_string_size, system_string_size, error )
+
+#define libbfio_system_string_copy_from_utf8_string( system_string, system_string_size, utf8_string, utf8_string_size, error ) \
+	libuna_utf16_string_copy_from_utf8( (libuna_utf16_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) utf8_string, utf8_string_size, error )
+
+#define utf8_string_size_from_libbfio_system_string( system_string, system_string_size, utf8_string_size, error ) \
+	libuna_utf8_string_size_from_utf16( (libuna_utf16_character_t *) system_string, system_string_size, utf8_string_size, error )
+
+#define utf8_string_copy_from_libbfio_system_string( utf8_string, utf8_string_size, system_string, system_string_size, error ) \
+	libuna_utf8_string_copy_from_utf16( (libuna_utf8_character_t *) utf8_string, utf8_string_size, (libuna_utf16_character_t *) system_string, system_string_size, error )
 
 #else
 #error Unsupported size of wchar_t
@@ -165,6 +193,8 @@ typedef char libbfio_system_character_t;
 #endif
 
 #endif
+
+extern int libbfio_system_narrow_string_codepage;
 
 #if defined( _cplusplus )
 }

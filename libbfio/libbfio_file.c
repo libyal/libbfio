@@ -1,7 +1,7 @@
 /*
  * File functions
  *
- * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -389,20 +389,42 @@ int libbfio_file_get_name_size(
 		return( -1 );
 	}
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( narrow_string_size_from_libbfio_system_string(
-	     io_handle->name,
-	     io_handle->name_size,
-	     name_size,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
-		 "%s: unable to determine name size.",
-		 function );
+		if( utf8_string_size_from_libbfio_system_string(
+		     io_handle->name,
+		     io_handle->name_size,
+		     name_size,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to determine name size.",
+			 function );
 
-		return( -1 );
+			return( -1 );
+		}
+	}
+	else
+	{
+		if( byte_stream_size_from_libbfio_system_string(
+		     io_handle->name,
+		     io_handle->name_size,
+		     libbfio_system_narrow_string_codepage,
+		     name_size,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to determine name size.",
+			 function );
+
+			return( -1 );
+		}
 	}
 #else
 	*name_size = io_handle->name_size;

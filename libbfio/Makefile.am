@@ -4,6 +4,7 @@ lib_LTLIBRARIES = libbfio.la
 
 libbfio_la_SOURCES = \
 	libbfio.c \
+	libbfio_codepage.h \
 	libbfio_definitions.h \
 	libbfio_error.c libbfio_error.h \
 	libbfio_error_string.c libbfio_error_string.h \
@@ -16,7 +17,7 @@ libbfio_la_SOURCES = \
 	libbfio_offset_list.c libbfio_offset_list.h \
 	libbfio_pool.c libbfio_pool.h \
 	libbfio_support.c libbfio_support.h \
-	libbfio_system_string.h \
+	libbfio_system_string.c libbfio_system_string.h \
 	libbfio_types.h
 
 libbfio_la_LIBADD  = ../liberror/liberror.la @LIBUNA_LIBADD@

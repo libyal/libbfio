@@ -1,7 +1,7 @@
 /*
  * Error string functions
  *
- * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -22,9 +22,7 @@
 
 #include <common.h>
 #include <memory.h>
-#include <narrow_string.h>
 #include <types.h>
-#include <wide_string.h>
 
 #include <liberror.h>
 
@@ -34,6 +32,7 @@
 
 #include "libbfio_error_string.h"
 #include "libbfio_libuna.h"
+#include "libbfio_system_string.h"
 
 /* Retrieves a descriptive string of the error number
  * Returns 1 if successful or -1 on error

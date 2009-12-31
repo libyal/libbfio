@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20091228],
+  [20100101],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20091228])
+ [20100101])
 
 AC_CONFIG_MACRO_DIR([m4])
 

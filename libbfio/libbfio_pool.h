@@ -1,7 +1,7 @@
 /*
  * The internal pool functions
  *
- * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -24,9 +24,7 @@
 #define _LIBBFIO_POOL_H
 
 #include <common.h>
-#include <narrow_string.h>
 #include <types.h>
-#include <wide_string.h>
 
 #include <liberror.h>
 
