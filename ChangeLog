@@ -1,5 +1,3 @@
-Fix
-
 Pool
 * implement pool throttling on add_handle and set_handle
   - move elements to front of (last used) list on read/write/seek
@@ -15,24 +13,25 @@ Memory range
 API
 * what about disk full on write errno = ENOSPC
 
-Other
-
 Test
 * pool throttling
-* chained IO (e.g. OLECF in PST)
 
 Windows
-* add WIN32_LEAN_AND_MEAN or VC_EXTRALEAN to msvscpp
+* add WIN32_LEAN_AND_MEAN to config_borlandc.h and config_msc.h
+* add VC_EXTRALEAN to config_msc.h
 
 Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
 
+20100102
+* worked on support of extended ASCII string to Unicode string conversion
+
 20100101
 * updated common, liberror, libuna
 * 2010 update
-* worked on support of extended ASCII string to UNICODE string conversion
+* worked on support of extended ASCII string to Unicode string conversion
 
 20091228
 * updated common, liberror, libuna

@@ -34,12 +34,16 @@
 extern "C" {
 #endif
 
+extern int libbfio_system_narrow_string_codepage;
+
 /* Detect if the code is being compiled with Windows Unicode support
  */
 #if defined( WINAPI ) && ( defined( _UNICODE ) || defined( UNICODE ) )
 #define LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER		1
 #endif
 
+/* The system string type is either UTF-16 or UTF-32
+ */
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 
 typedef wchar_t libbfio_system_character_t;
@@ -62,75 +66,7 @@ typedef wchar_t libbfio_system_character_t;
 #define libbfio_system_string_length( string ) \
 	wide_string_length( string )
 
-/* The wide character string type contains UTF-32
- */
-#if SIZEOF_WCHAR_T == 4
-
-/* byte stream conversion functions
- */
-#define libbfio_system_string_size_from_byte_stream( byte_stream, byte_stream_size, system_string_size, error ) \
-	libuna_utf32_string_size_from_utf8( (libuna_utf8_character_t *) byte_stream, byte_stream_size, system_string_size, error )
-
-#define libbfio_system_string_copy_from_byte_stream( system_string, system_string_size, byte_stream, byte_stream_size, error ) \
-	libuna_utf32_string_copy_from_utf8( (libuna_utf32_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) byte_stream, byte_stream_size, error )
-
-#define byte_stream_size_from_libbfio_system_string( system_string, system_string_size, byte_stream_size, error ) \
-	libuna_byte_stream_size_from_utf32( (libuna_utf32_character_t *) system_string, system_string_size, byte_stream_size, error )
-
-#define byte_stream_copy_from_libbfio_system_string( byte_stream, byte_stream_size, system_string, system_string_size, error ) \
-	libuna_byte_stream_copy_from_utf32( (libuna_utf8_character_t *) byte_stream, byte_stream_size, (libuna_utf32_character_t *) system_string, system_string_size, error )
-
-/* UTF-8 string conversion functions
- */
-#define libbfio_system_string_size_from_utf8_string( utf8_string, utf8_string_size, system_string_size, error ) \
-	libuna_utf32_string_size_from_utf8( (libuna_utf8_character_t *) utf8_string, utf8_string_size, system_string_size, error )
-
-#define libbfio_system_string_copy_from_utf8_string( system_string, system_string_size, utf8_string, utf8_string_size, error ) \
-	libuna_utf32_string_copy_from_utf8( (libuna_utf32_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) utf8_string, utf8_string_size, error )
-
-#define utf8_string_size_from_libbfio_system_string( system_string, system_string_size, utf8_string_size, error ) \
-	libuna_utf8_string_size_from_utf32( (libuna_utf32_character_t *) system_string, system_string_size, utf8_string_size, error )
-
-#define utf8_string_copy_from_libbfio_system_string( utf8_string, utf8_string_size, system_string, system_string_size, error ) \
-	libuna_utf8_string_copy_from_utf32( (libuna_utf8_character_t *) utf8_string, utf8_string_size, (libuna_utf32_character_t *) system_string, system_string_size, error )
-
-/* The wide character string type contains UTF-16
- */
-#elif SIZEOF_WCHAR_T == 2
-
-/* byte stream conversion functions
- */
-#define libbfio_system_string_size_from_byte_stream( byte_stream, byte_stream_size, system_string_size, error ) \
-	libuna_utf16_string_size_from_utf8( (libuna_utf8_character_t *) byte_stream, byte_stream_size, system_string_size, error )
-
-#define libbfio_system_string_copy_from_byte_stream( system_string, system_string_size, byte_stream, byte_stream_size, error ) \
-	libuna_utf16_string_copy_from_utf8( (libuna_utf16_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) byte_stream, byte_stream_size, error )
-
-#define byte_stream_size_from_libbfio_system_string( system_string, system_string_size, byte_stream_size, error ) \
-	libuna_byte_stream_size_from_utf16( (libuna_utf16_character_t *) system_string, system_string_size, byte_stream_size, error )
-
-#define byte_stream_copy_from_libbfio_system_string( byte_stream, byte_stream_size, system_string, system_string_size, error ) \
-	libuna_byte_stream_copy_from_utf16( (libuna_utf8_character_t *) byte_stream, byte_stream_size, (libuna_utf16_character_t *) system_string, system_string_size, error )
-
-/* UTF-8 string conversion functions
- */
-#define libbfio_system_string_size_from_utf8_string( utf8_string, utf8_string_size, system_string_size, error ) \
-	libuna_utf16_string_size_from_utf8( (libuna_utf8_character_t *) utf8_string, utf8_string_size, system_string_size, error )
-
-#define libbfio_system_string_copy_from_utf8_string( system_string, system_string_size, utf8_string, utf8_string_size, error ) \
-	libuna_utf16_string_copy_from_utf8( (libuna_utf16_character_t *) system_string, system_string_size, (libuna_utf8_character_t *) utf8_string, utf8_string_size, error )
-
-#define utf8_string_size_from_libbfio_system_string( system_string, system_string_size, utf8_string_size, error ) \
-	libuna_utf8_string_size_from_utf16( (libuna_utf16_character_t *) system_string, system_string_size, utf8_string_size, error )
-
-#define utf8_string_copy_from_libbfio_system_string( utf8_string, utf8_string_size, system_string, system_string_size, error ) \
-	libuna_utf8_string_copy_from_utf16( (libuna_utf8_character_t *) utf8_string, utf8_string_size, (libuna_utf16_character_t *) system_string, system_string_size, error )
-
-#else
-#error Unsupported size of wchar_t
-#endif
-
-/* The system string type contains UTF-8 or ASCII with a codepage
+/* The system string type is either UTF-8 or extended ASCII with a codepage
  */
 #else
 
@@ -148,53 +84,7 @@ typedef char libbfio_system_character_t;
 #define libbfio_system_string_length( string ) \
 	narrow_string_length( string )
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-/* The wide character string type contains UTF-32
- */
-#if SIZEOF_WCHAR_T == 4
-
-/* wide string conversion functions
- */
-#define libbfio_system_string_size_from_wide_string( wide_string, wide_string_size, system_string_size, error ) \
-	libuna_utf8_string_size_from_utf32( (libuna_utf32_character_t *) wide_string, wide_string_size, system_string_size, error )
-
-#define libbfio_system_string_copy_from_wide_string( system_string, system_string_size, wide_string, wide_string_size, error ) \
-	libuna_utf8_string_copy_from_utf32( (libuna_utf8_character_t *) system_string, system_string_size, (libuna_utf32_character_t *) wide_string, wide_string_size, error )
-
-#define wide_string_size_from_libbfio_system_string( system_string, system_string_size, wide_string_size, error ) \
-	libuna_utf32_string_size_from_utf8( (libuna_utf8_character_t *) system_string, system_string_size, wide_string_size, error )
-
-#define wide_string_copy_from_libbfio_system_string( wide_string, wide_string_size, system_string, system_string_size, error ) \
-	libuna_utf32_string_copy_from_utf8( (libuna_utf32_character_t *) wide_string, wide_string_size, (libuna_utf8_character_t *) system_string, system_string_size, error )
-
-/* The wide character string type contains UTF-16
- */
-#elif SIZEOF_WCHAR_T == 2
-
-/* wide string conversion functions
- */
-#define libbfio_system_string_size_from_wide_string( wide_string, wide_string_size, system_string_size, error ) \
-	libuna_utf8_string_size_from_utf16( (libuna_utf16_character_t *) wide_string, wide_string_size, system_string_size, error )
-
-#define libbfio_system_string_copy_from_wide_string( system_string, system_string_size, wide_string, wide_string_size, error ) \
-	libuna_utf8_string_copy_from_utf16( (libuna_utf8_character_t *) system_string, system_string_size, (libuna_utf16_character_t *) wide_string, wide_string_size, error )
-
-#define wide_string_size_from_libbfio_system_string( system_string, system_string_size, wide_string_size, error ) \
-	libuna_utf16_string_size_from_utf8( (libuna_utf8_character_t *) system_string, system_string_size, wide_string_size, error )
-
-#define wide_string_copy_from_libbfio_system_string( wide_string, wide_string_size, system_string, system_string_size, error ) \
-	libuna_utf16_string_copy_from_utf8( (libuna_utf16_character_t *) wide_string, wide_string_size, (libuna_utf8_character_t *) system_string, system_string_size, error )
-
-#else
-#error Unsupported size of wchar_t
 #endif
-
-#endif
-
-#endif
-
-extern int libbfio_system_narrow_string_codepage;
 
 #if defined( _cplusplus )
 }

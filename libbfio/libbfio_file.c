@@ -340,6 +340,10 @@ int libbfio_file_get_name_size(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name_size";
 
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result                                 = 0;
+#endif
+
 	if( handle == NULL )
 	{
 		liberror_error_set(
@@ -391,40 +395,52 @@ int libbfio_file_get_name_size(
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_system_narrow_string_codepage == 0 )
 	{
-		if( utf8_string_size_from_libbfio_system_string(
-		     io_handle->name,
-		     io_handle->name_size,
-		     name_size,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_CONVERSION,
-			 LIBERROR_CONVERSION_ERROR_GENERIC,
-			 "%s: unable to determine name size.",
-			 function );
-
-			return( -1 );
-		}
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_size_from_utf32(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_size_from_utf16(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
 	}
 	else
 	{
-		if( byte_stream_size_from_libbfio_system_string(
-		     io_handle->name,
-		     io_handle->name_size,
-		     libbfio_system_narrow_string_codepage,
-		     name_size,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_CONVERSION,
-			 LIBERROR_CONVERSION_ERROR_GENERIC,
-			 "%s: unable to determine name size.",
-			 function );
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_size_from_utf32(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_size_from_utf16(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to determine name size.",
+		 function );
 
-			return( -1 );
-		}
+		return( -1 );
 	}
 #else
 	*name_size = io_handle->name_size;
@@ -446,6 +462,10 @@ int libbfio_file_get_name(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name";
 	size_t narrow_name_size                    = 0;
+
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result                                 = 0;
+#endif
 
 	if( handle == NULL )
 	{
@@ -496,11 +516,45 @@ int libbfio_file_get_name(
 		return( -1 );
 	}
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( narrow_string_size_from_libbfio_system_string(
-	     io_handle->name,
-	     io_handle->name_size,
-	     &narrow_name_size,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_size_from_utf32(
+		          io_handle->name,
+		          io_handle->name_size,
+		          &narrow_name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_size_from_utf16(
+		          io_handle->name,
+		          io_handle->name_size,
+		          &narrow_name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_size_from_utf32(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          &narrow_name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_size_from_utf16(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          &narrow_name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -526,12 +580,49 @@ int libbfio_file_get_name(
 		return( -1 );
 	}
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( narrow_string_copy_from_libbfio_system_string(
-	     name,
-	     name_size,
-	     io_handle->name,
-	     io_handle->name_size,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_copy_from_utf32(
+		          name,
+		          name_size,
+		          io_handle->name,
+		          io_handle->name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_copy_from_utf16(
+		          name,
+		          name_size,
+		          io_handle->name,
+		          io_handle->name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_copy_from_utf32(
+		          name,
+		          name_size,
+		          libbfio_system_narrow_string_codepage,
+		          io_handle->name,
+		          io_handle->name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_copy_from_utf16(
+		          name,
+		          name_size,
+		          libbfio_system_narrow_string_codepage,
+		          io_handle->name,
+		          io_handle->name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -574,6 +665,10 @@ int libbfio_file_set_name(
 	libbfio_internal_handle_t *internal_handle = NULL;
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_set_name";
+
+#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result                                 = 0;
+#endif
 
 	if( handle == NULL )
 	{
@@ -659,11 +754,45 @@ int libbfio_file_set_name(
 		 io_handle->name_size = 0;
 	}
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_string_size_from_narrow_string(
-	     name,
-	     name_length + 1,
-	     &( io_handle->name_size ),
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_size_from_utf8(
+		          name,
+		          name_length + 1,
+		          &( io_handle->name_size ),
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_size_from_utf8(
+		          name,
+		          name_length + 1,
+		          &( io_handle->name_size ),
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_size_from_byte_stream(
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          &( io_handle->name_size ),
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_size_from_byte_stream(
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          &( io_handle->name_size ),
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -692,12 +821,49 @@ int libbfio_file_set_name(
 		return( -1 );
 	}
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_string_copy_from_narrow_string(
-	     io_handle->name,
-	     io_handle->name_size,
-	     name,
-	     name_length + 1,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_copy_from_utf8(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_copy_from_utf8(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_copy_from_byte_stream(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_copy_from_byte_stream(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -755,6 +921,10 @@ int libbfio_file_get_name_size_wide(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name_size_wide";
 
+#if !defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result                                 = 0;
+#endif
+
 	if( handle == NULL )
 	{
 		liberror_error_set(
@@ -806,11 +976,45 @@ int libbfio_file_get_name_size_wide(
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	*name_size = io_handle->name_size;
 #else
-	if( wide_string_size_from_libbfio_system_string(
-	     io_handle->name,
-	     io_handle->name_size,
-	     name_size,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_size_from_utf8(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_size_from_utf8(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_size_from_byte_stream(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_size_from_byte_stream(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -839,6 +1043,10 @@ int libbfio_file_get_name_wide(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name_wide";
 	size_t wide_name_size                      = 0;
+
+#if !defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result                                 = 0;
+#endif
 
 	if( handle == NULL )
 	{
@@ -891,11 +1099,45 @@ int libbfio_file_get_name_wide(
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	wide_name_size = io_handle->name_size;
 #else
-	if( wide_string_size_from_libbfio_system_string(
-	     io_handle->name,
-	     io_handle->name_size,
-	     &wide_name_size,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_size_from_utf8(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_size_from_utf8(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_size_from_byte_stream(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_size_from_byte_stream(
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -935,12 +1177,49 @@ int libbfio_file_get_name_wide(
 	}
 	name[ io_handle->name_size - 1 ] = 0;
 #else
-	if( wide_string_copy_from_libbfio_system_string(
-	     name,
-	     name_size,
-	     io_handle->name,
-	     io_handle->name_size,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_copy_from_utf8(
+		          name,
+		          name_size,
+		          io_handle->name,
+		          io_handle->name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_copy_from_utf8(
+		          name,
+		          name_size,
+		          io_handle->name,
+		          io_handle->name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf32_string_copy_from_byte_stream(
+		          name,
+		          name_size,
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf16_string_copy_from_byte_stream(
+		          name,
+		          name_size,
+		          io_handle->name,
+		          io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -967,6 +1246,10 @@ int libbfio_file_set_name_wide(
 	libbfio_internal_handle_t *internal_handle = NULL;
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_set_name_wide";
+
+#if !defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result                                 = 0;
+#endif
 
 	if( handle == NULL )
 	{
@@ -1054,12 +1337,45 @@ int libbfio_file_set_name_wide(
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
 	io_handle->name_size = name_length + 1;
 #else
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_size_from_utf32(
+		          name,
+		          name_length + 1,
+		          &( io_handle->name_size ),
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_size_from_utf16(
+		          name,
+		          name_length + 1,
+		          &( io_handle->name_size ),
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_string_size_from_utf32(
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          &( io_handle->name_size ),
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_string_size_from_utf16(
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          &( io_handle->name_size ),
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
 
-	if( libbfio_system_string_size_from_wide_string(
-	     name,
-	     name_length + 1,
-	     &( io_handle->name_size ),
-	     error ) != 1 )
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -1108,12 +1424,49 @@ int libbfio_file_set_name_wide(
 	}
 	io_handle->name[ name_length ] = 0;
 #else
-	if( libbfio_system_string_copy_from_wide_string(
-	     io_handle->name,
-	     io_handle->name_size,
-	     name,
-	     name_length + 1,
-	     error ) != 1 )
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_copy_from_utf32(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_copy_from_utf16(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_copy_from_utf32(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_copy_from_utf16(
+		          io_handle->name,
+		          io_handle->name_size,
+		          name,
+		          name_length + 1,
+		          libbfio_system_narrow_string_codepage,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,

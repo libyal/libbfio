@@ -49,7 +49,6 @@ const char *libbfio_get_version(
  * Returns 1 if successful or -1 on error
  */
 int libbfio_get_codepage(
-     libbfio_t *file,
      int *codepage,
      liberror_error_t **error )
 {
@@ -76,7 +75,6 @@ int libbfio_get_codepage(
  * Returns 1 if successful or -1 on error
  */
 int libbfio_set_codepage(
-     libbfio_t *file,
      int codepage,
      liberror_error_t **error )
 {
