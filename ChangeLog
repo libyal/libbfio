@@ -6,6 +6,7 @@ File
 * add errno error strings to liberror notifications
 * convert filename for open to UTF-8 or ASCII with codepage
 * convert filename for g_open to UTF-8
+* codepage fix
 
 Memory range
 * add callback function to resize memory range if needed?
@@ -24,6 +25,10 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20100104
+* updated common
+* fix for wide character support
 
 20100102
 * worked on support of extended ASCII string to Unicode string conversion
