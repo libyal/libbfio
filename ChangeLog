@@ -26,6 +26,11 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100106
+* updated liberror, libuna
+* worked on Borland C++ 5 compiler support
+  now supports the free BCC 5.5 version (__BORLANDC__ = 0x0610)
+
 20100104
 * updated common
 * fix for wide character support

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20100104],
+  [20100106],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20100104])
+ [20100106])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -268,12 +268,9 @@ AC_CHECK_FUNCS(
 AC_CHECK_FUNCS(
  [snprintf],
  [],
- [AC_CHECK_FUNCS(
-  [sprintf],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: snprintf and sprintf],
-   [1]) ]) ])
+ [AC_MSG_FAILURE(
+  [Missing function: snprintf],
+  [1]) ])
 
 AC_CHECK_FUNCS(
  [sscanf],
@@ -357,12 +354,9 @@ AC_CHECK_FUNCS(
 AC_CHECK_FUNCS(
  [vsnprintf],
  [],
- [AC_CHECK_FUNCS(
-  [vsprintf],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: vsnprintf and vsprintf],
-   [1]) ]) ])
+ [AC_MSG_FAILURE(
+  [Missing function: vsnprintf],
+  [1]) ])
 
 dnl File input/output functions used in libbfio/libbfio_file.h
 AC_CHECK_FUNCS(

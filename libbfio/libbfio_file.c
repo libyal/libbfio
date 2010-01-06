@@ -2654,7 +2654,7 @@ BOOL SafeSetFilePointerEx(
 	}
 	else
 	{
-#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+#if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
 		distance_to_move_lower_long = distance_to_move_large_integer.QuadPart & 0xffffffffUL;
 		distance_to_move_upper_long = distance_to_move_large_integer.QuadPart >> 32;
 #else
@@ -2676,7 +2676,7 @@ BOOL SafeSetFilePointerEx(
 		}
 		else
 		{
-#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+#if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
 			new_file_pointer_large_integer->QuadPart   = distance_to_move_upper_long;
 			new_file_pointer_large_integer->QuadPart <<= 32;
 			new_file_pointer_large_integer->QuadPart  += distance_to_move_lower_long;
@@ -2804,7 +2804,7 @@ off64_t libbfio_file_seek_offset(
 	{
 		move_method = FILE_END;
 	}
-#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+#if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
 	large_integer_offset.QuadPart = (LONGLONG) offset;
 #else
 	large_integer_offset.LowPart  = (DWORD) ( 0x0ffffffffUL & offset );
@@ -2836,7 +2836,7 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
-#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+#if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
 	offset = (off64_t) large_integer_offset.QuadPart;
 #else
 	offset = ( (off64_t) large_integer_offset.HighPart << 32 ) + large_integer_offset.LowPart;
@@ -3362,7 +3362,7 @@ BOOL SafeGetFileSizeEx(
 		}
 		else
 		{
-#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+#if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
 			file_size_large_integer->QuadPart   = file_size_upper_dword;
 			file_size_large_integer->QuadPart <<= 32;
 			file_size_large_integer->QuadPart  += file_size_lower_dword;
@@ -3477,7 +3477,7 @@ int libbfio_file_get_size(
 
 		return( -1 );
 	}
-#if defined( __BORLANDC__ ) && __BORLANDC__ < 0x0560
+#if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
 	*size = (size64_t) large_integer_size.QuadPart;
 #else
 	*size = ( (size64_t) large_integer_size.HighPart << 32 ) + large_integer_size.LowPart;
