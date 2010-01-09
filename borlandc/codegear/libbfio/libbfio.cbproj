@@ -41,83 +41,59 @@
 		<ItemGroup>
 			<LibFiles Include="..\Release\liberror.lib">
 				<IgnorePath>true</IgnorePath>
-				<BuildOrder>0</BuildOrder>
 			</LibFiles>
 			<CppCompile Include="..\..\..\libbfio\libbfio.c">
-				<BuildOrder>1</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_definitions.h">
-				<BuildOrder>2</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_error.c">
-				<BuildOrder>3</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_error.h">
-				<BuildOrder>4</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_error_string.c">
-				<BuildOrder>5</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_error_string.h">
-				<BuildOrder>6</BuildOrder>
 			</None>
 			<None Include="..\..\..\libbfio\libbfio_extern.h">
-				<BuildOrder>7</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_file.c">
-				<BuildOrder>8</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_file.h">
-				<BuildOrder>9</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_handle.c">
-				<BuildOrder>10</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_handle.h">
-				<BuildOrder>11</BuildOrder>
 			</None>
 			<None Include="..\..\..\libbfio\libbfio_libuna.h">
-				<BuildOrder>12</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_list_type.c">
-				<BuildOrder>13</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_list_type.h">
-				<BuildOrder>14</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_memory_range.c">
-				<BuildOrder>15</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_memory_range.h">
-				<BuildOrder>16</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_offset_list.c">
-				<BuildOrder>17</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_offset_list.h">
-				<BuildOrder>18</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_pool.c">
-				<BuildOrder>19</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_pool.h">
-				<BuildOrder>20</BuildOrder>
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_support.c">
-				<BuildOrder>21</BuildOrder>
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_support.h">
-				<BuildOrder>22</BuildOrder>
 			</None>
+			<CppCompile Include="..\..\..\libbfio\libbfio_system_string.c">
+			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_system_string.h">
-				<BuildOrder>23</BuildOrder>
 			</None>
 			<None Include="..\..\..\libbfio\libbfio_types.h">
-				<BuildOrder>24</BuildOrder>
 			</None>
 			<LibFiles Include="..\Release\libuna.lib">
 				<IgnorePath>true</IgnorePath>
-				<BuildOrder>25</BuildOrder>
 			</LibFiles>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
