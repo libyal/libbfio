@@ -26,6 +26,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100117
+* small refactoring in read offsets functions
+
 20100106
 * updated liberror, libuna
 * worked on Borland C++ 5 compiler support

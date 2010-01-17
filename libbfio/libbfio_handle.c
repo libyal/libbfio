@@ -28,6 +28,7 @@
 
 #include "libbfio_definitions.h"
 #include "libbfio_handle.h"
+#include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 
 /* Initializes the handle
@@ -1590,30 +1591,20 @@ int libbfio_handle_get_amount_of_offsets_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( internal_handle->offsets_read == NULL )
+	if( libbfio_list_get_amount_of_elements(
+	     internal_handle->offsets_read,
+	     amount_of_read_offsets,
+	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing offsets read table.",
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve amount of offsets read.",
 		 function );
 
 		return( -1 );
 	}
-	if( amount_of_read_offsets == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid amount of read offsets.",
-		 function );
-
-		return( -1 );
-	}
-	*amount_of_read_offsets = internal_handle->offsets_read->amount_of_elements;
-
 	return( 1 );
 }
 
@@ -1643,17 +1634,6 @@ int libbfio_handle_get_offset_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( internal_handle->offsets_read == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing offsets read table.",
-		 function );
-
-		return( -1 );
-	}
 	if( libbfio_offset_list_get_offset(
 	     internal_handle->offsets_read,
 	     index,
