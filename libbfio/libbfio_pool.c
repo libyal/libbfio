@@ -1997,3 +1997,85 @@ int libbfio_pool_get_amount_of_handles(
 	return( 1 );
 }
 
+/* Retrieves the maximum amount of open handles in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_get_maximum_amount_of_open_handles(
+     libbfio_pool_t *pool,
+     int *maximum_amount_of_open_handles,
+     liberror_error_t **error )
+{
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_get_maximum_amount_of_open_handles";
+
+	if( pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
+	if( maximum_amount_of_open_handles == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid maximum amount of open handles.",
+		 function );
+
+		return( -1 );
+	}
+	*maximum_amount_of_open_handles = internal_pool->maximum_amount_of_open_handles;
+
+	return( 1 );
+}
+
+/* Sets the maximum amount of open handles in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_set_maximum_amount_of_open_handles(
+     libbfio_pool_t *pool,
+     int maximum_amount_of_open_handles,
+     liberror_error_t **error )
+{
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_set_maximum_amount_of_open_handles";
+
+	if( pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
+	if( maximum_amount_of_open_handles == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid maximum amount of open handles.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool->maximum_amount_of_open_handles = maximum_amount_of_open_handles;
+
+	/* TODO close handles if current amount exceeds maximum amount */
+
+	return( 1 );
+}
+

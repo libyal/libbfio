@@ -177,6 +177,16 @@ LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
                     int *amount_of_handles,
                     liberror_error_t **error );
 
+LIBBFIO_EXTERN int libbfio_pool_get_maximum_amount_of_open_handles(
+                    libbfio_pool_t *pool,
+                    int *maximum_amount_of_open_handles,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_pool_set_maximum_amount_of_open_handles(
+                    libbfio_pool_t *pool,
+                    int maximum_amount_of_open_handles,
+                    liberror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

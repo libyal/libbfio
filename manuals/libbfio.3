@@ -1,4 +1,4 @@
-.Dd January 1, 2010
+.Dd January 18, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -128,6 +128,10 @@ Pool functions
 .Fn libbfio_pool_get_offset "libbfio_pool_t *pool, int entry, off64_t *offset, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_pool_get_amount_of_handles "libbfio_pool_t *pool, int *amount_of_handles, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_get_maximum_amount_of_open_handles "libbfio_pool_t *pool, int *maximum_amount_of_open_handles, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_pool_set_maximum_amount_of_open_handles "libbfio_pool_t *pool, int maximum_amount_of_open_handles, libbfio_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libbfio_get_version
