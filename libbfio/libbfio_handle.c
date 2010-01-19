@@ -1056,101 +1056,99 @@ off64_t libbfio_handle_seek_offset(
 
 		return( -1 );
 	}
-	if( internal_handle->offset != offset )
+	if( internal_handle->open_on_demand != 0 )
 	{
-		if( internal_handle->open_on_demand != 0 )
+		if( internal_handle->is_open == NULL )
 		{
-			if( internal_handle->is_open == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid handle - missing is open function.",
-				 function );
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid handle - missing is open function.",
+			 function );
 
-				return( -1 );
-			}
-			if( internal_handle->open == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid handle - missing open function.",
-				 function );
+			return( -1 );
+		}
+		if( internal_handle->open == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid handle - missing open function.",
+			 function );
 
-				return( -1 );
-			}
-			is_open = internal_handle->is_open(
-				   internal_handle->io_handle,
-				   error );
+			return( -1 );
+		}
+		is_open = internal_handle->is_open(
+			   internal_handle->io_handle,
+			   error );
 
-			if( is_open == -1 )
+		if( is_open == -1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to determine if handle is open.",
+			 function );
+
+			return( -1 );
+		}
+		else if( is_open == 0 )
+		{
+			if( internal_handle->open(
+			     internal_handle->io_handle,
+			     internal_handle->flags,
+			     error ) != 1 )
 			{
 				liberror_error_set(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_OPEN_FAILED,
-				 "%s: unable to determine if handle is open.",
+				 "%s: unable to open handle on demand.",
 				 function );
 
 				return( -1 );
 			}
-			else if( is_open == 0 )
+			if( internal_handle->seek_offset(
+			     internal_handle->io_handle,
+			     internal_handle->offset,
+			     SEEK_SET,
+			     error ) == -1 )
 			{
-				if( internal_handle->open(
-				     internal_handle->io_handle,
-				     internal_handle->flags,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open handle on demand.",
-					 function );
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_IO,
+				 LIBERROR_IO_ERROR_SEEK_FAILED,
+				 "%s: unable to find current offset: %" PRIi64 " in handle.",
+				 function,
+				 internal_handle->offset );
 
-					return( -1 );
-				}
-				if( internal_handle->seek_offset(
-				     internal_handle->io_handle,
-				     internal_handle->offset,
-				     SEEK_SET,
-				     error ) == -1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_SEEK_FAILED,
-					 "%s: unable to find current offset: %" PRIi64 " in handle.",
-					 function,
-					 internal_handle->offset );
-
-					return( -1 );
-				}
+				return( -1 );
 			}
 		}
-		offset = internal_handle->seek_offset(
-			  internal_handle->io_handle,
-			  offset,
-			  whence,
-			  error );
-
-		if( offset == -1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to find offset: %" PRIi64 " in handle.",
-			 function,
-			 offset );
-
-			return( -1 );
-		}
-		internal_handle->offset = offset;
 	}
+	offset = internal_handle->seek_offset(
+		  internal_handle->io_handle,
+		  offset,
+		  whence,
+		  error );
+
+	if( offset == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to find offset: %" PRIi64 " in handle.",
+		 function,
+		 offset );
+
+		return( -1 );
+	}
+	internal_handle->offset = offset;
+
 	return( offset );
 }
 

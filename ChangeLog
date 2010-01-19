@@ -1,7 +1,5 @@
 Pool
-* implement pool throttling on add_handle and set_handle
-  - move elements to front of (last used) list on read/write/seek
-* close handles if current amount exceeds maximum amount
+* allow re-set of pool entries
 
 File
 * add errno error strings to liberror notifications
@@ -26,6 +24,13 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20100119
+* worked on pool throttling
+* handles are now closed if current amount exceeds maximum amount after set
+* handles are now moved to front of (last used) list on read/write/seek
+* fixed error in pool throttling
+* fixed error in seek offset - offset check not valid for all whences
 
 20100118
 * worked on means to set pools open handle limit after initialization
