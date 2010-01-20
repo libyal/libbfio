@@ -1,11 +1,9 @@
 Pool
-* allow re-set of pool entries
+* allow re-set of pool entries?
 
 File
 * add errno error strings to liberror notifications
-* convert filename for open to UTF-8 or ASCII with codepage
-* convert filename for g_open to UTF-8
-* codepage fix
+* convert filename for g_open to UTF-8 ? or use codepage setting ?
 
 Memory range
 * add callback function to resize memory range if needed?
@@ -15,6 +13,7 @@ API
 
 Test
 * pool throttling
+* wide to narrow (ASCII with codepage) conversion
 
 Windows
 * add WIN32_LEAN_AND_MEAN to config_borlandc.h and config_msc.h
