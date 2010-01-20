@@ -98,11 +98,6 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
      libbfio_handle_t *handle,
      liberror_error_t **error );
 
-int libbfio_pool_remove_handle_from_last_used_list(
-     libbfio_internal_pool_t *internal_pool,
-     libbfio_list_element_t *last_used_list_element,
-     liberror_error_t **error );
-
 LIBBFIO_EXTERN int libbfio_pool_get_handle(
                     libbfio_pool_t *pool,
                     int entry,

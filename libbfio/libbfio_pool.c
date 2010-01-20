@@ -522,16 +522,27 @@ int libbfio_pool_add_handle_to_last_used_list(
 	{
 		last_used_list_element = internal_pool->last_used_list->last;
 
-		if( libbfio_pool_remove_handle_from_last_used_list(
-		     internal_pool,
+		if( libbfio_list_remove_element(
+		     internal_pool->last_used_list,
 		     last_used_list_element,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to remove a handle from the last used list.",
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
+			 "%s: unable to remove last used list element from list.",
+			 function );
+
+			return( -1 );
+		}
+		if( last_used_list_element == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing last used list element.",
 			 function );
 
 			return( -1 );
@@ -667,15 +678,15 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 	}
 	if( last_used_list_element != internal_pool->last_used_list->first )
 	{
-		if( libbfio_pool_remove_handle_from_last_used_list(
-		     internal_pool,
+		if( libbfio_list_remove_element(
+		     internal_pool->last_used_list,
 		     last_used_list_element,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
 			 "%s: unable to remove last used list element from list.",
 			 function );
 
@@ -702,85 +713,6 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 
 			return( -1 );
 		}
-	}
-	return( 1 );
-}
-
-/* Removes the handle from the last used list
- * Returns 1 if successful or -1 on error
- */
-int libbfio_pool_remove_handle_from_last_used_list(
-     libbfio_internal_pool_t *internal_pool,
-     libbfio_list_element_t *last_used_list_element,
-     liberror_error_t **error )
-{
-	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_pool_remove_handle_from_last_used_list";
-
-	if( internal_pool == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid pool.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_pool->last_used_list == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid pool - missing last used list.",
-		 function );
-
-		return( -1 );
-	}
-	if( last_used_list_element == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid last used list element.",
-		 function );
-
-		return( -1 );
-	}
-	internal_handle = (libbfio_internal_handle_t *) last_used_list_element->value;
-
-	if( internal_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	internal_handle->pool_last_used_list_element = NULL;
-
-	if( libbfio_list_remove_element(
-	     internal_pool->last_used_list,
-	     last_used_list_element,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
-		 "%s: unable to remove last used list element from list.",
-		 function );
-
-		memory_free(
-		 last_used_list_element );
-
-		return( -1 );
 	}
 	return( 1 );
 }
@@ -1354,20 +1286,47 @@ int libbfio_pool_close(
 	{
 		last_used_list_element = ( (libbfio_internal_handle_t *) internal_pool->handles[ entry ] )->pool_last_used_list_element;
 
-		if( libbfio_pool_remove_handle_from_last_used_list(
-		     internal_pool,
+		if( libbfio_list_remove_element(
+		     internal_pool->last_used_list,
 		     last_used_list_element,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to remove a handle from the last used list.",
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
+			 "%s: unable to remove last used list element from list.",
+			 function );
+
+			memory_free(
+			 last_used_list_element );
+
+			return( -1 );
+		}
+		if( last_used_list_element == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing last used list element.",
 			 function );
 
 			return( -1 );
 		}
+		if( last_used_list_element->value == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing last used list element value.",
+			 function );
+
+			return( -1 );
+		}
+		( (libbfio_internal_handle_t *) ( last_used_list_element->value ) )->pool_last_used_list_element = NULL;
+
 		if( libbfio_list_element_free(
 		     &last_used_list_element,
 		     NULL,
@@ -2242,16 +2201,41 @@ int libbfio_pool_set_maximum_amount_of_open_handles(
 	{
 		last_used_list_element = internal_pool->last_used_list->last;
 
-		if( libbfio_pool_remove_handle_from_last_used_list(
-		     internal_pool,
+		if( libbfio_list_remove_element(
+		     internal_pool->last_used_list,
 		     last_used_list_element,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to remove a handle from the last used list.",
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
+			 "%s: unable to remove last used list element from list.",
+			 function );
+
+			memory_free(
+			 last_used_list_element );
+
+			return( -1 );
+		}
+		if( last_used_list_element == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing last used list element.",
+			 function );
+
+			return( -1 );
+		}
+		if( last_used_list_element->value == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing last used list element value.",
 			 function );
 
 			return( -1 );
@@ -2272,11 +2256,13 @@ int libbfio_pool_set_maximum_amount_of_open_handles(
 
 			return( -1 );
 		}
+		internal_pool->amount_of_open_handles--;
+
+		( (libbfio_internal_handle_t *) ( last_used_list_element->value ) )->pool_last_used_list_element = NULL;
+
 		/* Make sure the truncate flag is removed from the handle
 		 */
 		( (libbfio_internal_handle_t *) ( last_used_list_element->value ) )->flags &= ~LIBBFIO_FLAG_TRUNCATE;
-
-		internal_pool->amount_of_open_handles--;
 
 		if( libbfio_list_element_free(
 		     &last_used_list_element,

@@ -112,16 +112,45 @@ LIBBFIO_EXTERN int libbfio_error_backtrace_sprint(
 LIBBFIO_EXTERN int libbfio_handle_initialize(
                     libbfio_handle_t **handle,
                     intptr_t *io_handle,
-                    int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ),
-                    int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, libbfio_error_t **error ),
-                    int (*open)( intptr_t *io_handle, int flags, libbfio_error_t **error ),
-                    int (*close)( intptr_t *io_handle, libbfio_error_t **error ),
-                    ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ),
-                    ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ),
-                    off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ),
-                    int (*exists)( intptr_t *io_handle, libbfio_error_t **error ),
-                    int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ),
-                    int (*get_size)( intptr_t *io_handle, size64_t *size, libbfio_error_t **error ),
+                    int (*free_io_handle)(
+                           intptr_t *io_handle,
+                           libbfio_error_t **error ),
+                    int (*clone_io_handle)(
+                           intptr_t **destination_io_handle,
+                           intptr_t *source_io_handle,
+                           libbfio_error_t **error ),
+                    int (*open)(
+                           intptr_t *io_handle,
+                           int flags,
+                           libbfio_error_t **error ),
+                    int (*close)(
+                           intptr_t *io_handle,
+                           libbfio_error_t **error ),
+                    ssize_t (*read)(
+                               intptr_t *io_handle,
+                               uint8_t *buffer,
+                               size_t size,
+                               libbfio_error_t **error ),
+                    ssize_t (*write)(
+                               intptr_t *io_handle,
+                               uint8_t *buffer,
+                               size_t size,
+                               libbfio_error_t **error ),
+                    off64_t (*seek_offset)(
+                               intptr_t *io_handle,
+                               off64_t offset,
+                               int whence,
+                               libbfio_error_t **error ),
+                    int (*exists)(
+                           intptr_t *io_handle,
+                           libbfio_error_t **error ),
+                    int (*is_open)(
+                           intptr_t *io_handle,
+                           libbfio_error_t **error ),
+                    int (*get_size)(
+                           intptr_t *io_handle,
+                           size64_t *size,
+                           libbfio_error_t **error ),
                     libbfio_error_t **error );
 
 /* Frees the handle
