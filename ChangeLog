@@ -4,6 +4,9 @@ Pool
 File
 * add errno error strings to liberror notifications
 * convert filename for g_open to UTF-8 ? or use codepage setting ?
+* use long windows filenames \\?\ notation
+  - notation does not seem to allow relative paths \\?\..\
+* check if codepage before gopen is UTF8 ?
 
 Memory range
 * add callback function to resize memory range if needed?
@@ -12,7 +15,6 @@ API
 * what about disk full on write errno = ENOSPC
 
 Test
-* pool throttling
 * wide to narrow (ASCII with codepage) conversion
 
 Windows
@@ -23,6 +25,14 @@ Deployment:
 * check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20100123
+* worked on TODO
+* added export to codepage functions in public header
+* added iso 8859 codepage support
+
+20100122
+* fix in public header removed abbundant libbfio_t
 
 20100120
 * small changes

@@ -1892,24 +1892,45 @@ int libbfio_file_open(
 #endif
 #else
 #if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	/* TODO codepage fix */
-	/* Assumed here that the narrow open function can handle UTF-8
-	 */
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
 #if SIZEOF_WCHAR_T == 4
-	if( libuna_utf8_string_size_from_utf32(
-	     (libuna_utf32_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     &narrow_filename_size,
-	     error ) != 1 )
+		result = libuna_utf8_string_size_from_utf32(
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          &narrow_filename_size,
+		          error );
 #elif SIZEOF_WCHAR_T == 2
-	if( libuna_utf8_string_size_from_utf16(
-	     (libuna_utf16_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     &narrow_filename_size,
-	     error ) != 2 )
+		result = libuna_utf8_string_size_from_utf16(
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          &narrow_filename_size,
+		          error );
 #else
 #error Unsupported size of wchar_t
-#endif
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_size_from_utf32(
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          &narrow_filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_size_from_utf16(
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          &narrow_filename_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -1934,23 +1955,49 @@ int libbfio_file_open(
 
 		return( -1 );
 	}
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
 #if SIZEOF_WCHAR_T == 4
-	if( libuna_utf8_string_copy_from_utf32(
-	     (libuna_utf8_character_t *) narrow_filename,
-	     narrow_filename_size,
-	     (libuna_utf32_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     error ) != 1 )
+		result = libuna_utf8_string_copy_from_utf32(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
 #elif SIZEOF_WCHAR_T == 2
-	if( libuna_utf8_string_copy_from_utf16(
-	     (libuna_utf8_character_t *) narrow_filename,
-	     narrow_filename_size,
-	     (libuna_utf16_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     error ) != 1 )
+		result = libuna_utf8_string_copy_from_utf16(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
 #else
 #error Unsupported size of wchar_t
-#endif
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_copy_from_utf32(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libbfio_system_narrow_string_codepage,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_copy_from_utf16(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libbfio_system_narrow_string_codepage,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -1990,7 +2037,7 @@ int libbfio_file_open(
 					   file_io_flags,
 					   0644 );
 #endif /* HAVE_GLIB_H */
-#endif
+#endif /* defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	if( file_io_handle->file_descriptor == -1 )
 	{
@@ -3099,24 +3146,48 @@ int libbfio_file_exists(
 	                                   _O_RDONLY | _O_BINARY,
 	                                   0 );
 #else
-	/* TODO codepage fix */
-	/* Assumed here that the narrow open function can handle UTF-8
+	/* Convert the filename to a narrow string
+	 * if the platform has no wide character open function
 	 */
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
 #if SIZEOF_WCHAR_T == 4
-	if( libuna_utf8_string_size_from_utf32(
-	     (libuna_utf32_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     &narrow_filename_size,
-	     error ) != 1 )
+		result = libuna_utf8_string_size_from_utf32(
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          &narrow_filename_size,
+		          error );
 #elif SIZEOF_WCHAR_T == 2
-	if( libuna_utf8_string_size_from_utf16(
-	     (libuna_utf16_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     &narrow_filename_size,
-	     error ) != 2 )
+		result = libuna_utf8_string_size_from_utf16(
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          &narrow_filename_size,
+		          error );
 #else
 #error Unsupported size of wchar_t
-#endif
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_size_from_utf32(
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          &narrow_filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_size_from_utf16(
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          libbfio_system_narrow_string_codepage,
+		          &narrow_filename_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -3141,23 +3212,49 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
+	if( libbfio_system_narrow_string_codepage == 0 )
+	{
 #if SIZEOF_WCHAR_T == 4
-	if( libuna_utf8_string_copy_from_utf32(
-	     (libuna_utf8_character_t *) narrow_filename,
-	     narrow_filename_size,
-	     (libuna_utf32_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     error ) != 1 )
+		result = libuna_utf8_string_copy_from_utf32(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
 #elif SIZEOF_WCHAR_T == 2
-	if( libuna_utf8_string_copy_from_utf16(
-	     (libuna_utf8_character_t *) narrow_filename,
-	     narrow_filename_size,
-	     (libuna_utf16_character_t *) file_io_handle->name,
-	     file_io_handle->name_size,
-	     error ) != 1 )
+		result = libuna_utf8_string_copy_from_utf16(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
 #else
 #error Unsupported size of wchar_t
-#endif
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_copy_from_utf32(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libbfio_system_narrow_string_codepage,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_copy_from_utf16(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libbfio_system_narrow_string_codepage,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -3180,6 +3277,7 @@ int libbfio_file_exists(
 	 narrow_filename );
 #endif
 #else
+/* The system string is a narrow character string */
 #if defined( _MSC_VER )
 	if( _sopen_s(
 	     &( file_io_handle->file_descriptor ),
