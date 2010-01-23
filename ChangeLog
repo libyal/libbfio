@@ -30,6 +30,7 @@ Deployment:
 * worked on TODO
 * added export to codepage functions in public header
 * added iso 8859 codepage support
+* updated features
 
 20100122
 * fix in public header removed abbundant libbfio_t
