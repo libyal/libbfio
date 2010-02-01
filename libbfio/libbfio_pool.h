@@ -98,6 +98,11 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
      libbfio_handle_t *handle,
      liberror_error_t **error );
 
+LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
+                    libbfio_pool_t *pool,
+                    int *amount_of_handles,
+                    liberror_error_t **error );
+
 LIBBFIO_EXTERN int libbfio_pool_get_handle(
                     libbfio_pool_t *pool,
                     int entry,
@@ -170,11 +175,6 @@ LIBBFIO_EXTERN int libbfio_pool_get_offset(
                     libbfio_pool_t *pool,
                     int entry,
                     off64_t *offset,
-                    liberror_error_t **error );
-
-LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
-                    libbfio_pool_t *pool,
-                    int *amount_of_handles,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_pool_get_maximum_amount_of_open_handles(

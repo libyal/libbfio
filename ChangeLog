@@ -26,6 +26,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100210
+* added support functions for initializing a pool of file handles using filenames
+
 20100123
 * worked on TODO
 * added export to codepage functions in public header

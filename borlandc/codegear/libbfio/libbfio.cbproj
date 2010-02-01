@@ -60,6 +60,10 @@
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_file.h">
 			</None>
+			<CppCompile Include="..\..\..\libbfio\libbfio_file_pool.c">
+			</CppCompile>
+			<None Include="..\..\..\libbfio\libbfio_file_pool.h">
+			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_handle.c">
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_handle.h">

@@ -10,6 +10,7 @@ libbfio_la_SOURCES = \
 	libbfio_error_string.c libbfio_error_string.h \
 	libbfio_extern.h \
 	libbfio_file.c libbfio_file.h \
+	libbfio_file_pool.c libbfio_file_pool.h \
 	libbfio_handle.c libbfio_handle.h \
 	libbfio_libuna.h \
 	libbfio_list_type.c libbfio_list_type.h \

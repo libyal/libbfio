@@ -427,6 +427,14 @@ LIBBFIO_EXTERN int libbfio_pool_resize(
                     int amount_of_handles,
                     libbfio_error_t **error );
 
+/* Retrieves the amount of handles in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
+                    libbfio_pool_t *pool,
+                    int *amount_of_handles,
+                    libbfio_error_t **error );
+
 /* Retrieves a certain handle from the pool
  * Returns 1 if successful or -1 on error
  */
@@ -538,14 +546,6 @@ LIBBFIO_EXTERN int libbfio_pool_get_offset(
                     off64_t *offset,
                     libbfio_error_t **error );
 
-/* Retrieves the amount of handles in the pool
- * Returns 1 if successful or -1 on error
- */
-LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
-                    libbfio_pool_t *pool,
-                    int *amount_of_handles,
-                    libbfio_error_t **error );
-
 /* Retrieves the maximum amount of open handles in the pool
  * Returns 1 if successful or -1 on error
  */
@@ -561,6 +561,33 @@ LIBBFIO_EXTERN int libbfio_pool_set_maximum_amount_of_open_handles(
                     libbfio_pool_t *pool,
                     int maximum_amount_of_open_handles,
                     libbfio_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * File pool functions
+ * ------------------------------------------------------------------------- */
+
+/* Adds file handles to the pool for the corresponding filenames
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names(
+                    libbfio_pool_t *pool,
+                    char * const names[],
+                    int amount_of_names,
+                    int flags,
+                    libbfio_error_t **error );
+
+#if defined( LIBBFIO_WIDE_CHARACTER_TYPE )
+
+/* Adds file handles to the pool for the corresponding filenames
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_file_pool_add_handle_for_names_wide(
+                    libbfio_pool_t *pool,
+                    wchar_t * const names[],
+                    int amount_of_names,
+                    int flags,
+                    libbfio_error_t **error );
+#endif
 
 #if defined( __cplusplus )
 }

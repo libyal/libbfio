@@ -717,6 +717,46 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 	return( 1 );
 }
 
+/* Retrieves the amount of handles in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_get_amount_of_handles(
+     libbfio_pool_t *pool,
+     int *amount_of_handles,
+     liberror_error_t **error )
+{
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_get_amount_of_handles";
+
+	if( pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
+	if( amount_of_handles == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid amount of handles.",
+		 function );
+
+		return( -1 );
+	}
+	*amount_of_handles = internal_pool->amount_of_handles;
+
+	return( 1 );
+}
+
 /* Retrieves a certain handle from the pool
  * Returns 1 if successful or -1 on error
  */
@@ -2086,46 +2126,6 @@ int libbfio_pool_get_offset(
 
 		return( -1 );
 	}
-	return( 1 );
-}
-
-/* Retrieves the amount of handles in the pool
- * Returns 1 if successful or -1 on error
- */
-int libbfio_pool_get_amount_of_handles(
-     libbfio_pool_t *pool,
-     int *amount_of_handles,
-     liberror_error_t **error )
-{
-	libbfio_internal_pool_t *internal_pool = NULL;
-	static char *function                  = "libbfio_pool_get_amount_of_handles";
-
-	if( pool == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid pool.",
-		 function );
-
-		return( -1 );
-	}
-	internal_pool = (libbfio_internal_pool_t *) pool;
-
-	if( amount_of_handles == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid amount of handles.",
-		 function );
-
-		return( -1 );
-	}
-	*amount_of_handles = internal_pool->amount_of_handles;
-
 	return( 1 );
 }
 
