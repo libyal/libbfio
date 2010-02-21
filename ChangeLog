@@ -26,6 +26,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100221
+* updated common, liberror, libuna
+* updated contact e-mail address
+
 20100210
 * added support functions for initializing a pool of file handles using filenames
 

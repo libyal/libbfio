@@ -1,6 +1,7 @@
 /*
  * Library to support (abstracted) basic file IO
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *

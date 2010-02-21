@@ -2,15 +2,15 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20100201],
-  [forensics@hoffmannbv.nl])
+  [20100221],
+  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
  [include/libbfio.h.in])
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20100201])
+ [20100221])
 
 AC_CONFIG_MACRO_DIR([m4])
 

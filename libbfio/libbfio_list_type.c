@@ -1,6 +1,7 @@
 /*
  * List type functions
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (C) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -93,7 +94,9 @@ int libbfio_list_element_initialize(
  */
 int libbfio_list_element_free(
      libbfio_list_element_t **list_element,
-     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
+     int (*value_free_function)(
+            intptr_t *value,
+            liberror_error_t **error ),
      liberror_error_t **error )
 {
 	static char *function = "libbfio_list_element_free";
@@ -211,7 +214,9 @@ int libbfio_list_initialize(
  */
 int libbfio_list_free(
      libbfio_list_t **list,
-     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
+     int (*value_free_function)(
+            intptr_t *value,
+            liberror_error_t **error ),
      liberror_error_t **error )
 {
 	static char *function = "libbfio_list_free";
@@ -258,7 +263,9 @@ int libbfio_list_free(
  */
 int libbfio_list_empty(
      libbfio_list_t *list,
-     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
+     int (*value_free_function)(
+            intptr_t *value,
+            liberror_error_t **error ),
      liberror_error_t **error )
 {
 	libbfio_list_element_t *list_element = NULL;
@@ -341,7 +348,10 @@ int libbfio_list_empty(
 int libbfio_list_clone(
      libbfio_list_t **destination,
      libbfio_list_t *source,
-     int (*value_clone_function)( intptr_t **destination, intptr_t *source, liberror_error_t **error ),
+     int (*value_clone_function)(
+            intptr_t **destination,
+            intptr_t *source,
+            liberror_error_t **error ),
      liberror_error_t **error )
 {
 	libbfio_list_element_t *source_list_element = NULL;
@@ -918,7 +928,10 @@ int libbfio_list_append_value(
 int libbfio_list_insert_element(
      libbfio_list_t *list,
      libbfio_list_element_t *element,
-     int (*value_compare_function)( intptr_t *first_value, intptr_t *second_value, liberror_error_t **error ),
+     int (*value_compare_function)(
+            intptr_t *first_value,
+            intptr_t *second_value,
+            liberror_error_t **error ),
      liberror_error_t **error )
 {
 	libbfio_list_element_t *list_element = NULL;
@@ -1100,7 +1113,10 @@ int libbfio_list_insert_element(
 int libbfio_list_insert_value(
      libbfio_list_t *list,
      intptr_t *value,
-     int (*value_compare_function)( intptr_t *first_value, intptr_t *second_value, liberror_error_t **error ),
+     int (*value_compare_function)(
+            intptr_t *first_value,
+            intptr_t *second_value,
+            liberror_error_t **error ),
      liberror_error_t **error )
 {
 	libbfio_list_element_t *element = NULL;
