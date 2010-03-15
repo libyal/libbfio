@@ -158,7 +158,7 @@ int libbfio_file_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create handle.",
+			 "%s: unable to create file IO handle.",
 			 function );
 
 			return( -1 );
@@ -185,8 +185,9 @@ int libbfio_file_initialize(
 			 "%s: unable to create handle.",
 			 function );
 
-			memory_free(
-			 io_handle );
+			libbfio_file_io_handle_free(
+			 (intptr_t *) io_handle,
+			 NULL );
 
 			return( -1 );
 		}

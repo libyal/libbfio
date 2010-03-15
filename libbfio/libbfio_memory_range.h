@@ -53,7 +53,11 @@ struct libbfio_memory_range_io_handle
 	 */
 	size_t range_offset;
 
-	/* Value to indicate the current access flags
+	/* Value to indicate the memory range is open
+	 */
+	uint8_t is_open;
+
+	/* The current access flags
 	 */
 	int access_flags;
 };

@@ -382,7 +382,7 @@ LIBBFIO_EXTERN int libbfio_memory_range_initialize(
                     libbfio_handle_t **handle,
                     libbfio_error_t **error );
 
-/* Retrieves the range the memory range handle
+/* Retrieves the range of the memory range handle
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_memory_range_get(
@@ -391,7 +391,7 @@ LIBBFIO_EXTERN int libbfio_memory_range_get(
                     size_t *size,
                     libbfio_error_t **error );
 
-/* Sets the range the memory range handle
+/* Sets the range of the memory range handle
  * Returns 1 if succesful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_memory_range_set(
