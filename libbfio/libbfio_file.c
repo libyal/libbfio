@@ -329,6 +329,134 @@ int libbfio_file_io_handle_clone(
 	return( 1 );
 }
 
+#if defined( WINAPI )
+
+/* Creates a Windows long filename from a 'short' filename
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_create_windows_long_filename(
+     char *filename,
+     size_t filename_length,
+     char **long_filename,
+     size_t *long_filename_size,
+     liberror_error_t **error )
+{
+	char *current_working_directory         = NULL;
+	static char *function                   = "libbfio_file_create_windows_long_filename";
+	size_t current_working_directory_length = 0;
+	size_t path_index                       = 0;
+	size_t server_name_length               = 0;
+	size_t volume_name_index                = 0;
+	uint8_t filename_contains_device_name   = 0;
+	uint8_t filename_contains_volume_name   = 0;
+
+	if( filename == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid filename.",
+		 function );
+
+		return( -1 );
+	}
+	if( filename_length == 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 "%s: invalid filename length is zero.",
+		 function );
+
+		return( -1 );
+	}
+	if( filename_length >= (size_t) SSIZE_MAX )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid filename length value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	/* Check if the filename starts with a volume letter
+	 */
+	if( ( filename_length > 1 )
+	 && ( filename[ 1 ] == ':' ) )
+	{
+		if( ( ( filename[ 0 ] >= 'A' )
+		   && ( filename[ 0 ] <= 'Z' ) )
+		 || ( ( filename[ 0 ] >= 'a' )
+		   && ( filename[ 0 ] <= 'z' ) ) )
+		{
+			filename_contains_volume_name = 1;
+		}
+	}
+	/* Check for special Windows filenames
+	 */
+	if( ( filename_length > 2 )
+	 && ( filename[ 0 ] == '\\' )
+	 && ( filename[ 1 ] == '\\' ) )
+	{
+		/* Check for a Windows device filename
+		 */
+		if( ( filename_length > 4 )
+		 && ( filename[ 2 ] == '.' )
+		 && ( filename[ 3 ] == '\\' ) )
+		{
+			filename_contains_device_name = 1;
+		}
+		else
+		{
+			/* Determine the element in an UNC path
+			 * \\server\volume\directory\file
+			 */
+			for( volume_name_index = 1;
+			     volume_name_index <= filename_length;
+			     volume_name_index++ )
+			{
+				if( filename[ volume_name_index ] == '\\' )
+				{
+					volume_name_index++;
+
+					break;
+				}
+				server_name_length++;
+			}
+			if( volume_name_index < filename_length )
+			{
+				filename_contains_volume_name = 1;
+			}
+		}
+	}
+	/* TODO determine CWD */
+	current_working_directory = narrow_string_get_current_working_directory();
+
+	if( current_working_directory == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve current working directory.",
+		 function );
+
+		return( -1 );
+	}
+	current_working_directory_length = narrow_string_length(
+	                                    current_working_directory );
+
+	if( filename_contains_volume_name != 0 )
+	{
+	}
+	return( 1 );
+}
+#endif
+
 /* Retrieves the name size of the file handle
  * The name size includes the end of string character
  * Returns 1 if succesful or -1 on error
