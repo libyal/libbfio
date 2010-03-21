@@ -26,6 +26,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100321
+* removed safe filename
+
 20100316
 * worked on Windows long filename support based on patch by Björn Ganster
 

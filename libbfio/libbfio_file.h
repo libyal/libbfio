@@ -83,15 +83,6 @@ int libbfio_file_io_handle_clone(
      intptr_t *source_io_handle,
      liberror_error_t **error );
 
-#if defined( WINAPI )
-int libbfio_file_create_long_filename(
-     char *filename,
-     size_t filename_size,
-     char *long_filename,
-     size_t long_filename_size,
-     liberror_error_t **error );
-#endif
-
 LIBBFIO_EXTERN int libbfio_file_get_name_size(
                     libbfio_handle_t *handle,
                     size_t *name_size,
