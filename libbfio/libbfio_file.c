@@ -23,10 +23,9 @@
 
 #include <common.h>
 #include <memory.h>
-#include <narrow_string.h>
 #include <types.h>
-#include <wide_string.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 #if defined( HAVE_ERRNO_H ) || defined( WINAPI )
@@ -60,7 +59,6 @@
 #include "libbfio_file.h"
 #include "libbfio_handle.h"
 #include "libbfio_libuna.h"
-#include "libbfio_system_string.h"
 #include "libbfio_types.h"
 
 /* Initializes the file IO handle
@@ -282,8 +280,8 @@ int libbfio_file_io_handle_clone(
 
 		return( -1 );
 	}
-	( (libbfio_file_io_handle_t *) *destination_io_handle )->name = (libbfio_system_character_t *) memory_allocate(
-	                                                                                                sizeof( libbfio_system_character_t ) * ( (libbfio_file_io_handle_t *) source_io_handle )->name_size );
+	( (libbfio_file_io_handle_t *) *destination_io_handle )->name = (libcstring_system_character_t *) memory_allocate(
+	                                                                                                   sizeof( libcstring_system_character_t ) * ( (libbfio_file_io_handle_t *) source_io_handle )->name_size );
 
 	if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->name == NULL )
 	{
@@ -302,7 +300,7 @@ int libbfio_file_io_handle_clone(
 
 		return( -1 );
 	}
-	if( libbfio_system_string_copy(
+	if( libcstring_system_string_copy(
 	     ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
 	     ( (libbfio_file_io_handle_t *) source_io_handle )->name,
 	     ( (libbfio_file_io_handle_t *) source_io_handle )->name_size ) == NULL )
@@ -342,7 +340,7 @@ int libbfio_file_get_name_size(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name_size";
 
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	int result                                 = 0;
 #endif
 
@@ -394,8 +392,8 @@ int libbfio_file_get_name_size(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_narrow_string_codepage == 0 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -419,14 +417,14 @@ int libbfio_file_get_name_size(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
 #else
@@ -465,7 +463,7 @@ int libbfio_file_get_name(
 	static char *function                      = "libbfio_file_get_name";
 	size_t narrow_name_size                    = 0;
 
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	int result                                 = 0;
 #endif
 
@@ -517,8 +515,8 @@ int libbfio_file_get_name(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_narrow_string_codepage == 0 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -542,14 +540,14 @@ int libbfio_file_get_name(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &narrow_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &narrow_name_size,
 		          error );
 #else
@@ -581,8 +579,8 @@ int libbfio_file_get_name(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_narrow_string_codepage == 0 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_copy_from_utf32(
@@ -608,7 +606,7 @@ int libbfio_file_get_name(
 		result = libuna_byte_stream_copy_from_utf32(
 		          (uint8_t *) name,
 		          name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf32_character_t *) io_handle->name,
 		          io_handle->name_size,
 		          error );
@@ -616,7 +614,7 @@ int libbfio_file_get_name(
 		result = libuna_byte_stream_copy_from_utf16(
 		          (uint8_t *) name,
 		          name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf16_character_t *) io_handle->name,
 		          io_handle->name_size,
 		          error );
@@ -636,7 +634,7 @@ int libbfio_file_get_name(
 		return( -1 );
 	}
 #else
-	if( libbfio_system_string_copy(
+	if( libcstring_system_string_copy(
 	     name,
 	     io_handle->name,
 	     io_handle->name_size ) == NULL )
@@ -668,7 +666,7 @@ int libbfio_file_set_name(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_set_name";
 
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	int result                                 = 0;
 #endif
 
@@ -743,7 +741,7 @@ int libbfio_file_set_name(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-			 "%s: name already set: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: name already set: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 io_handle->name );
 
@@ -755,8 +753,8 @@ int libbfio_file_set_name(
 		 io_handle->name      = NULL;
 		 io_handle->name_size = 0;
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_narrow_string_codepage == 0 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
@@ -780,14 +778,14 @@ int libbfio_file_set_name(
 		result = libuna_utf32_string_size_from_byte_stream(
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &( io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &( io_handle->name_size ),
 		          error );
 #else
@@ -808,8 +806,8 @@ int libbfio_file_set_name(
 #else
 	io_handle->name_size = name_length + 1;
 #endif
-	io_handle->name = (libbfio_system_character_t *) memory_allocate(
-	                                                  sizeof( libbfio_system_character_t ) * io_handle->name_size );
+	io_handle->name = (libcstring_system_character_t *) memory_allocate(
+	                                                     sizeof( libcstring_system_character_t ) * io_handle->name_size );
 
 	if( io_handle->name == NULL )
 	{
@@ -822,8 +820,8 @@ int libbfio_file_set_name(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_narrow_string_codepage == 0 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_copy_from_utf8(
@@ -851,7 +849,7 @@ int libbfio_file_set_name(
 		          io_handle->name_size,
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_byte_stream(
@@ -859,7 +857,7 @@ int libbfio_file_set_name(
 		          io_handle->name_size,
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -883,7 +881,7 @@ int libbfio_file_set_name(
 		return( -1 );
 	}
 #else
-	if( libbfio_system_string_copy(
+	if( libcstring_system_string_copy(
 	     io_handle->name,
 	     name,
 	     name_length + 1 ) == NULL )
@@ -923,7 +921,7 @@ int libbfio_file_get_name_size_wide(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name_size_wide";
 
-#if !defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	int result                                 = 0;
 #endif
 
@@ -975,10 +973,10 @@ int libbfio_file_get_name_size_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	*name_size = io_handle->name_size;
 #else
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
@@ -1002,14 +1000,14 @@ int libbfio_file_get_name_size_wide(
 		result = libuna_utf32_string_size_from_byte_stream(
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
 #else
@@ -1046,7 +1044,7 @@ int libbfio_file_get_name_wide(
 	static char *function                      = "libbfio_file_get_name_wide";
 	size_t wide_name_size                      = 0;
 
-#if !defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	int result                                 = 0;
 #endif
 
@@ -1098,10 +1096,10 @@ int libbfio_file_get_name_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	wide_name_size = io_handle->name_size;
 #else
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
@@ -1125,14 +1123,14 @@ int libbfio_file_get_name_wide(
 		result = libuna_utf32_string_size_from_byte_stream(
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &wide_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &wide_name_size,
 		          error );
 #else
@@ -1162,8 +1160,8 @@ int libbfio_file_get_name_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_string_copy(
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_system_string_copy(
 	     name,
 	     io_handle->name,
 	     io_handle->name_size ) == NULL )
@@ -1179,7 +1177,7 @@ int libbfio_file_get_name_wide(
 	}
 	name[ io_handle->name_size - 1 ] = 0;
 #else
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_copy_from_utf8(
@@ -1207,7 +1205,7 @@ int libbfio_file_get_name_wide(
 		          name_size,
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_byte_stream(
@@ -1215,7 +1213,7 @@ int libbfio_file_get_name_wide(
 		          name_size,
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -1249,7 +1247,7 @@ int libbfio_file_set_name_wide(
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_set_name_wide";
 
-#if !defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	int result                                 = 0;
 #endif
 
@@ -1324,7 +1322,7 @@ int libbfio_file_set_name_wide(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-			 "%s: name already set: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: name already set: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 io_handle->name );
 
@@ -1336,10 +1334,10 @@ int libbfio_file_set_name_wide(
 		 io_handle->name      = NULL;
 		 io_handle->name_size = 0;
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	io_handle->name_size = name_length + 1;
 #else
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -1363,14 +1361,14 @@ int libbfio_file_set_name_wide(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &( io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &( io_handle->name_size ),
 		          error );
 #else
@@ -1388,10 +1386,10 @@ int libbfio_file_set_name_wide(
 
 		return( -1 );
 	}
-#endif /* defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER ) */
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
-	io_handle->name = (libbfio_system_character_t *) memory_allocate(
-	                                                  sizeof( libbfio_system_character_t ) * io_handle->name_size );
+	io_handle->name = (libcstring_system_character_t *) memory_allocate(
+	                                                     sizeof( libcstring_system_character_t ) * io_handle->name_size );
 
 	if( io_handle->name == NULL )
 	{
@@ -1404,8 +1402,8 @@ int libbfio_file_set_name_wide(
 
 		return( -1 );
 	}
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_string_copy(
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_system_string_copy(
 	     io_handle->name,
 	     name,
 	     name_length + 1 ) == NULL )
@@ -1427,7 +1425,7 @@ int libbfio_file_set_name_wide(
 	}
 	io_handle->name[ name_length ] = 0;
 #else
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_copy_from_utf32(
@@ -1453,7 +1451,7 @@ int libbfio_file_set_name_wide(
 		result = libuna_byte_stream_copy_from_utf32(
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
 		          error );
@@ -1461,7 +1459,7 @@ int libbfio_file_set_name_wide(
 		result = libuna_byte_stream_copy_from_utf16(
 		          (uint8_t *) io_handle->name,
 		          io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
 		          error );
@@ -1486,7 +1484,7 @@ int libbfio_file_set_name_wide(
 
 		return( -1 );
 	}
-#endif /* defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER ) */
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	return( 1 );
 }
@@ -1501,7 +1499,7 @@ int libbfio_file_open(
      int flags,
      liberror_error_t **error )
 {
-	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle  = NULL;
 	static char *function                     = "libbfio_file_open";
@@ -1518,7 +1516,7 @@ int libbfio_file_open(
 #endif
 	int file_io_flags                         = 0;
 #endif
-#if !defined( WINAPI ) && defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if !defined( WINAPI ) && defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	char *narrow_filename                     = NULL;
 	size_t narrow_filename_size               = 0;
 #endif
@@ -1615,7 +1613,7 @@ int libbfio_file_open(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_ACCESS_DENIED,
-				 "%s: access denied to file: %" PRIs_LIBBFIO_SYSTEM ".",
+				 "%s: access denied to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
 
@@ -1627,7 +1625,7 @@ int libbfio_file_open(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_INVALID_RESOURCE,
-				 "%s: no such file: %" PRIs_LIBBFIO_SYSTEM ".",
+				 "%s: no such file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
 
@@ -1644,7 +1642,7 @@ int libbfio_file_open(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 					 function,
 					 file_io_handle->name,
 					 error_string );
@@ -1655,7 +1653,7 @@ int libbfio_file_open(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
 					 file_io_handle->name );
 				}
@@ -1733,7 +1731,7 @@ int libbfio_file_open(
 	}
 #if defined( WINAPI )
 #if defined( _MSC_VER )
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( _wsopen_s(
 	     &( file_io_handle->file_descriptor ),
 	     (wchar_t *) file_io_handle->name,
@@ -1747,9 +1745,9 @@ int libbfio_file_open(
 	     file_io_flags | _O_BINARY,
 	     file_io_shared_flags,
 	     file_io_persmission_flags ) != 0 )
-#endif /* LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER */
+#endif /* LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER */
 #else
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	file_io_handle->file_descriptor = _wsopen(
 					   (wchar_t *) file_io_handle->name,
 					   file_io_flags | _O_BINARY,
@@ -1759,7 +1757,7 @@ int libbfio_file_open(
 					   (char *) file_io_handle->name,
 					   file_io_flags | _O_BINARY,
 					   file_io_persmission_flags );
-#endif /* LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER */
+#endif /* LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER */
 
 	if( file_io_handle->file_descriptor == -1 )
 #endif /* _MSC_VER */
@@ -1771,7 +1769,7 @@ int libbfio_file_open(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_ACCESS_DENIED,
-				 "%s: access denied to file: %" PRIs_LIBBFIO_SYSTEM ".",
+				 "%s: access denied to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
 
@@ -1782,7 +1780,7 @@ int libbfio_file_open(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_INVALID_RESOURCE,
-				 "%s: no such file: %" PRIs_LIBBFIO_SYSTEM ".",
+				 "%s: no such file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
 
@@ -1799,7 +1797,7 @@ int libbfio_file_open(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 					 function,
 					 file_io_handle->name,
 					 error_string );
@@ -1810,7 +1808,7 @@ int libbfio_file_open(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
 					 file_io_handle->name );
 				}
@@ -1833,8 +1831,8 @@ int libbfio_file_open(
 	}
 #endif
 #else
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libbfio_system_narrow_string_codepage == 0 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -1858,14 +1856,14 @@ int libbfio_file_open(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &narrow_filename_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &narrow_filename_size,
 		          error );
 #else
@@ -1897,7 +1895,7 @@ int libbfio_file_open(
 
 		return( -1 );
 	}
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_copy_from_utf32(
@@ -1923,7 +1921,7 @@ int libbfio_file_open(
 		result = libuna_byte_stream_copy_from_utf32(
 		          (uint8_t *) narrow_filename,
 		          narrow_filename_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf32_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
 		          error );
@@ -1931,7 +1929,7 @@ int libbfio_file_open(
 		result = libuna_byte_stream_copy_from_utf16(
 		          (uint8_t *) narrow_filename,
 		          narrow_filename_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf16_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
 		          error );
@@ -1979,7 +1977,7 @@ int libbfio_file_open(
 					   file_io_flags,
 					   0644 );
 #endif /* HAVE_GLIB_H */
-#endif /* defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER ) */
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	if( file_io_handle->file_descriptor == -1 )
 	{
@@ -1990,7 +1988,7 @@ int libbfio_file_open(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_ACCESS_DENIED,
-				 "%s: access denied to file: %" PRIs_LIBBFIO_SYSTEM ".",
+				 "%s: access denied to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
 
@@ -2001,7 +1999,7 @@ int libbfio_file_open(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_INVALID_RESOURCE,
-				 "%s: no such file: %" PRIs_LIBBFIO_SYSTEM ".",
+				 "%s: no such file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
 
@@ -2018,7 +2016,7 @@ int libbfio_file_open(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 					 function,
 					 file_io_handle->name,
 					 error_string );
@@ -2029,7 +2027,7 @@ int libbfio_file_open(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
 					 file_io_handle->name );
 				}
@@ -2051,7 +2049,7 @@ int libbfio_file_close(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_close";
@@ -2125,7 +2123,7 @@ int libbfio_file_close(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 file_io_handle->name,
 			 error_string );
@@ -2136,7 +2134,7 @@ int libbfio_file_close(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
 		}
@@ -2162,7 +2160,7 @@ int libbfio_file_close(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 file_io_handle->name,
 			 error_string );
@@ -2173,7 +2171,7 @@ int libbfio_file_close(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
 		}
@@ -2195,7 +2193,7 @@ ssize_t libbfio_file_read(
          size_t size,
          liberror_error_t **error )
 {
-	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_read";
@@ -2318,7 +2316,7 @@ ssize_t libbfio_file_read(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 					 function,
 					 file_io_handle->name,
 					 error_string );
@@ -2329,7 +2327,7 @@ ssize_t libbfio_file_read(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
 					 file_io_handle->name );
 				}
@@ -2372,7 +2370,7 @@ ssize_t libbfio_file_read(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 file_io_handle->name,
 			 error_string );
@@ -2383,7 +2381,7 @@ ssize_t libbfio_file_read(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to read from file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
 		}
@@ -2402,7 +2400,7 @@ ssize_t libbfio_file_write(
          size_t size,
          liberror_error_t **error )
 {
-	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_write";
@@ -2519,7 +2517,7 @@ ssize_t libbfio_file_write(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 file_io_handle->name,
 			 error_string );
@@ -2530,7 +2528,7 @@ ssize_t libbfio_file_write(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
 		}
@@ -2571,7 +2569,7 @@ ssize_t libbfio_file_write(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 file_io_handle->name,
 			 error_string );
@@ -2582,7 +2580,7 @@ ssize_t libbfio_file_write(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBBFIO_SYSTEM ".",
+			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
 		}
@@ -2623,7 +2621,7 @@ BOOL SafeSetFilePointerEx(
 		return( FALSE );
 	}
 	library_handle = LoadLibrary(
-	                  _LIBBFIO_SYSTEM_STRING( "kernel32.dll" ) );
+	                  _LIBCSTRING_SYSTEM_STRING( "kernel32.dll" ) );
 
 	if( library_handle == NULL )
 	{
@@ -2818,7 +2816,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBBFIO_SYSTEM ".",
+		 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
 		 offset,
 		 file_io_handle->name );
@@ -2862,7 +2860,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset in file: %" PRIs_LIBBFIO_SYSTEM ".",
+		 "%s: unable to seek offset in file: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
 		 file_io_handle->name );
 
@@ -2879,7 +2877,7 @@ int libbfio_file_exists(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	libbfio_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_exists";
@@ -2889,7 +2887,7 @@ int libbfio_file_exists(
 	DWORD error_code                         = 0;
 #endif
 
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER ) && !defined( WINAPI )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) && !defined( WINAPI )
 	char *narrow_filename                    = NULL;
 	size_t narrow_filename_size              = 0;
 #endif
@@ -2919,7 +2917,7 @@ int libbfio_file_exists(
 		return( -1 );
 	}
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	/* Must use CreateFileW here because filename is a 
 	 * wide character string and CreateFile is dependent
 	 * on UNICODE directives
@@ -2975,7 +2973,7 @@ int libbfio_file_exists(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 					 function,
 					 file_io_handle->name,
 					 error_string );
@@ -2986,7 +2984,7 @@ int libbfio_file_exists(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
 					 file_io_handle->name );
 				}
@@ -3010,7 +3008,7 @@ int libbfio_file_exists(
 	}
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
 #else
-#if defined( LIBBFIO_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 #if defined( _MSC_VER )
 	if( _wsopen_s(
 	     &( file_io_handle->file_descriptor ),
@@ -3030,7 +3028,7 @@ int libbfio_file_exists(
 	/* Convert the filename to a narrow string
 	 * if the platform has no wide character open function
 	 */
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -3054,14 +3052,14 @@ int libbfio_file_exists(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &narrow_filename_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          &narrow_filename_size,
 		          error );
 #else
@@ -3093,7 +3091,7 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
-	if( libbfio_system_narrow_string_codepage == 0 )
+	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_copy_from_utf32(
@@ -3119,7 +3117,7 @@ int libbfio_file_exists(
 		result = libuna_byte_stream_copy_from_utf32(
 		          (uint8_t *) narrow_filename,
 		          narrow_filename_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf32_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
 		          error );
@@ -3127,7 +3125,7 @@ int libbfio_file_exists(
 		result = libuna_byte_stream_copy_from_utf16(
 		          (uint8_t *) narrow_filename,
 		          narrow_filename_size,
-		          libbfio_system_narrow_string_codepage,
+		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf16_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
 		          error );
@@ -3206,7 +3204,7 @@ int libbfio_file_exists(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM " with error: %" PRIs_LIBBFIO_SYSTEM "",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 					 function,
 					 file_io_handle->name,
 					 error_string );
@@ -3217,7 +3215,7 @@ int libbfio_file_exists(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
 					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBBFIO_SYSTEM ".",
+					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
 					 file_io_handle->name );
 				}
@@ -3311,7 +3309,7 @@ BOOL SafeGetFileSizeEx(
 		return( FALSE );
 	}
 	library_handle = LoadLibrary(
-	                  _LIBBFIO_SYSTEM_STRING( "kernel32.dll" ) );
+	                  _LIBCSTRING_SYSTEM_STRING( "kernel32.dll" ) );
 
 	if( library_handle == NULL )
 	{

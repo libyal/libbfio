@@ -30,7 +30,6 @@
 #include <liberror.h>
 
 #include "libbfio_extern.h"
-#include "libbfio_system_string.h"
 #include "libbfio_types.h"
 
 #if defined( __cplusplus )

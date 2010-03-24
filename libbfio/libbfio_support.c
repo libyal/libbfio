@@ -24,6 +24,7 @@
 #include <common.h>
 #include <types.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 #include <stdio.h>
@@ -31,7 +32,6 @@
 #include "libbfio_codepage.h"
 #include "libbfio_definitions.h"
 #include "libbfio_support.h"
-#include "libbfio_system_string.h"
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
@@ -66,7 +66,7 @@ int libbfio_get_codepage(
 
 		return( -1 );
 	}
-	*codepage = libbfio_system_narrow_string_codepage;
+	*codepage = libcstring_narrow_system_string_codepage;
 
 	return( 1 );
 }
@@ -117,7 +117,7 @@ int libbfio_set_codepage(
 
 		return( -1 );
 	}
-	libbfio_system_narrow_string_codepage = codepage;
+	libcstring_narrow_system_string_codepage = codepage;
 
 	return( 1 );
 }

@@ -26,6 +26,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100324
+* worked on libcstring
+
 20100321
 * removed safe filename
 

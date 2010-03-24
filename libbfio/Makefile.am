@@ -1,4 +1,10 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/common -I$(top_srcdir)/liberror @LIBUNA_CPPFLAGS@ @MEMWATCH_CPPFLAGS@
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/common \
+	-I$(top_srcdir)/libcstring \
+	-I$(top_srcdir)/liberror \
+	@LIBUNA_CPPFLAGS@ \
+	@MEMWATCH_CPPFLAGS@
 
 lib_LTLIBRARIES = libbfio.la
 
@@ -18,10 +24,13 @@ libbfio_la_SOURCES = \
 	libbfio_offset_list.c libbfio_offset_list.h \
 	libbfio_pool.c libbfio_pool.h \
 	libbfio_support.c libbfio_support.h \
-	libbfio_system_string.c libbfio_system_string.h \
 	libbfio_types.h
 
-libbfio_la_LIBADD  = ../liberror/liberror.la @LIBUNA_LIBADD@
+libbfio_la_LIBADD = \
+	../libcstring/libcstring.la \
+	../liberror/liberror.la \
+	@LIBUNA_LIBADD@
+
 libbfio_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
 EXTRA_DIST = \

@@ -29,10 +29,10 @@
 #include <types.h>
 #include <wide_string.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 #include "libbfio_extern.h"
-#include "libbfio_system_string.h"
 #include "libbfio_types.h"
 
 #if defined( __cplusplus )
@@ -45,7 +45,7 @@ struct libbfio_file_io_handle
 {
 	/* The name
 	 */
-	libbfio_system_character_t *name;
+	libcstring_system_character_t *name;
 
 	/* The size of the name
 	 */
