@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+	libcstring/libcstring.vcproj \
 	liberror/liberror.vcproj \
 	libbfio_dll/libbfio_dll.vcproj \
 	libuna/libuna.vcproj \

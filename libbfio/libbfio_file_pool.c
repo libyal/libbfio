@@ -22,10 +22,9 @@
  */
 
 #include <common.h>
-#include <narrow_string.h>
 #include <types.h>
-#include <wide_string.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 #include "libbfio_definitions.h"
@@ -88,7 +87,7 @@ int libbfio_file_pool_add_handles_for_names(
 	     name_iterator < amount_of_names;
 	     name_iterator++ )
 	{
-		name_length = narrow_string_length(
+		name_length = libcstring_narrow_string_length(
 		               names[ name_iterator ] );
 
 		if( libbfio_file_initialize(
@@ -206,7 +205,7 @@ int libbfio_file_pool_add_handle_for_names_wide(
 	     name_iterator < amount_of_names;
 	     name_iterator++ )
 	{
-		name_length = wide_string_length(
+		name_length = libcstring_wide_string_length(
 		               names[ name_iterator ] );
 
 		if( libbfio_file_initialize(

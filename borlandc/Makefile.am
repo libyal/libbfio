@@ -1,4 +1,5 @@
 CODEGEAR_FILES = \
+	codegear/libcstring/libcstring.cbproj \
 	codegear/liberror/liberror.cbproj \
 	codegear/libbfio/libbfio.cbproj \
 	codegear/libuna/libuna.cbproj \

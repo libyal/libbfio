@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20100324],
+  [20100327],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20100324])
+ [20100327])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -86,15 +86,20 @@ AC_CHECK_HEADER(
 dnl Headers included in common/types.h
 AC_CHECK_HEADERS([limits.h])
 
-dnl Headers included in common/narrow_string.h
+dnl Headers included in common/memory.h and libcstring/libcstring_narrow_string.h
+AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([string.h])
 
-dnl Headers included in common/memory.h
-AC_CHECK_HEADERS([stdlib.h])
-
-dnl Headers included in common/notify.c
-AC_CHECK_HEADERS([stdarg.h])
-AC_CHECK_HEADERS([varargs.h])
+dnl Headers included in liberror/liberror_error.c
+AC_CHECK_HEADERS(
+ [stdarg.h],
+ [],
+ [AC_CHECK_HEADERS(
+  [varargs.h],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing headers: stdarg.h and varargs.h],
+   [1]) ]) ])
 
 dnl Headers included in libbfio/libbfio_file.h
 AC_CHECK_HEADERS([sys/stat.h])
@@ -257,13 +262,66 @@ AC_CHECK_FUNCS(
   [Missing function: realloc],
   [1]) ])
 
-dnl Narrow character string functions used in common/narrow_string.h
+dnl Narrow character string functions used in libcstring/libcstring_narrow_string.h
 AC_CHECK_FUNCS(
  [fgets],
  [],
  [AC_MSG_FAILURE(
   [Missing function: fgets],
   [1]) ])
+
+AC_CHECK_FUNCS(
+ [memchr],
+ [],
+ [AC_CHECK_FUNCS(
+  [strchr],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing functions: memchr and strchr],
+   [1]) ]) ])
+
+AC_CHECK_FUNCS(
+ [memcmp],
+ [],
+ [AC_CHECK_FUNCS(
+  [strncmp],
+  [],
+  [AC_CHECK_FUNCS(
+   [strcmp],
+   [],
+   [AC_MSG_FAILURE(
+    [Missing functions: memcmp, strncmp and strcmp],
+    [1]) ]) ]) ])
+
+AC_CHECK_FUNCS(
+ [memcpy],
+ [],
+ [AC_CHECK_FUNCS(
+  [strncpy],
+  [],
+  [AC_CHECK_FUNCS(
+   [strcpy],
+   [],
+   [AC_MSG_FAILURE(
+    [Missing functions: memcpy, strncpy and strcpy],
+    [1]) ]) ]) ])
+
+AC_CHECK_FUNCS(
+ [memrchr],
+ [AC_CHECK_DECLS(
+  [memrchr],
+  [ac_libbfio_have_memrchr=yes],
+  [ac_libbfio_have_memrchr=no]) ],
+ [ac_libbfio_have_memrchr=no])
+
+AS_IF(
+	[test "x$ac_libbfio_have_memrchr" = xno],
+	[AC_CHECK_FUNCS(
+	 [strrchr],
+	 [],
+	 [AC_MSG_FAILURE(
+	  [Missing functions: strrchr and memrchr],
+	  [1]) ]) ])
 
 AC_CHECK_FUNCS(
  [snprintf],
@@ -287,48 +345,13 @@ AC_CHECK_FUNCS(
   [1]) ])
 
 AC_CHECK_FUNCS(
- [strchr],
+ [strncasecmp],
  [],
  [AC_CHECK_FUNCS(
-  [memchr],
+  [strcasecmp],
   [],
   [AC_MSG_FAILURE(
-   [Missing functions: strchr and memchr],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [strncmp],
- [],
- [AC_CHECK_FUNCS(
-  [strcmp],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: strncmp and strcmp],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [strncpy],
- [],
- [AC_CHECK_FUNCS(
-  [strcpy],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: strncpy and strcpy],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [strrchr],
- [],
- [AC_CHECK_FUNCS(
-  [memrchr],
-  [AC_CHECK_DECLS(
-   [memrchr],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing declaration for function memrchr],
-    [1]) ]) ],
-  [AC_MSG_FAILURE(
-   [Missing functions: strrchr and memrchr],
+   [Missing functions: strncasecmp and strcasecmp],
    [1]) ]) ])
 
 AC_CHECK_FUNCS(
@@ -363,35 +386,35 @@ AC_CHECK_FUNCS(
  [close],
  [],
  [AC_MSG_FAILURE(
-  [Missing functions: close],
+  [Missing function: close],
   [1]) ])
 
 AC_CHECK_FUNCS(
  [lseek],
  [],
  [AC_MSG_FAILURE(
-  [Missing functions: lseek],
+  [Missing function: lseek],
   [1]) ])
 
 AC_CHECK_FUNCS(
  [open],
  [],
  [AC_MSG_FAILURE(
-  [Missing functions: open],
+  [Missing function: open],
   [1]) ])
 
 AC_CHECK_FUNCS(
  [read],
  [],
  [AC_MSG_FAILURE(
-  [Missing functions: read],
+  [Missing function: read],
   [1]) ])
 
 AC_CHECK_FUNCS(
  [write],
  [],
  [AC_MSG_FAILURE(
-  [Missing functions: write],
+  [Missing function: write],
   [1]) ])
 
 AC_CHECK_FUNCS(
@@ -688,86 +711,99 @@ AS_IF(
 
 	dnl Check for wide character string functions
 
-	dnl Wide character string functions used in common/wide_string.h
+	dnl Wide character string functions used in libcstring/libcstring_wide_string.h
 	AC_CHECK_FUNCS(
 	 [fgetws],
 	 [],
 	 [AC_MSG_FAILURE(
-	  [Missing functions: fgetws],
+	  [Missing function: fgetws],
 	  [1]) ])
 
 	AC_CHECK_FUNCS(
 	 [swprintf],
 	 [],
 	 [AC_MSG_FAILURE(
-	  [Missing functions: swprintf],
+	  [Missing function: swprintf],
 	  [1]) ])
 
 	AC_CHECK_FUNCS(
-	 [wcschr],
+	 [wmemchr],
 	 [],
 	 [AC_CHECK_FUNCS(
-	  [wmemchr],
+	  [wcschr],
 	  [],
 	  [AC_MSG_FAILURE(
-	   [Missing functions: wcschr and wmemchr],
+	   [Missing functions: wmemchr and wcschr],
 	   [1]) ]) ])
 
 	AC_CHECK_FUNCS(
-	 [wcsncmp],
+	 [wmemcmp],
 	 [],
 	 [AC_CHECK_FUNCS(
-	  [wmemcmp],
+	  [wcsncmp],
 	  [],
 	  [AC_CHECK_FUNCS(
 	   [wcscmp],
 	   [],
 	   [AC_MSG_FAILURE(
-	    [Missing functions: wcsncmp, wmemcmp and wcscmp],
+	    [Missing functions: wmemcmp, wcsncmp and wcscmp],
 	    [1]) ]) ]) ])
 
 	AC_CHECK_FUNCS(
-	 [wcsncpy],
+	 [wmemcpy],
 	 [],
 	 [AC_CHECK_FUNCS(
-	  [wmemcpy],
+	  [wcsncpy],
 	  [],
 	  [AC_CHECK_FUNCS(
 	   [wcscpy],
 	   [],
 	   [AC_MSG_FAILURE(
-	    [Missing functions: wcsncpy, wmemcpy and wcscpy],
+	    [Missing functions: wmemcpy, wcsncpy and wcscpy],
 	    [1]) ]) ]) ])
+
+	AC_CHECK_FUNCS(
+	 [wmemrchr],
+	 [],
+	 [AC_CHECK_FUNCS(
+	  [wcsrchr],
+	  [],
+	  [AC_MSG_FAILURE(
+	   [Missing functions: wmemrchr and wcsrchr],
+	   [1]) ]) ])
 
 	AC_CHECK_FUNCS(
 	 [wcslen],
 	 [],
 	 [AC_MSG_FAILURE(
-	  [Missing functions: wcslen],
+	  [Missing function: wcslen],
 	  [1]) ])
 
 	AC_CHECK_FUNCS(
-	 [wcsrchr],
+	 [wcsncasecmp],
 	 [],
 	 [AC_CHECK_FUNCS(
-	  [wmemrchr],
+	  [wcscasecmp],
 	  [],
-	  [AC_MSG_FAILURE(
-	   [Missing functions: wcsrchr and wmemrchr],
-	   [1]) ]) ])
+	  [AC_CHECK_FUNCS(
+	   [towlower],
+	   [],
+	   [AC_MSG_FAILURE(
+	    [Missing functions: wcsncasecmp, wcscasecmp and towlower],
+	    [1]) ]) ]) ])
 
 	AC_CHECK_FUNCS(
 	 [wcstoll],
 	 [],
 	 [AC_MSG_FAILURE(
-	  [Missing functions: wcstoll],
+	  [Missing function: wcstoll],
 	  [1]) ])
 
 	AC_CHECK_FUNCS(
 	 [wcstoull],
 	 [],
 	 [AC_MSG_FAILURE(
-	  [Missing functions: wcstoull],
+	  [Missing function: wcstoull],
 	  [1]) ])
 
 	dnl Make the necessary definitions

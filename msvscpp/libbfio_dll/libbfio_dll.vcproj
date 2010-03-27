@@ -39,7 +39,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\liberror;..\..\libuna;..\..\libbfio"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libuna;..\..\libbfio"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBBFIO;LIBBFIO_DLL_EXPORT"
 				RuntimeLibrary="2"
 				WarningLevel="4"
@@ -137,10 +137,6 @@
 				RelativePath="..\..\libbfio\libbfio_support.c"
 				>
 			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_system_string.c"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -197,10 +193,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libbfio\libbfio_support.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_system_string.h"
 				>
 			</File>
 			<File
