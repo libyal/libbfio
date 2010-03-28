@@ -22,9 +22,12 @@ Windows
 * add VC_EXTRALEAN to config_msc.h
 
 Deployment:
-* check macosx
 * create debian package
 * check if libbfio.3 is up to date
+
+20100328
+* updated libuna
+* update macosx files
 
 20100327
 * worked on libcstring

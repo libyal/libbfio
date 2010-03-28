@@ -114,10 +114,12 @@ enum LIBBFIO_COMPRESSION_ERROR
 	 */
 	LIBBFIO_COMPRESSION_ERROR_COMPRESS_FAILED     = 1,
 
-	/* The de/uncompression failed
+	/* The decompression failed
 	 */
-	LIBBFIO_COMPRESSION_ERROR_UNCOMPRESS_FAILED   = 2
+	LIBBFIO_COMPRESSION_ERROR_DECOMPRESS_FAILED   = 2
 };
+
+#define LIBBFIO_COMPRESSION_ERROR_UNCOMPRESS_FAILED	LIBBFIO_COMPRESSION_ERROR_DECOMPRESS_FAILED
 
 /* The input/output error codes
  * to signify errors regarding input/output
