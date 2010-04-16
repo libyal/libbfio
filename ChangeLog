@@ -25,6 +25,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100416
+* updated liberror, libuna
+
 20100328
 * updated libuna
 * update macosx files
