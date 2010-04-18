@@ -444,7 +444,8 @@ int libbfio_file_get_name_size(
 	}
 #else
 	*name_size = io_handle->name_size;
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	return( 1 );
 }
 
@@ -567,7 +568,8 @@ int libbfio_file_get_name(
 	}
 #else
 	narrow_name_size = io_handle->name_size;
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	if( name_size < narrow_name_size )
 	{
 		liberror_error_set(
@@ -649,7 +651,8 @@ int libbfio_file_get_name(
 		return( -1 );
 	}
 	name[ io_handle->name_size - 1 ] = 0;
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	return( 1 );
 }
 
@@ -805,7 +808,8 @@ int libbfio_file_set_name(
 	}
 #else
 	io_handle->name_size = name_length + 1;
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	io_handle->name = (libcstring_system_character_t *) memory_allocate(
 	                                                     sizeof( libcstring_system_character_t ) * io_handle->name_size );
 
@@ -902,7 +906,8 @@ int libbfio_file_set_name(
 		return( -1 );
 	}
 	io_handle->name[ name_length ] = 0;
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	return( 1 );
 }
 
@@ -1025,7 +1030,8 @@ int libbfio_file_get_name_size_wide(
 
 		return( -1 );
 	}
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	return( 1 );
 }
 
@@ -1148,7 +1154,8 @@ int libbfio_file_get_name_wide(
 
 		return( -1 );
 	}
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	if( name_size < wide_name_size )
 	{
 		liberror_error_set(
@@ -1230,7 +1237,8 @@ int libbfio_file_get_name_wide(
 
 		return( -1 );
 	}
-#endif
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 	return( 1 );
 }
 
