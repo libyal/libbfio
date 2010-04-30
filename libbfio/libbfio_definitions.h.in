@@ -71,6 +71,9 @@
 #elif defined( __BORLANDC__ )
 #define LIBBFIO_LARGE_INTEGER_ZERO			{ 0 }
 
+#elif defined( __MINGW32_VERSION )
+#define LIBBFIO_LARGE_INTEGER_ZERO			{ { 0, 0 } }
+
 #endif
 
 #endif

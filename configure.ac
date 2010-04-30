@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20100416],
+  [20100430],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20100416])
+ [20100430])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -83,29 +83,33 @@ AC_CHECK_HEADER(
   [HAVE_STDINT_H],
   [0])])
 
+dnl Headers included in common/common.h
+AC_CHECK_HEADERS([windows.h])
+
 dnl Headers included in common/types.h
 AC_CHECK_HEADERS([limits.h])
 
 dnl Headers included in common/memory.h and libcstring/libcstring_narrow_string.h
-AC_CHECK_HEADERS([stdlib.h])
-AC_CHECK_HEADERS([string.h])
+AC_CHECK_HEADERS([stdlib.h string.h])
 
-dnl Headers included in liberror/liberror_error.c
-AC_CHECK_HEADERS(
- [stdarg.h],
- [],
- [AC_CHECK_HEADERS(
-  [varargs.h],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing headers: stdarg.h and varargs.h],
-   [1]) ]) ])
+dnl Headers included in liberror/liberror_error.c and libnotify/libnotify_print.c
+AC_CHECK_HEADERS([stdarg.h])
 
-dnl Headers included in libbfio/libbfio_file.h
-AC_CHECK_HEADERS([sys/stat.h])
+AS_IF(
+ [test "x$ac_cv_header_stdarg_h" != xyes],
+ [AC_CHECK_HEADERS([varargs.h]) ])
+
+AS_IF(
+ [test "x$ac_cv_header_stdarg_h" != xyes && test "x$ac_cv_header_varargs_h" != xyes],
+ [AC_MSG_FAILURE(
+  [Missing headers: stdarg.h and varargs.h],
+  [1]) ])
+
+dnl Headers included in libnotify/libnotify_stream.c and libbfio/libbfio_file.c
 AC_CHECK_HEADERS([errno.h])
-AC_CHECK_HEADERS([fcntl.h])
-AC_CHECK_HEADERS([unistd.h])
+
+dnl Headers included in libbfio/libbfio_file.c
+AC_CHECK_HEADERS([fcntl.h sys/stat.h unistd.h])
 
 dnl Check for declarations and type definitions
 AC_TYPE_OFF_T
@@ -201,9 +205,12 @@ AC_CHECK_FUNCS(
 AC_CHECK_FUNCS(
  [fseeko],
  [],
- [AC_MSG_FAILURE(
-  [Missing function: fseeko],
-  [1]) ])
+ [AC_CHECK_FUNCS(
+  [fseeko64],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: fseeko and fseeko64],
+   [1]) ]) ])
 
 AC_CHECK_FUNCS(
  [fwrite],
@@ -425,8 +432,10 @@ AC_CHECK_FUNCS(
   [1]) ])
 
 dnl Check for error string functions used in libbfio/libbfio_error_string.h
-AC_FUNC_STRERROR_R(
- [],
+AC_FUNC_STRERROR_R()
+
+AS_IF(
+ [test "x$ac_cv_have_decl_strerror_r" = xno],
  [AC_CHECK_FUNCS(
   [strerror],
   [],
@@ -691,141 +700,141 @@ AM_CONDITIONAL(
 
 dnl Check if libbfio should be build with wide character type support
 AS_IF(
-	[test "x$ac_cv_libbfio_enable_wide_character_type" != xno ],
-	[dnl Check for the wide character header
-	AC_CHECK_HEADERS(
-	 [wchar.h],
-	 [AC_DEFINE(
-	  [HAVE_WCHAR_H],
-	  [1],
-	  [Define to 1 if you have the <wchar.h> header file.])
-	 AC_SUBST(
-	  [HAVE_WCHAR_H],
-	  [1]) ],
-	 [AC_MSG_FAILURE(
-	  [Missing header: wchar.h],
-	  [1]) ])
+ [test "x$ac_cv_header_windows_h" = xyes],
+ [ac_cv_libbfio_enable_wide_character_type=yes])
 
-	dnl Determine wide character byte size
-	AC_CHECK_SIZEOF([wchar_t])
+AS_IF(
+ [test "x$ac_cv_libbfio_enable_wide_character_type" != xno ],
+ [dnl Check for the wide character header
+ AC_CHECK_HEADERS(
+  [wchar.h],
+  [AC_DEFINE(
+   [HAVE_WCHAR_H],
+   [1],
+   [Define to 1 if you have the <wchar.h> header file.])
+  AC_SUBST(
+   [HAVE_WCHAR_H],
+   [1]) ],
+  [AC_MSG_FAILURE(
+   [Missing header: wchar.h],
+   [1]) ])
 
-	dnl Check for wide character string functions
+ dnl Determine wide character byte size
+ AC_CHECK_SIZEOF([wchar_t])
 
-	dnl Wide character string functions used in libcstring/libcstring_wide_string.h
-	AC_CHECK_FUNCS(
-	 [fgetws],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: fgetws],
-	  [1]) ])
+ dnl Check for wide character string functions
 
-	AC_CHECK_FUNCS(
-	 [swprintf],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: swprintf],
-	  [1]) ])
+ dnl Wide character string functions used in libcstring/libcstring_wide_string.h
+ AC_CHECK_FUNCS(
+  [fgetws],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: fgetws],
+   [1]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemchr],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcschr],
-	  [],
-	  [AC_MSG_FAILURE(
-	   [Missing functions: wmemchr and wcschr],
-	   [1]) ]) ])
+ AC_CHECK_FUNCS(
+  [swprintf],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: swprintf],
+   [1]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemcmp],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcsncmp],
-	  [],
-	  [AC_CHECK_FUNCS(
-	   [wcscmp],
-	   [],
-	   [AC_MSG_FAILURE(
-	    [Missing functions: wmemcmp, wcsncmp and wcscmp],
-	    [1]) ]) ]) ])
+ AC_CHECK_FUNCS(
+  [wmemchr],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcschr],
+   [],
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemchr and wcschr],
+    [1]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemcpy],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcsncpy],
-	  [],
-	  [AC_CHECK_FUNCS(
-	   [wcscpy],
-	   [],
-	   [AC_MSG_FAILURE(
-	    [Missing functions: wmemcpy, wcsncpy and wcscpy],
-	    [1]) ]) ]) ])
+ AC_CHECK_FUNCS(
+  [wmemcmp],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcsncmp],
+   [],
+   [AC_CHECK_FUNCS(
+    [wcscmp],
+    [],
+    [AC_MSG_FAILURE(
+     [Missing functions: wmemcmp, wcsncmp and wcscmp],
+     [1]) ]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemrchr],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcsrchr],
-	  [],
-	  [AC_MSG_FAILURE(
-	   [Missing functions: wmemrchr and wcsrchr],
-	   [1]) ]) ])
+ AC_CHECK_FUNCS(
+  [wmemcpy],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcsncpy],
+   [],
+   [AC_CHECK_FUNCS(
+    [wcscpy],
+    [],
+    [AC_MSG_FAILURE(
+     [Missing functions: wmemcpy, wcsncpy and wcscpy],
+     [1]) ]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcslen],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: wcslen],
-	  [1]) ])
+ AC_CHECK_FUNCS(
+  [wmemrchr],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcsrchr],
+   [],
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemrchr and wcsrchr],
+    [1]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcsncasecmp],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcscasecmp],
-	  [],
-	  [AC_CHECK_FUNCS(
-	   [towlower],
-	   [],
-	   [AC_MSG_FAILURE(
-	    [Missing functions: wcsncasecmp, wcscasecmp and towlower],
-	    [1]) ]) ]) ])
+ AC_CHECK_FUNCS(
+  [wcslen],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcslen],
+   [1]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcstoll],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: wcstoll],
-	  [1]) ])
+ AC_CHECK_FUNCS(
+  [wcsncasecmp],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcscasecmp],
+   [],
+   [AC_CHECK_FUNCS(
+    [towlower],
+    [],
+    [AC_MSG_FAILURE(
+     [Missing functions: wcsncasecmp, wcscasecmp and towlower],
+     [1]) ]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcstoull],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: wcstoull],
-	  [1]) ])
+ AC_CHECK_FUNCS(
+  [wcstoll],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcstoll],
+   [1]) ])
 
-	dnl Make the necessary definitions
-	AC_DEFINE(
-	 [HAVE_WIDE_CHARACTER_TYPE],
-	 [1],
-	 [Define to 1 if wide character type should be used.])
-	AC_SUBST(
-	 [HAVE_WIDE_CHARACTER_TYPE],
-	 [1])
-	ac_cv_libbfio_enable_wide_character_type=yes],
+ AC_CHECK_FUNCS(
+  [wcstoull],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcstoull],
+   [1]) ])
 
-	[AC_SUBST(
-	 [HAVE_WIDE_CHARACTER_TYPE],
-	 [0])
-	AC_SUBST(
-	 [HAVE_WCHAR_H],
-	 [0]) ])
+ dnl Make the necessary definitions
+ AC_DEFINE(
+  [HAVE_WIDE_CHARACTER_TYPE],
+  [1],
+  [Define to 1 if wide character type should be used.])
+ AC_SUBST(
+  [HAVE_WIDE_CHARACTER_TYPE],
+  [1])
+ ac_cv_libbfio_enable_wide_character_type=yes],
 
-AC_SUBST(
- [HAVE_WIDE_CHARACTER_SUPPORT_FUNCTIONS],
- [0])
+ [AC_SUBST(
+  [HAVE_WIDE_CHARACTER_TYPE],
+  [0])
+ AC_SUBST(
+  [HAVE_WCHAR_H],
+  [0]) ])
 
 dnl Check if libbfio should be build with verbose output
 AS_IF(

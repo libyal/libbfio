@@ -25,6 +25,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100430
+* worked on mingw compilation
+* updated common, libcstring
+
 20100416
 * updated liberror, libuna
 
