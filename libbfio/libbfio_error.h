@@ -62,7 +62,7 @@ LIBBFIO_EXTERN int libbfio_error_backtrace_sprint(
                     char *string,
                     size_t size );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 
 #if defined( __cplusplus )
 }

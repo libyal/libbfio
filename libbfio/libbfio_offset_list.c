@@ -99,14 +99,14 @@ int libbfio_offset_list_add_offset(
 	libbfio_list_element_t *list_element        = NULL;
 	libbfio_list_element_t *remove_element      = NULL;
 	libbfio_offset_list_values_t *offset_values = NULL;
-	static char *function                      = "libbfio_offset_list_add_offset";
-	off64_t last_offset                        = 0;
-	off64_t last_range_offset                  = 0;
-	int iterator                               = 0;
-	int create_list_element                    = 1;
-	int merge_next_list_element_check          = 0;
-	int merge_previous_list_element_check      = 0;
-	int result                                 = 0;
+	static char *function                       = "libbfio_offset_list_add_offset";
+	off64_t last_offset                         = 0;
+	off64_t last_range_offset                   = 0;
+	int list_element_iterator                   = 0;
+	int create_list_element                     = 1;
+	int merge_next_list_element_check           = 0;
+	int merge_previous_list_element_check       = 0;
+	int result                                  = 0;
 
 	if( offset_list == NULL )
 	{
@@ -132,11 +132,13 @@ int libbfio_offset_list_add_offset(
 	}
 	/* Check if new range should be merged with an existing range
 	 */
-	if( offset_list->amount_of_elements > 0 )
+	if( offset_list->number_of_elements > 0 )
 	{
 		list_element = offset_list->first;
 
-		for( iterator = 0; iterator < offset_list->amount_of_elements; iterator++ )
+		for( list_element_iterator = 0;
+		     list_element_iterator < offset_list->number_of_elements;
+		     list_element_iterator++ )
 		{
 			if( list_element == NULL )
 			{
@@ -146,7 +148,7 @@ int libbfio_offset_list_add_offset(
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected for element: %d.",
 				 function,
-				 iterator + 1 );
+				 list_element_iterator );
 
 				return( -1 );
 			}
@@ -158,7 +160,7 @@ int libbfio_offset_list_add_offset(
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: missing offset list values for element: %d.",
 				 function,
-				 iterator + 1 );
+				 list_element_iterator );
 
 				return( -1 );
 			}
@@ -337,7 +339,7 @@ int libbfio_offset_list_add_offset(
 	if( create_list_element != 0 )
 	{
 		offset_values = (libbfio_offset_list_values_t *) memory_allocate(
-		                                                 sizeof( libbfio_offset_list_values_t ) );
+		                                                  sizeof( libbfio_offset_list_values_t ) );
 
 		if( offset_values == NULL )
 		{
@@ -390,8 +392,8 @@ int libbfio_offset_list_get_offset(
      liberror_error_t **error )
 {
 	libbfio_list_element_t *list_element = NULL;
-	static char *function               = "libbfio_offset_list_get_offset";
-	int result                          = 0;
+	static char *function                = "libbfio_offset_list_get_offset";
+	int result                           = 0;
 
 	if( offset_list == NULL )
 	{
@@ -474,8 +476,8 @@ int libbfio_offset_list_get_offset_by_value(
 {
 	libbfio_list_element_t *list_element        = NULL;
 	libbfio_offset_list_values_t *offset_values = NULL;
-	static char *function                      = "libbfio_offset_list_get_offset_by_value";
-	int iterator                               = 0;
+	static char *function                       = "libbfio_offset_list_get_offset_by_value";
+	int list_element_iterator                   = 0;
 
 	if( offset_list == NULL )
 	{
@@ -512,7 +514,9 @@ int libbfio_offset_list_get_offset_by_value(
 	}
 	list_element = offset_list->first;
 
-	for( iterator = 0; iterator < offset_list->amount_of_elements; iterator++ )
+	for( list_element_iterator = 0;
+	     list_element_iterator < offset_list->number_of_elements;
+	     list_element_iterator++ )
 	{
 		if( list_element == NULL )
 		{
@@ -522,7 +526,7 @@ int libbfio_offset_list_get_offset_by_value(
 			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: corruption detected for element: %d.",
 			 function,
-			 iterator + 1 );
+			 list_element_iterator );
 
 			return( -1 );
 		}
@@ -534,7 +538,7 @@ int libbfio_offset_list_get_offset_by_value(
 			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing offset list values for element: %d.",
 			 function,
-			 iterator + 1 );
+			 list_element_iterator );
 
 			return( -1 );
 		}
@@ -564,9 +568,9 @@ int libbfio_offset_list_range_is_present(
 {
 	libbfio_list_element_t *list_element        = NULL;
 	libbfio_offset_list_values_t *offset_values = NULL;
-	static char *function                      = "libbfio_offset_list_range_is_present";
-	off64_t last_offset                        = 0;
-	int iterator                               = 0;
+	static char *function                       = "libbfio_offset_list_range_is_present";
+	off64_t last_offset                         = 0;
+	int list_element_iterator                   = 0;
 
 	if( offset_list == NULL )
 	{
@@ -604,7 +608,9 @@ int libbfio_offset_list_range_is_present(
 	last_offset  = offset + size;
 	list_element = offset_list->first;
 
-	for( iterator = 0; iterator < offset_list->amount_of_elements; iterator++ )
+	for( list_element_iterator = 0;
+	     list_element_iterator < offset_list->number_of_elements;
+	     list_element_iterator++ )
 	{
 		if( list_element == NULL )
 		{
@@ -614,7 +620,7 @@ int libbfio_offset_list_range_is_present(
 			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: corruption detected for element: %d.",
 			 function,
-			 iterator + 1 );
+			 list_element_iterator );
 
 			return( -1 );
 		}
@@ -626,7 +632,7 @@ int libbfio_offset_list_range_is_present(
 			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing offset list values for element: %d.",
 			 function,
-			 iterator + 1 );
+			 list_element_iterator );
 
 			return( -1 );
 		}

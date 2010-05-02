@@ -41,21 +41,21 @@ typedef struct libbfio_internal_pool libbfio_internal_pool_t;
 
 struct libbfio_internal_pool
 {
-	/* The amount of handles in the pool
+	/* The number of handles in the pool
 	 */
-	int amount_of_handles;
+	int number_of_handles;
 
-	/* The amount of used handles in the pool
+	/* The number of used handles in the pool
 	 */
-	int amount_of_used_handles;
+	int number_of_used_handles;
 
-	/* The amount of open handles in the pool
+	/* The number of open handles in the pool
 	 */
-	int amount_of_open_handles;
+	int number_of_open_handles;
 
-	/* The maximum amount of open handles in the pool
+	/* The maximum number of open handles in the pool
 	 */
-	int maximum_amount_of_open_handles;
+	int maximum_number_of_open_handles;
 
 	/* A dynamic array containing the handles
 	 */
@@ -70,8 +70,8 @@ struct libbfio_internal_pool
 
 LIBBFIO_EXTERN int libbfio_pool_initialize(
                     libbfio_pool_t **pool,
-                    int amount_of_handles,
-                    int maximum_amount_of_open_handles,
+                    int number_of_handles,
+                    int maximum_number_of_open_handles,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_pool_free(
@@ -80,7 +80,7 @@ LIBBFIO_EXTERN int libbfio_pool_free(
 
 LIBBFIO_EXTERN int libbfio_pool_resize(
                     libbfio_pool_t *pool,
-                    int amount_of_handles,
+                    int number_of_handles,
                     liberror_error_t **error );
 
 int libbfio_pool_open_handle(
@@ -99,9 +99,9 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
      libbfio_handle_t *handle,
      liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
+LIBBFIO_EXTERN int libbfio_pool_get_number_of_handles(
                     libbfio_pool_t *pool,
-                    int *amount_of_handles,
+                    int *number_of_handles,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_pool_get_handle(
@@ -178,14 +178,14 @@ LIBBFIO_EXTERN int libbfio_pool_get_offset(
                     off64_t *offset,
                     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_get_maximum_amount_of_open_handles(
+LIBBFIO_EXTERN int libbfio_pool_get_maximum_number_of_open_handles(
                     libbfio_pool_t *pool,
-                    int *maximum_amount_of_open_handles,
+                    int *maximum_number_of_open_handles,
                     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_set_maximum_amount_of_open_handles(
+LIBBFIO_EXTERN int libbfio_pool_set_maximum_number_of_open_handles(
                     libbfio_pool_t *pool,
-                    int maximum_amount_of_open_handles,
+                    int maximum_number_of_open_handles,
                     liberror_error_t **error );
 
 #if defined( __cplusplus )

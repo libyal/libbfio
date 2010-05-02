@@ -72,6 +72,10 @@
 			</CppCompile>
 			<None Include="..\..\..\libbfio\libbfio_handle.h">
 			</None>
+			<CppCompile Include="..\..\..\libbfio\libbfio_legacy.c">
+			</CppCompile>
+			<None Include="..\..\..\libbfio\libbfio_legacy.h">
+			</None>
 			<None Include="..\..\..\libbfio\libbfio_libuna.h">
 			</None>
 			<CppCompile Include="..\..\..\libbfio\libbfio_list_type.c">

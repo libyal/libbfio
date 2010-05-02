@@ -61,9 +61,9 @@ typedef struct libbfio_list libbfio_list_t;
 
 struct libbfio_list
 {
-	/* The amount of elements
+	/* The number of elements
 	 */
-	int amount_of_elements;
+	int number_of_elements;
 
 	/* The first list element
 	 */
@@ -112,9 +112,9 @@ int libbfio_list_clone(
             liberror_error_t **error ),
      liberror_error_t **error );
 
-int libbfio_list_get_amount_of_elements(
+int libbfio_list_get_number_of_elements(
      libbfio_list_t *list,
-     int *amount_of_elements,
+     int *number_of_elements,
      liberror_error_t **error );
 
 int libbfio_list_get_element(

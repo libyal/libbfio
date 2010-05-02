@@ -40,7 +40,7 @@
 int libbfio_file_pool_add_handles_for_names(
      libbfio_pool_t *pool,
      char * const names[],
-     int amount_of_names,
+     int number_of_names,
      int flags,
      liberror_error_t **error )
 {
@@ -72,19 +72,19 @@ int libbfio_file_pool_add_handles_for_names(
 
 		return( -1 );
 	}
-	if( amount_of_names <= 0 )
+	if( number_of_names <= 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid amount of names zero or less.",
+		 "%s: invalid number of names zero or less.",
 		 function );
 
 		return( -1 );
 	}
 	for( name_iterator = 0;
-	     name_iterator < amount_of_names;
+	     name_iterator < number_of_names;
 	     name_iterator++ )
 	{
 		name_length = libcstring_narrow_string_length(
@@ -158,7 +158,7 @@ int libbfio_file_pool_add_handles_for_names(
 int libbfio_file_pool_add_handle_for_names_wide(
      libbfio_pool_t *pool,
      wchar_t * const names[],
-     int amount_of_names,
+     int number_of_names,
      int flags,
      liberror_error_t **error )
 {
@@ -190,19 +190,19 @@ int libbfio_file_pool_add_handle_for_names_wide(
 
 		return( -1 );
 	}
-	if( amount_of_names <= 0 )
+	if( number_of_names <= 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid amount of names zero or less.",
+		 "%s: invalid number of names zero or less.",
 		 function );
 
 		return( -1 );
 	}
 	for( name_iterator = 0;
-	     name_iterator < amount_of_names;
+	     name_iterator < number_of_names;
 	     name_iterator++ )
 	{
 		name_length = libcstring_wide_string_length(
@@ -268,5 +268,5 @@ int libbfio_file_pool_add_handle_for_names_wide(
 	return( 1 );
 }
 
-#endif
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

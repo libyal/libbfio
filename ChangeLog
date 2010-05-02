@@ -18,12 +18,19 @@ Test
 * wide to narrow (ASCII with codepage) conversion
 
 Windows
-* add WIN32_LEAN_AND_MEAN to config_borlandc.h and config_msc.h
 * add VC_EXTRALEAN to config_msc.h
+
+Beta release
+* remove deprecated functions in libbfio_legacy.[ch]
 
 Deployment:
 * create debian package
 * check if libbfio.3 is up to date
+
+20100502
+* updated common. libcstring. liberror, libuna
+* changed amount of to number of
+* added deprecation macros
 
 20100501
 * updated common. libcstring

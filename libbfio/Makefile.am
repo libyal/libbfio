@@ -18,6 +18,7 @@ libbfio_la_SOURCES = \
 	libbfio_file.c libbfio_file.h \
 	libbfio_file_pool.c libbfio_file_pool.h \
 	libbfio_handle.c libbfio_handle.h \
+	libbfio_legacy.c libbfio_legacy.h \
 	libbfio_libuna.h \
 	libbfio_list_type.c libbfio_list_type.h \
 	libbfio_memory_range.c libbfio_memory_range.h \

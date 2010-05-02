@@ -31,5 +31,15 @@
 
 #endif
 
+#if !defined( LIBBFIO_DEPRECATED )
+#if defined( __GNUC__ ) && __GNUC__ >= 3
+#define LIBBFIO_DEPRECATED	__attribute__ ((__deprecated__))
+#elif defined( _MSC_VER )
+#define LIBBFIO_DEPRECATED	__declspec(deprecated)
+#else
+#define LIBBFIO_DEPRECATED
+#endif
+#endif
+
 #endif
 

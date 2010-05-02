@@ -1,4 +1,4 @@
-.Dd February 21, 2010
+.Dd May 2, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -65,7 +65,7 @@ Handle functions
 .Ft int
 .Fn libbfio_handle_set_track_offsets_read "libbfio_handle_t *handle, uint8_t track_offsets_read, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_handle_get_amount_of_offsets_read "libbfio_handle_t *handle, int *amount_of_read_offsets, libbfio_error_t **error"
+.Fn libbfio_handle_get_number_of_offsets_read "libbfio_handle_t *handle, int *number_of_read_offsets, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_get_offset_read "libbfio_handle_t *handle, int index, off64_t *offset, size64_t *size, libbfio_error_t **error"
 .Pp
@@ -97,13 +97,13 @@ Memory range functions
 .Pp
 Pool functions
 .Ft int
-.Fn libbfio_pool_initialize "libbfio_pool_t **pool, int amount_of_handles, int maximum_amount_of_open_handles, libbfio_error_t **error"
+.Fn libbfio_pool_initialize "libbfio_pool_t **pool, int number_of_handles, int maximum_number_of_open_handles, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_pool_free "libbfio_pool_t **pool, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_pool_resize "libbfio_pool_t *pool, int amount_of_handles, libbfio_error_t **error"
+.Fn libbfio_pool_resize "libbfio_pool_t *pool, int number_of_handles, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_pool_get_amount_of_handles "libbfio_pool_t *pool, int *amount_of_handles, libbfio_error_t **error"
+.Fn libbfio_pool_get_number_of_handles "libbfio_pool_t *pool, int *number_of_handles, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_pool_get_handle "libbfio_pool_t *pool, int entry, libbfio_handle_t **handle, libbfio_error_t **error"
 .Ft int
@@ -129,15 +129,15 @@ Pool functions
 .Ft int
 .Fn libbfio_pool_get_offset "libbfio_pool_t *pool, int entry, off64_t *offset, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_pool_get_maximum_amount_of_open_handles "libbfio_pool_t *pool, int *maximum_amount_of_open_handles, libbfio_error_t **error"
+.Fn libbfio_pool_get_maximum_number_of_open_handles "libbfio_pool_t *pool, int *maximum_number_of_open_handles, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_pool_set_maximum_amount_of_open_handles "libbfio_pool_t *pool, int maximum_amount_of_open_handles, libbfio_error_t **error"
+.Fn libbfio_pool_set_maximum_number_of_open_handles "libbfio_pool_t *pool, int maximum_number_of_open_handles, libbfio_error_t **error"
 .Pp
 File pool functions
 .Ft int
-.Fn libbfio_file_pool_add_handles_for_names "libbfio_pool_t **pool, char * const filenames[], int amount_of_filenames, int flags, libbfio_error_t **error"
+.Fn libbfio_file_pool_add_handles_for_names "libbfio_pool_t **pool, char * const filenames[], int number_of_filenames, int flags, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_file_pool_add_handles_for_names_wide "libbfio_pool_t **pool, wchar_t * const filenames[], int amount_of_filenames, int flags, libbfio_error_t **error"
+.Fn libbfio_file_pool_add_handles_for_names_wide "libbfio_pool_t **pool, wchar_t * const filenames[], int number_of_filenames, int flags, libbfio_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libbfio_get_version

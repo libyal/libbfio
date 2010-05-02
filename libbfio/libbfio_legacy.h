@@ -1,9 +1,7 @@
 /*
- * File pool functions
+ * Legacy functions
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -21,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBBFIO_FILE_POOL_H )
-#define _LIBBFIO_FILE_POOL_H
+#if !defined( _LIBBFIO_LEGACY_H )
+#define _LIBBFIO_LEGACY_H
 
 #include <common.h>
 #include <types.h>
@@ -36,23 +34,29 @@
 extern "C" {
 #endif
 
-LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names(
-                    libbfio_pool_t *pool,
-                    char * const names[],
-                    int number_of_names,
-                    int flags,
+#if !defined( HAVE_LOCAL_LIBBFIO )
+
+LIBBFIO_EXTERN int libbfio_handle_get_amount_of_offsets_read(
+                    libbfio_handle_t *handle,
+                    int *amount_of_read_offsets,
                     liberror_error_t **error );
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names_wide(
+LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
                     libbfio_pool_t *pool,
-                    wchar_t * const names[],
-                    int number_of_names,
-                    int flags,
+                    int *amount_of_handles,
                     liberror_error_t **error );
 
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+LIBBFIO_EXTERN int libbfio_pool_get_maximum_amount_of_open_handles(
+                    libbfio_pool_t *pool,
+                    int *maximum_amount_of_open_handles,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_pool_set_maximum_amount_of_open_handles(
+                    libbfio_pool_t *pool,
+                    int maximum_amount_of_open_handles,
+                    liberror_error_t **error );
+
+#endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 
 #if defined( __cplusplus )
 }

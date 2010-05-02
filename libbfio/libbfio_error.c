@@ -42,7 +42,7 @@ void libbfio_error_free(
 }
 
 /* Prints a descriptive string of the error to the stream
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 int libbfio_error_fprint(
      libbfio_error_t *error,
@@ -54,7 +54,7 @@ int libbfio_error_fprint(
 }
 
 /* Prints a descriptive string of the error to the string
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 int libbfio_error_sprint(
      libbfio_error_t *error,
@@ -68,7 +68,7 @@ int libbfio_error_sprint(
 }
 
 /* Prints a backtrace of the error to the stream
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 int libbfio_error_backtrace_fprint(
      libbfio_error_t *error,
@@ -80,7 +80,7 @@ int libbfio_error_backtrace_fprint(
 }
 
 /* Prints a backtrace of the error to the string
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 int libbfio_error_backtrace_sprint(
      libbfio_error_t *error,
@@ -93,5 +93,5 @@ int libbfio_error_backtrace_sprint(
 	         size ) );
 }
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 

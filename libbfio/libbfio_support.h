@@ -48,7 +48,7 @@ LIBBFIO_EXTERN int libbfio_set_codepage(
                     int codepage,
                     liberror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 
 #if defined( __cplusplus )
 }

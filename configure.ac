@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20100501],
+  [20100502],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libbfio],
- [20100501])
+ [20100502])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -21,6 +21,11 @@ dnl Check for large file support
 AC_SYS_LARGEFILE
 
 dnl Check for configure arguments
+LIBBFIO_TEST_ENABLE(
+ [winapi],
+ [winapi],
+ [enable WINAPI support for cross-compilation],
+ [no])
 LIBBFIO_TEST_ENABLE(
  [wide-character-type],
  [wide_character_type],
@@ -84,7 +89,16 @@ AC_CHECK_HEADER(
   [0])])
 
 dnl Headers included in common/common.h
-AC_CHECK_HEADERS([windows.h])
+AS_IF(
+ [test "x$ac_cv_libbfio_enable_winapi" = xyes],
+ [AC_CHECK_HEADERS([windows.h])
+
+ AS_IF(
+  [test "x$ac_cv_header_windows_h" = xno],
+  [AC_MSG_FAILURE(
+   [Missing header: windows.h header is required to compile with winapi support],
+   [1]) ])
+ ])
 
 dnl Headers included in common/types.h
 AC_CHECK_HEADERS([limits.h])
@@ -322,13 +336,13 @@ AC_CHECK_FUNCS(
  [ac_libbfio_have_memrchr=no])
 
 AS_IF(
-	[test "x$ac_libbfio_have_memrchr" = xno],
-	[AC_CHECK_FUNCS(
-	 [strrchr],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing functions: strrchr and memrchr],
-	  [1]) ]) ])
+ [test "x$ac_libbfio_have_memrchr" = xno],
+ [AC_CHECK_FUNCS(
+  [strrchr],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing functions: strrchr and memrchr],
+   [1]) ]) ])
 
 AC_CHECK_FUNCS(
  [snprintf],
@@ -444,255 +458,57 @@ AS_IF(
    [1]) ]) ])
 
 dnl Check for printf conversion specifier support
-LIBBFIO_PRINTF_JD
-LIBBFIO_PRINTF_ZD
+LIBBFIO_CHECK_FUNC_PRINTF_JD
+LIBBFIO_CHECK_FUNC_PRINTF_ZD
 
 dnl Checks for libraries and library functions
 dnl ac_libbfio_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
 
 dnl Check for enabling libuna for Unicode string support
-AC_CHECK_HEADERS(
- [libuna.h],
- [],
- [ac_libbfio_have_libuna=no])
+LIBBFIO_CHECK_LIBUNA
 
 AS_IF(
-	[test "x$ac_libbfio_have_libuna" != xno],
-	[ac_libbfio_have_libuna=yes
-	AC_CHECK_LIB(
-	 una,
-	 libuna_get_version,
-	 [],
-	 [ac_libbfio_have_libuna=no])
-
-	dnl Byte stream functions
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_string_size_from_byte_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_string_copy_from_byte_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_byte_stream_size_from_utf8,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_byte_stream_copy_from_utf8,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_string_size_from_byte_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_string_copy_from_byte_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_byte_stream_size_from_utf16,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_byte_stream_copy_from_utf16,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf32_string_size_from_byte_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf32_string_copy_from_byte_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_byte_stream_size_from_utf32,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_byte_stream_copy_from_utf32,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-
-	dnl UTF-8 stream functions
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_string_size_from_utf8_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_string_copy_from_utf8_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_stream_size_from_utf8,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_stream_copy_from_utf8,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_string_size_from_utf8_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_string_copy_from_utf8_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_stream_size_from_utf16,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_stream_copy_from_utf16,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf32_string_size_from_utf8_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf32_string_copy_from_utf8_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_stream_size_from_utf32,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_stream_copy_from_utf32,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-
-	dnl UTF-16 stream functions
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_string_size_from_utf16_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf8_string_copy_from_utf16_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_stream_size_from_utf8,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_stream_copy_from_utf8,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_string_size_from_utf16_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_string_copy_from_utf16_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_stream_size_from_utf16,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_stream_copy_from_utf16,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf32_string_size_from_utf16_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf32_string_copy_from_utf16_stream,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_stream_size_from_utf32,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	AC_CHECK_LIB(
-	 una,
-	 libuna_utf16_stream_copy_from_utf32,
-	 [ac_libbfio_dummy=yes],
-	 [ac_libbfio_have_libuna=no])
-	])
-
-AS_IF(
-	[test "x$ac_libbfio_have_libuna" = xyes],
-	[AC_SUBST(
-	 [libbfio_pc_libs_private_libuna],
-	 [-luna])
-	AC_SUBST(
-	 [libbfio_spec_requires_libuna],
-	 [libuna])
-	AC_SUBST(
-	 [libbfio_spec_build_requires_libuna],
-	 [libuna-devel])
-	AC_SUBST(
-	 [LIBUNA_CPPFLAGS],
-	 [])
-	AC_SUBST(
-	 [LIBUNA_LIBADD],
-	 []) ],
-	[dnl If libuna is not available use the (local) version that came with libbfio
-	AC_DEFINE(
-	 [HAVE_LOCAL_LIBUNA],
-	 [1],
-	 [Define to 1 if the local version of libuna is used.])
-	AC_SUBST(
-	 [HAVE_LOCAL_LIBUNA],
-	 [1])
-	AC_SUBST(
-	 [libbfio_pc_libs_private_libuna],
-	 [])
-	AC_SUBST(
-	 [libbfio_spec_requires_libuna],
-	 [])
-	AC_SUBST(
-	 [libbfio_spec_build_requires_libuna],
-	 [])
-	AC_SUBST(
-	 [LIBUNA_CPPFLAGS],
-	 [-I../libuna])
-	AC_SUBST(
-	 [LIBUNA_LIBADD],
-	 [../libuna/libuna.la])
-	ac_libbfio_have_libuna=local])
+ [test "x$ac_libbfio_have_libuna" = xyes],
+ [dnl libuna is available
+ AC_SUBST(
+  [libbfio_pc_libs_private_libuna],
+  [-luna])
+ AC_SUBST(
+  [libbfio_spec_requires_libuna],
+  [libuna])
+ AC_SUBST(
+  [libbfio_spec_build_requires_libuna],
+  [libuna-devel])
+ AC_SUBST(
+  [LIBUNA_CPPFLAGS],
+  [])
+ AC_SUBST(
+  [LIBUNA_LIBADD],
+  []) ],
+ [dnl libuna is not available, using the (local) version that came with the source package
+ AC_DEFINE(
+  [HAVE_LOCAL_LIBUNA],
+  [1],
+  [Define to 1 if the local version of libuna is used.])
+ AC_SUBST(
+  [HAVE_LOCAL_LIBUNA],
+  [1])
+ AC_SUBST(
+  [libbfio_pc_libs_private_libuna],
+  [])
+ AC_SUBST(
+  [libbfio_spec_requires_libuna],
+  [])
+ AC_SUBST(
+  [libbfio_spec_build_requires_libuna],
+  [])
+ AC_SUBST(
+  [LIBUNA_CPPFLAGS],
+  [-I../libuna])
+ AC_SUBST(
+  [LIBUNA_LIBADD],
+  [../libuna/libuna.la])
+ ac_libbfio_have_libuna=local])
 
 AM_CONDITIONAL(
  [HAVE_LOCAL_LIBUNA],
@@ -724,7 +540,7 @@ AS_IF(
 
  dnl Check for wide character string functions
 
- dnl Wide character string functions used in libcstring/libcstring_wide_string.h
+ dnl Wide character string functions used in common/file_stream.h
  AC_CHECK_FUNCS(
   [fgetws],
   [],
@@ -732,6 +548,7 @@ AS_IF(
    [Missing function: fgetws],
    [1]) ])
 
+ dnl Wide character string functions used in libcstring/libcstring_wide_string.h
  AC_CHECK_FUNCS(
   [swprintf],
   [],
@@ -838,50 +655,50 @@ AS_IF(
 
 dnl Check if libbfio should be build with verbose output
 AS_IF(
-	[test "x$ac_cv_libbfio_enable_verbose_output" != xno ],
-	[AC_DEFINE(
-	 [HAVE_VERBOSE_OUTPUT],
-	 [1],
-	 [Define to 1 if verbose output should be used.])
-	ac_cv_libbfio_enable_verbose_output=yes])
+ [test "x$ac_cv_libbfio_enable_verbose_output" != xno ],
+ [AC_DEFINE(
+ [HAVE_VERBOSE_OUTPUT],
+ [1],
+ [Define to 1 if verbose output should be used.])
+ ac_cv_libbfio_enable_verbose_output=yes])
 
 dnl Check if libbfio should be build with debug output
 AS_IF(
-	[test "x$ac_cv_libbfio_enable_debug_output" != xno ],
-	[AC_DEFINE(
-	 [HAVE_DEBUG_OUTPUT],
-	 [1],
-	 [Define to 1 if debug output should be used.])
-	ac_cv_libbfio_enable_debug_output=yes])
+ [test "x$ac_cv_libbfio_enable_debug_output" != xno ],
+ [AC_DEFINE(
+ [HAVE_DEBUG_OUTPUT],
+ [1],
+ [Define to 1 if debug output should be used.])
+ ac_cv_libbfio_enable_debug_output=yes])
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
-	[test "x$ac_libbfio_have_libuna" = xyes],
-	[AC_SUBST(
-	 [libbfio_spec_requires],
-	 [Requires:])
-	AC_SUBST(
-	 [libbfio_spec_build_requires],
-	 [BuildRequires:]) ],
-	[AC_SUBST(
-	 [libbfio_spec_requires],
-	 [])
-	AC_SUBST(
-	 [libbfio_spec_build_requires],
-	 [])
-	ac_libbfio_dummy=yes])
+ [test "x$ac_libbfio_have_libuna" = xyes],
+ [AC_SUBST(
+ [libbfio_spec_requires],
+ [Requires:])
+ AC_SUBST(
+ [libbfio_spec_build_requires],
+ [BuildRequires:]) ],
+ [AC_SUBST(
+ [libbfio_spec_requires],
+ [])
+ AC_SUBST(
+ [libbfio_spec_build_requires],
+ [])
+ ac_libbfio_dummy=yes])
 
 dnl Set memwatch support
 ac_libbfio_have_memwatch=no
 
 AS_IF(
-	[test "x$ac_libbfio_have_memwatch" != xno ],
-	[AC_SUBST(
-	 [MEMWATCH_CPPFLAGS],
-	 ["-DMEMWATCH -DMEMWATCH_STDIO"])
-	AC_SUBST(
-	 [MEMWATCH_LIBADD],
-	 [../common/libmemwatch.la]) ])
+ [test "x$ac_libbfio_have_memwatch" != xno ],
+ [AC_SUBST(
+ [MEMWATCH_CPPFLAGS],
+ ["-DMEMWATCH -DMEMWATCH_STDIO"])
+ AC_SUBST(
+ [MEMWATCH_LIBADD],
+ [../common/libmemwatch.la]) ])
 
 AM_CONDITIONAL(
  [HAVE_MEMWATCH],

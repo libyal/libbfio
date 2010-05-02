@@ -43,8 +43,6 @@ const char *libbfio_get_version(
 	return( (const char *) LIBBFIO_VERSION_STRING );
 }
 
-#endif
-
 /* Retrieves the narrow system string codepage
  * A value of 0 represents no codepage, UTF-8 encoding is used instead
  * Returns 1 if successful or -1 on error
@@ -121,4 +119,6 @@ int libbfio_set_codepage(
 
 	return( 1 );
 }
+
+#endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 

@@ -33,6 +33,14 @@
 #include "libbfio_list_type.h"
 #include "libbfio_types.h"
 
+#if defined( _MSC_VER ) || defined( __BORLANDC__ )
+
+/* This inclusion is needed otherwise some linkers
+ * mess up exporting the legacy functions
+ */
+#include "libbfio_legacy.h"
+#endif
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -276,9 +284,9 @@ LIBBFIO_EXTERN int libbfio_handle_set_track_offsets_read(
                     uint8_t track_offsets_read,
                     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_amount_of_offsets_read(
+LIBBFIO_EXTERN int libbfio_handle_get_number_of_offsets_read(
                     libbfio_handle_t *handle,
-                    int *amount_of_read_offsets,
+                    int *number_of_read_offsets,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_get_offset_read(

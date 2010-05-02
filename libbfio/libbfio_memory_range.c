@@ -501,7 +501,7 @@ int libbfio_memory_range_close(
 }
 
 /* Reads a buffer from the memory range handle
- * Returns the amount of bytes read if successful, or -1 on errror
+ * Returns the number of bytes read if successful, or -1 on errror
  */
 ssize_t libbfio_memory_range_read(
          intptr_t *io_handle,
@@ -598,7 +598,7 @@ ssize_t libbfio_memory_range_read(
 	{
 		return( 0 );
 	}
-	/* Check the amount data available
+	/* Check the amount of data available
 	 */
 	read_size = memory_range_io_handle->range_size - memory_range_io_handle->range_offset;
 
@@ -628,7 +628,7 @@ ssize_t libbfio_memory_range_read(
 }
 
 /* Writes a buffer to the memory range handle
- * Returns the amount of bytes written if successful, or -1 on errror
+ * Returns the number of bytes written if successful, or -1 on errror
  */
 ssize_t libbfio_memory_range_write(
          intptr_t *io_handle,
@@ -719,7 +719,7 @@ ssize_t libbfio_memory_range_write(
 
 		return( -1 );
 	}
-	/* Check the amount data available
+	/* Check the amount of data available
 	 */
 	write_size = memory_range_io_handle->range_size - memory_range_io_handle->range_offset;
 

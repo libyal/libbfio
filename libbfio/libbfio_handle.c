@@ -723,7 +723,7 @@ int libbfio_handle_close(
 }
 
 /* Reads a buffer from the handle
- * Returns the amount of bytes read if successful, or -1 on errror
+ * Returns the number of bytes read if successful, or -1 on errror
  */
 ssize_t libbfio_handle_read(
          libbfio_handle_t *handle,
@@ -945,7 +945,7 @@ ssize_t libbfio_handle_read(
 }
 
 /* Writes a buffer to the handle
- * Returns the amount of bytes written if successful, or -1 on errror
+ * Returns the number of bytes written if successful, or -1 on errror
  */
 ssize_t libbfio_handle_write(
          libbfio_handle_t *handle,
@@ -1595,16 +1595,16 @@ int libbfio_handle_set_track_offsets_read(
 	return( 1 );
 }
 
-/* Retrieves the amount of offsets read
+/* Retrieves the number of offsets read
  * Returns 1 if successful or -1 on error
  */
-int libbfio_handle_get_amount_of_offsets_read(
+int libbfio_handle_get_number_of_offsets_read(
      libbfio_handle_t *handle,
-     int *amount_of_read_offsets,
+     int *number_of_read_offsets,
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_get_amount_of_offsets_read";
+	static char *function                      = "libbfio_handle_get_number_of_offsets_read";
 
 	if( handle == NULL )
 	{
@@ -1619,16 +1619,16 @@ int libbfio_handle_get_amount_of_offsets_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_list_get_amount_of_elements(
+	if( libbfio_list_get_number_of_elements(
 	     internal_handle->offsets_read,
-	     amount_of_read_offsets,
+	     number_of_read_offsets,
 	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve amount of offsets read.",
+		 "%s: unable to retrieve number of offsets read.",
 		 function );
 
 		return( -1 );
