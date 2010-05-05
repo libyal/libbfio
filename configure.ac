@@ -2,15 +2,13 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20100502],
+  [20100505],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
  [include/libbfio.h.in])
 
-AM_INIT_AUTOMAKE(
- [libbfio],
- [20100502])
+AM_INIT_AUTOMAKE([gnu 1.6])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -22,14 +20,14 @@ AC_SYS_LARGEFILE
 
 dnl Check for configure arguments
 LIBBFIO_TEST_ENABLE(
- [winapi],
- [winapi],
- [enable WINAPI support for cross-compilation],
- [no])
-LIBBFIO_TEST_ENABLE(
  [wide-character-type],
  [wide_character_type],
  [enable wide character type support],
+ [no])
+LIBBFIO_TEST_ENABLE(
+ [winapi],
+ [winapi],
+ [enable WINAPI support for cross-compilation],
  [no])
 
 dnl Check for libtool DLL support

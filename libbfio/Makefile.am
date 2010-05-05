@@ -37,7 +37,11 @@ libbfio_la_LDFLAGS = -no-undefined -version-info 1:0:0
 EXTRA_DIST = \
 	libbfio_definitions.h.in
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 distclean: clean
+	/bin/rm -f libbfio_definitions.h
 	/bin/rm -f Makefile
 
 splint:

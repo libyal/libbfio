@@ -16,6 +16,7 @@ API
 
 Test
 * wide to narrow (ASCII with codepage) conversion
+* add autoconf/make test suite
 
 Windows
 * add VC_EXTRALEAN to config_msc.h
@@ -26,6 +27,10 @@ Beta release
 Deployment:
 * create debian package
 * check if libbfio.3 is up to date
+
+20100505
+* updated configure.ac and Makefile.am files
+* updated libuna
 
 20100502
 * updated common. libcstring. liberror, libuna

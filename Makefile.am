@@ -20,6 +20,9 @@ EXTRA_DIST = \
         $(REDHAT_FILES) \
 	libbfio.pc.in
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 pkgconfigdir = $(libdir)/pkgconfig
 
 pkgconfig_DATA = \
