@@ -1,5 +1,5 @@
 /*
- * The internal handle functions
+ * The handle functions
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
@@ -206,20 +206,22 @@ int libbfio_handle_free(
 				result = -1;
 			}
 		}
-		if( ( internal_handle->offsets_read != NULL )
-		 && ( libbfio_list_free(
-		       &( internal_handle->offsets_read ),
-		       &libbfio_offset_list_values_free,
-		       error ) != 1 ) )
+		if( internal_handle->offsets_read != NULL )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free offsets list.",
-			 function );
+			if( libbfio_list_free(
+			     &( internal_handle->offsets_read ),
+			     &libbfio_offset_list_values_free,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free offsets list.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
 		memory_free(
 		 internal_handle );
@@ -1445,7 +1447,7 @@ int libbfio_handle_get_size(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid handle - missing is open function.",
+			 "%s: invalid handle - missing get size function.",
 			 function );
 
 			return( -1 );

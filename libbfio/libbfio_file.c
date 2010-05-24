@@ -129,8 +129,8 @@ int libbfio_file_io_handle_initialize(
  * Returns 1 if successful or -1 on error
  */
 int libbfio_file_initialize(
-      libbfio_handle_t **handle,
-      liberror_error_t **error )
+     libbfio_handle_t **handle,
+     liberror_error_t **error )
 {
 	libbfio_file_io_handle_t *io_handle = NULL;
 	static char *function               = "libbfio_file_initialize";

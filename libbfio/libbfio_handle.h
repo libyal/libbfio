@@ -1,5 +1,5 @@
 /*
- * The internal handle functions
+ * The handle functions
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,

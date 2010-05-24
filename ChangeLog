@@ -28,6 +28,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100524
+* small textual changes
+
 20100505
 * updated configure.ac and Makefile.am files
 * updated libuna
