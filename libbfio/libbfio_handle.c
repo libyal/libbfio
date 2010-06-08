@@ -193,8 +193,8 @@ int libbfio_handle_free(
 				 internal_handle->io_handle );
 			}
 			else if( internal_handle->free_io_handle(
-			                           internal_handle->io_handle,
-			                           error ) != 1 )
+			          internal_handle->io_handle,
+			          error ) != 1 )
 			{
 				liberror_error_set(
 				 error,
@@ -279,52 +279,33 @@ int libbfio_handle_clone(
 	}
 	internal_source_handle = (libbfio_internal_handle_t *) source_handle;
 
-	if( internal_source_handle->io_handle == NULL )
+	if( internal_source_handle->io_handle != NULL )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid source handle - missing IO handle.",
-		 function );
+		if( internal_source_handle->clone_io_handle == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid handle - missing clone IO handle function.",
+			 function );
 
-		return( -1 );
-	}
-	if( internal_source_handle->free_io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing free IO handle function.",
-		 function );
+			return( -1 );
+		}
+		if( internal_source_handle->clone_io_handle(
+		     &destination_io_handle,
+		     internal_source_handle->io_handle,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to clone IO handle.",
+			 function );
 
-		return( -1 );
-	}
-	if( internal_source_handle->clone_io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing clone IO handle function.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_source_handle->clone_io_handle(
-	     &destination_io_handle,
-	     internal_source_handle->io_handle,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to clone IO handle.",
-		 function );
-
-		return( -1 );
+			return( -1 );
+		}
 	}
 	if( libbfio_handle_initialize(
 	     destination_handle,
@@ -348,10 +329,20 @@ int libbfio_handle_clone(
 		 "%s: unable to create destination handle.",
 		 function );
 
-		internal_source_handle->free_io_handle(
-		 destination_io_handle,
-		 NULL );
-
+		if( internal_source_handle->io_handle != NULL )
+		{
+			if( internal_source_handle->free_io_handle == NULL )
+			{
+				memory_free(
+				 destination_io_handle );
+			}
+			else
+			{
+				internal_source_handle->free_io_handle(
+				 destination_io_handle,
+				 NULL );
+			}
+		}
 		return( -1 );
 	}
 	if( libbfio_handle_open(
@@ -366,8 +357,8 @@ int libbfio_handle_clone(
 		 "%s: unable to open destination handle.",
 		 function );
 
-		internal_source_handle->free_io_handle(
-		 destination_io_handle,
+		libbfio_handle_free(
+		 destination_handle,
 		 NULL );
 
 		return( -1 );
@@ -385,8 +376,8 @@ int libbfio_handle_clone(
 		 "%s: unable to seek offset in destination handle.",
 		 function );
 
-		internal_source_handle->free_io_handle(
-		 destination_io_handle,
+		libbfio_handle_free(
+		 destination_handle,
 		 NULL );
 
 		return( -1 );

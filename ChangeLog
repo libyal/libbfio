@@ -28,6 +28,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100608
+* small changes regarding handle clone
+
 20100524
 * small textual changes
 
