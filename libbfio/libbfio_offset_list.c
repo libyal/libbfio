@@ -31,16 +31,28 @@
 #include "libbfio_offset_list.h"
 
 /* Frees offset list values
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_offset_list_values_free(
      intptr_t *values,
      liberror_error_t **error )
 {
-	if( values != NULL )
+	static char *function = "libbfio_offset_list_values_free";
+
+	if( values == NULL )
 	{
-		memory_free(
-		 values );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid offset list values.",
+		 function );
+
+		return( -1 );
 	}
+	memory_free(
+	 values );
+
 	return( 1 );
 }
 
@@ -88,7 +100,7 @@ int libbfio_offset_list_values_compare(
 }
 
 /* Add an offset
- * Returns 1 if successful, or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_offset_list_add_offset(
      libbfio_list_t *offset_list,
