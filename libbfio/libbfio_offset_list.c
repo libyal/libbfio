@@ -31,28 +31,16 @@
 #include "libbfio_offset_list.h"
 
 /* Frees offset list values
- * Returns 1 if successful or -1 on error
  */
 int libbfio_offset_list_values_free(
      intptr_t *values,
      liberror_error_t **error )
 {
-	static char *function = "libbfio_offset_list_values_free";
-
-	if( values == NULL )
+	if( values != NULL )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid offset list values.",
-		 function );
-
-		return( -1 );
+		memory_free(
+		 values );
 	}
-	memory_free(
-	 values );
-
 	return( 1 );
 }
 
@@ -100,7 +88,7 @@ int libbfio_offset_list_values_compare(
 }
 
 /* Add an offset
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, or -1 on error
  */
 int libbfio_offset_list_add_offset(
      libbfio_list_t *offset_list,
@@ -142,10 +130,22 @@ int libbfio_offset_list_add_offset(
 
 		return( -1 );
 	}
+	if( size > (size64_t) INT64_MAX )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 	/* Check if new range should be merged with an existing range
 	 */
 	if( offset_list->number_of_elements > 0 )
 	{
+		last_offset  = offset + size;
 		list_element = offset_list->first;
 
 		for( list_element_iterator = 0;
@@ -178,7 +178,6 @@ int libbfio_offset_list_add_offset(
 			}
 			offset_values = (libbfio_offset_list_values_t *) list_element->value;
 
-			last_offset       = offset + size;
 			last_range_offset = offset_values->offset + offset_values->size;
 
 			/* Check if the offset range overlaps at the end of an existing offset range
@@ -224,7 +223,7 @@ int libbfio_offset_list_add_offset(
 			}
 			list_element = list_element->next;
 		}
-		/* Check if current range should also be merged with previous
+		/* Check if current range should be merged with the previous range
 		 */
 		if( merge_previous_list_element_check != 0 )
 		{
@@ -252,7 +251,8 @@ int libbfio_offset_list_add_offset(
 
 					return( -1 );
 				}
-				last_offset = ( (libbfio_offset_list_values_t *) list_element->previous->value )->offset + ( (libbfio_offset_list_values_t *) list_element->previous->value )->size;
+				last_offset = ( (libbfio_offset_list_values_t *) list_element->previous->value )->offset
+				            + ( (libbfio_offset_list_values_t *) list_element->previous->value )->size;
 
 				if( last_offset == offset_values->offset )
 				{
@@ -286,7 +286,7 @@ int libbfio_offset_list_add_offset(
 				}
 			}
 		}
-		/* Check if current range should also be merged with next
+		/* Check if current range should be merged with the next range
 		 */
 		if( merge_next_list_element_check != 0 )
 		{

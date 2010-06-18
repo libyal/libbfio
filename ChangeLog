@@ -28,8 +28,8 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
-20100611
-* offset list value free function now requires non NULL value
+20100618
+* fixes in offset tracking
 
 20100608
 * small changes regarding handle clone

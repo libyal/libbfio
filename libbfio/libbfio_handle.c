@@ -878,17 +878,6 @@ ssize_t libbfio_handle_read(
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
-		if( internal_handle->offsets_read == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid handle - missing offsets read table.",
-			 function );
-
-			return( -1 );
-		}
 		if( libbfio_offset_list_add_offset(
 		     internal_handle->offsets_read,
 		     internal_handle->offset,
@@ -1572,17 +1561,6 @@ int libbfio_handle_set_track_offsets_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( internal_handle->offsets_read == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing offsets read table.",
-		 function );
-
-		return( -1 );
-	}
 	internal_handle->track_offsets_read = track_offsets_read;
 
 	return( 1 );
