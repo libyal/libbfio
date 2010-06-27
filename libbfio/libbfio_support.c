@@ -1,9 +1,7 @@
 /*
  * Support functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -95,6 +93,8 @@ int libbfio_set_codepage(
 	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_14 )
 	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_15 )
 	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_16 )
+	 && ( codepage != LIBBFIO_CODEPAGE_KOI8_R )
+	 && ( codepage != LIBBFIO_CODEPAGE_KOI8_U )
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_874 )
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1250 )
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1251 )

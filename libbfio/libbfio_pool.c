@@ -1,9 +1,7 @@
 /*
  * The internal pool functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -229,39 +227,43 @@ int libbfio_pool_free(
 			     handle_iterator < internal_pool->number_of_handles;
 			     handle_iterator++ )
 			{
-				if( ( internal_pool->handles[ handle_iterator ] != NULL )
-				 && ( libbfio_handle_free(
-				        &( internal_pool->handles[ handle_iterator ] ),
-				        error ) != 1 ) )
+				if( internal_pool->handles[ handle_iterator ] != NULL )
 				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_CLOSE_FAILED,
-					 "%s: unable to free handle: %d.",
-					 function,
-					 handle_iterator );
+					if( libbfio_handle_free(
+					     &( internal_pool->handles[ handle_iterator ] ),
+					     error ) != 1 )
+					{
+						liberror_error_set(
+						 error,
+						 LIBERROR_ERROR_DOMAIN_IO,
+						 LIBERROR_IO_ERROR_CLOSE_FAILED,
+						 "%s: unable to free handle: %d.",
+						 function,
+						 handle_iterator );
 
-					result = -1;
+						result = -1;
+					}
 				}
 			}
 			memory_free(
 			 internal_pool->handles );
 		}
-		if( ( internal_pool->last_used_list != NULL )
-		 && ( libbfio_list_free(
-		       &( internal_pool->last_used_list ),
-		       NULL,
-		       error ) != 1 ) )
+		if( internal_pool->last_used_list != NULL )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free last used list.",
-			 function );
+			if( libbfio_list_free(
+			     &( internal_pool->last_used_list ),
+			     NULL,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free last used list.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
 		memory_free(
 		 internal_pool );

@@ -55,13 +55,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man3/*
 
 %changelog
-* Sun Feb 21 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100221-1
-- Email address change
-
-* Fri Aug 28 2009 Joachim Metz <forensics@hoffmannbv.nl> 20090828-1
-- Fixed libuna requires and build requires
-- Fixed empty requires and build requires
-
-* Thu Mar 12 2009 Joachim Metz <forensics@hoffmannbv.nl> 20090312-1
-- Initial version based on libbfio spec file
+* Sun Jun 27 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100627-1
+- Clean up of previous version of spec file
 

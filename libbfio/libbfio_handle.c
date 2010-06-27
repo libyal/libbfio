@@ -1,9 +1,7 @@
 /*
  * The handle functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -1493,7 +1491,7 @@ int libbfio_handle_get_offset(
 	return( 1 );
 }
 
-/* Set the value to have the library open and close 
+/* Sets the value to have the library open and close 
  * the systems file descriptor or handle on demand
  * 0 disables open on demand any other value enables it
  * Returns 1 if successful or -1 on error
@@ -1536,7 +1534,7 @@ int libbfio_handle_set_open_on_demand(
 	return( 1 );
 }
 
-/* Set the value to have the library track the offsets read
+/* Sets the value to have the library track the offsets read
  * 0 disables tracking any other value enables it
  * Returns 1 if successful or -1 on error
  */

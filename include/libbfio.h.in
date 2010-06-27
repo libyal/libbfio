@@ -1,9 +1,7 @@
 /*
  * Library to support support (abstracted) basic file IO
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -256,7 +254,7 @@ LIBBFIO_EXTERN int libbfio_handle_get_size(
                     size64_t *size,
                     libbfio_error_t **error );
 
-/* Set the value to have the library open and close 
+/* Sets the value to have the library open and close 
  * the systems file descriptor or handle on demand
  * 0 disables open on demand any other value enables it
  * Returns 1 if successful or -1 on error
@@ -266,7 +264,7 @@ LIBBFIO_EXTERN int libbfio_handle_set_open_on_demand(
                     uint8_t open_on_demand,
                     libbfio_error_t **error );
 
-/* Set the value to have the library track the offsets read
+/* Sets the value to have the library track the offsets read
  * 0 disables tracking any other value enables it
  * Returns 1 if successful or -1 on error
  */
@@ -478,7 +476,7 @@ LIBBFIO_EXTERN int libbfio_pool_add_handle(
                     int flags,
                     libbfio_error_t **error );
 
-/* Set a certain handle in the pool
+/* Sets a certain handle in the pool
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN int libbfio_pool_set_handle(

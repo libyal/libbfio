@@ -1,7 +1,7 @@
-EXTRA_DIST = \
+man_MANS = \
 	libbfio.3
 
-man_MANS = \
+EXTRA_DIST = \
 	libbfio.3
 
 MAINTAINERCLEANFILES = \
