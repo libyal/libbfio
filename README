@@ -1,4 +1,13 @@
-Mac OS X
+Windows
+* pre Windows 2000 support
+
+
+Pre Windows 2000 support
+If you need pre Windows 2000 support make sure WINVER is defined correctly
+libbfio uses WINVER to determine the available WINAPI functions
+
+
+MacOS X
 * missing libtoolize
 * building multiple architure binaries
 
@@ -8,8 +17,10 @@ Use glibtoolize instead
 
 
 Building multiple architecture binaries
-I.e. on Mac OS X 10.4 run the following commands:
-CFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" LDFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" ./configure --disable-dependency-tracking --prefix=$PWD/macosx/tmp/
+I.e. on MacOS X 10.4 run the following commands:
+CFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" \
+LDFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" \
+./configure --disable-dependency-tracking --prefix=$PWD/macosx/tmp/
 make
 make install
 

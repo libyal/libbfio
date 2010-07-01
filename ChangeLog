@@ -4,8 +4,6 @@ Pool
 File
 * add errno error strings to liberror notifications
 * convert filename for g_open to UTF-8 ? or use codepage setting ?
-* use long windows filenames \\?\ notation
-  - notation does not seem to allow relative paths \\?\..\
 * check if codepage before gopen is UTF8 ?
 
 Memory range
@@ -27,6 +25,11 @@ Beta release
 Deployment:
 * create debian package
 * check if libbfio.3 is up to date
+
+20100701
+* replaced HAVE_GETFILESIZEEX and HAVE_SETFILEPOINTEREX by WINVER check
+* added optimized file exists check
+* updated libbfio.3 manual
 
 20100627
 * updated common, libcstring, liberror, libuna

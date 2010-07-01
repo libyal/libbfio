@@ -2596,7 +2596,7 @@ ssize_t libbfio_file_write(
 	return( write_count );
 }
 
-#if defined( WINAPI ) && !defined( HAVE_SETFILEPOINTEREX )
+#if defined( WINAPI ) && ( WINVER < 0x0500 )
 
 #if !defined( INVALID_SET_FILE_POINTER )
 #define INVALID_SET_FILE_POINTER	((LONG) -1)
@@ -2804,7 +2804,7 @@ off64_t libbfio_file_seek_offset(
 	large_integer_offset.HighPart = (LONG) ( offset >> 32 );
 #endif
 
-#if defined( HAVE_SETFILEPOINTEREX )
+#if ( WINVER >= 0x0500 )
 	if( SetFilePointerEx(
 	     file_io_handle->file_handle,
 	     large_integer_offset,
@@ -2876,7 +2876,10 @@ off64_t libbfio_file_seek_offset(
 	return( offset );
 }
 
+#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS ) && ( WINVER >= 0x0500 )
+
 /* Function to determine if a file exists
+ * Optimized version for Windows 2000 (WINAPI 5) or later
  * Return 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
@@ -2888,15 +2891,8 @@ int libbfio_file_exists(
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_exists";
 	int result                               = 1;
-
-#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	DWORD error_code                         = 0;
-#endif
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) && !defined( WINAPI )
-	char *narrow_filename                    = NULL;
-	size_t narrow_filename_size              = 0;
-#endif
+	DWORD file_attributes                    = 0;
 
 	if( io_handle == NULL )
 	{
@@ -2922,7 +2918,112 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	/* Must use GetFileAttributesW here because filename is a 
+	 * wide character string and GetFileAttributes is dependent
+	 * on UNICODE directives
+	 */
+	file_attributes = GetFileAttributesW(
+	                   (LPCWSTR) file_io_handle->name );
+#else
+	/* Must use GetFileAttributesA here because filename is a 
+	 * narrow character string and GetFileAttributes is dependent
+	 * on UNICODE directives
+	 */
+	file_attributes = GetFileAttributesA(
+	                   (LPCSTR) file_io_handle->name );
+#endif
+	if( file_attributes == INVALID_FILE_ATTRIBUTES )
+	{
+		error_code = GetLastError();
+
+		switch( error_code )
+		{
+			case ERROR_ACCESS_DENIED:
+				result = 1;
+
+				break;
+
+			case ERROR_FILE_NOT_FOUND:
+			case ERROR_PATH_NOT_FOUND:
+				result = 0;
+
+				break;
+
+			default:
+				if( libbfio_error_string_copy_from_error_number(
+				     error_string,
+				     128,
+				     error_code,
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_GENERIC,
+					 "%s: unable to determine attributes of file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+					 function,
+					 file_io_handle->name,
+					 error_string );
+				}
+				else
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_GENERIC,
+					 "%s: unable to determine attributes of file: %" PRIs_LIBCSTRING_SYSTEM ".",
+					 function,
+					 file_io_handle->name );
+				}
+				result = -1;
+
+				break;
+		}
+	}
+	return( result );
+}
+
+#elif defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
+
+/* Function to determine if a file exists
+ * Return 1 if file exists, 0 if not or -1 on error
+ */
+int libbfio_file_exists(
+     intptr_t *io_handle,
+     liberror_error_t **error )
+{
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_exists";
+	int result                               = 1;
+	DWORD error_code                         = 0;
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle - missing name.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	/* Must use CreateFileW here because filename is a 
 	 * wide character string and CreateFile is dependent
@@ -3013,7 +3114,288 @@ int libbfio_file_exists(
 		return( -1 );
 	}
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
+
+	return( result );
+}
+
+#elif defined( HAVE_STAT ) && !defined( WINAPI )
+
+/* Function to determine if a file exists
+ * Optimized version for platforms with the stat function
+ * Return 1 if file exists, 0 if not or -1 on error
+ */
+int libbfio_file_exists(
+     intptr_t *io_handle,
+     liberror_error_t **error )
+{
+	struct stat file_statistics;
+
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_exists";
+	int result                               = 1;
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	char *narrow_filename                    = NULL;
+	size_t narrow_filename_size              = 0;
+#endif
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle - missing name.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	/* Convert the filename to a narrow string
+	 * if the platform has no wide character open function
+	 */
+	if( libcstring_narrow_system_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_size_from_utf32(
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          &narrow_filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_size_from_utf16(
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          &narrow_filename_size,
+		          error );
 #else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_size_from_utf32(
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          libcstring_narrow_system_string_codepage,
+		          &narrow_filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_size_from_utf16(
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          libcstring_narrow_system_string_codepage,
+		          &narrow_filename_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to determine narrow character filename size.",
+		 function );
+
+		return( -1 );
+	}
+	narrow_filename = (char *) memory_allocate(
+	                            sizeof( char ) * narrow_filename_size );
+
+	if( narrow_filename == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create narrow character filename.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcstring_narrow_system_string_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_copy_from_utf32(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_copy_from_utf16(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_copy_from_utf32(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libcstring_narrow_system_string_codepage,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_copy_from_utf16(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libcstring_narrow_system_string_codepage,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to set narrow character filename.",
+		 function );
+
+		memory_free(
+		 narrow_filename );
+
+		return( -1 );
+	}
+	result = stat(
+	          narrow_filename,
+	          &file_statistics );
+
+	memory_free(
+	 narrow_filename );
+#else
+	result = stat(
+	          (char *) file_io_handle->name,
+	          &file_statistics );
+#endif
+
+	if( result != 0 )
+	{
+		switch( errno )
+		{
+			case EACCES:
+				result = 1;
+
+				break;
+
+			case ENOENT:
+				result = 0;
+
+				break;
+
+			default:
+				if( libbfio_error_string_copy_from_error_number(
+				     error_string,
+				     128,
+				     errno,
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_GENERIC,
+					 "%s: unable to stat file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+					 function,
+					 file_io_handle->name,
+					 error_string );
+				}
+				else
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_GENERIC,
+					 "%s: unable to stat file: %" PRIs_LIBCSTRING_SYSTEM ".",
+					 function,
+					 file_io_handle->name );
+				}
+				result = -1;
+
+				break;
+		}
+	}
+	else
+	{
+		result = 1;
+	}
+	return( result );
+}
+
+#else
+
+/* Function to determine if a file exists
+ * Return 1 if file exists, 0 if not or -1 on error
+ */
+int libbfio_file_exists(
+     intptr_t *io_handle,
+     liberror_error_t **error )
+{
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_exists";
+	int result                               = 1;
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) && !defined( WINAPI )
+	char *narrow_filename                    = NULL;
+	size_t narrow_filename_size              = 0;
+#endif
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
+
+	if( file_io_handle->name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle - missing name.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 #if defined( _MSC_VER )
 	if( _wsopen_s(
@@ -3180,7 +3562,7 @@ int libbfio_file_exists(
 					   0 );
 #else
 	file_io_handle->file_descriptor = open(
-	                                   file_io_handle->name,
+	                                   (char *) file_io_handle->name,
 	                                   O_RDONLY,
 	                                   0644 );
 #endif
@@ -3249,9 +3631,11 @@ int libbfio_file_exists(
 		return( -1 );
 	}
 	file_io_handle->file_descriptor = -1;	
-#endif
+
 	return( result );
 }
+
+#endif
 
 /* Check if the file is open
  * Returns 1 if open, 0 if not or -1 on error
@@ -3290,7 +3674,7 @@ int libbfio_file_is_open(
 	return( 1 );
 }
 
-#if defined( WINAPI ) && !defined( HAVE_GETFILESIZEEX )
+#if defined( WINAPI ) && ( WINVER < 0x0500 )
 
 /* Cross Windows safe version of GetFileSizeEx
  * Returns TRUE if successful or FALSE on error
@@ -3441,7 +3825,7 @@ int libbfio_file_get_size(
 		return( -1 );
 	}
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-#if defined( HAVE_GETFILESIZEEX )
+#if ( WINVER >= 0x0500 )
 	if( GetFileSizeEx(
 	     file_io_handle->file_handle,
 	     &large_integer_size ) == 0 )

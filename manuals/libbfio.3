@@ -1,4 +1,4 @@
-.Dd June 27, 2010
+.Dd July 1, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -153,7 +153,9 @@ libbfio allows to be compiled with wide character support.
 To compile libbfio with wide character support use
 .Ar ./configure --enable-wide-character-type=yes
 or pass the definition
-.Ar HAVE_WIDE_CHARACTER_TYPE
+.Ar _UNICODE
+ or
+.Ar UNICODE
  to the compiler (i.e. in case of Microsoft Visual Studio (MSVS) C++).
 
 To have other code to determine if libbfio was compiled with wide character support it defines
