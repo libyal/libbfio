@@ -26,6 +26,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100705
+* updated offset list
+
 20100701
 * replaced HAVE_GETFILESIZEEX and HAVE_SETFILEPOINTEREX by WINVER check
 * added optimized file exists check

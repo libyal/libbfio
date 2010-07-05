@@ -136,7 +136,7 @@ int libbfio_handle_initialize(
 		internal_handle->is_open         = is_open;
 		internal_handle->get_size        = get_size;
 
-		if( libbfio_list_initialize(
+		if( libbfio_offset_list_initialize(
 		     &( internal_handle->offsets_read ),
 		     error ) != 1 )
 		{
@@ -144,7 +144,7 @@ int libbfio_handle_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create offsets read list.",
+			 "%s: unable to create read offsets list.",
 			 function );
 
 			memory_free(
@@ -206,16 +206,15 @@ int libbfio_handle_free(
 		}
 		if( internal_handle->offsets_read != NULL )
 		{
-			if( libbfio_list_free(
+			if( libbfio_offset_list_free(
 			     &( internal_handle->offsets_read ),
-			     &libbfio_offset_list_values_free,
 			     error ) != 1 )
 			{
 				liberror_error_set(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free offsets list.",
+				 "%s: unable to free read offsets list.",
 				 function );
 
 				result = -1;
@@ -1588,7 +1587,7 @@ int libbfio_handle_get_number_of_offsets_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_list_get_number_of_elements(
+	if( libbfio_offset_list_get_number_of_elements(
 	     internal_handle->offsets_read,
 	     number_of_read_offsets,
 	     error ) != 1 )
@@ -1597,7 +1596,7 @@ int libbfio_handle_get_number_of_offsets_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of offsets read.",
+		 "%s: unable to retrieve number of read offsets.",
 		 function );
 
 		return( -1 );
@@ -1642,7 +1641,7 @@ int libbfio_handle_get_offset_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve offset.",
+		 "%s: unable to retrieve read offset.",
 		 function );
 
 		return( -1 );

@@ -29,6 +29,7 @@
 
 #include "libbfio_extern.h"
 #include "libbfio_list_type.h"
+#include "libbfio_offset_list.h"
 #include "libbfio_types.h"
 
 #if defined( _MSC_VER ) || defined( __BORLANDC__ )
@@ -82,7 +83,7 @@ struct libbfio_internal_handle
 
 	/* The offset ranges that were read
 	 */
-	libbfio_list_t *offsets_read;
+	libbfio_offset_list_t *offsets_read;
 
 	/* The narrow string codepage
 	 */

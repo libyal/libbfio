@@ -33,9 +33,9 @@
 extern "C" {
 #endif
 
-typedef struct libbfio_offset_list_values libbfio_offset_list_values_t;
+typedef struct libbfio_offset_list_value libbfio_offset_list_value_t;
 
-struct libbfio_offset_list_values
+struct libbfio_offset_list_value
 {
 	/* The offset
 	 */
@@ -46,37 +46,70 @@ struct libbfio_offset_list_values
 	size64_t size;
 };
 
-int libbfio_offset_list_values_free(
-     intptr_t *values,
+typedef struct libbfio_offset_list libbfio_offset_list_t;
+
+struct libbfio_offset_list
+{
+	/* The number of elements
+	 */
+	int number_of_elements;
+
+	/* The first list element
+	 */
+	libbfio_list_element_t *first;
+
+	/* The last list element
+	 */
+	libbfio_list_element_t *last;
+
+	/* The current list element
+	 */
+	libbfio_list_element_t *current;
+
+	/* The current list element index
+	 */
+	int current_index;
+};
+
+int libbfio_offset_list_value_free(
+     intptr_t *offset_list_value,
      liberror_error_t **error );
 
-int libbfio_offset_list_values_compare(
-     intptr_t *first,
-     intptr_t *second,
+int libbfio_offset_list_initialize(
+     libbfio_offset_list_t **offset_list,
+     liberror_error_t **error );
+
+int libbfio_offset_list_free(
+     libbfio_offset_list_t **offset_list,
+     liberror_error_t **error );
+
+int libbfio_offset_list_get_number_of_elements(
+     libbfio_offset_list_t *offset_list,
+     int *number_of_elements,
      liberror_error_t **error );
 
 int libbfio_offset_list_add_offset(
-     libbfio_list_t *offset_list,
+     libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
      liberror_error_t **error );
 
 int libbfio_offset_list_get_offset(
-     libbfio_list_t *offset_list,
+     libbfio_offset_list_t *offset_list,
      int index,
      off64_t *offset,
      size64_t *size,
      liberror_error_t **error );
 
 int libbfio_offset_list_get_offset_by_value(
-     libbfio_list_t *offset_list,
+     libbfio_offset_list_t *offset_list,
      off64_t offset_value,
      off64_t *offset,
      size64_t *size,
      liberror_error_t **error );
 
 int libbfio_offset_list_range_is_present(
-     libbfio_list_t *offset_list,
+     libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
      liberror_error_t **error );
