@@ -268,8 +268,8 @@ int libbfio_list_empty(
 {
 	libbfio_list_element_t *list_element = NULL;
 	static char *function                = "libbfio_list_empty";
+	int element_index                    = 0;
 	int number_of_elements               = 0;
-	int iterator                         = 0;
 	int result                           = 1;
 
 	if( list == NULL )
@@ -287,9 +287,9 @@ int libbfio_list_empty(
 	{
 		number_of_elements = list->number_of_elements;
 
-		for( iterator = 0;
-		     iterator < number_of_elements;
-		     iterator++ )
+		for( element_index = 0;
+		     element_index < number_of_elements;
+		     element_index++ )
 		{
 			list_element = list->first;
 
@@ -301,7 +301,7 @@ int libbfio_list_empty(
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected in element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_index );
 
 				return( -1 );
 			}
@@ -320,7 +320,7 @@ int libbfio_list_empty(
 			list_element->next = NULL;
 
 			if( libbfio_list_element_free(
-			     &( list_element ),
+			     &list_element,
 			     value_free_function,
 			     error ) != 1 )
 			{
@@ -330,7 +330,7 @@ int libbfio_list_empty(
 				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 				 "%s: unable to free element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_index );
 
 				result = -1;
 			}
@@ -355,7 +355,7 @@ int libbfio_list_clone(
 	libbfio_list_element_t *source_list_element = NULL;
 	intptr_t *destination_value                 = NULL;
 	static char *function                       = "libbfio_list_clone";
-	int iterator                                = 0;
+	int element_index                           = 0;
 
 	if( destination == NULL )
 	{
@@ -431,9 +431,9 @@ int libbfio_list_clone(
 		}
 		source_list_element = source->first;
 
-		for( iterator = 0;
-		     iterator < source->number_of_elements;
-		     iterator++ )
+		for( element_index = 0;
+		     element_index < source->number_of_elements;
+		     element_index++ )
 		{
 			if( source_list_element == NULL )
 			{
@@ -443,7 +443,7 @@ int libbfio_list_clone(
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected in source list element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_index );
 
 				return( -1 );
 			}
@@ -460,7 +460,7 @@ int libbfio_list_clone(
 				 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 				 "%s: unable to clone value of list element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_index );
 
 				return( -1 );
 			}
@@ -475,7 +475,7 @@ int libbfio_list_clone(
 				 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
 				 "%s: unable to append value of list element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_index );
 
 				return( -1 );
 			}
@@ -533,7 +533,7 @@ int libbfio_list_get_element(
 {
 	libbfio_list_element_t *list_element = NULL;
 	static char *function                = "libbfio_list_get_element";
-	int iterator                         = 0;
+	int element_iterator                 = 0;
 
 	if( list == NULL )
 	{
@@ -553,7 +553,7 @@ int libbfio_list_get_element(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
-		 "%s: invalid element index out of range.",
+		 "%s: invalid element index value out of range.",
 		 function );
 
 		return( -1 );
@@ -573,9 +573,9 @@ int libbfio_list_get_element(
 	{
 		list_element = list->first;
 
-		for( iterator = 0;
-		     iterator < element_index;
-		     iterator++ )
+		for( element_iterator = 0;
+		     element_iterator < element_index;
+		     element_iterator++ )
 		{
 			if( list_element == NULL )
 			{
@@ -585,7 +585,7 @@ int libbfio_list_get_element(
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected in element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_iterator );
 
 				return( -1 );
 			}
@@ -596,9 +596,9 @@ int libbfio_list_get_element(
 	{
 		list_element = list->last;
 
-		for( iterator = ( list->number_of_elements - 1 );
-		     iterator > element_index;
-		     iterator-- )
+		for( element_iterator = ( list->number_of_elements - 1 );
+		     element_iterator > element_index;
+		     element_iterator-- )
 		{
 			if( list_element == NULL )
 			{
@@ -608,7 +608,7 @@ int libbfio_list_get_element(
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected in element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_iterator );
 
 				return( -1 );
 			}
@@ -935,7 +935,7 @@ int libbfio_list_insert_element(
 	libbfio_list_element_t *list_element = NULL;
 	static char *function                = "libbfio_list_insert_element";
 	int result                           = 0;
-	int iterator                         = 0;
+	int element_index                    = 0;
 
 	if( list == NULL )
 	{
@@ -1035,9 +1035,9 @@ int libbfio_list_insert_element(
 		}
 		list_element = list->first;
 
-		for( iterator = 0;
-		     iterator < list->number_of_elements;
-		     iterator++ )
+		for( element_index = 0;
+		     element_index < list->number_of_elements;
+		     element_index++ )
 		{
 			result = value_compare_function(
 			          element->value,
@@ -1052,7 +1052,7 @@ int libbfio_list_insert_element(
 				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to compare list element: %d.",
 				 function,
-				 iterator + 1 );
+				 element_index );
 
 				return( -1 );
 			}
@@ -1077,7 +1077,7 @@ int libbfio_list_insert_element(
 					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: corruption detected - missing previous in list element: %d.",
 					 function,
-					 iterator + 1 );
+					 element_index );
 
 					return( -1 );
 				}

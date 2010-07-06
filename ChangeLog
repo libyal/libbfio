@@ -26,6 +26,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100706
+* updated libuna
+* small changes
+
 20100705
 * updated offset list
 
