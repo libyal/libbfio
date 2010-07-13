@@ -30,14 +30,14 @@ typedef intptr_t libbfio_error_t;
  */
 enum LIBBFIO_ERROR_DOMAINS
 {
-	LIBBFIO_ERROR_DOMAIN_ARGUMENTS                = (int) 'a',
-	LIBBFIO_ERROR_DOMAIN_CONVERSION               = (int) 'c',
-	LIBBFIO_ERROR_DOMAIN_COMPRESSION              = (int) 'C',
-	LIBBFIO_ERROR_DOMAIN_IO                       = (int) 'I',
-	LIBBFIO_ERROR_DOMAIN_INPUT                    = (int) 'i',
-	LIBBFIO_ERROR_DOMAIN_MEMORY                   = (int) 'm',
-	LIBBFIO_ERROR_DOMAIN_OUTPUT                   = (int) 'o',
-	LIBBFIO_ERROR_DOMAIN_RUNTIME                  = (int) 'r',
+	LIBBFIO_ERROR_DOMAIN_ARGUMENTS			= (int) 'a',
+	LIBBFIO_ERROR_DOMAIN_CONVERSION			= (int) 'c',
+	LIBBFIO_ERROR_DOMAIN_COMPRESSION		= (int) 'C',
+	LIBBFIO_ERROR_DOMAIN_IO				= (int) 'I',
+	LIBBFIO_ERROR_DOMAIN_INPUT			= (int) 'i',
+	LIBBFIO_ERROR_DOMAIN_MEMORY			= (int) 'm',
+	LIBBFIO_ERROR_DOMAIN_OUTPUT			= (int) 'o',
+	LIBBFIO_ERROR_DOMAIN_RUNTIME			= (int) 'r',
 };
 
 /* The argument error codes
@@ -45,60 +45,63 @@ enum LIBBFIO_ERROR_DOMAINS
  */
 enum LIBBFIO_ARGUMENT_ERROR
 {
-	LIBBFIO_ARGUMENT_ERROR_GENERIC                = 0,
+	LIBBFIO_ARGUMENT_ERROR_GENERIC			= 0,
 
 	/* The argument contains an invalid value
 	 */
-	LIBBFIO_ARGUMENT_ERROR_INVALID_VALUE          = 1,
+	LIBBFIO_ARGUMENT_ERROR_INVALID_VALUE		= 1,
 
 	/* The argument contains a value less than zero
 	 */
-	LIBBFIO_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO   = 2,
+	LIBBFIO_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO	= 2,
 
 	/* The argument contains a value zero or less
 	 */
-	LIBBFIO_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS     = 3,
+	LIBBFIO_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS	= 3,
 
 	/* The argument contains a value that exceeds the maximum
 	 * for the specific type
 	 */
-	LIBBFIO_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM   = 4,
+	LIBBFIO_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM	= 4,
 
 	/* The argument contains a value that is too small
 	 */
-	LIBBFIO_ARGUMENT_ERROR_VALUE_TOO_SMALL        = 5,
+	LIBBFIO_ARGUMENT_ERROR_VALUE_TOO_SMALL		= 5,
 
 	/* The argument contains a value that is too large
 	 */
-	LIBBFIO_ARGUMENT_ERROR_VALUE_TOO_LARGE        = 6,
+	LIBBFIO_ARGUMENT_ERROR_VALUE_TOO_LARGE		= 6,
 
-	/* The argument contains a value that is out of range
+	/* The argument contains a value that is out of bounds
 	 */
-	LIBBFIO_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE     = 7,
+	LIBBFIO_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS	= 7,
 
 	/* The argument contains a value that is not supported
 	 */
-	LIBBFIO_ARGUMENT_ERROR_UNSUPPORTED_VALUE      = 8,
+	LIBBFIO_ARGUMENT_ERROR_UNSUPPORTED_VALUE	= 8,
 
 	/* The argument contains a value that conficts with another argument
 	 */
-	LIBBFIO_ARGUMENT_ERROR_CONFLICTING_VALUE      = 9
+	LIBBFIO_ARGUMENT_ERROR_CONFLICTING_VALUE	= 9
 };
+
+/* TODO deprecated remove after a while */
+#define LIBBFIO_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE	LIBBFIO_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS
 
 /* The conversion error codes
  * to signify errors regarding conversions
  */
 enum LIBBFIO_CONVERSION_ERROR
 {
-	LIBBFIO_CONVERSION_ERROR_GENERIC              = 0,
+	LIBBFIO_CONVERSION_ERROR_GENERIC		= 0,
 
 	/* The conversion failed on the input
 	 */
-	LIBBFIO_CONVERSION_ERROR_INPUT_FAILED         = 1,
+	LIBBFIO_CONVERSION_ERROR_INPUT_FAILED		= 1,
 
 	/* The conversion failed on the output
 	 */
-	LIBBFIO_CONVERSION_ERROR_OUTPUT_FAILED        = 2
+	LIBBFIO_CONVERSION_ERROR_OUTPUT_FAILED		= 2
 };
 
 /* The compression error codes
@@ -106,61 +109,62 @@ enum LIBBFIO_CONVERSION_ERROR
  */
 enum LIBBFIO_COMPRESSION_ERROR
 {
-	LIBBFIO_COMPRESSION_ERROR_GENERIC             = 0,
+	LIBBFIO_COMPRESSION_ERROR_GENERIC		= 0,
 
 	/* The compression failed
 	 */
-	LIBBFIO_COMPRESSION_ERROR_COMPRESS_FAILED     = 1,
+	LIBBFIO_COMPRESSION_ERROR_COMPRESS_FAILED	= 1,
 
 	/* The decompression failed
 	 */
-	LIBBFIO_COMPRESSION_ERROR_DECOMPRESS_FAILED   = 2
+	LIBBFIO_COMPRESSION_ERROR_DECOMPRESS_FAILED	= 2
 };
 
-#define LIBBFIO_COMPRESSION_ERROR_UNCOMPRESS_FAILED	LIBBFIO_COMPRESSION_ERROR_DECOMPRESS_FAILED
+/* TODO deprecated remove after a while */
+#define LIBERROR_COMPRESSION_ERROR_UNCOMPRESS_FAILED	LIBERROR_COMPRESSION_ERROR_DECOMPRESS_FAILED
 
 /* The input/output error codes
  * to signify errors regarding input/output
  */
 enum LIBBFIO_IO_ERROR
 {
-	LIBBFIO_IO_ERROR_GENERIC                      = 0,
+	LIBBFIO_IO_ERROR_GENERIC			= 0,
 
 	/* The open failed
 	 */
-	LIBBFIO_IO_ERROR_OPEN_FAILED                  = 1,
+	LIBBFIO_IO_ERROR_OPEN_FAILED			= 1,
 
 	/* The close failed
 	 */
-	LIBBFIO_IO_ERROR_CLOSE_FAILED                 = 2,
+	LIBBFIO_IO_ERROR_CLOSE_FAILED			= 2,
 
 	/* The seek failed
 	 */
-	LIBBFIO_IO_ERROR_SEEK_FAILED                  = 3,
+	LIBBFIO_IO_ERROR_SEEK_FAILED			= 3,
 
 	/* The read failed
 	 */
-	LIBBFIO_IO_ERROR_READ_FAILED                  = 4,
+	LIBBFIO_IO_ERROR_READ_FAILED			= 4,
 
 	/* The write failed
 	 */
-	LIBBFIO_IO_ERROR_WRITE_FAILED                 = 5,
+	LIBBFIO_IO_ERROR_WRITE_FAILED			= 5,
 
 	/* Access denied
 	 */
-	LIBBFIO_IO_ERROR_ACCESS_DENIED                = 6,
+	LIBBFIO_IO_ERROR_ACCESS_DENIED			= 6,
 
 	/* The resource is invalid i.e. a missing file
 	 */
-	LIBBFIO_IO_ERROR_INVALID_RESOURCE             = 7,
+	LIBBFIO_IO_ERROR_INVALID_RESOURCE		= 7,
 
 	/* The ioctl failed
 	 */
-	LIBBFIO_IO_ERROR_IOCTL_FAILED                 = 8,
+	LIBBFIO_IO_ERROR_IOCTL_FAILED			= 8,
 
 	/* The unlink failed
 	 */
-	LIBBFIO_IO_ERROR_UNLINK_FAILED                = 9
+	LIBBFIO_IO_ERROR_UNLINK_FAILED			= 9
 };
 
 /* The input error codes
@@ -168,32 +172,24 @@ enum LIBBFIO_IO_ERROR
  */
 enum LIBBFIO_INPUT_ERROR
 {
-	LIBBFIO_INPUT_ERROR_GENERIC                   = 0,
+	LIBBFIO_INPUT_ERROR_GENERIC			= 0,
 
 	/* The input contains invalid data
 	 */
-	LIBBFIO_INPUT_ERROR_INVALID_DATA              = 1,
+	LIBBFIO_INPUT_ERROR_INVALID_DATA		= 1,
 
 	/* The input contains an unsupported signature
 	 */
-	LIBBFIO_INPUT_ERROR_SIGNATURE_MISMATCH        = 2,
+	LIBBFIO_INPUT_ERROR_SIGNATURE_MISMATCH		= 2,
 
 	/* A CRC in the input did not match
 	 */
-	LIBBFIO_INPUT_ERROR_CRC_MISMATCH              = 3,
+	LIBBFIO_INPUT_ERROR_CRC_MISMATCH		= 3,
 
 	/* A value in the input did not match a previously
 	 * read value or calculated value
 	 */
-	LIBBFIO_INPUT_ERROR_VALUE_MISMATCH            = 4,
-
-	/* The last segment file is missing from the input
-	 */
-	LIBBFIO_INPUT_ERROR_MISSING_LAST_SEGMENT_FILE = 5,
-
-	/* The last section is missing from the input
-	 */
-	LIBBFIO_INPUT_ERROR_MISSING_LAST_SECTION      = 6
+	LIBBFIO_INPUT_ERROR_VALUE_MISMATCH		= 4
 };
 
 /* The memory error codes
@@ -201,19 +197,19 @@ enum LIBBFIO_INPUT_ERROR
  */
 enum LIBBFIO_MEMORY_ERROR
 {
-	LIBBFIO_MEMORY_ERROR_GENERIC                  = 0,
+	LIBBFIO_MEMORY_ERROR_GENERIC			= 0,
 
 	/* There is insufficient memory available
 	 */
-	LIBBFIO_MEMORY_ERROR_INSUFFICIENT             = 1,
+	LIBBFIO_MEMORY_ERROR_INSUFFICIENT		= 1,
 
 	/* The memory failed to be copied
 	 */
-	LIBBFIO_MEMORY_ERROR_COPY_FAILED              = 2,
+	LIBBFIO_MEMORY_ERROR_COPY_FAILED		= 2,
 
 	/* The memory failed to be set
 	 */
-	LIBBFIO_MEMORY_ERROR_SET_FAILED               = 3
+	LIBBFIO_MEMORY_ERROR_SET_FAILED			= 3
 };
 
 /* The runtime error codes
@@ -221,70 +217,73 @@ enum LIBBFIO_MEMORY_ERROR
  */
 enum LIBBFIO_RUNTIME_ERROR
 {
-	LIBBFIO_RUNTIME_ERROR_GENERIC                 = 0,
+	LIBBFIO_RUNTIME_ERROR_GENERIC			= 0,
 
 	/* The value is missing
 	 */
-	LIBBFIO_RUNTIME_ERROR_VALUE_MISSING           = 1,
+	LIBBFIO_RUNTIME_ERROR_VALUE_MISSING		= 1,
 
 	/* The value was already set
 	 */
-	LIBBFIO_RUNTIME_ERROR_VALUE_ALREADY_SET       = 2,
+	LIBBFIO_RUNTIME_ERROR_VALUE_ALREADY_SET		= 2,
 
 	/* The creation and/or initialization of an internal structure failed
 	 */
-	LIBBFIO_RUNTIME_ERROR_INITIALIZE_FAILED       = 3,
+	LIBBFIO_RUNTIME_ERROR_INITIALIZE_FAILED		= 3,
 
 	/* The resize of an internal structure failed
 	 */
-	LIBBFIO_RUNTIME_ERROR_RESIZE_FAILED           = 4,
+	LIBBFIO_RUNTIME_ERROR_RESIZE_FAILED		= 4,
 
 	/* The free and/or finalization of an internal structure failed
 	 */
-	LIBBFIO_RUNTIME_ERROR_FINALIZE_FAILED         = 5,
+	LIBBFIO_RUNTIME_ERROR_FINALIZE_FAILED		= 5,
 
 	/* The value could not be determined
 	 */
-	LIBBFIO_RUNTIME_ERROR_GET_FAILED              = 6,
+	LIBBFIO_RUNTIME_ERROR_GET_FAILED		= 6,
 
 	/* The value could not be set
 	 */
-	LIBBFIO_RUNTIME_ERROR_SET_FAILED              = 7,
+	LIBBFIO_RUNTIME_ERROR_SET_FAILED		= 7,
 
 	/* The value could not be appended/prepended
 	 */
-	LIBBFIO_RUNTIME_ERROR_APPEND_FAILED           = 8,
+	LIBBFIO_RUNTIME_ERROR_APPEND_FAILED		= 8,
 
 	/* The value could not be copied
 	 */
-	LIBBFIO_RUNTIME_ERROR_COPY_FAILED             = 9,
+	LIBBFIO_RUNTIME_ERROR_COPY_FAILED		= 9,
 
 	/* The value could not be removed
 	 */
-	LIBBFIO_RUNTIME_ERROR_REMOVE_FAILED           = 10,
+	LIBBFIO_RUNTIME_ERROR_REMOVE_FAILED		= 10,
 
 	/* The value could not be printed
 	 */
-	LIBBFIO_RUNTIME_ERROR_PRINT_FAILED            = 11,
+	LIBBFIO_RUNTIME_ERROR_PRINT_FAILED		= 11,
 
-	/* The value was out of range
+	/* The value was out of bounds
 	 */
-	LIBBFIO_RUNTIME_ERROR_VALUE_OUT_OF_RANGE      = 12,
+	LIBBFIO_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS	= 12,
 
 	/* The value exceeds the maximum for its specific type
 	 */
-	LIBBFIO_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM   = 13,
+	LIBBFIO_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM	= 13,
 
 	/* The value is unsupported
 	 */
-	LIBBFIO_RUNTIME_ERROR_UNSUPPORTED_VALUE       = 14
+	LIBBFIO_RUNTIME_ERROR_UNSUPPORTED_VALUE		= 14
 };
+
+/* TODO deprecated remove after a while */
+#define LIBBFIO_RUNTIME_ERROR_VALUE_OUT_OF_RANGE	LIBBFIO_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS
 
 /* The output error codes
  */
 enum LIBBFIO_OUTPUT_ERROR
 {
-	LIBBFIO_OUTPUT_ERROR_GENERIC                  = 0
+	LIBBFIO_OUTPUT_ERROR_GENERIC			= 0
 };
 
 #endif

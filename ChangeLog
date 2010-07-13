@@ -26,6 +26,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100713
+* updated liberror and include/error.h
+* updated libuna
+
 20100711
 * textual changes
 * fix for range merge in offset list
