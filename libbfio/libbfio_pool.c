@@ -524,7 +524,7 @@ int libbfio_pool_add_handle_to_last_used_list(
 	if( ( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	 && ( ( internal_pool->number_of_open_handles + 1 ) >= internal_pool->maximum_number_of_open_handles ) )
 	{
-		last_used_list_element = internal_pool->last_used_list->last;
+		last_used_list_element = internal_pool->last_used_list->last_element;
 
 		if( libbfio_list_remove_element(
 		     internal_pool->last_used_list,
@@ -680,7 +680,7 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 
 		return( -1 );
 	}
-	if( last_used_list_element != internal_pool->last_used_list->first )
+	if( last_used_list_element != internal_pool->last_used_list->first_element )
 	{
 		if( libbfio_list_remove_element(
 		     internal_pool->last_used_list,
@@ -2203,7 +2203,7 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 	while( ( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	    && ( internal_pool->number_of_open_handles > internal_pool->maximum_number_of_open_handles ) )
 	{
-		last_used_list_element = internal_pool->last_used_list->last;
+		last_used_list_element = internal_pool->last_used_list->last_element;
 
 		if( libbfio_list_remove_element(
 		     internal_pool->last_used_list,

@@ -54,21 +54,21 @@ struct libbfio_offset_list
 	 */
 	int number_of_elements;
 
-	/* The first list element
+	/* The first element
 	 */
-	libbfio_list_element_t *first;
+	libbfio_list_element_t *first_element;
 
-	/* The last list element
+	/* The last element
 	 */
-	libbfio_list_element_t *last;
+	libbfio_list_element_t *last_element;
 
 	/* The current list element
 	 */
-	libbfio_list_element_t *current;
+	libbfio_list_element_t *current_element;
 
 	/* The current list element index
 	 */
-	int current_index;
+	int current_element_index;
 };
 
 int libbfio_offset_list_value_free(

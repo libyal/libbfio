@@ -31,26 +31,49 @@
 extern "C" {
 #endif
 
+/* The array comparison definitions
+ */
 enum LIBBFIO_LIST_COMPARE_DEFINITIONS
 {
-	LIBBFIO_LIST_COMPARE_LESS,
-	LIBBFIO_LIST_COMPARE_EQUAL,
-	LIBBFIO_LIST_COMPARE_GREATER
+	/* The first value is less than the second value
+	 */
+        LIBBFIO_LIST_COMPARE_LESS,
+
+	/* The first and second values are equal
+	 */
+        LIBBFIO_LIST_COMPARE_EQUAL,
+
+	/* The first value is greater than the second value
+	 */
+        LIBBFIO_LIST_COMPARE_GREATER
+};
+
+/* The array insert flag definitions
+ */
+enum LIBBFIO_LIST_INSERT_FLAGS
+{
+	/* Allow duplicate entries
+	 */
+	LIBBFIO_LIST_INSERT_FLAG_NON_UNIQUE_ENTRIES	= 0x00,
+
+	/* Only allow unique entries, no duplicates
+	 */
+	LIBBFIO_LIST_INSERT_FLAG_UNIQUE_ENTRIES		= 0x01,
 };
 
 typedef struct libbfio_list_element libbfio_list_element_t;
 
 struct libbfio_list_element
 {
-	/* The previous element
+	/* The previous list element
 	 */
-	libbfio_list_element_t *previous;
+	libbfio_list_element_t *previous_element;
 
-	/* The next element
+	/* The next list element
 	 */
-	libbfio_list_element_t *next;
+	libbfio_list_element_t *next_element;
 
-	/* The list element value
+	/* The value
 	 */
 	intptr_t *value;
 };
@@ -63,24 +86,34 @@ struct libbfio_list
 	 */
 	int number_of_elements;
 
-	/* The first list element
+	/* The first element
 	 */
-	libbfio_list_element_t *first;
+	libbfio_list_element_t *first_element;
 
-	/* The last list element
+	/* The last element
 	 */
-	libbfio_list_element_t *last;
+	libbfio_list_element_t *last_element;
 };
 
 int libbfio_list_element_initialize(
-     libbfio_list_element_t **list_element,
+     libbfio_list_element_t **element,
      liberror_error_t **error );
 
 int libbfio_list_element_free(
-     libbfio_list_element_t **list_element,
+     libbfio_list_element_t **element,
      int (*value_free_function)(
             intptr_t *value,
             liberror_error_t **error ),
+     liberror_error_t **error );
+
+int libbfio_list_element_get_value(
+     libbfio_list_element_t *element,
+     intptr_t **value,
+     liberror_error_t **error );
+
+int libbfio_list_element_set_value(
+     libbfio_list_element_t *element,
+     intptr_t *value,
      liberror_error_t **error );
 
 int libbfio_list_initialize(
@@ -102,8 +135,11 @@ int libbfio_list_empty(
      liberror_error_t **error );
 
 int libbfio_list_clone(
-     libbfio_list_t **destination,
-     libbfio_list_t *source,
+     libbfio_list_t **destination_list,
+     libbfio_list_t *source_list,
+     int (*value_free_function)(
+            intptr_t *value,
+            liberror_error_t **error ),
      int (*value_clone_function)(
             intptr_t **destination,
             intptr_t *source,
@@ -115,15 +151,15 @@ int libbfio_list_get_number_of_elements(
      int *number_of_elements,
      liberror_error_t **error );
 
-int libbfio_list_get_element(
+int libbfio_list_get_element_by_index(
      libbfio_list_t *list,
-     int element_index,
+     int list_element_index,
      libbfio_list_element_t **element,
      liberror_error_t **error );
 
-int libbfio_list_get_value(
+int libbfio_list_get_value_by_index(
      libbfio_list_t *list,
-     int element_index,
+     int list_element_index,
      intptr_t **value,
      liberror_error_t **error );
 
@@ -154,6 +190,7 @@ int libbfio_list_insert_element(
             intptr_t *first,
             intptr_t *second,
             liberror_error_t **error ),
+     uint8_t insert_flags,
      liberror_error_t **error );
 
 int libbfio_list_insert_value(
@@ -163,6 +200,7 @@ int libbfio_list_insert_value(
             intptr_t *first,
             intptr_t *second,
             liberror_error_t **error ),
+     uint8_t insert_flags,
      liberror_error_t **error );
 
 int libbfio_list_remove_element(

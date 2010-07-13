@@ -26,8 +26,13 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100711
+* textual changes
+* fix for range merge in offset list
+
 20100706
 * updated libuna
+* updated list type, offset list
 * small changes
 
 20100705

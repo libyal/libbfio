@@ -146,7 +146,7 @@ int libbfio_offset_list_free(
 			     element_index < number_of_elements;
 			     element_index++ )
 			{
-				list_element = ( *offset_list )->first;
+				list_element = ( *offset_list )->first_element;
 
 				if( list_element == NULL )
 				{
@@ -160,19 +160,19 @@ int libbfio_offset_list_free(
 
 					return( -1 );
 				}
-				( *offset_list )->first = list_element->next;
+				( *offset_list )->first_element = list_element->next_element;
 
-				if( ( *offset_list )->last == list_element )
+				if( ( *offset_list )->last_element == list_element )
 				{
-					( *offset_list )->last = list_element->next;
+					( *offset_list )->last_element = list_element->next_element;
 				}
 				( *offset_list )->number_of_elements -= 1;
 
-				if( list_element->next != NULL )
+				if( list_element->next_element != NULL )
 				{
-					list_element->next->previous = NULL;
+					list_element->next_element->previous_element = NULL;
 				}
-				list_element->next = NULL;
+				list_element->next_element = NULL;
 
 				if( libbfio_list_element_free(
 				     & list_element,
@@ -274,7 +274,7 @@ int libbfio_offset_list_add_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
-		 "%s: invalid offset value is below zero.",
+		 "%s: invalid offset value less than zero.",
 		 function );
 
 		return( -1 );
@@ -298,7 +298,7 @@ int libbfio_offset_list_add_offset(
 
 		/* Check the last element first, most often the list will be filled linear 
 		 */
-		list_element = offset_list->last;
+		list_element = offset_list->last_element;
 
 		if( list_element == NULL )
 		{
@@ -328,22 +328,17 @@ int libbfio_offset_list_add_offset(
 
 		last_range_offset = offset_list_value->offset + offset_list_value->size;
 
-		/* Check if the offset range is beyond the last range
-		 */
-		if( last_offset > last_range_offset )
-		{
-			last_list_element = list_element;
-		}
 		/* Check if the offset range overlaps at the end of the last offset range
 		 */
-		else if( ( offset >= offset_list_value->offset )
-		      && ( offset <= last_range_offset ) )
+		if( ( offset >= offset_list_value->offset )
+		 && ( offset <= last_range_offset ) )
 		{
 			if( last_offset > last_range_offset )
 			{
 				offset_list_value->size += (size64_t) ( last_offset - last_range_offset );
 			}
-			create_list_element = 0;
+			create_list_element           = 0;
+			merge_next_list_element_check = 1;
 		}
 		/* Check if the offset range overlaps at the beginning of the last offset range
 		 */
@@ -355,7 +350,8 @@ int libbfio_offset_list_add_offset(
 				offset_list_value->offset  = offset;
 				offset_list_value->size   += (size64_t) ( offset_list_value->offset - offset );
 			}
-			create_list_element = 0;
+			create_list_element               = 0;
+			merge_previous_list_element_check = 1;
 		}
 		/* Check if the offset range overlaps the last offset range entirely
 		 */
@@ -368,11 +364,17 @@ int libbfio_offset_list_add_offset(
 			create_list_element               = 0;
 			merge_previous_list_element_check = 1;
 		}
+		/* Check if the offset range is beyond the last range
+		 */
+		else if( last_offset > last_range_offset )
+		{
+			last_list_element = list_element;
+		}
 		else if( offset_list->number_of_elements > 1 )
 		{
 			if( last_offset > ( last_range_offset / 2 ) )
 			{
-				list_element = list_element->previous;
+				list_element = list_element->previous_element;
 
 				for( element_index = ( offset_list->number_of_elements - 2 );
 				     element_index >= 0;
@@ -447,21 +449,21 @@ int libbfio_offset_list_add_offset(
 					{
 						break;
 					}
-					/* Check if the offset range belongs after the current offset range
+					/* Check if the offset range belongs after the exising offset range
 					 */
-					if( last_offset > last_range_offset )
+					if( last_offset < last_range_offset )
 					{
 						last_list_element = list_element;
 
 						break;
 					}
 					last_list_element = list_element;
-					list_element      = list_element->previous;
+					list_element      = list_element->previous_element;
 				}
 			}
 			else
 			{
-				list_element = offset_list->first;
+				list_element = offset_list->first_element;
 
 				for( element_index = 0;
 				     element_index < ( offset_list->number_of_elements - 1 );
@@ -540,12 +542,12 @@ int libbfio_offset_list_add_offset(
 					 */
 					if( last_offset < last_range_offset )
 					{
-						last_list_element = list_element->previous;
+                                        	last_list_element = list_element->previous_element;
 
 						break;
 					}
-					last_list_element = list_element;
-					list_element      = list_element->next;
+                                        last_list_element = list_element;
+                                        list_element      = list_element->next_element;
 				}
 			}
 		}
@@ -564,9 +566,9 @@ int libbfio_offset_list_add_offset(
 
 				return( -1 );
 			}
-			if( list_element->previous != NULL )
+			if( list_element->previous_element != NULL )
 			{
-				if( list_element->previous->value == NULL )
+				if( list_element->previous_element->value == NULL )
 				{
 					liberror_error_set(
 					 error,
@@ -577,38 +579,38 @@ int libbfio_offset_list_add_offset(
 
 					return( -1 );
 				}
-				last_offset = ( (libbfio_offset_list_value_t *) list_element->previous->value )->offset
-				            + ( (libbfio_offset_list_value_t *) list_element->previous->value )->size;
+				last_offset = ( (libbfio_offset_list_value_t *) list_element->previous_element->value )->offset
+				            + ( (libbfio_offset_list_value_t *) list_element->previous_element->value )->size;
 
 				if( last_offset == offset_list_value->offset )
 				{
 					/* Merge offset range with previous
 					 */
-					offset_list_value->offset  = ( (libbfio_offset_list_value_t *) list_element->previous->value )->offset;
-					offset_list_value->size   += ( (libbfio_offset_list_value_t *) list_element->previous->value )->size;
+					offset_list_value->offset  = ( (libbfio_offset_list_value_t *) list_element->previous_element->value )->offset;
+					offset_list_value->size   += ( (libbfio_offset_list_value_t *) list_element->previous_element->value )->size;
 
 					/* Remove previous list element
 					 */
-					remove_element = list_element->previous;
+					remove_element = list_element->previous_element;
 
-					if( remove_element == offset_list->first )
+					if( remove_element == offset_list->first_element )
 					{
-						offset_list->first = remove_element->next;
+						offset_list->first_element = remove_element->next_element;
 					}
-					if( remove_element == offset_list->last )
+					if( remove_element == offset_list->last_element )
 					{
-						offset_list->last = remove_element->previous;
+						offset_list->last_element = remove_element->previous_element;
 					}
-					if( remove_element->next != NULL )
+					if( remove_element->next_element != NULL )
 					{
-						remove_element->next->previous = remove_element->previous;
+						remove_element->next_element->previous_element = remove_element->previous_element;
 					}
-					if( remove_element->previous != NULL )
+					if( remove_element->previous_element != NULL )
 					{
-						remove_element->previous->next = remove_element->next;
+						remove_element->previous_element->next_element = remove_element->next_element;
 					}
-					remove_element->next             = NULL;
-					remove_element->previous         = NULL;
+					remove_element->next_element     = NULL;
+					remove_element->previous_element = NULL;
 					offset_list->number_of_elements -= 1;
 
 					if( libbfio_list_element_free(
@@ -644,9 +646,9 @@ int libbfio_offset_list_add_offset(
 
 				return( -1 );
 			}
-			if( list_element->next != NULL )
+			if( list_element->next_element != NULL )
 			{
-				if( list_element->next->value == NULL )
+				if( list_element->next_element->value == NULL )
 				{
 					liberror_error_set(
 					 error,
@@ -659,34 +661,34 @@ int libbfio_offset_list_add_offset(
 				}
 				last_offset = offset_list_value->offset + offset_list_value->size;
 
-				if( last_offset == ( (libbfio_offset_list_value_t *) list_element->next->value )->offset )
+				if( last_offset == ( (libbfio_offset_list_value_t *) list_element->next_element->value )->offset )
 				{
 					/* Merge offset range with next
 					 */
-					offset_list_value->size += ( (libbfio_offset_list_value_t *) list_element->next->value )->size;
+					offset_list_value->size += ( (libbfio_offset_list_value_t *) list_element->next_element->value )->size;
 
 					/* Remove next list element
 					 */
-					remove_element = list_element->next;
+					remove_element = list_element->next_element;
 
-					if( remove_element == offset_list->first )
+					if( remove_element == offset_list->first_element )
 					{
-						offset_list->first = remove_element->next;
+						offset_list->first_element = remove_element->next_element;
 					}
-					if( remove_element == offset_list->last )
+					if( remove_element == offset_list->last_element )
 					{
-						offset_list->last = remove_element->previous;
+						offset_list->last_element = remove_element->previous_element;
 					}
-					if( remove_element->next != NULL )
+					if( remove_element->next_element != NULL )
 					{
-						remove_element->next->previous = remove_element->previous;
+						remove_element->next_element->previous_element = remove_element->previous_element;
 					}
-					if( remove_element->previous != NULL )
+					if( remove_element->previous_element != NULL )
 					{
-						remove_element->previous->next = remove_element->next;
+						remove_element->previous_element->next_element = remove_element->next_element;
 					}
-					remove_element->next             = NULL;
-					remove_element->previous         = NULL;
+					remove_element->next_element     = NULL;
+					remove_element->previous_element = NULL;
 					offset_list->number_of_elements -= 1;
 
 					if( libbfio_list_element_free(
@@ -763,13 +765,13 @@ int libbfio_offset_list_add_offset(
 
 		if( offset_list->number_of_elements == 0 )
 		{
-			if( offset_list->first != NULL )
+			if( offset_list->first_element != NULL )
 			{
 				liberror_error_set(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: corruption detected - first already set.",
+				 "%s: corruption detected - first element already set.",
 				 function );
 
 				libbfio_list_element_free(
@@ -779,13 +781,13 @@ int libbfio_offset_list_add_offset(
 
 				return( -1 );
 			}
-			if( offset_list->last != NULL )
+			if( offset_list->last_element != NULL )
 			{
 				liberror_error_set(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: corruption detected - last already set.",
+				 "%s: corruption detected - last element already set.",
 				 function );
 
 				libbfio_list_element_free(
@@ -795,8 +797,8 @@ int libbfio_offset_list_add_offset(
 
 				return( -1 );
 			}
-			offset_list->first = list_element;
-			offset_list->last  = list_element;
+			offset_list->first_element = list_element;
+			offset_list->last_element  = list_element;
 		}
 		else
 		{
@@ -816,7 +818,7 @@ int libbfio_offset_list_add_offset(
 
 				return( -1 );
 			}
-			if( offset_list->first == NULL )
+			if( offset_list->first_element == NULL )
 			{
 				liberror_error_set(
 				 error,
@@ -832,7 +834,7 @@ int libbfio_offset_list_add_offset(
 
 				return( -1 );
 			}
-			if( offset_list->last == NULL )
+			if( offset_list->last_element == NULL )
 			{
 				liberror_error_set(
 				 error,
@@ -848,14 +850,14 @@ int libbfio_offset_list_add_offset(
 
 				return( -1 );
 			}
-			list_element->previous = last_list_element;
-			list_element->next     = last_list_element->next;
+			list_element->previous_element = last_list_element;
+			list_element->next_element     = last_list_element->next_element;
 
-			if( last_list_element == offset_list->last )
+			if( last_list_element == offset_list->last_element )
 			{
-				offset_list->last = list_element;
+				offset_list->last_element = list_element;
 			}
-			else if( last_list_element->next == NULL )
+			else if( last_list_element->next_element == NULL )
 			{
 				liberror_error_set(
 				 error,
@@ -868,9 +870,9 @@ int libbfio_offset_list_add_offset(
 			}
 			else
 			{
-				last_list_element->next->previous = list_element;
+				last_list_element->next_element->previous_element = list_element;
 			}
-			last_list_element->next = list_element;
+			last_list_element->next_element = list_element;
 		}
 		offset_list->number_of_elements++;
 	}
@@ -935,16 +937,16 @@ int libbfio_offset_list_get_offset(
 
 		return( -1 );
 	}
-	if( ( offset_list->current != NULL )
-	 && ( offset_list->current_index != index ) )
+	if( ( offset_list->current_element != NULL )
+	 && ( offset_list->current_element_index != index ) )
 	{
-		if( index < offset_list->current_index )
+		if( index < offset_list->current_element_index )
 		{
-			if( ( offset_list->current_index - index ) < ( offset_list->number_of_elements / 2 ) )
+			if( ( offset_list->current_element_index - index ) < ( offset_list->number_of_elements / 2 ) )
 			{
-				while( offset_list->current_index > index )
+				while( offset_list->current_element_index > index )
 				{
-					if( offset_list->current == NULL )
+					if( offset_list->current_element == NULL )
 					{
 						liberror_error_set(
 						 error,
@@ -952,23 +954,23 @@ int libbfio_offset_list_get_offset(
 						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: corruption detected in element: %d.",
 						 function,
-						 offset_list->current_index );
+						 offset_list->current_element_index );
 
 						return( -1 );
 					}
-					offset_list->current = offset_list->current->next;
+					offset_list->current_element = offset_list->current_element->next_element;
 
-					offset_list->current_index--;
+					offset_list->current_element_index--;
 				}
 			}
 		}
 		else
 		{
-			if( ( index - offset_list->current_index ) < ( offset_list->number_of_elements / 2 ) )
+			if( ( index - offset_list->current_element_index ) < ( offset_list->number_of_elements / 2 ) )
 			{
-				while( offset_list->current_index < index )
+				while( offset_list->current_element_index < index )
 				{
-					if( offset_list->current == NULL )
+					if( offset_list->current_element == NULL )
 					{
 						liberror_error_set(
 						 error,
@@ -976,29 +978,29 @@ int libbfio_offset_list_get_offset(
 						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: corruption detected in element: %d.",
 						 function,
-						 offset_list->current_index );
+						 offset_list->current_element_index );
 
 						return( -1 );
 					}
-					offset_list->current = offset_list->current->next;
+					offset_list->current_element = offset_list->current_element->next_element;
 
-					offset_list->current_index++;
+					offset_list->current_element_index++;
 				}
 			}
 		}
 	}
-	if( ( offset_list->current == NULL )
-	 || ( offset_list->current_index != index ) )
+	if( ( offset_list->current_element == NULL )
+	 || ( offset_list->current_element_index != index ) )
 	{
 		if( index < ( offset_list->number_of_elements / 2 ) )
 		{
-			offset_list->current = offset_list->first;
+			offset_list->current_element = offset_list->first_element;
 
-			for( offset_list->current_index = 0;
-			     offset_list->current_index < index;
-			     offset_list->current_index++ )
+			for( offset_list->current_element_index = 0;
+			     offset_list->current_element_index < index;
+			     offset_list->current_element_index++ )
 			{
-				if( offset_list->current == NULL )
+				if( offset_list->current_element == NULL )
 				{
 					liberror_error_set(
 					 error,
@@ -1006,22 +1008,22 @@ int libbfio_offset_list_get_offset(
 					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: corruption detected in element: %d.",
 					 function,
-					 offset_list->current_index );
+					 offset_list->current_element_index );
 
 					return( -1 );
 				}
-				offset_list->current = offset_list->current->next;
+				offset_list->current_element = offset_list->current_element->next_element;
 			}
 		}
 		else
 		{
-			offset_list->current = offset_list->last;
+			offset_list->current_element = offset_list->last_element;
 
-			for( offset_list->current_index = ( offset_list->number_of_elements - 1 );
-			     offset_list->current_index > index;
-			     offset_list->current_index-- )
+			for( offset_list->current_element_index = ( offset_list->number_of_elements - 1 );
+			     offset_list->current_element_index > index;
+			     offset_list->current_element_index-- )
 			{
-				if( offset_list->current == NULL )
+				if( offset_list->current_element == NULL )
 				{
 					liberror_error_set(
 					 error,
@@ -1029,19 +1031,19 @@ int libbfio_offset_list_get_offset(
 					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: corruption detected in element: %d.",
 					 function,
-					 offset_list->current_index );
+					 offset_list->current_element_index );
 
 					return( -1 );
 				}
-				offset_list->current = offset_list->current->previous;
+				offset_list->current_element = offset_list->current_element->previous_element;
 			}
 		}
 	}
-	if( offset_list->current == NULL )
+	if( offset_list->current_element == NULL )
 	{
 		return( 0 );
 	}
-	if( offset_list->current->value == NULL )
+	if( offset_list->current_element->value == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -1049,11 +1051,11 @@ int libbfio_offset_list_get_offset(
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing offset list value for list element: %d.",
 		 function,
-		 offset_list->current_index );
+		 offset_list->current_element_index );
 
 		return( -1 );
 	}
-	offset_list_value = (libbfio_offset_list_value_t *) offset_list->current->value;
+	offset_list_value = (libbfio_offset_list_value_t *) offset_list->current_element->value;
 
 	*offset = offset_list_value->offset;
 	*size   = offset_list_value->size;
@@ -1109,7 +1111,7 @@ int libbfio_offset_list_get_offset_by_value(
 
 		return( -1 );
 	}
-	list_element = offset_list->first;
+	list_element = offset_list->first_element;
 
 	for( element_index = 0;
 	     element_index < offset_list->number_of_elements;
@@ -1149,7 +1151,7 @@ int libbfio_offset_list_get_offset_by_value(
 
 			return( 1 );
 		}
-		list_element = list_element->next;
+		list_element = list_element->next_element;
 	}
 	return( 0 );
 }
@@ -1186,7 +1188,7 @@ int libbfio_offset_list_range_is_present(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
-		 "%s: invalid offset negative value.",
+		 "%s: invalid offset value less than zero.",
 		 function );
 
 		return( -1 );
@@ -1203,7 +1205,7 @@ int libbfio_offset_list_range_is_present(
 		return( -1 );
 	}
 	last_offset  = offset + size;
-	list_element = offset_list->first;
+	list_element = offset_list->first_element;
 
 	for( element_index = 0;
 	     element_index < offset_list->number_of_elements;
@@ -1245,7 +1247,7 @@ int libbfio_offset_list_range_is_present(
 		{
 			return( 1 );
 		}
-		list_element = list_element->next;
+		list_element = list_element->next_element;
 	}
 	return( 0 );
 }
