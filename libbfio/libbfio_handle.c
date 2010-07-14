@@ -182,6 +182,7 @@ int libbfio_handle_free(
 	if( *handle != NULL )
 	{
 		internal_handle = (libbfio_internal_handle_t *) *handle;
+		*handle         = NULL;
 
 		if( internal_handle->io_handle != NULL )
 		{
@@ -222,8 +223,6 @@ int libbfio_handle_free(
 		}
 		memory_free(
 		 internal_handle );
-
-		*handle = NULL;
 	}
 	return( result );
 }
