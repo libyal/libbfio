@@ -26,6 +26,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100716
+* updated libuna
+
 20100713
 * updated liberror and include/error.h
 * updated libuna
