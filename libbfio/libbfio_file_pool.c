@@ -153,7 +153,7 @@ int libbfio_file_pool_add_handles_for_names(
 /* Adds file handles to the pool for the corresponding filenames
  * Returns 1 if successful or -1 on error
  */
-int libbfio_file_pool_add_handle_for_names_wide(
+int libbfio_file_pool_add_handles_for_names_wide(
      libbfio_pool_t *pool,
      wchar_t * const names[],
      int number_of_names,
