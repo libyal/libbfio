@@ -182,15 +182,18 @@ enum LIBBFIO_INPUT_ERROR
 	 */
 	LIBBFIO_INPUT_ERROR_SIGNATURE_MISMATCH		= 2,
 
-	/* A CRC in the input did not match
+	/* A checksum in the input did not match
 	 */
-	LIBBFIO_INPUT_ERROR_CRC_MISMATCH		= 3,
+	LIBBFIO_INPUT_ERROR_CHECKSUM_MISMATCH		= 3,
 
 	/* A value in the input did not match a previously
 	 * read value or calculated value
 	 */
 	LIBBFIO_INPUT_ERROR_VALUE_MISMATCH		= 4
 };
+
+/* TODO deprecated remove after a while */
+#define LIBBFIO_INPUT_ERROR_CRC_MISMATCH		LIBBFIO_INPUT_ERROR_CHECKSUM_MISMATCH
 
 /* The memory error codes
  * to signify errors regarding memory

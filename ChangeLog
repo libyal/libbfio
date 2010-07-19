@@ -26,6 +26,14 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100719
+* fixed file pool flags issue
+* updated include/error.h and liberror
+* updated libuna
+
+20100718
+* fixed file pool wide open issue
+
 20100716
 * updated libuna
 

@@ -126,7 +126,7 @@ int libbfio_file_pool_add_handles_for_names(
 		     pool,
 		     &pool_entry,
 		     file_io_handle,
-		     LIBBFIO_OPEN_READ,
+		     flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -244,7 +244,7 @@ int libbfio_file_pool_add_handles_for_names_wide(
 		     pool,
 		     &pool_entry,
 		     file_io_handle,
-		     LIBBFIO_OPEN_READ,
+		     flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
