@@ -26,6 +26,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100720
+* textual changes
+
 20100719
 * fixed file pool flags issue
 * updated include/error.h and liberror
