@@ -1000,6 +1000,10 @@ ssize_t libbfio_handle_write(
 	}
 	internal_handle->offset += (off64_t) write_count;
 
+	if( (size64_t) internal_handle->offset > internal_handle->size )
+	{
+		internal_handle->size = (size64_t) internal_handle->offset;
+	}
 	return( write_count );
 }
 
