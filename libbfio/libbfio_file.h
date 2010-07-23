@@ -119,7 +119,7 @@ LIBBFIO_EXTERN int libbfio_file_set_name_wide(
 
 int libbfio_file_open(
      intptr_t *io_handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error );
 
 int libbfio_file_close(

@@ -48,13 +48,13 @@ typedef struct libbfio_internal_handle libbfio_internal_handle_t;
 
 struct libbfio_internal_handle
 {
-	/* The io handle
+	/* The IO handle
 	 */
 	intptr_t *io_handle;
 
-	/* The flags
+	/* The access flags
 	 */
-	int flags;
+	int access_flags;
 
 	/* The current offset
 	 */
@@ -89,13 +89,13 @@ struct libbfio_internal_handle
 	 */
 	int narrow_string_codepage;
 
-	/* The free io handle function
+	/* The free IO handle function
 	 */
 	int (*free_io_handle)(
 	       intptr_t *io_handle,
 	       liberror_error_t **error );
 
-	/* The clone (duplicate) io handle function
+	/* The clone (duplicate) IO handle function
 	 */
 	int (*clone_io_handle)(
 	       intptr_t **destination_io_handle,
@@ -106,7 +106,7 @@ struct libbfio_internal_handle
 	 */
 	int (*open)(
 	       intptr_t *io_handle,
-	       int flags,
+	       int access_flags,
 	       liberror_error_t **error );
 
 	/* The close function
@@ -172,7 +172,7 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
                            liberror_error_t **error ),
                     int (*open)(
                            intptr_t *io_handle,
-                           int flags,
+                           int access_flags,
                            liberror_error_t **error ),
                     int (*close)(
                            intptr_t *io_handle,
@@ -215,12 +215,12 @@ LIBBFIO_EXTERN int libbfio_handle_clone(
 
 LIBBFIO_EXTERN int libbfio_handle_open(
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_reopen(
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_close(
@@ -253,14 +253,14 @@ LIBBFIO_EXTERN int libbfio_handle_is_open(
                     libbfio_handle_t *handle,
                     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_flags(
+LIBBFIO_EXTERN int libbfio_handle_get_access_flags(
                     libbfio_handle_t *handle,
-                    int *flags,
+                    int *access_flags,
                     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_set_flags(
+LIBBFIO_EXTERN int libbfio_handle_set_access_flags(
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_get_size(

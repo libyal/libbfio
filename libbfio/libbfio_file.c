@@ -1502,7 +1502,7 @@ int libbfio_file_set_name_wide(
  */
 int libbfio_file_open(
      intptr_t *io_handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
@@ -1552,20 +1552,20 @@ int libbfio_file_open(
 		return( -1 );
 	}
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	if( ( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
-	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 ) )
 	{
 		file_io_access_flags   = GENERIC_WRITE | GENERIC_READ;
 		file_io_creation_flags = OPEN_ALWAYS;
 		file_io_shared_flags   = FILE_SHARE_READ;
 	}
-	else if( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
+	else if( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != 0 )
 	{
 		file_io_access_flags   = GENERIC_READ;
 		file_io_creation_flags = OPEN_EXISTING;
 		file_io_shared_flags   = FILE_SHARE_READ;
 	}
-	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
+	else if( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
 	{
 		file_io_access_flags   = GENERIC_WRITE;
 		file_io_creation_flags = OPEN_ALWAYS;
@@ -1577,14 +1577,14 @@ int libbfio_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags: 0x%02x.",
+		 "%s: unsupported access flags: 0x%02x.",
 		 function,
-		 flags );
+		 access_flags );
 
 		return( -1 );
 	}
-	if( ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
-	 && ( ( flags & LIBBFIO_FLAG_TRUNCATE ) == LIBBFIO_FLAG_TRUNCATE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_TRUNCATE ) != 0 ) )
 	{
 		file_io_creation_flags = CREATE_ALWAYS;
 	}
@@ -1668,8 +1668,8 @@ int libbfio_file_open(
 		return( -1 );
 	}
 #else
-	if( ( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
-	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 ) )
 	{
 #if defined( WINAPI )
 		file_io_flags             = _O_RDWR | _O_CREAT;
@@ -1681,7 +1681,7 @@ int libbfio_file_open(
 		file_io_shared_flags = _SH_DENYWR;
 #endif
 	}
-	else if( ( flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
+	else if( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != 0 )
 	{
 #if defined( WINAPI )
 		file_io_flags = _O_RDONLY;
@@ -1692,7 +1692,7 @@ int libbfio_file_open(
 		file_io_shared_flags = _SH_DENYWR;
 #endif
 	}
-	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
+	else if( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
 	{
 #if defined( WINAPI )
 		file_io_flags             = _O_WRONLY | _O_CREAT;
@@ -1710,13 +1710,13 @@ int libbfio_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
+		 "%s: unsupported access flags.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
-	 && ( ( flags & LIBBFIO_FLAG_TRUNCATE ) == LIBBFIO_FLAG_TRUNCATE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_TRUNCATE ) != 0 ) )
 	{
 #if defined( WINAPI )
 		file_io_flags |= _O_TRUNC;
@@ -2043,7 +2043,7 @@ int libbfio_file_open(
 	}
 #endif
 #endif
-	file_io_handle->access_flags = flags;
+	file_io_handle->access_flags = access_flags;
 
 	return( 1 );
 }

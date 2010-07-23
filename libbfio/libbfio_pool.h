@@ -59,9 +59,9 @@ struct libbfio_internal_pool
 	 */
 	libbfio_handle_t **handles;
 
-	/* A list containing the file io handles in order of the last use
+	/* A list containing the file IO handles in order of the last use
 	 * it starts with the last used at the beginning of the list
-	 * the value of the list element refers to the corresponding file io handle
+	 * the value of the list element refers to the corresponding file IO handle
 	 */
 	libbfio_list_t *last_used_list;
 };
@@ -84,7 +84,7 @@ LIBBFIO_EXTERN int libbfio_pool_resize(
 int libbfio_pool_open_handle(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error );
 
 int libbfio_pool_add_handle_to_last_used_list(
@@ -112,26 +112,26 @@ LIBBFIO_EXTERN int libbfio_pool_add_handle(
                     libbfio_pool_t *pool,
                     int *entry,
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_pool_set_handle(
                     libbfio_pool_t *pool,
                     int entry,
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_pool_open(
                     libbfio_pool_t *pool,
                     int entry,
-                    int flags,
+                    int access_flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_pool_reopen(
                     libbfio_pool_t *pool,
                     int entry,
-                    int flags,
+                    int access_flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_pool_close(

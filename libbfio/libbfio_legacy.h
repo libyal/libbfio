@@ -36,6 +36,16 @@ extern "C" {
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
+LIBBFIO_EXTERN int libbfio_handle_get_flags(
+                    libbfio_handle_t *handle,
+                    int *flags,
+                    liberror_error_t **error );
+
+LIBBFIO_EXTERN int libbfio_handle_set_flags(
+                    libbfio_handle_t *handle,
+                    int flags,
+                    liberror_error_t **error );
+
 LIBBFIO_EXTERN int libbfio_handle_get_amount_of_offsets_read(
                     libbfio_handle_t *handle,
                     int *amount_of_read_offsets,

@@ -118,7 +118,7 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
                            libbfio_error_t **error ),
                     int (*open)(
                            intptr_t *io_handle,
-                           int flags,
+                           int access_flags,
                            libbfio_error_t **error ),
                     int (*close)(
                            intptr_t *io_handle,
@@ -171,7 +171,7 @@ LIBBFIO_EXTERN int libbfio_handle_clone(
  */
 LIBBFIO_EXTERN int libbfio_handle_open(
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 /* Reopens the handle
@@ -179,7 +179,7 @@ LIBBFIO_EXTERN int libbfio_handle_open(
  */
 LIBBFIO_EXTERN int libbfio_handle_reopen(
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 /* Closes the handle
@@ -230,20 +230,20 @@ LIBBFIO_EXTERN int libbfio_handle_is_open(
                     libbfio_handle_t *handle,
                     libbfio_error_t **error );
 
-/* Retrieves the flags
+/* Retrieves the access flags
  * Returns 1 if successful or -1 on error
  */
-LIBBFIO_EXTERN int libbfio_handle_get_flags(
+LIBBFIO_EXTERN int libbfio_handle_get_access_flags(
                     libbfio_handle_t *handle,
-                    int *flags,
+                    int *access_flags,
                     libbfio_error_t **error );
 
-/* Sets the flags
+/* Sets the access flags
  * Returns 1 if successful or -1 on error
  */
-LIBBFIO_EXTERN int libbfio_handle_set_flags(
+LIBBFIO_EXTERN int libbfio_handle_set_access_flags(
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 /* Returns the size of the data of the handle
@@ -289,6 +289,42 @@ LIBBFIO_EXTERN int libbfio_handle_get_number_of_offsets_read(
                     int *number_of_read_offsets,
                     libbfio_error_t **error );
 
+/* Retrieves the information of an offset read
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_get_offset_read(
+                    libbfio_handle_t *handle,
+                    int index,
+                    off64_t *offset,
+                    size64_t *size,
+                    libbfio_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Handle functions - deprecated
+ * ------------------------------------------------------------------------- */
+
+/* Retrieves the access flags
+ * Returns 1 if successful or -1 on error
+ *
+ * This function is deprecated use libbfio_handle_get_access_flags instead
+ */
+LIBBFIO_DEPRECATED \
+LIBBFIO_EXTERN int libbfio_handle_get_flags(
+                    libbfio_handle_t *handle,
+                    int *access_flags,
+                    libbfio_error_t **error );
+
+/* Sets the access flags
+ * Returns 1 if successful or -1 on error
+ *
+ * This function is deprecated use libbfio_handle_set_access_flags instead
+ */
+LIBBFIO_DEPRECATED \
+LIBBFIO_EXTERN int libbfio_handle_set_flags(
+                    libbfio_handle_t *handle,
+                    int access_flags,
+                    libbfio_error_t **error );
+
 /* Retrieves the amount of offsets read
  * Returns 1 if successful or -1 on error
  *
@@ -298,16 +334,6 @@ LIBBFIO_DEPRECATED \
 LIBBFIO_EXTERN int libbfio_handle_get_amount_of_offsets_read(
                     libbfio_handle_t *handle,
                     int *amount_of_read_offsets,
-                    libbfio_error_t **error );
-
-/* Retrieves the information of an offset read
- * Returns 1 if successful or -1 on error
- */
-LIBBFIO_EXTERN int libbfio_handle_get_offset_read(
-                    libbfio_handle_t *handle,
-                    int index,
-                    off64_t *offset,
-                    size64_t *size,
                     libbfio_error_t **error );
 
 /* -------------------------------------------------------------------------
@@ -445,17 +471,6 @@ LIBBFIO_EXTERN int libbfio_pool_get_number_of_handles(
                     int *number_of_handles,
                     libbfio_error_t **error );
 
-/* Retrieves the amount of handles in the pool
- * Returns 1 if successful or -1 on error
- *
- * This function is deprecated use libbfio_pool_get_number_of_handles instead
- */
-LIBBFIO_DEPRECATED \
-LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
-                    libbfio_pool_t *pool,
-                    int *amount_of_handles,
-                    libbfio_error_t **error );
-
 /* Retrieves a certain handle from the pool
  * Returns 1 if successful or -1 on error
  */
@@ -473,7 +488,7 @@ LIBBFIO_EXTERN int libbfio_pool_add_handle(
                     libbfio_pool_t *pool,
                     int *entry,
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 /* Sets a certain handle in the pool
@@ -483,7 +498,7 @@ LIBBFIO_EXTERN int libbfio_pool_set_handle(
                     libbfio_pool_t *pool,
                     int entry,
                     libbfio_handle_t *handle,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 /* Opens a handle in the pool
@@ -492,7 +507,7 @@ LIBBFIO_EXTERN int libbfio_pool_set_handle(
 LIBBFIO_EXTERN int libbfio_pool_open(
                     libbfio_pool_t *pool,
                     int entry,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 /* Reopens a handle in the pool
@@ -501,7 +516,7 @@ LIBBFIO_EXTERN int libbfio_pool_open(
 LIBBFIO_EXTERN int libbfio_pool_reopen(
                     libbfio_pool_t *pool,
                     int entry,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 /* Closes a handle in the pool
@@ -583,6 +598,21 @@ LIBBFIO_EXTERN int libbfio_pool_set_maximum_number_of_open_handles(
                     int maximum_number_of_open_handles,
                     libbfio_error_t **error );
 
+/* -------------------------------------------------------------------------
+ * Pool functions - deprecated
+ * ------------------------------------------------------------------------- */
+
+/* Retrieves the amount of handles in the pool
+ * Returns 1 if successful or -1 on error
+ *
+ * This function is deprecated use libbfio_pool_get_number_of_handles instead
+ */
+LIBBFIO_DEPRECATED \
+LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
+                    libbfio_pool_t *pool,
+                    int *amount_of_handles,
+                    libbfio_error_t **error );
+
 /* Retrieves the maximum amount of open handles in the pool
  * Returns 1 if successful or -1 on error
  *
@@ -616,7 +646,7 @@ LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names(
                     libbfio_pool_t *pool,
                     char * const names[],
                     int number_of_names,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 
 #if defined( LIBBFIO_WIDE_CHARACTER_TYPE )
@@ -628,7 +658,7 @@ LIBBFIO_EXTERN int libbfio_file_pool_add_handle_for_names_wide(
                     libbfio_pool_t *pool,
                     wchar_t * const names[],
                     int number_of_names,
-                    int flags,
+                    int access_flags,
                     libbfio_error_t **error );
 #endif
 

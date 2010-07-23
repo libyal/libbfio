@@ -1,3 +1,7 @@
+TODO
+* add management flags to handle ?
+* add management flags to pool ?
+
 Pool
 * allow re-set of pool entries?
 
@@ -25,6 +29,9 @@ Beta release
 Deployment:
 * create debian package
 * check if libbfio.3 is up to date
+
+20100723
+* renamed flags to access flags
 
 20100722
 * fix for maintaining file size on write

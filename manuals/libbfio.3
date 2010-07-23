@@ -1,4 +1,4 @@
-.Dd July 1, 2010
+.Dd July 23, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -31,15 +31,15 @@ Error functions
 .Pp
 Handle functions
 .Ft int
-.Fn libbfio_handle_initialize "libbfio_handle_t **handle, intptr_t *io_handle, int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ), int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, libbfio_error_t **error ), int (*open)( intptr_t *io_handle, int flags, libbfio_error_t **error ), int (*close)( intptr_t *io_handle, libbfio_error_t **error ), ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ), int (*exists)( intptr_t *io_handle, libbfio_error_t **error ), int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ), int (*get_size)( intptr_t *io_handle, size64_t *size, libbfio_error_t **error ), libbfio_error_t **error"
+.Fn libbfio_handle_initialize "libbfio_handle_t **handle, intptr_t *io_handle, int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ), int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, libbfio_error_t **error ), int (*open)( intptr_t *io_handle, int access_flags, libbfio_error_t **error ), int (*close)( intptr_t *io_handle, libbfio_error_t **error ), ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), ssize_t (*write)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ), int (*exists)( intptr_t *io_handle, libbfio_error_t **error ), int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ), int (*get_size)( intptr_t *io_handle, size64_t *size, libbfio_error_t **error ), libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_free "libbfio_handle_t **handle, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_clone "libbfio_handle_t **destination_handle, ibbfio_handle_t *source_handle, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_handle_open "libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Fn libbfio_handle_open "libbfio_handle_t *handle, int access_flags, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_handle_reopen "libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Fn libbfio_handle_reopen "libbfio_handle_t *handle, int access_flags, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_close "libbfio_handle_t *handle, libbfio_error_t **error"
 .Ft ssize_t
@@ -53,9 +53,9 @@ Handle functions
 .Ft int
 .Fn libbfio_handle_is_open "libbfio_handle_t *handle, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_handle_get_flags "libbfio_handle_t *handle, int *flags, libbfio_error_t **error"
+.Fn libbfio_handle_get_access_flags "libbfio_handle_t *handle, int *access_flags, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_handle_set_flags "libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Fn libbfio_handle_set_access_flags "libbfio_handle_t *handle, int access_flags, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_get_size "libbfio_handle_t *handle, size64_t *size, libbfio_error_t **error"
 .Ft int
@@ -107,13 +107,13 @@ Pool functions
 .Ft int
 .Fn libbfio_pool_get_handle "libbfio_pool_t *pool, int entry, libbfio_handle_t **handle, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_pool_add_handle "libbfio_pool_t *pool, int *entry, libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Fn libbfio_pool_add_handle "libbfio_pool_t *pool, int *entry, libbfio_handle_t *handle, int access_flags, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_pool_set_handle "libbfio_pool_t *pool, int entry, libbfio_handle_t *handle, int flags, libbfio_error_t **error"
+.Fn libbfio_pool_set_handle "libbfio_pool_t *pool, int entry, libbfio_handle_t *handle, int access_flags, libbfio_error_t **error"
 .Ft int
-.Ft libbfio_pool_open "libbfio_pool_t *pool, int entry, int flags, libbfio_error_t **error"
+.Ft libbfio_pool_open "libbfio_pool_t *pool, int entry, int access_flags, libbfio_error_t **error"
 .Ft int
-.Ft libbfio_pool_reopen "libbfio_pool_t *pool, int entry, int flags, libbfio_error_t **error"
+.Ft libbfio_pool_reopen "libbfio_pool_t *pool, int entry, int access_flags, libbfio_error_t **error"
 .Ft int
 .Ft libbfio_pool_close "libbfio_pool_t *pool, int entry, libbfio_error_t **error"
 .Ft int
@@ -135,9 +135,9 @@ Pool functions
 .Pp
 File pool functions
 .Ft int
-.Fn libbfio_file_pool_add_handles_for_names "libbfio_pool_t **pool, char * const filenames[], int number_of_filenames, int flags, libbfio_error_t **error"
+.Fn libbfio_file_pool_add_handles_for_names "libbfio_pool_t **pool, char * const filenames[], int number_of_filenames, int access_flags, libbfio_error_t **error"
 .Ft int
-.Fn libbfio_file_pool_add_handles_for_names_wide "libbfio_pool_t **pool, wchar_t * const filenames[], int number_of_filenames, int flags, libbfio_error_t **error"
+.Fn libbfio_file_pool_add_handles_for_names_wide "libbfio_pool_t **pool, wchar_t * const filenames[], int number_of_filenames, int access_flags, libbfio_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libbfio_get_version

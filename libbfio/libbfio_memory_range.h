@@ -90,7 +90,7 @@ LIBBFIO_EXTERN int libbfio_memory_range_set(
 
 int libbfio_memory_range_open(
      intptr_t *io_handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error );
 
 int libbfio_memory_range_close(

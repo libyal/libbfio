@@ -45,7 +45,7 @@ int libbfio_handle_initialize(
              liberror_error_t **error ),
       int (*open)(
              intptr_t *io_handle,
-             int flags,
+             int access_flags,
              liberror_error_t **error ),
       int (*close)(
              intptr_t *io_handle,
@@ -343,7 +343,7 @@ int libbfio_handle_clone(
 	}
 	if( libbfio_handle_open(
 	     *destination_handle,
-	     internal_source_handle->flags,
+	     internal_source_handle->access_flags,
 	     error ) == -1 )
 	{
 		liberror_error_set(
@@ -386,7 +386,7 @@ int libbfio_handle_clone(
  */
 int libbfio_handle_open(
      libbfio_handle_t *handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
@@ -427,16 +427,16 @@ int libbfio_handle_open(
 
 		return( -1 );
 	}
-	if( ( ( flags & LIBBFIO_FLAG_READ ) != LIBBFIO_FLAG_READ )
-	 && ( ( flags & LIBBFIO_FLAG_WRITE ) != LIBBFIO_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != LIBBFIO_ACCESS_FLAG_READ )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != LIBBFIO_ACCESS_FLAG_WRITE ) )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags: 0x%02x.",
+		 "%s: unsupported access flags: 0x%02x.",
 		 function,
-		 flags );
+		 access_flags );
 
 		return( -1 );
 	}
@@ -444,7 +444,7 @@ int libbfio_handle_open(
 	{
 		if( internal_handle->open(
 		     internal_handle->io_handle,
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -457,7 +457,7 @@ int libbfio_handle_open(
 			return( -1 );
 		}
 	}
-	else if( ( flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
+	else if( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
 	{
 		liberror_error_set(
 		 error,
@@ -468,7 +468,7 @@ int libbfio_handle_open(
 
 		return( -1 );
 	}
-	internal_handle->flags = flags;
+	internal_handle->access_flags = access_flags;
 
 	return( 1 );
 }
@@ -478,7 +478,7 @@ int libbfio_handle_open(
  */
 int libbfio_handle_reopen(
      libbfio_handle_t *handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
@@ -541,21 +541,21 @@ int libbfio_handle_reopen(
 
 		return( -1 );
 	}
-	if( ( ( flags & LIBBFIO_FLAG_READ ) != LIBBFIO_FLAG_READ )
-	 && ( ( flags & LIBBFIO_FLAG_WRITE ) != LIBBFIO_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != LIBBFIO_ACCESS_FLAG_READ )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != LIBBFIO_ACCESS_FLAG_WRITE ) )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
+		 "%s: unsupported access flags.",
 		 function );
 
 		return( -1 );
 	}
-	/* Only reopen if the flags have changed
+	/* Only reopen if the access flags have changed
 	 */
-	if( internal_handle->flags != flags )
+	if( internal_handle->access_flags != access_flags )
 	{
 		if( internal_handle->close(
 		     internal_handle->io_handle,
@@ -574,7 +574,7 @@ int libbfio_handle_reopen(
 		{
 			if( internal_handle->open(
 			     internal_handle->io_handle,
-			     flags,
+			     access_flags,
 			     error ) != 1 )
 			{
 				liberror_error_set(
@@ -587,13 +587,13 @@ int libbfio_handle_reopen(
 				return( -1 );
 			}
 		}
-		internal_handle->flags = flags;
+		internal_handle->access_flags = access_flags;
 
 		if( internal_handle->open_on_demand == 0 )
 		{
 			/* Seek the previous file offset only when at least reading the file
 			 */
-			if( ( internal_handle->flags & LIBBFIO_FLAG_READ ) == LIBBFIO_FLAG_READ )
+			if( ( internal_handle->access_flags & LIBBFIO_ACCESS_FLAG_READ ) != 0 )
 			{
 				if( internal_handle->seek_offset(
 				     internal_handle->io_handle,
@@ -825,7 +825,7 @@ ssize_t libbfio_handle_read(
 		{
 			if( internal_handle->open(
 			     internal_handle->io_handle,
-			     internal_handle->flags,
+			     internal_handle->access_flags,
 			     error ) != 1 )
 			{
 				liberror_error_set(
@@ -1111,7 +1111,7 @@ off64_t libbfio_handle_seek_offset(
 		{
 			if( internal_handle->open(
 			     internal_handle->io_handle,
-			     internal_handle->flags,
+			     internal_handle->access_flags,
 			     error ) != 1 )
 			{
 				liberror_error_set(
@@ -1292,16 +1292,16 @@ int libbfio_handle_is_open(
 	return( result );
 }
 
-/* Retrieves the flags
+/* Retrieves the access flags
  * Returns 1 if successful or -1 on error
  */
-int libbfio_handle_get_flags(
+int libbfio_handle_get_access_flags(
      libbfio_handle_t *handle,
-     int *flags,
+     int *access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_get_flags";
+	static char *function                      = "libbfio_handle_get_access_flags";
 
 	if( handle == NULL )
 	{
@@ -1316,32 +1316,32 @@ int libbfio_handle_get_flags(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( flags == NULL )
+	if( access_flags == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid flags.",
+		 "%s: invalid access flags.",
 		 function );
 
 		return( -1 );
 	}
-	*flags = internal_handle->flags;
+	*access_flags = internal_handle->access_flags;
 
 	return( 1 );
 }
 
-/* Sets the flags
+/* Sets the access flags
  * Returns 1 if successful or -1 on error
  */
-int libbfio_handle_set_flags(
+int libbfio_handle_set_access_flags(
      libbfio_handle_t *handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_set_flags";
+	static char *function                      = "libbfio_handle_set_access_flags";
 
 	if( handle == NULL )
 	{
@@ -1356,19 +1356,19 @@ int libbfio_handle_set_flags(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( ( ( flags & LIBBFIO_FLAG_READ ) != LIBBFIO_FLAG_READ )
-	 && ( ( flags & LIBBFIO_FLAG_WRITE ) != LIBBFIO_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != LIBBFIO_ACCESS_FLAG_READ )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != LIBBFIO_ACCESS_FLAG_WRITE ) )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
+		 "%s: unsupported access flags.",
 		 function );
 
 		return( -1 );
 	}
-	internal_handle->flags = flags;
+	internal_handle->access_flags = access_flags;
 
 	return( 1 );
 }
@@ -1519,7 +1519,7 @@ int libbfio_handle_set_open_on_demand(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( ( ( internal_handle->flags & LIBBFIO_FLAG_WRITE ) == LIBBFIO_FLAG_WRITE )
+	if( ( ( internal_handle->access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
 	 && ( open_on_demand != 0 ) )
 	{
 		liberror_error_set(

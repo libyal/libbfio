@@ -32,6 +32,34 @@
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
+/* Retrieves the flags
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_handle_get_flags(
+     libbfio_handle_t *handle,
+     int *flags,
+     liberror_error_t **error )
+{
+	return( libbfio_handle_get_access_flags(
+	         handle,
+	         flags,
+	         error ) );
+}
+
+/* Sets the flags
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_handle_set_flags(
+     libbfio_handle_t *handle,
+     int flags,
+     liberror_error_t **error )
+{
+	return( libbfio_handle_set_access_flags(
+	         handle,
+	         flags,
+	         error ) );
+}
+
 /* Retrieves the amount of offsets read
  * Returns 1 if successful or -1 on error
  */

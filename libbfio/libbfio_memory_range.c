@@ -386,7 +386,7 @@ int libbfio_memory_range_set(
  */
 int libbfio_memory_range_open(
      intptr_t *io_handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
@@ -429,20 +429,20 @@ int libbfio_memory_range_open(
 	}
 	/* Either read or write flag should be set
 	 */
-	if( ( ( flags & LIBBFIO_FLAG_READ ) == 0 )
-	 && ( ( flags & LIBBFIO_FLAG_WRITE ) == 0 ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags: 0x%02x.",
+		 "%s: unsupported access flags: 0x%02x.",
 		 function );
 
 		return( -1 );
 	}
 	memory_range_io_handle->range_offset = 0;
-	memory_range_io_handle->access_flags = flags;
+	memory_range_io_handle->access_flags = access_flags;
 	memory_range_io_handle->is_open      = 1;
 
 	return( 1 );
@@ -546,7 +546,7 @@ ssize_t libbfio_memory_range_read(
 
 		return( -1 );
 	}
-	if( ( memory_range_io_handle->access_flags & LIBBFIO_FLAG_READ ) == 0 )
+	if( ( memory_range_io_handle->access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
 	{
 		liberror_error_set(
 		 error,
@@ -673,7 +673,7 @@ ssize_t libbfio_memory_range_write(
 
 		return( -1 );
 	}
-	if( ( memory_range_io_handle->access_flags & LIBBFIO_FLAG_WRITE ) == 0 )
+	if( ( memory_range_io_handle->access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 )
 	{
 		liberror_error_set(
 		 error,

@@ -367,7 +367,7 @@ int libbfio_pool_resize(
 int libbfio_pool_open_handle(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_pool_open_handle";
@@ -444,7 +444,7 @@ int libbfio_pool_open_handle(
 	}
 	if( libbfio_handle_open(
 	     handle,
-	     flags,
+	     access_flags,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -575,7 +575,7 @@ int libbfio_pool_add_handle_to_last_used_list(
 
 			/* Make sure the truncate flag is removed from the handle
 			 */
-			( (libbfio_internal_handle_t *) ( last_used_list_element->value ) )->flags &= ~LIBBFIO_FLAG_TRUNCATE;
+			( (libbfio_internal_handle_t *) ( last_used_list_element->value ) )->access_flags &= ~LIBBFIO_ACCESS_FLAG_TRUNCATE;
 		}
 		/* The last used list element is reused to contain the new last used entry
 		 */
@@ -833,7 +833,7 @@ int libbfio_pool_add_handle(
      libbfio_pool_t *pool,
      int *entry,
      libbfio_handle_t *handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
@@ -930,18 +930,18 @@ int libbfio_pool_add_handle(
 
 	if( is_open == 0 )
 	{
-		/* Set the flags is the handle is not open
+		/* Set the access flags is the handle is not open
 		 */
-		if( libbfio_handle_set_flags(
+		if( libbfio_handle_set_access_flags(
 		     handle,
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to set flags.",
+			 "%s: unable to set access flags.",
 			 function );
 
 			return( -1 );
@@ -974,7 +974,7 @@ int libbfio_pool_set_handle(
      libbfio_pool_t *pool,
      int entry,
      libbfio_handle_t *handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
@@ -1065,18 +1065,18 @@ int libbfio_pool_set_handle(
 
 	if( is_open == 0 )
 	{
-		/* Set the flags is the handle is not open
+		/* Set the access flags is the handle is not open
 		 */
-		if( libbfio_handle_set_flags(
+		if( libbfio_handle_set_access_flags(
 		     handle,
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to set flags.",
+			 "%s: unable to set access flags.",
 			 function );
 
 			return( -1 );
@@ -1108,7 +1108,7 @@ int libbfio_pool_set_handle(
 int libbfio_pool_open(
      libbfio_pool_t *pool,
      int entry,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
@@ -1184,7 +1184,7 @@ int libbfio_pool_open(
 	if( libbfio_pool_open_handle(
 	     internal_pool,
 	     internal_pool->handles[ entry ],
-	     flags,
+	     access_flags,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1206,7 +1206,7 @@ int libbfio_pool_open(
 int libbfio_pool_reopen(
      libbfio_pool_t *pool,
      int entry,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
@@ -1250,7 +1250,7 @@ int libbfio_pool_reopen(
 	}
 	if( libbfio_handle_reopen(
 	     internal_pool->handles[ entry ],
-	     flags,
+	     access_flags,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1487,7 +1487,7 @@ ssize_t libbfio_pool_read(
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_read";
 	ssize_t read_count                     = 0;
-	int flags                              = 0;
+	int access_flags                       = 0;
 	int is_open                            = 0;
 
 	if( pool == NULL )
@@ -1546,16 +1546,16 @@ ssize_t libbfio_pool_read(
 	}
 	else if( is_open == 0 )
 	{
-		if( libbfio_handle_get_flags(
+		if( libbfio_handle_get_access_flags(
 		     internal_pool->handles[ entry ],
-		     &flags,
+		     &access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve flags.",
+			 "%s: unable to retrieve access flags.",
 			 function );
 
 			return( -1 );
@@ -1563,7 +1563,7 @@ ssize_t libbfio_pool_read(
 		if( libbfio_pool_open_handle(
 		     internal_pool,
 		     internal_pool->handles[ entry ],
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -1628,7 +1628,7 @@ ssize_t libbfio_pool_write(
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_write";
 	ssize_t write_count                    = 0;
-	int flags                              = 0;
+	int access_flags                       = 0;
 	int is_open                            = 0;
 
 	if( pool == NULL )
@@ -1687,16 +1687,16 @@ ssize_t libbfio_pool_write(
 	}
 	else if( is_open == 0 )
 	{
-		if( libbfio_handle_get_flags(
+		if( libbfio_handle_get_access_flags(
 		     internal_pool->handles[ entry ],
-		     &flags,
+		     &access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve flags.",
+			 "%s: unable to retrieve access flags.",
 			 function );
 
 			return( -1 );
@@ -1704,7 +1704,7 @@ ssize_t libbfio_pool_write(
 		if( libbfio_pool_open_handle(
 		     internal_pool,
 		     internal_pool->handles[ entry ],
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -1769,7 +1769,7 @@ off64_t libbfio_pool_seek_offset(
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_seek_offset";
 	off64_t seek_offset                    = 0;
-	int flags                              = 0;
+	int access_flags                       = 0;
 	int is_open                            = 0;
 
 	if( pool == NULL )
@@ -1828,16 +1828,16 @@ off64_t libbfio_pool_seek_offset(
 	}
 	else if( is_open == 0 )
 	{
-		if( libbfio_handle_get_flags(
+		if( libbfio_handle_get_access_flags(
 		     internal_pool->handles[ entry ],
-		     &flags,
+		     &access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve flags.",
+			 "%s: unable to retrieve access flags.",
 			 function );
 
 			return( -1 );
@@ -1845,7 +1845,7 @@ off64_t libbfio_pool_seek_offset(
 		if( libbfio_pool_open_handle(
 		     internal_pool,
 		     internal_pool->handles[ entry ],
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -1908,7 +1908,7 @@ int libbfio_pool_get_size(
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_size";
-	int flags                              = 0;
+	int access_flags                       = 0;
 	int is_open                            = 0;
 
 	if( pool == NULL )
@@ -1967,16 +1967,16 @@ int libbfio_pool_get_size(
 	}
 	else if( is_open == 0 )
 	{
-		if( libbfio_handle_get_flags(
+		if( libbfio_handle_get_access_flags(
 		     internal_pool->handles[ entry ],
-		     &flags,
+		     &access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve flags.",
+			 "%s: unable to retrieve access flags.",
 			 function );
 
 			return( -1 );
@@ -1984,7 +1984,7 @@ int libbfio_pool_get_size(
 		if( libbfio_pool_open_handle(
 		     internal_pool,
 		     internal_pool->handles[ entry ],
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -2026,7 +2026,7 @@ int libbfio_pool_get_offset(
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_offset";
-	int flags                              = 0;
+	int access_flags                       = 0;
 	int is_open                            = 0;
 
 	if( pool == NULL )
@@ -2085,16 +2085,16 @@ int libbfio_pool_get_offset(
 	}
 	else if( is_open == 0 )
 	{
-		if( libbfio_handle_get_flags(
+		if( libbfio_handle_get_access_flags(
 		     internal_pool->handles[ entry ],
-		     &flags,
+		     &access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve flags.",
+			 "%s: unable to retrieve access flags.",
 			 function );
 
 			return( -1 );
@@ -2102,7 +2102,7 @@ int libbfio_pool_get_offset(
 		if( libbfio_pool_open_handle(
 		     internal_pool,
 		     internal_pool->handles[ entry ],
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -2266,7 +2266,7 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 
 		/* Make sure the truncate flag is removed from the handle
 		 */
-		( (libbfio_internal_handle_t *) ( last_used_list_element->value ) )->flags &= ~LIBBFIO_FLAG_TRUNCATE;
+		( (libbfio_internal_handle_t *) ( last_used_list_element->value ) )->access_flags &= ~LIBBFIO_ACCESS_FLAG_TRUNCATE;
 
 		if( libbfio_list_element_free(
 		     &last_used_list_element,

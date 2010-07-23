@@ -39,7 +39,7 @@ int libbfio_file_pool_add_handles_for_names(
      libbfio_pool_t *pool,
      char * const names[],
      int number_of_names,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
@@ -96,7 +96,7 @@ int libbfio_file_pool_add_handles_for_names(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create file io handle: %d.",
+			 "%s: unable to create file IO handle: %d.",
 			 function,
 			 name_iterator );
 
@@ -112,7 +112,7 @@ int libbfio_file_pool_add_handles_for_names(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set name in file io handle: %d.",
+			 "%s: unable to set name in file IO handle: %d.",
 			 function,
 			 name_iterator );
 
@@ -126,14 +126,14 @@ int libbfio_file_pool_add_handles_for_names(
 		     pool,
 		     &pool_entry,
 		     file_io_handle,
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to add file io handle: %d to pool.",
+			 "%s: unable to add file IO handle: %d to pool.",
 			 function,
 			 name_iterator );
 
@@ -157,7 +157,7 @@ int libbfio_file_pool_add_handles_for_names_wide(
      libbfio_pool_t *pool,
      wchar_t * const names[],
      int number_of_names,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
@@ -214,7 +214,7 @@ int libbfio_file_pool_add_handles_for_names_wide(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create file io handle: %d.",
+			 "%s: unable to create file IO handle: %d.",
 			 function,
 			 name_iterator );
 
@@ -230,7 +230,7 @@ int libbfio_file_pool_add_handles_for_names_wide(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set name in file io handle: %d.",
+			 "%s: unable to set name in file IO handle: %d.",
 			 function,
 			 name_iterator );
 
@@ -244,14 +244,14 @@ int libbfio_file_pool_add_handles_for_names_wide(
 		     pool,
 		     &pool_entry,
 		     file_io_handle,
-		     flags,
+		     access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to add file io handle: %d to pool.",
+			 "%s: unable to add file IO handle: %d to pool.",
 			 function,
 			 name_iterator );
 
