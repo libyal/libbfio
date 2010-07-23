@@ -1,6 +1,4 @@
 TODO
-* add management flags to handle ?
-* add management flags to pool ?
 
 Pool
 * allow re-set of pool entries?
@@ -32,6 +30,9 @@ Deployment:
 
 20100723
 * renamed flags to access flags
+* API change: added management flags to handle
+* API change: deprecrated add functions in preference of append functions
+* API change: deprecrated flags functions in preference of access_flags functions
 
 20100722
 * fix for maintaining file size on write

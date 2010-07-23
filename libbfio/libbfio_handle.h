@@ -52,6 +52,10 @@ struct libbfio_internal_handle
 	 */
 	intptr_t *io_handle;
 
+	/* The flags
+	 */
+	uint8_t flags;
+
 	/* The access flags
 	 */
 	int access_flags;
@@ -202,6 +206,7 @@ LIBBFIO_EXTERN int libbfio_handle_initialize(
                            intptr_t *io_handle,
                            size64_t *size,
                            liberror_error_t **error ),
+                    uint8_t flags,
                     liberror_error_t **error );
 
 LIBBFIO_EXTERN int libbfio_handle_free(

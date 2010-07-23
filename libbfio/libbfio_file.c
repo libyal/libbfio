@@ -172,6 +172,7 @@ int libbfio_file_initialize(
 		     libbfio_file_exists,
 		     libbfio_file_is_open,
 		     libbfio_file_get_size,
+		     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -2880,7 +2881,7 @@ off64_t libbfio_file_seek_offset(
 
 /* Function to determine if a file exists
  * Optimized version for Windows 2000 (WINAPI 5) or later
- * Return 1 if file exists, 0 if not or -1 on error
+ * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
      intptr_t *io_handle,
@@ -2987,7 +2988,7 @@ int libbfio_file_exists(
 #elif defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 
 /* Function to determine if a file exists
- * Return 1 if file exists, 0 if not or -1 on error
+ * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
      intptr_t *io_handle,
@@ -3122,7 +3123,7 @@ int libbfio_file_exists(
 
 /* Function to determine if a file exists
  * Optimized version for platforms with the stat function
- * Return 1 if file exists, 0 if not or -1 on error
+ * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
      intptr_t *io_handle,
@@ -3355,7 +3356,7 @@ int libbfio_file_exists(
 #else
 
 /* Function to determine if a file exists
- * Return 1 if file exists, 0 if not or -1 on error
+ * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
      intptr_t *io_handle,

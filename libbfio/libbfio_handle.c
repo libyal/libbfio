@@ -75,6 +75,7 @@ int libbfio_handle_initialize(
              intptr_t *io_handle,
              size64_t *size,
              liberror_error_t **error ),
+      uint8_t flags,
       liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
@@ -125,6 +126,7 @@ int libbfio_handle_initialize(
 			return( -1 );
 		}
 		internal_handle->io_handle       = io_handle;
+		internal_handle->flags           = flags;
 		internal_handle->free_io_handle  = free_io_handle;
 		internal_handle->clone_io_handle = clone_io_handle;
 		internal_handle->open            = open;
@@ -184,25 +186,28 @@ int libbfio_handle_free(
 		internal_handle = (libbfio_internal_handle_t *) *handle;
 		*handle         = NULL;
 
-		if( internal_handle->io_handle != NULL )
+		if( ( internal_handle->flags & LIBBFIO_FLAG_IO_HANDLE_MANAGED ) != 0 )
 		{
-			if( internal_handle->free_io_handle == NULL )
+			if( internal_handle->io_handle != NULL )
 			{
-				memory_free(
-				 internal_handle->io_handle );
-			}
-			else if( internal_handle->free_io_handle(
-			          internal_handle->io_handle,
-			          error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free IO handle.",
-				 function );
+				if( internal_handle->free_io_handle == NULL )
+				{
+					memory_free(
+					 internal_handle->io_handle );
+				}
+				else if( internal_handle->free_io_handle(
+					  internal_handle->io_handle,
+					  error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free IO handle.",
+					 function );
 
-				result = -1;
+					result = -1;
+				}
 			}
 		}
 		if( internal_handle->offsets_read != NULL )
@@ -239,6 +244,7 @@ int libbfio_handle_clone(
 	libbfio_internal_handle_t *internal_source_handle = NULL;
 	intptr_t *destination_io_handle                   = NULL;
 	static char *function                             = "libbfio_handle_clone";
+	uint8_t destination_flags                         = 0;
 
 	if( destination_handle == NULL )
 	{
@@ -277,30 +283,40 @@ int libbfio_handle_clone(
 
 	if( internal_source_handle->io_handle != NULL )
 	{
-		if( internal_source_handle->clone_io_handle == NULL )
+		if( ( internal_source_handle->flags & LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_REFERENCE ) != 0 )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid handle - missing clone IO handle function.",
-			 function );
+			destination_io_handle = internal_source_handle->io_handle;
 
-			return( -1 );
+			destination_flags = LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_REFERENCE;
 		}
-		if( internal_source_handle->clone_io_handle(
-		     &destination_io_handle,
-		     internal_source_handle->io_handle,
-		     error ) != 1 )
+		else
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to clone IO handle.",
-			 function );
+			if( internal_source_handle->clone_io_handle == NULL )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: invalid handle - missing clone IO handle function.",
+				 function );
 
-			return( -1 );
+				return( -1 );
+			}
+			if( internal_source_handle->clone_io_handle(
+			     &destination_io_handle,
+			     internal_source_handle->io_handle,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to clone IO handle.",
+				 function );
+
+				return( -1 );
+			}
+			destination_flags = LIBBFIO_FLAG_IO_HANDLE_MANAGED;
 		}
 	}
 	if( libbfio_handle_initialize(
@@ -316,6 +332,7 @@ int libbfio_handle_clone(
 	     internal_source_handle->exists,
 	     internal_source_handle->is_open,
 	     internal_source_handle->get_size,
+	     destination_flags,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1165,7 +1182,7 @@ off64_t libbfio_handle_seek_offset(
 }
 
 /* Function to determine if a file object exists
- * Return 1 if file object exists, 0 if not or -1 on error
+ * Returns 1 if file object exists, 0 if not or -1 on error
  */
 int libbfio_handle_exists(
      libbfio_handle_t *handle,

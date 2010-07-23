@@ -87,7 +87,7 @@ int libbfio_pool_open_handle(
      int access_flags,
      liberror_error_t **error );
 
-int libbfio_pool_add_handle_to_last_used_list(
+int libbfio_pool_append_handle_to_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      liberror_error_t **error );
@@ -108,7 +108,7 @@ LIBBFIO_EXTERN int libbfio_pool_get_handle(
                     libbfio_handle_t **handle,
                     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_add_handle(
+LIBBFIO_EXTERN int libbfio_pool_append_handle(
                     libbfio_pool_t *pool,
                     int *entry,
                     libbfio_handle_t *handle,

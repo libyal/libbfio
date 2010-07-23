@@ -41,6 +41,14 @@ enum LIBBFIO_FLAGS
 	/* The IO handle is managed by the library
 	 */
         LIBBFIO_FLAG_IO_HANDLE_MANAGED			= 0x01,
+
+	/* The IO handle is cloned by the function
+	 */
+        LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION	= 0x00,
+
+	/* The IO handle is not cloned, but passed as a reference
+	 */
+        LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_REFERENCE	= 0x02,
 };
 
 /* The access flags definitions

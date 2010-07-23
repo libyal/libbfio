@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names(
+LIBBFIO_EXTERN int libbfio_file_pool_append_handles_for_names(
                     libbfio_pool_t *pool,
                     char * const names[],
                     int number_of_names,
@@ -43,7 +43,7 @@ LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names_wide(
+LIBBFIO_EXTERN int libbfio_file_pool_append_handles_for_names_wide(
                     libbfio_pool_t *pool,
                     wchar_t * const names[],
                     int number_of_names,

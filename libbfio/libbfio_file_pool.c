@@ -32,10 +32,10 @@
 #include "libbfio_pool.h"
 #include "libbfio_types.h"
 
-/* Adds file handles to the pool for the corresponding filenames
+/* Appends file handles to the pool for the corresponding filenames
  * Returns 1 if successful or -1 on error
  */
-int libbfio_file_pool_add_handles_for_names(
+int libbfio_file_pool_append_handles_for_names(
      libbfio_pool_t *pool,
      char * const names[],
      int number_of_names,
@@ -43,7 +43,7 @@ int libbfio_file_pool_add_handles_for_names(
      liberror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
-	static char *function            = "libbfio_file_pool_add_handles_for_names";
+	static char *function            = "libbfio_file_pool_append_handles_for_names";
 	size_t name_length               = 0;
 	int pool_entry                   = 0;
 	int name_iterator                = 0;
@@ -122,7 +122,7 @@ int libbfio_file_pool_add_handles_for_names(
 
 			return( -1 );
 		}
-		if( libbfio_pool_add_handle(
+		if( libbfio_pool_append_handle(
 		     pool,
 		     &pool_entry,
 		     file_io_handle,
@@ -133,7 +133,7 @@ int libbfio_file_pool_add_handles_for_names(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to add file IO handle: %d to pool.",
+			 "%s: unable to append file IO handle: %d to pool.",
 			 function,
 			 name_iterator );
 
@@ -150,10 +150,10 @@ int libbfio_file_pool_add_handles_for_names(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Adds file handles to the pool for the corresponding filenames
+/* Appends file handles to the pool for the corresponding filenames
  * Returns 1 if successful or -1 on error
  */
-int libbfio_file_pool_add_handles_for_names_wide(
+int libbfio_file_pool_append_handles_for_names_wide(
      libbfio_pool_t *pool,
      wchar_t * const names[],
      int number_of_names,
@@ -161,7 +161,7 @@ int libbfio_file_pool_add_handles_for_names_wide(
      liberror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
-	static char *function            = "libbfio_file_pool_add_handles_for_names_wide";
+	static char *function            = "libbfio_file_pool_append_handles_for_names_wide";
 	size_t name_length               = 0;
 	int pool_entry                   = 0;
 	int name_iterator                = 0;
@@ -240,7 +240,7 @@ int libbfio_file_pool_add_handles_for_names_wide(
 
 			return( -1 );
 		}
-		if( libbfio_pool_add_handle(
+		if( libbfio_pool_append_handle(
 		     pool,
 		     &pool_entry,
 		     file_io_handle,
@@ -251,7 +251,7 @@ int libbfio_file_pool_add_handles_for_names_wide(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to add file IO handle: %d to pool.",
+			 "%s: unable to append file IO handle: %d to pool.",
 			 function,
 			 name_iterator );
 

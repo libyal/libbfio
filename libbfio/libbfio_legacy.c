@@ -25,6 +25,7 @@
 
 #include <liberror.h>
 
+#include "libbfio_file_pool.h"
 #include "libbfio_handle.h"
 #include "libbfio_legacy.h"
 #include "libbfio_pool.h"
@@ -88,6 +89,25 @@ int libbfio_pool_get_amount_of_handles(
 	         error ) );
 }
 
+/* Appends a handle to the pool
+ * Sets the entry
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_add_handle(
+     libbfio_pool_t *pool,
+     int *entry,
+     libbfio_handle_t *handle,
+     int access_flags,
+     liberror_error_t **error )
+{
+	return( libbfio_pool_append_handle(
+	         pool,
+	         entry,
+	         handle,
+	         access_flags,
+	         error ) );
+}
+
 /* Retrieves the maximum amount of open handles in the pool
  * Returns 1 if successful or -1 on error
  */
@@ -115,6 +135,46 @@ int libbfio_pool_set_maximum_amount_of_open_handles(
 	         maximum_amount_of_open_handles,
 	         error ) );
 }
+
+/* Adds file handles to the pool for the corresponding filenames
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_file_pool_add_handles_for_names(
+     libbfio_pool_t *pool,
+     char * const names[],
+     int number_of_names,
+     int access_flags,
+     liberror_error_t **error )
+{
+	return( libbfio_file_pool_append_handles_for_names(
+	         pool,
+	         names,
+	         number_of_names,
+	         access_flags,
+	         error ) );
+}
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Adds file handles to the pool for the corresponding filenames
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_file_pool_add_handles_for_names_wide(
+     libbfio_pool_t *pool,
+     wchar_t * const names[],
+     int number_of_names,
+     int access_flags,
+     liberror_error_t **error )
+{
+	return( libbfio_file_pool_append_handles_for_names_wide(
+	         pool,
+	         names,
+	         number_of_names,
+	         access_flags,
+	         error ) );
+}
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 #endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 

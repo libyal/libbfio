@@ -138,6 +138,7 @@ int libbfio_memory_range_initialize(
 		     libbfio_memory_range_exists,
 		     libbfio_memory_range_is_open,
 		     libbfio_memory_range_get_size,
+		     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -853,7 +854,7 @@ off64_t libbfio_memory_range_seek_offset(
 }
 
 /* Function to determine if a memory range exists
- * Return 1 if the memory range exists, 0 if not or -1 on error
+ * Returns 1 if the memory range exists, 0 if not or -1 on error
  */
 int libbfio_memory_range_exists(
      intptr_t *io_handle,

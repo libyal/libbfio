@@ -427,7 +427,7 @@ int libbfio_pool_open_handle(
 	}
 	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	{
-		if( libbfio_pool_add_handle_to_last_used_list(
+		if( libbfio_pool_append_handle_to_last_used_list(
 		     internal_pool,
 		     handle,
 		     error ) != 1 )
@@ -474,17 +474,17 @@ int libbfio_pool_open_handle(
 	return( 1 );
 }
 
-/* Adds the handle to the last used list
+/* Appends the handle to the last used list
  * Closes the less frequently used handle if necessary
  * Returns 1 if successful or -1 on error
  */
-int libbfio_pool_add_handle_to_last_used_list(
+int libbfio_pool_append_handle_to_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      liberror_error_t **error )
 {
 	libbfio_list_element_t *last_used_list_element = NULL;
-	static char *function                          = "libbfio_pool_add_handle_to_last_used_list";
+	static char *function                          = "libbfio_pool_append_handle_to_last_used_list";
 
 	if( internal_pool == NULL )
 	{
@@ -829,7 +829,7 @@ int libbfio_pool_get_handle(
  * Sets the entry
  * Returns 1 if successful or -1 on error
  */
-int libbfio_pool_add_handle(
+int libbfio_pool_append_handle(
      libbfio_pool_t *pool,
      int *entry,
      libbfio_handle_t *handle,
@@ -837,7 +837,7 @@ int libbfio_pool_add_handle(
      liberror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
-	static char *function                  = "libbfio_pool_add_handle";
+	static char *function                  = "libbfio_pool_append_handle";
 	int is_open                            = 0;
 
 	if( pool == NULL )
@@ -949,7 +949,7 @@ int libbfio_pool_add_handle(
 	}
 	else if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	{
-		if( libbfio_pool_add_handle_to_last_used_list(
+		if( libbfio_pool_append_handle_to_last_used_list(
 		     internal_pool,
 		     handle,
 		     error ) != 1 )
@@ -1084,7 +1084,7 @@ int libbfio_pool_set_handle(
 	}
 	else if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	{
-		if( libbfio_pool_add_handle_to_last_used_list(
+		if( libbfio_pool_append_handle_to_last_used_list(
 		     internal_pool,
 		     handle,
 		     error ) != 1 )
