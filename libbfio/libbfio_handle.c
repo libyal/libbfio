@@ -891,7 +891,7 @@ ssize_t libbfio_handle_read(
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
-		if( libbfio_offset_list_add_offset(
+		if( libbfio_offset_list_append_offset(
 		     internal_handle->offsets_read,
 		     internal_handle->offset,
 		     read_count,
@@ -901,7 +901,7 @@ ssize_t libbfio_handle_read(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to add offset range to offsets read table.",
+			 "%s: unable to append offset range to offsets read table.",
 			 function );
 
 			return( -1 );

@@ -236,10 +236,10 @@ int libbfio_offset_list_get_number_of_elements(
 	return( 1 );
 }
 
-/* Add an offset
+/* Appends an offset
  * Returns 1 if successful, or -1 on error
  */
-int libbfio_offset_list_add_offset(
+int libbfio_offset_list_append_offset(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
@@ -249,7 +249,7 @@ int libbfio_offset_list_add_offset(
 	libbfio_list_element_t *list_element           = NULL;
 	libbfio_list_element_t *remove_element         = NULL;
 	libbfio_offset_list_value_t *offset_list_value = NULL;
-	static char *function                          = "libbfio_offset_list_add_offset";
+	static char *function                          = "libbfio_offset_list_append_offset";
 	off64_t last_offset                            = 0;
 	off64_t last_range_offset                      = 0;
 	int create_list_element                        = 1;
