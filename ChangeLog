@@ -28,6 +28,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100801
+* update for mingw64
+
 20100725
 * changed add into append in offset list
 
