@@ -13,6 +13,34 @@ AC_DEFUN([LIBBFIO_TEST_ENABLE],
    [ac_cv_libbfio_enable_$2=$4])dnl
  ])
 
+dnl Function to detect whether nl_langinfo supports CODESET
+AC_DEFUN([LIBBFIO_CHECK_FUNC_LANGINFO_CODESET],
+ [AC_CHECK_FUNCS([nl_langinfo])
+
+ AS_IF(
+  [test "x$ac_cv_func_nl_langinfo" = xyes],
+  [AC_CACHE_CHECK(
+   [for nl_langinfo CODESET support],
+   [ac_cv_libbfio_langinfo_codeset],
+   [AC_LANG_PUSH(C)
+   AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM(
+     [[#include <langinfo.h>]],
+     [[char* charset = nl_langinfo( CODESET );]]) ],
+    [ac_cv_libbfio_langinfo_codeset=yes],
+    [ac_cv_libbfio_langinfo_codeset=no])
+   AC_LANG_POP(C) ]) ],
+  [ac_cv_libbfio_langinfo_codeset=no])
+
+ AS_IF(
+  [test "x$ac_cv_libbfio_langinfo_codeset" = xyes],
+  [AC_DEFINE(
+   [HAVE_LANGINFO_CODESET],
+   [1],
+   [Define if nl_langinfo has CODESET support.])
+  ])
+ ])
+
 dnl Function to detect whether printf conversion specifier "%jd" is available
 AC_DEFUN([LIBBFIO_CHECK_FUNC_PRINTF_JD],
  [AC_MSG_CHECKING(

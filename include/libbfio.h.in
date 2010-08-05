@@ -535,7 +535,7 @@ LIBBFIO_EXTERN int libbfio_pool_close_all(
                     libbfio_pool_t *pool,
                     libbfio_error_t **error );
 
-/* Read from a handle in the pool
+/* Reads from a handle in the pool
  * Returns the number of bytes read or -1 on error
  */
 LIBBFIO_EXTERN ssize_t libbfio_pool_read(

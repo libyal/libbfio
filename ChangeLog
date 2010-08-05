@@ -28,6 +28,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100805
+* updated libcstring, libuna
+
 20100801
 * update for mingw64
 

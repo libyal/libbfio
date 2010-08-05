@@ -17,8 +17,9 @@ REDHAT_FILES = \
 	libbfio.spec.in
 
 EXTRA_DIST = \
-        $(REDHAT_FILES) \
-	libbfio.pc.in
+	README.mingw \
+	libbfio.pc.in \
+        $(REDHAT_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

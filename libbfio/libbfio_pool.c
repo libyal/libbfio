@@ -1474,7 +1474,7 @@ int libbfio_pool_close_all(
 	return( result );
 }
 
-/* Read from a handle in the pool
+/* Reads from a handle in the pool
  * Returns the number of bytes read or -1 on error
  */
 ssize_t libbfio_pool_read(
