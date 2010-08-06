@@ -94,6 +94,8 @@ enum LIBBFIO_ACCESS_FLAGS
 
 /* Platform specific macros
  */
+#if defined( WINAPI )
+
 #if defined( _MSC_VER )
 #define LIBBFIO_LARGE_INTEGER_ZERO			{ 0, 0 }
 
@@ -104,6 +106,12 @@ enum LIBBFIO_ACCESS_FLAGS
 #define LIBBFIO_LARGE_INTEGER_ZERO			{ { 0, 0 } }
 
 #endif
+
+#if !defined( INVALID_FILE_ATTRIBUTES )
+#define INVALID_FILE_ATTRIBUTES				((DWORD)-1)
+#endif
+
+#endif /* defined( WINAPI ) */
 
 #endif
 

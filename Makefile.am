@@ -12,14 +12,14 @@ SUBDIRS = \
 	borlandc \
 	msvscpp
 
-REDHAT_FILES = \
+SPEC_FILES = \
 	libbfio.spec \
 	libbfio.spec.in
 
 EXTRA_DIST = \
 	README.mingw \
 	libbfio.pc.in \
-        $(REDHAT_FILES)
+        $(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
