@@ -1643,7 +1643,7 @@ int libbfio_file_open(
 				     error_string,
 				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     error_code,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -1798,7 +1798,7 @@ int libbfio_file_open(
 				     error_string,
 				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     errno,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -2017,7 +2017,7 @@ int libbfio_file_open(
 				     error_string,
 				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     errno,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -2124,7 +2124,7 @@ int libbfio_file_close(
 		     error_string,
 		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     error_code,
-		     error ) != 1 )
+		     error ) == 1 )
 		{
 			liberror_error_set(
 			 error,
@@ -2161,7 +2161,7 @@ int libbfio_file_close(
 		     error_string,
 		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     errno,
-		     error ) != 1 )
+		     error ) == 1 )
 		{
 			liberror_error_set(
 			 error,
@@ -2317,7 +2317,7 @@ ssize_t libbfio_file_read(
 				     error_string,
 				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     error_code,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -2371,7 +2371,7 @@ ssize_t libbfio_file_read(
 		     error_string,
 		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     errno,
-		     error ) != 1 )
+		     error ) == 1 )
 		{
 			liberror_error_set(
 			 error,
@@ -2518,7 +2518,7 @@ ssize_t libbfio_file_write(
 		     error_string,
 		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     error_code,
-		     error ) != 1 )
+		     error ) == 1 )
 		{
 			liberror_error_set(
 			 error,
@@ -2570,7 +2570,7 @@ ssize_t libbfio_file_write(
 		     error_string,
 		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 		     errno,
-		     error ) != 1 )
+		     error ) == 1 )
 		{
 			liberror_error_set(
 			 error,
@@ -2954,9 +2954,9 @@ int libbfio_file_exists(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     128,
+				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     error_code,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -3075,7 +3075,7 @@ int libbfio_file_exists(
 				     error_string,
 				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     error_code,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -3318,9 +3318,9 @@ int libbfio_file_exists(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     128,
+				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     errno,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
@@ -3587,7 +3587,7 @@ int libbfio_file_exists(
 				     error_string,
 				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
 				     errno,
-				     error ) != 1 )
+				     error ) == 1 )
 				{
 					liberror_error_set(
 					 error,
