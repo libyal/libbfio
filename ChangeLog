@@ -28,6 +28,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20100912
+* fix for range sorting in offset list
+
 20100830
 * added debug local library type definitions
 * fixed bug in detailed error reporting

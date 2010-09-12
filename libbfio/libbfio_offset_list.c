@@ -451,7 +451,7 @@ int libbfio_offset_list_append_offset(
 					}
 					/* Check if the offset range belongs after the exising offset range
 					 */
-					if( last_offset < last_range_offset )
+					if( last_offset > last_range_offset )
 					{
 						last_list_element = list_element;
 

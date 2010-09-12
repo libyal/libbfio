@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20100830],
+  [20100912],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
