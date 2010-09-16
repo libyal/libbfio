@@ -930,7 +930,7 @@ int libbfio_pool_append_handle(
 
 	if( is_open == 0 )
 	{
-		/* Set the access flags is the handle is not open
+		/* Set the access flags if the handle is not open
 		 */
 		if( libbfio_handle_set_access_flags(
 		     handle,
@@ -1065,7 +1065,7 @@ int libbfio_pool_set_handle(
 
 	if( is_open == 0 )
 	{
-		/* Set the access flags is the handle is not open
+		/* Set the access flags if the handle is not open
 		 */
 		if( libbfio_handle_set_access_flags(
 		     handle,
