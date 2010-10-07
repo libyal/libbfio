@@ -168,6 +168,7 @@ int libbfio_handle_free(
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_free";
+	int is_open                                = 0;
 	int result                                 = 1;
 
 	if( handle == NULL )
@@ -186,6 +187,37 @@ int libbfio_handle_free(
 		internal_handle = (libbfio_internal_handle_t *) *handle;
 		*handle         = NULL;
 
+		is_open = internal_handle->is_open(
+			   internal_handle->io_handle,
+		           error );
+
+		if( is_open == -1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to determine if handle is open.",
+			 function );
+
+			result = -1;
+		}
+		else if( is_open != 0 )
+		{
+			if( internal_handle->close(
+			     internal_handle->io_handle,
+			     error ) != 0 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_IO,
+				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close handle.",
+				 function );
+
+				result = -1;
+			}
+		}
 		if( ( internal_handle->flags & LIBBFIO_FLAG_IO_HANDLE_MANAGED ) != 0 )
 		{
 			if( internal_handle->io_handle != NULL )

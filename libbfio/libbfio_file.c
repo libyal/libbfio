@@ -2704,11 +2704,14 @@ off64_t libbfio_file_seek_offset(
          int whence,
          liberror_error_t **error )
 {
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_seek_offset";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	LARGE_INTEGER large_integer_offset       = LIBBFIO_LARGE_INTEGER_ZERO;
+	DWORD error_code                         = 0;
 	DWORD move_method                        = 0;
 #endif
 
@@ -2819,15 +2822,35 @@ off64_t libbfio_file_seek_offset(
 	     move_method ) == 0 )
 #endif
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
-		 function,
-		 offset,
-		 file_io_handle->name );
+		error_code = GetLastError();
 
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     error_code,
+		     error ) == 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+			 function,
+			 offset,
+			 file_io_handle->name,
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 function,
+			 offset,
+			 file_io_handle->name );
+		}
 		return( -1 );
 	}
 #if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
@@ -2863,14 +2886,33 @@ off64_t libbfio_file_seek_offset(
 
 	if( offset < 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset in file: %" PRIs_LIBCSTRING_SYSTEM ".",
-		 function,
-		 file_io_handle->name );
-
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     errno,
+		     error ) == 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+			 function,
+			 offset,
+			 file_io_handle->name,
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 function,
+			 offset,
+			 file_io_handle->name );
+		}
 		return( -1 );
 	}
 #endif
@@ -3104,14 +3146,33 @@ int libbfio_file_exists(
 	else if( CloseHandle(
 	          file_io_handle->file_handle ) == 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %s.",
-		 function,
-		 file_io_handle->name );
+		error_code = GetLastError();
 
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     error_code,
+		     error ) == 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
 		return( -1 );
 	}
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
@@ -3621,15 +3682,31 @@ int libbfio_file_exists(
 		  file_io_handle->file_descriptor ) != 0 )
 #endif
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file: %s.",
-		 function,
-		 file_io_handle->name );
-
-		return( -1 );
+		if( libbfio_error_string_copy_from_error_number(
+		     error_string,
+		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     errno,
+		     error ) == 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+			 function,
+			 file_io_handle->name,
+			 error_string );
+		}
+		else
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+		}
 	}
 	file_io_handle->file_descriptor = -1;	
 

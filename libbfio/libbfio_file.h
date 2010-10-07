@@ -97,7 +97,6 @@ LIBBFIO_EXTERN int libbfio_file_set_name(
                     liberror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
-
 LIBBFIO_EXTERN int libbfio_file_get_name_size_wide(
                     libbfio_handle_t *handle,
                     size_t *name_size,
@@ -138,14 +137,12 @@ ssize_t libbfio_file_write(
          size_t size,
          liberror_error_t **error );
 
-#if defined( WINAPI ) && !defined( HAVE_SETFILEPOINTEREX )
-
+#if defined( WINAPI ) && ( WINVER < 0x0500 )
 BOOL SafeSetFilePointerEx(
       HANDLE file_handle,
       LARGE_INTEGER distance_to_move_large_integer,
       LARGE_INTEGER *new_file_pointer_large_integer,
       DWORD move_method );
-
 #endif
 
 off64_t libbfio_file_seek_offset(
@@ -162,12 +159,10 @@ int libbfio_file_is_open(
      intptr_t *io_handle,
      liberror_error_t **error );
 
-#if defined( WINAPI ) && !defined( HAVE_GETFILESIZEEX )
-
+#if defined( WINAPI ) && ( WINVER < 0x0500 )
 BOOL SafeGetFileSizeEx(
       HANDLE file_handle,
       LARGE_INTEGER *file_size_large_integer );
-
 #endif
 
 int libbfio_file_get_size(

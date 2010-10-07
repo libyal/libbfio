@@ -28,12 +28,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
-20100917
-* minor changes
-
-20100916
-* textual changes
-* updated liberror
+20101007
+* changed conditional defines for safe functions in libbfio_file.h
+* worked on detailed error reporting
+* added close on free in libbfio_handle
 
 20100912
 * fix for range sorting in offset list
