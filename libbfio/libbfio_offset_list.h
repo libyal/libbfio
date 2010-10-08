@@ -71,6 +71,10 @@ struct libbfio_offset_list
 	int current_element_index;
 };
 
+int libbfio_offset_list_value_initialize(
+     libbfio_offset_list_value_t **offset_list_value,
+     liberror_error_t **error );
+
 int libbfio_offset_list_value_free(
      intptr_t *offset_list_value,
      liberror_error_t **error );
@@ -83,6 +87,10 @@ int libbfio_offset_list_free(
      libbfio_offset_list_t **offset_list,
      liberror_error_t **error );
 
+int libbfio_offset_list_empty(
+     libbfio_offset_list_t *offset_list,
+     liberror_error_t **error );
+
 int libbfio_offset_list_get_number_of_elements(
      libbfio_offset_list_t *offset_list,
      int *number_of_elements,
@@ -92,6 +100,7 @@ int libbfio_offset_list_append_offset(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
+     uint8_t merge_ranges,
      liberror_error_t **error );
 
 int libbfio_offset_list_get_offset(

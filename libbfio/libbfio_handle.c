@@ -927,6 +927,7 @@ ssize_t libbfio_handle_read(
 		     internal_handle->offsets_read,
 		     internal_handle->offset,
 		     read_count,
+		     1,
 		     error ) != 1 )
 		{
 			liberror_error_set(

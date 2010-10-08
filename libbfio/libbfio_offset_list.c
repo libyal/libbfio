@@ -28,6 +28,65 @@
 #include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 
+/* Creates an offset list value
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_value_initialize(
+     libbfio_offset_list_value_t **offset_list_value,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_offset_list_value_initialize";
+
+	if( offset_list_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid offset list value.",
+		 function );
+
+		return( -1 );
+	}
+	if( *offset_list_value == NULL )
+	{
+		*offset_list_value = (libbfio_offset_list_value_t *) memory_allocate(
+		                                                      sizeof( libbfio_offset_list_value_t ) );
+
+		if( *offset_list_value == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create offset list value.",
+			 function );
+
+			return( -1 );
+		}
+		if( memory_set(
+		     *offset_list_value,
+		     0,
+		     sizeof( libbfio_offset_list_value_t ) ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear offset list value.",
+			 function );
+
+			memory_free(
+			 *offset_list_value );
+
+			*offset_list_value = NULL;
+
+			return( -1 );
+		}
+	}
+	return( 1 );
+}
+
 /* Frees an offset list value
  */
 int libbfio_offset_list_value_free(
@@ -119,8 +178,52 @@ int libbfio_offset_list_free(
      libbfio_offset_list_t **offset_list,
      liberror_error_t **error )
 {
+	static char *function = "libbfio_offset_list_free";
+	int result            = 1;
+
+	if( offset_list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid offset list.",
+		 function );
+
+		return( -1 );
+	}
+	if( *offset_list != NULL )
+	{
+		result = libbfio_offset_list_empty(
+		          *offset_list,
+		          error );
+
+		if( result != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to empty offset list.",
+			 function );
+		}
+		memory_free(
+		 *offset_list );
+
+		*offset_list = NULL;
+	}
+	return( result );
+}
+
+/* Empties an offset list and frees the elements
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_empty(
+     libbfio_offset_list_t *offset_list,
+     liberror_error_t **error )
+{
 	libbfio_list_element_t *list_element = NULL;
-	static char *function                = "libbfio_offset_list_free";
+	static char *function                = "libbfio_offset_list_empty";
 	int element_index                    = 0;
 	int number_of_elements               = 0;
 	int result                           = 1;
@@ -136,65 +239,60 @@ int libbfio_offset_list_free(
 
 		return( -1 );
 	}
-	if( *offset_list != NULL )
+	if( offset_list->number_of_elements > 0 )
 	{
-		if( ( *offset_list )->number_of_elements > 0 )
+		number_of_elements = offset_list->number_of_elements;
+
+		for( element_index = 0;
+		     element_index < number_of_elements;
+		     element_index++ )
 		{
-			number_of_elements = ( *offset_list )->number_of_elements;
+			list_element = offset_list->first_element;
 
-			for( element_index = 0;
-			     element_index < number_of_elements;
-			     element_index++ )
+			if( list_element == NULL )
 			{
-				list_element = ( *offset_list )->first_element;
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: corruption detected in element: %d.",
+				 function,
+				 element_index );
 
-				if( list_element == NULL )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: corruption detected in element: %d.",
-					 function,
-					 element_index );
+				return( -1 );
+			}
+			offset_list->first_element = list_element->next_element;
 
-					return( -1 );
-				}
-				( *offset_list )->first_element = list_element->next_element;
+			if( offset_list->last_element == list_element )
+			{
+				offset_list->last_element = list_element->next_element;
+			}
+			offset_list->number_of_elements -= 1;
 
-				if( ( *offset_list )->last_element == list_element )
-				{
-					( *offset_list )->last_element = list_element->next_element;
-				}
-				( *offset_list )->number_of_elements -= 1;
+			if( list_element->next_element != NULL )
+			{
+				list_element->next_element->previous_element = NULL;
+			}
+			list_element->next_element = NULL;
 
-				if( list_element->next_element != NULL )
-				{
-					list_element->next_element->previous_element = NULL;
-				}
-				list_element->next_element = NULL;
+			if( libbfio_list_element_free(
+			     &list_element,
+			     &libbfio_offset_list_value_free,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free element: %d.",
+				 function,
+				 element_index );
 
-				if( libbfio_list_element_free(
-				     & list_element,
-				     &libbfio_offset_list_value_free,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free element: %d.",
-					 function,
-					 element_index );
-
-					result = -1;
-				}
+				result = -1;
 			}
 		}
-		memory_free(
-		 *offset_list );
-
-		*offset_list = NULL;
+		offset_list->current_element       = NULL;
+		offset_list->current_element_index = 0;
 	}
 	return( result );
 }
@@ -243,6 +341,7 @@ int libbfio_offset_list_append_offset(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
+     uint8_t merge_ranges,
      liberror_error_t **error )
 {
 	libbfio_list_element_t *last_list_element      = NULL;
@@ -252,7 +351,7 @@ int libbfio_offset_list_append_offset(
 	static char *function                          = "libbfio_offset_list_append_offset";
 	off64_t last_offset                            = 0;
 	off64_t last_range_offset                      = 0;
-	int create_list_element                        = 1;
+	int create_list_element                        = 0;
 	int element_index                              = 0;
 	int merge_next_list_element_check              = 0;
 	int merge_previous_list_element_check          = 0;
@@ -290,9 +389,15 @@ int libbfio_offset_list_append_offset(
 
 		return( -1 );
 	}
+	create_list_element = 1;
+
 	/* Check if new range should be merged with an existing range
 	 */
-	if( offset_list->number_of_elements > 0 )
+        if( merge_ranges == 0 )
+        {
+                last_list_element = offset_list->last_element;
+        }
+	else if( offset_list->number_of_elements > 0 )
 	{
 		last_offset = offset + size;
 
@@ -712,16 +817,28 @@ int libbfio_offset_list_append_offset(
 	}
 	if( create_list_element != 0 )
 	{
-		offset_list_value = (libbfio_offset_list_value_t *) memory_allocate(
-		                                                    sizeof( libbfio_offset_list_value_t ) );
+		offset_list_value = NULL;
 
+		if( libbfio_offset_list_value_initialize(
+		     &offset_list_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create offset list value.",
+			 function );
+
+			return( -1 );
+		}
 		if( offset_list_value == NULL )
 		{
 			liberror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create offset list value.",
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing offset list value.",
 			 function );
 
 			return( -1 );
@@ -742,8 +859,9 @@ int libbfio_offset_list_append_offset(
 			 "%s: unable to create list element.",
 			 function );
 
-			memory_free(
-			 offset_list_value );
+			libbfio_offset_list_value_free(
+			 (intptr_t *) offset_list_value,
+			 NULL );
 
 			return( -1 );
 		}
@@ -756,10 +874,10 @@ int libbfio_offset_list_append_offset(
 			 "%s: missing list element.",
 			 function );
 
-			memory_free(
-			 offset_list_value );
+			libbfio_offset_list_value_free(
+			 (intptr_t *) offset_list_value,
+			 NULL );
 
-			return( -1 );
 		}
 		list_element->value = (intptr_t *) offset_list_value;
 
