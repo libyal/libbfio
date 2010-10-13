@@ -2606,7 +2606,7 @@ ssize_t libbfio_file_write(
 /* Cross Windows safe version of SetFilePointerEx
  * Returns TRUE if successful or FALSE on error
  */
-BOOL SafeSetFilePointerEx(
+BOOL libbfio_SetFilePointerEx(
       HANDLE file_handle,
       LARGE_INTEGER distance_to_move_large_integer,
       LARGE_INTEGER *new_file_pointer_large_integer,
@@ -2815,7 +2815,7 @@ off64_t libbfio_file_seek_offset(
 	     &large_integer_offset,
 	     move_method ) == 0 )
 #else
-	if( SafeSetFilePointerEx(
+	if( libbfio_SetFilePointerEx(
 	     file_io_handle->file_handle,
 	     large_integer_offset,
 	     &large_integer_offset,
@@ -3757,7 +3757,7 @@ int libbfio_file_is_open(
 /* Cross Windows safe version of GetFileSizeEx
  * Returns TRUE if successful or FALSE on error
  */
-BOOL SafeGetFileSizeEx(
+BOOL libbfio_GetFileSizeEx(
       HANDLE file_handle,
       LARGE_INTEGER *file_size_large_integer )
 {
@@ -3908,7 +3908,7 @@ int libbfio_file_get_size(
 	     file_io_handle->file_handle,
 	     &large_integer_size ) == 0 )
 #else
-	if( SafeGetFileSizeEx(
+	if( libbfio_GetFileSizeEx(
 	     file_io_handle->file_handle,
 	     &large_integer_size ) == 0 )
 #endif

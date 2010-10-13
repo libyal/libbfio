@@ -28,6 +28,10 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20101013
+* renamed Win95/98 safe WINAPI replacement functions
+  to prevent conflict with libsmdev
+
 20101008
 * code clean up in offset list
 

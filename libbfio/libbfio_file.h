@@ -138,7 +138,7 @@ ssize_t libbfio_file_write(
          liberror_error_t **error );
 
 #if defined( WINAPI ) && ( WINVER < 0x0500 )
-BOOL SafeSetFilePointerEx(
+BOOL libbfio_SetFilePointerEx(
       HANDLE file_handle,
       LARGE_INTEGER distance_to_move_large_integer,
       LARGE_INTEGER *new_file_pointer_large_integer,
@@ -160,7 +160,7 @@ int libbfio_file_is_open(
      liberror_error_t **error );
 
 #if defined( WINAPI ) && ( WINVER < 0x0500 )
-BOOL SafeGetFileSizeEx(
+BOOL libbfio_GetFileSizeEx(
       HANDLE file_handle,
       LARGE_INTEGER *file_size_large_integer );
 #endif
