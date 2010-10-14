@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-#define LIBBFIO_ERROR_STRING_DEFAULT_SIZE	128
+#define LIBBFIO_ERROR_STRING_SIZE	128
 
 int libbfio_error_string_copy_from_error_number(
      libcstring_system_character_t *error_string,

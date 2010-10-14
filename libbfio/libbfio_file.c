@@ -1506,7 +1506,7 @@ int libbfio_file_open(
      int access_flags,
      liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle  = NULL;
 	static char *function                     = "libbfio_file_open";
@@ -1641,7 +1641,7 @@ int libbfio_file_open(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     error_code,
 				     error ) == 1 )
 				{
@@ -1796,7 +1796,7 @@ int libbfio_file_open(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     errno,
 				     error ) == 1 )
 				{
@@ -2015,7 +2015,7 @@ int libbfio_file_open(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     errno,
 				     error ) == 1 )
 				{
@@ -2056,7 +2056,7 @@ int libbfio_file_close(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_close";
@@ -2122,7 +2122,7 @@ int libbfio_file_close(
 
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     error_code,
 		     error ) == 1 )
 		{
@@ -2159,7 +2159,7 @@ int libbfio_file_close(
 	{
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     errno,
 		     error ) == 1 )
 		{
@@ -2200,7 +2200,7 @@ ssize_t libbfio_file_read(
          size_t size,
          liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_read";
@@ -2315,7 +2315,7 @@ ssize_t libbfio_file_read(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     error_code,
 				     error ) == 1 )
 				{
@@ -2369,7 +2369,7 @@ ssize_t libbfio_file_read(
 	{
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     errno,
 		     error ) == 1 )
 		{
@@ -2407,7 +2407,7 @@ ssize_t libbfio_file_write(
          size_t size,
          liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_write";
@@ -2516,7 +2516,7 @@ ssize_t libbfio_file_write(
 
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     error_code,
 		     error ) == 1 )
 		{
@@ -2568,7 +2568,7 @@ ssize_t libbfio_file_write(
 	{
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     errno,
 		     error ) == 1 )
 		{
@@ -2704,7 +2704,7 @@ off64_t libbfio_file_seek_offset(
          int whence,
          liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_seek_offset";
@@ -2826,7 +2826,7 @@ off64_t libbfio_file_seek_offset(
 
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     error_code,
 		     error ) == 1 )
 		{
@@ -2888,7 +2888,7 @@ off64_t libbfio_file_seek_offset(
 	{
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     errno,
 		     error ) == 1 )
 		{
@@ -2929,7 +2929,7 @@ int libbfio_file_exists(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_exists";
@@ -2996,7 +2996,7 @@ int libbfio_file_exists(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     error_code,
 				     error ) == 1 )
 				{
@@ -3036,7 +3036,7 @@ int libbfio_file_exists(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_exists";
@@ -3115,7 +3115,7 @@ int libbfio_file_exists(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     error_code,
 				     error ) == 1 )
 				{
@@ -3150,7 +3150,7 @@ int libbfio_file_exists(
 
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     error_code,
 		     error ) == 1 )
 		{
@@ -3192,7 +3192,7 @@ int libbfio_file_exists(
 {
 	struct stat file_statistics;
 
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_exists";
@@ -3379,7 +3379,7 @@ int libbfio_file_exists(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     errno,
 				     error ) == 1 )
 				{
@@ -3423,7 +3423,7 @@ int libbfio_file_exists(
      intptr_t *io_handle,
      liberror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_DEFAULT_SIZE ];
+	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_exists";
@@ -3646,7 +3646,7 @@ int libbfio_file_exists(
 			default:
 				if( libbfio_error_string_copy_from_error_number(
 				     error_string,
-				     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+				     LIBBFIO_ERROR_STRING_SIZE,
 				     errno,
 				     error ) == 1 )
 				{
@@ -3684,7 +3684,7 @@ int libbfio_file_exists(
 	{
 		if( libbfio_error_string_copy_from_error_number(
 		     error_string,
-		     LIBBFIO_ERROR_STRING_DEFAULT_SIZE,
+		     LIBBFIO_ERROR_STRING_SIZE,
 		     errno,
 		     error ) == 1 )
 		{
