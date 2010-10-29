@@ -1,4 +1,4 @@
-.Dd July 23, 2010
+.Dd October 29, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -78,6 +78,8 @@ File functions
 .Fn libbfio_file_get_name "libbfio_handle_t *handle, char *name, size_t name_size, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_file_set_name "libbfio_handle_t *handle, const char *name, size_t name_length, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_file_pre_allocate_size "libbfio_handle_t *handle, size64_t size, libbfio_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int

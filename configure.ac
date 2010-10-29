@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20101014],
+  [20101029],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -456,6 +456,8 @@ AC_CHECK_FUNCS(
  [AC_MSG_FAILURE(
   [Missing function: open],
   [1]) ])
+
+AC_CHECK_FUNCS([posix_fallocate])
 
 AC_CHECK_FUNCS(
  [read],
