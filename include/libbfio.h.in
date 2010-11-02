@@ -407,14 +407,6 @@ LIBBFIO_EXTERN int libbfio_file_set_name_wide(
                     libbfio_error_t **error );
 #endif
 
-/* Pre-allocates the file size
- * Returns 1 if successful, 0 if not supported or -1 on error
- */
-LIBBFIO_EXTERN int libbfio_file_pre_allocate_size(
-                    libbfio_handle_t *handle,
-                    size64_t size,
-                    libbfio_error_t **error );
-
 /* -------------------------------------------------------------------------
  * Memory range functions
  * ------------------------------------------------------------------------- */

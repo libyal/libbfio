@@ -170,11 +170,6 @@ int libbfio_file_get_size(
      size64_t *size,
      liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_pre_allocate_size(
-                    libbfio_handle_t *handle,
-                    size64_t size,
-                    liberror_error_t **error );
-
 #if defined( __cplusplus )
 }
 #endif

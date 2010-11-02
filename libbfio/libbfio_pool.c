@@ -2007,8 +2007,9 @@ int libbfio_pool_get_size(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size.",
-		 function );
+		 "%s: unable to retrieve size of entry: %d.",
+		 function,
+		 entry );
 
 		return( -1 );
 	}

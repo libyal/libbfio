@@ -457,8 +457,6 @@ AC_CHECK_FUNCS(
   [Missing function: open],
   [1]) ])
 
-AC_CHECK_FUNCS([posix_fallocate])
-
 AC_CHECK_FUNCS(
  [read],
  [],

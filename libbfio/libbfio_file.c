@@ -2322,7 +2322,7 @@ ssize_t libbfio_file_read(
 					liberror_error_set(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 LIBERROR_IO_ERROR_READ_FAILED,
 					 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 					 function,
 					 file_io_handle->name,
@@ -2333,7 +2333,7 @@ ssize_t libbfio_file_read(
 					liberror_error_set(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 LIBERROR_IO_ERROR_READ_FAILED,
 					 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
 					 file_io_handle->name );
@@ -2376,7 +2376,7 @@ ssize_t libbfio_file_read(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_READ_FAILED,
 			 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 file_io_handle->name,
@@ -2387,7 +2387,7 @@ ssize_t libbfio_file_read(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_READ_FAILED,
 			 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
@@ -2523,7 +2523,7 @@ ssize_t libbfio_file_write(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_WRITE_FAILED,
 			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 file_io_handle->name,
@@ -2534,7 +2534,7 @@ ssize_t libbfio_file_write(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_WRITE_FAILED,
 			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
@@ -2566,32 +2566,63 @@ ssize_t libbfio_file_write(
 
 	if( write_count < 0 )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     errno,
-		     error ) == 1 )
+		switch( errno )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
+			case ENOSPC:
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_OUTPUT,
+				 LIBERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE,
+				 "%s: insufficient space to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
+				break;
+
+			default:
+				if( libbfio_error_string_copy_from_error_number(
+				     error_string,
+				     LIBBFIO_ERROR_STRING_SIZE,
+				     errno,
+				     error ) == 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_WRITE_FAILED,
+					 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+					 function,
+					 file_io_handle->name,
+					 error_string );
+				}
+				else
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_WRITE_FAILED,
+					 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
+					 function,
+					 file_io_handle->name );
+				}
+				break;
 		}
 		return( -1 );
+	}
+	else if( write_count == 0 )
+	{
+		if( errno == ENOSPC )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_OUTPUT,
+			 LIBERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE,
+			 "%s: insufficient space to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 function,
+			 file_io_handle->name );
+
+			return( -1 );
+		}
 	}
 #endif
 	return( write_count );
@@ -2833,7 +2864,7 @@ off64_t libbfio_file_seek_offset(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_SEEK_FAILED,
 			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 offset,
@@ -2845,7 +2876,7 @@ off64_t libbfio_file_seek_offset(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_SEEK_FAILED,
 			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 offset,
@@ -2895,7 +2926,7 @@ off64_t libbfio_file_seek_offset(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_SEEK_FAILED,
 			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
 			 function,
 			 offset,
@@ -2907,7 +2938,7 @@ off64_t libbfio_file_seek_offset(
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBERROR_IO_ERROR_SEEK_FAILED,
 			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 offset,
@@ -3954,119 +3985,5 @@ int libbfio_file_get_size(
 	*size = (size64_t) file_stat.st_size;
 #endif
 	return( 1 );
-}
-
-/* Pre-allocates the file size
- * Returns 1 if successful, 0 if not supported or -1 on error
- */
-int libbfio_file_pre_allocate_size(
-     libbfio_handle_t *handle,
-     size64_t size,
-     liberror_error_t **error )
-{
-#if defined( HAVE_POSIX_FALLOCATE )
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-#endif
-
-	libbfio_internal_handle_t *internal_handle = NULL;
-	libbfio_file_io_handle_t *io_handle        = NULL;
-	static char *function                      = "libbfio_file_pre_allocate_size";
-	int result                                 = 0;
-
-	if( handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	internal_handle = (libbfio_internal_handle_t *) handle;
-
-	if( internal_handle->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
-
-#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	if( io_handle->file_handle == INVALID_HANDLE_VALUE )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file handle.",
-		 function );
-
-		return( -1 );
-	}
-#else
-	if( io_handle->file_descriptor == -1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file descriptor.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-#if defined( HAVE_POSIX_FALLOCATE )
-	result = 1;
-
-	if( posix_fallocate(
-	     io_handle->file_descriptor,
-	     0,
-	     (off_t) size ) != 0 )
-	{
-		switch( errno )
-		{
-			case ENOSPC:
-				result = 0;
-
-			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     errno,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to pre-allocate size of file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to pre-allocate size of file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 io_handle->name );
-				}
-				return( -1 );
-		}
-	}
-#endif
-	return( result );
 }
 

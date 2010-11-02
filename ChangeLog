@@ -1,4 +1,5 @@
 TODO
+* WINAPI add LIBERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE support
 
 Pool
 * allow re-set of pool entries?
@@ -25,11 +26,13 @@ Beta release
 * remove deprecated functions in libbfio_legacy.[ch]
 
 Deployment:
-* create debian package
 * check if libbfio.3 is up to date
 
 20101102
 * worked on support for file pre-allocation
+* removed pre-allocation it does not provide the desired results
+* added LIBBFIO_OUTPUT_ERROR_INSUFFICIENT_SPACE
+* updated liberror
 
 20101029
 * worked on support for file pre-allocation

@@ -22,6 +22,8 @@
 #if !defined( _LIBBFIO_ERROR_H )
 #define _LIBBFIO_ERROR_H
 
+#include <libbfio/types.h>
+
 /* External error type definition hides internal structure
  */
 typedef intptr_t libbfio_error_t;
@@ -290,7 +292,11 @@ enum LIBBFIO_RUNTIME_ERROR
  */
 enum LIBBFIO_OUTPUT_ERROR
 {
-	LIBBFIO_OUTPUT_ERROR_GENERIC			= 0
+	LIBBFIO_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBBFIO_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
 };
 
 #endif

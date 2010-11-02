@@ -1,4 +1,4 @@
-.Dd October 29, 2010
+.Dd November 2, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -78,8 +78,6 @@ File functions
 .Fn libbfio_file_get_name "libbfio_handle_t *handle, char *name, size_t name_size, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_file_set_name "libbfio_handle_t *handle, const char *name, size_t name_length, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_pre_allocate_size "libbfio_handle_t *handle, size64_t size, libbfio_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
@@ -138,6 +136,8 @@ Pool functions
 File pool functions
 .Ft int
 .Fn libbfio_file_pool_append_handles_for_names "libbfio_pool_t **pool, char * const filenames[], int number_of_filenames, int access_flags, libbfio_error_t **error"
+.Pp
+Available when compiled with wide character string support:
 .Ft int
 .Fn libbfio_file_pool_append_handles_for_names_wide "libbfio_pool_t **pool, wchar_t * const filenames[], int number_of_filenames, int access_flags, libbfio_error_t **error"
 .Sh DESCRIPTION
