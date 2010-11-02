@@ -3971,6 +3971,7 @@ int libbfio_file_pre_allocate_size(
 	libbfio_internal_handle_t *internal_handle = NULL;
 	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_pre_allocate_size";
+	int result                                 = 0;
 
 	if( handle == NULL )
 	{
@@ -4024,41 +4025,48 @@ int libbfio_file_pre_allocate_size(
 	}
 #endif
 #if defined( HAVE_POSIX_FALLOCATE )
+	result = 1;
+
 	if( posix_fallocate(
 	     io_handle->file_descriptor,
 	     0,
 	     (off_t) size ) != 0 )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     errno,
-		     error ) == 1 )
+		switch( errno )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to pre-allocate size of file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 io_handle->name,
-			 error_string );
+			case ENOSPC:
+				result = 0;
+
+			default:
+				if( libbfio_error_string_copy_from_error_number(
+				     error_string,
+				     LIBBFIO_ERROR_STRING_SIZE,
+				     errno,
+				     error ) == 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to pre-allocate size of file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
+					 function,
+					 io_handle->name,
+					 error_string );
+				}
+				else
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_OPEN_FAILED,
+					 "%s: unable to pre-allocate size of file: %" PRIs_LIBCSTRING_SYSTEM ".",
+					 function,
+					 io_handle->name );
+				}
+				return( -1 );
 		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to pre-allocate size of file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 io_handle->name );
-		}
-		return( -1 );
 	}
-	return( 1 );
-#else
-	return( 0 );
 #endif
+	return( result );
 }
 

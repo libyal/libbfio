@@ -28,6 +28,9 @@ Deployment:
 * create debian package
 * check if libbfio.3 is up to date
 
+20101102
+* worked on support for file pre-allocation
+
 20101029
 * worked on support for file pre-allocation
 
