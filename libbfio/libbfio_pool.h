@@ -153,7 +153,7 @@ LIBBFIO_EXTERN ssize_t libbfio_pool_read(
 LIBBFIO_EXTERN ssize_t libbfio_pool_write(
                         libbfio_pool_t *pool,
                         int entry,
-                        uint8_t *buffer,
+                        const uint8_t *buffer,
                         size_t size,
                         liberror_error_t **error );
 

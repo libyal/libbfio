@@ -2403,7 +2403,7 @@ ssize_t libbfio_file_read(
  */
 ssize_t libbfio_file_write(
          intptr_t *io_handle,
-         uint8_t *buffer,
+         const uint8_t *buffer,
          size_t size,
          liberror_error_t **error )
 {

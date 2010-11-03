@@ -28,6 +28,9 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20101103
+* added const to write function
+
 20101102
 * worked on support for file pre-allocation
 * removed pre-allocation it does not provide the desired results

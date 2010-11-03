@@ -57,7 +57,7 @@ int libbfio_handle_initialize(
                  liberror_error_t **error ),
       ssize_t (*write)(
                  intptr_t *io_handle,
-                 uint8_t *buffer,
+                 const uint8_t *buffer,
                  size_t size,
                  liberror_error_t **error ),
       off64_t (*seek_offset)(
@@ -977,7 +977,7 @@ ssize_t libbfio_handle_read(
  */
 ssize_t libbfio_handle_write(
          libbfio_handle_t *handle,
-         uint8_t *buffer,
+         const uint8_t *buffer,
          size_t size,
          liberror_error_t **error )
 {
