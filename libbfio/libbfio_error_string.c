@@ -68,7 +68,11 @@ int libbfio_error_string_copy_from_error_number(
 
 		return( -1 );
 	}
+#if UINT32_MAX < SSIZE_MAX
+	if( string_size > (size_t) UINT32_MAX )
+#else
 	if( string_size > (size_t) SSIZE_MAX )
+#endif
 	{
 		liberror_error_set(
 		 error,
@@ -91,7 +95,7 @@ int libbfio_error_string_copy_from_error_number(
 	      LANG_NEUTRAL,
 	      SUBLANG_DEFAULT ),
 	     string,
-	     string_size,
+	     (DWORD) string_size,
 	     NULL ) != 0 )
 #else
 	if( FormatMessageA(
@@ -102,7 +106,7 @@ int libbfio_error_string_copy_from_error_number(
 	      LANG_NEUTRAL,
 	     SUBLANG_DEFAULT ),
 	     string,
-	     string_size,
+	     (DWORD) string_size,
 	     NULL ) != 0 )
 #endif
 	{

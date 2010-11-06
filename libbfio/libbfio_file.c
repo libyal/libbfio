@@ -2270,22 +2270,11 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
-#if defined( WINAPI )
-#if UINT_MAX < SIZE_MAX
-	if( size > (size_t) UINT_MAX )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-#endif
+#if UINT32_MAX < SSIZE_MAX
+	if( size > (size_t) UINT32_MAX )
 #else
 	if( size > (size_t) SSIZE_MAX )
+#endif
 	{
 		liberror_error_set(
 		 error,
@@ -2296,12 +2285,11 @@ ssize_t libbfio_file_read(
 
 		return( -1 );
 	}
-#endif
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( ReadFile(
 	     file_io_handle->file_handle,
 	     buffer,
-	     size,
+	     (DWORD) size,
 	     (LPDWORD) &read_count,
 	     NULL ) == 0 )
 	{
@@ -2477,22 +2465,11 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
-#if defined( WINAPI )
-#if UINT_MAX < SIZE_MAX
-	if( size > (size_t) UINT_MAX )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-#endif
+#if UINT32_MAX < SSIZE_MAX
+	if( size > (size_t) UINT32_MAX )
 #else
 	if( size > (size_t) SSIZE_MAX )
+#endif
 	{
 		liberror_error_set(
 		 error,
@@ -2503,12 +2480,11 @@ ssize_t libbfio_file_write(
 
 		return( -1 );
 	}
-#endif
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( WriteFile(
 	     file_io_handle->file_handle,
 	     buffer,
-	     size,
+	     (DWORD) size,
 	     (LPDWORD) &write_count,
 	     NULL ) == 0 )
 	{

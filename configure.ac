@@ -2,8 +2,8 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
-  [20101103],
-  [jbmetz@users.sourceforge.net])
+ [20101106],
+ [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
  [include/libbfio.h.in])
@@ -767,6 +767,7 @@ AC_CONFIG_FILES([include/libbfio/types.h])
 AC_CONFIG_FILES([libbfio/libbfio_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([libbfio/libbfio.rc])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libbfio.pc])
 AC_CONFIG_FILES([libbfio.spec])
@@ -783,5 +784,4 @@ Building:
 Features:
    Wide character type support: $ac_cv_libbfio_enable_wide_character_type
 ]);
-
 

@@ -35,7 +35,9 @@ libbfio_la_LIBADD = \
 libbfio_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
 EXTRA_DIST = \
-	libbfio_definitions.h.in
+	libbfio_definitions.h.in \
+	libbfio.rc \
+	libbfio.rc.in
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

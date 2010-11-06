@@ -28,6 +28,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20101106
+* fixed some 64-bit WINAPI compilation warnings
+* added libbfio.rc
+
 20101103
 * added const to write function
 
