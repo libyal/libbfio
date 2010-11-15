@@ -998,7 +998,7 @@ int libbfio_offset_list_append_offset(
 }
 
 /* Retrieves a specific offset
- * Returns 1 if successful, 0 if not available or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_offset_list_get_offset(
      libbfio_offset_list_t *offset_list,
@@ -1159,7 +1159,15 @@ int libbfio_offset_list_get_offset(
 	}
 	if( offset_list->current_element == NULL )
 	{
-		return( 0 );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing offset list element: %d.",
+		 function,
+		 offset_list->current_element_index );
+
+		return( -1 );
 	}
 	if( offset_list->current_element->value == NULL )
 	{

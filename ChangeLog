@@ -28,6 +28,12 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20101115
+* updated configure.ac
+* updated include/types.h
+* updated common
+* changed return value of libbfio_offset_list_get_offset
+
 20101106
 * fixed some 64-bit WINAPI compilation warnings
 * added libbfio.rc

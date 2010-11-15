@@ -44,6 +44,7 @@ MAINTAINERCLEANFILES = \
 
 distclean: clean
 	/bin/rm -f libbfio_definitions.h
+	/bin/rm -f libbfio.rc
 	/bin/rm -f Makefile
 
 splint:
