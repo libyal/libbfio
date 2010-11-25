@@ -100,6 +100,8 @@
 			</None>
 			<None Include="..\..\..\libbfio\libbfio_types.h">
 			</None>
+			<None Include="..\..\..\libbfio\libbfio_unused.h">
+			</None>
 			<LibFiles Include="..\Release\libuna.lib">
 				<IgnorePath>true</IgnorePath>
 			</LibFiles>

@@ -476,8 +476,8 @@ int libbfio_handle_open(
 
 		return( -1 );
 	}
-	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != LIBBFIO_ACCESS_FLAG_READ )
-	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != LIBBFIO_ACCESS_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
 		liberror_error_set(
 		 error,
@@ -590,8 +590,8 @@ int libbfio_handle_reopen(
 
 		return( -1 );
 	}
-	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != LIBBFIO_ACCESS_FLAG_READ )
-	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != LIBBFIO_ACCESS_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
 		liberror_error_set(
 		 error,
@@ -1342,6 +1342,46 @@ int libbfio_handle_is_open(
 	return( result );
 }
 
+/* Retrieves the IO handle
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_handle_get_io_handle(
+     libbfio_handle_t *handle,
+     intptr_t **io_handle,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_get_io_handle";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	*io_handle = internal_handle->io_handle;
+
+	return( 1 );
+}
+
 /* Retrieves the access flags
  * Returns 1 if successful or -1 on error
  */
@@ -1406,8 +1446,8 @@ int libbfio_handle_set_access_flags(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) != LIBBFIO_ACCESS_FLAG_READ )
-	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != LIBBFIO_ACCESS_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
 		liberror_error_set(
 		 error,

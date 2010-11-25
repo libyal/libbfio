@@ -231,6 +231,14 @@ LIBBFIO_EXTERN int libbfio_handle_is_open(
                     libbfio_handle_t *handle,
                     libbfio_error_t **error );
 
+/* Retrieves the IO handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN int libbfio_handle_get_io_handle(
+                    libbfio_handle_t *handle,
+                    intptr_t **io_handle,
+                    libbfio_error_t **error );
+
 /* Retrieves the access flags
  * Returns 1 if successful or -1 on error
  */

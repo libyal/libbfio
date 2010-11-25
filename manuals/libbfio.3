@@ -1,4 +1,4 @@
-.Dd November 3, 2010
+.Dd November 25, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -52,6 +52,8 @@ Handle functions
 .Fn libbfio_handle_exists "libbfio_handle_t *handle, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_is_open "libbfio_handle_t *handle, libbfio_error_t **error"
+.Ft int
+.Fn libbfio_handle_get_io_handle "libbfio_handle_t *handle, intptr_t **io_handle, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_get_access_flags "libbfio_handle_t *handle, int *access_flags, libbfio_error_t **error"
 .Ft int

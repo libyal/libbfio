@@ -210,6 +210,8 @@
 			</CppCompile>
 			<None Include="..\..\..\libuna\libuna_utf8_string.h">
 			</None>
+			<None Include="..\..\..\libuna\libuna_unused.h">
+			</None>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

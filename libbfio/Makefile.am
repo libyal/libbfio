@@ -25,7 +25,8 @@ libbfio_la_SOURCES = \
 	libbfio_offset_list.c libbfio_offset_list.h \
 	libbfio_pool.c libbfio_pool.h \
 	libbfio_support.c libbfio_support.h \
-	libbfio_types.h
+	libbfio_types.h \
+	libbfio_unused.h
 
 libbfio_la_LIBADD = \
 	../libcstring/libcstring.la \
