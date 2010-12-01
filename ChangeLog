@@ -28,7 +28,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
-20101135
+20101201
+* updated offset list
+
+20101125
 * updated configure.ac
 * updated libcstring, liberror, libuna
 

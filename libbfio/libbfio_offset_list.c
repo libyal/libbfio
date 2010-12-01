@@ -920,22 +920,6 @@ int libbfio_offset_list_append_offset(
 		}
 		else
 		{
-			if( last_list_element == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: missing last list element.",
-				 function );
-
-				libbfio_list_element_free(
-				 &list_element,
-				 &libbfio_offset_list_value_free,
-				 NULL );
-
-				return( -1 );
-			}
 			if( offset_list->first_element == NULL )
 			{
 				liberror_error_set(
@@ -968,29 +952,39 @@ int libbfio_offset_list_append_offset(
 
 				return( -1 );
 			}
-			list_element->previous_element = last_list_element;
-			list_element->next_element     = last_list_element->next_element;
-
-			if( last_list_element == offset_list->last_element )
+			if( last_list_element == NULL )
 			{
-				offset_list->last_element = list_element;
-			}
-			else if( last_list_element->next_element == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: corruption detected - missing next in last list element.",
-				 function );
+				offset_list->first_element->previous_element = list_element;
+				list_element->next_element                   = offset_list->first_element;
 
-				return( -1 );
+				offset_list->first_element = list_element;
 			}
 			else
 			{
-				last_list_element->next_element->previous_element = list_element;
+				list_element->previous_element = last_list_element;
+				list_element->next_element     = last_list_element->next_element;
+
+				if( last_list_element == offset_list->last_element )
+				{
+					offset_list->last_element = list_element;
+				}
+				else if( last_list_element->next_element == NULL )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 "%s: corruption detected - missing next in last list element.",
+					 function );
+
+					return( -1 );
+				}
+				else
+				{
+					last_list_element->next_element->previous_element = list_element;
+				}
+				last_list_element->next_element = list_element;
 			}
-			last_list_element->next_element = list_element;
 		}
 		offset_list->number_of_elements++;
 	}
