@@ -35,16 +35,19 @@ extern "C" {
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
-LIBBFIO_EXTERN const char *libbfio_get_version(
-                           void );
+LIBBFIO_EXTERN \
+const char *libbfio_get_version(
+             void );
 
-LIBBFIO_EXTERN int libbfio_get_codepage(
-                    int *codepage,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_get_codepage(
+     int *codepage,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_set_codepage(
-                    int codepage,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_set_codepage(
+     int codepage,
+     liberror_error_t **error );
 
 #endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 

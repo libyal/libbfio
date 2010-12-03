@@ -52,8 +52,8 @@ int libbfio_memory_range_io_handle_initialize(
 	}
 	if( *memory_range_io_handle == NULL )
 	{
-		*memory_range_io_handle = (libbfio_memory_range_io_handle_t *) memory_allocate(
-		                                                                sizeof( libbfio_memory_range_io_handle_t ) );
+		*memory_range_io_handle = memory_allocate_structure(
+		                           libbfio_memory_range_io_handle_t );
 
 		if( *memory_range_io_handle == NULL )
 		{
@@ -64,7 +64,7 @@ int libbfio_memory_range_io_handle_initialize(
 			 "%s: unable to create memory range IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *memory_range_io_handle,
@@ -78,15 +78,20 @@ int libbfio_memory_range_io_handle_initialize(
 			 "%s: unable to clear memory range IO handle.",
 			 function );
 
-			memory_free(
-			 *memory_range_io_handle );
-
-			*memory_range_io_handle = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( *memory_range_io_handle != NULL )
+	{
+		memory_free(
+		 *memory_range_io_handle );
+
+		*memory_range_io_handle = NULL;
+	}
+	return( -1 );
 }
 
 /* Initializes the memory range handle

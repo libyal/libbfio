@@ -63,9 +63,10 @@ int libbfio_memory_range_io_handle_initialize(
      libbfio_memory_range_io_handle_t **memory_range_io_handle,
      liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_memory_range_initialize(
-                    libbfio_handle_t **handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_memory_range_initialize(
+     libbfio_handle_t **handle,
+     liberror_error_t **error );
 
 int libbfio_memory_range_io_handle_free(
      intptr_t *io_handle,
@@ -76,17 +77,19 @@ int libbfio_memory_range_io_handle_clone(
      intptr_t *source_io_handle,
      liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_memory_range_get(
-                    libbfio_handle_t *handle,
-                    uint8_t **range_start,
-                    size_t *range_size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_memory_range_get(
+     libbfio_handle_t *handle,
+     uint8_t **range_start,
+     size_t *range_size,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_memory_range_set(
-                    libbfio_handle_t *handle,
-                    uint8_t *range_start,
-                    size_t range_size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_memory_range_set(
+     libbfio_handle_t *handle,
+     uint8_t *range_start,
+     size_t range_size,
+     liberror_error_t **error );
 
 int libbfio_memory_range_open(
      intptr_t *io_handle,

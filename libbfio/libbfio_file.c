@@ -81,8 +81,8 @@ int libbfio_file_io_handle_initialize(
 	}
 	if( *file_io_handle == NULL )
 	{
-		*file_io_handle = (libbfio_file_io_handle_t *) memory_allocate(
-		                                                sizeof( libbfio_file_io_handle_t ) );
+		*file_io_handle = memory_allocate_structure(
+		                   libbfio_file_io_handle_t );
 
 		if( *file_io_handle == NULL )
 		{
@@ -93,7 +93,7 @@ int libbfio_file_io_handle_initialize(
 			 "%s: unable to create file IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *file_io_handle,
@@ -107,12 +107,7 @@ int libbfio_file_io_handle_initialize(
 			 "%s: unable to clear file IO handle.",
 			 function );
 
-			memory_free(
-			 *file_io_handle );
-
-			*file_io_handle = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 		( *file_io_handle )->file_handle     = INVALID_HANDLE_VALUE;
@@ -121,6 +116,16 @@ int libbfio_file_io_handle_initialize(
 #endif
 	}
 	return( 1 );
+
+on_error:
+	if( *file_io_handle != NULL )
+	{
+		memory_free(
+		 *file_io_handle );
+
+		*file_io_handle = NULL;
+	}
+	return( -1 );
 }
 
 /* Initializes the file handle
@@ -875,13 +880,7 @@ int libbfio_file_set_name(
 		 "%s: unable to set name.",
 		 function );
 
-		memory_free(
-		 io_handle->name );
-
-		io_handle->name      = NULL;
-		io_handle->name_size = 0;
-
-		return( -1 );
+		goto on_error;
 	}
 #else
 	if( libcstring_system_string_copy(
@@ -896,18 +895,23 @@ int libbfio_file_set_name(
 		 "%s: unable to set name.",
 		 function );
 
-		memory_free(
-		 io_handle->name );
-
-		io_handle->name      = NULL;
-		io_handle->name_size = 0;
-
-		return( -1 );
+		goto on_error;
 	}
 	io_handle->name[ name_length ] = 0;
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	return( 1 );
+
+on_error:
+	if( io_handle->name != NULL )
+	{
+		memory_free(
+		 io_handle->name );
+
+		io_handle->name      = NULL;
+		io_handle->name_size = 0;
+	}
+	return( -1 );
 }
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
@@ -1422,13 +1426,7 @@ int libbfio_file_set_name_wide(
 		 "%s: unable to set name.",
 		 function );
 
-		memory_free(
-		 io_handle->name );
-
-		io_handle->name      = NULL;
-		io_handle->name_size = 0;
-
-		return( -1 );
+		goto on_error;
 	}
 	io_handle->name[ name_length ] = 0;
 #else
@@ -1483,17 +1481,22 @@ int libbfio_file_set_name_wide(
 		 "%s: unable to set name.",
 		 function );
 
+		goto on_error;
+	}
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
+	return( 1 );
+
+on_error:
+	if( io_handle->name != NULL )
+	{
 		memory_free(
 		 io_handle->name );
 
 		io_handle->name      = NULL;
 		io_handle->name_size = 0;
-
-		return( -1 );
 	}
-#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
-
-	return( 1 );
+	return( -1 );
 }
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */

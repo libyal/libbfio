@@ -66,9 +66,10 @@ int libbfio_file_io_handle_initialize(
      libbfio_file_io_handle_t **file_io_handle,
      liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_initialize(
-                    libbfio_handle_t **handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_initialize(
+     libbfio_handle_t **handle,
+     liberror_error_t **error );
 
 int libbfio_file_io_handle_free(
      intptr_t *io_handle,
@@ -79,40 +80,46 @@ int libbfio_file_io_handle_clone(
      intptr_t *source_io_handle,
      liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_get_name_size(
-                    libbfio_handle_t *handle,
-                    size_t *name_size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_get_name_size(
+     libbfio_handle_t *handle,
+     size_t *name_size,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_get_name(
-                    libbfio_handle_t *handle,
-                    char *name,
-                    size_t name_size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_get_name(
+     libbfio_handle_t *handle,
+     char *name,
+     size_t name_size,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_set_name(
-                    libbfio_handle_t *handle,
-                    const char *name,
-                    size_t name_length,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_set_name(
+     libbfio_handle_t *handle,
+     const char *name,
+     size_t name_length,
+     liberror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
-LIBBFIO_EXTERN int libbfio_file_get_name_size_wide(
-                    libbfio_handle_t *handle,
-                    size_t *name_size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_get_name_size_wide(
+     libbfio_handle_t *handle,
+     size_t *name_size,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_get_name_wide(
-                    libbfio_handle_t *handle,
-                    wchar_t *name,
-                    size_t name_size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_get_name_wide(
+     libbfio_handle_t *handle,
+     wchar_t *name,
+     size_t name_size,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_set_name_wide(
-                    libbfio_handle_t *handle,
-                    const wchar_t *name,
-                    size_t name_length,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_set_name_wide(
+     libbfio_handle_t *handle,
+     const wchar_t *name,
+     size_t name_length,
+     liberror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

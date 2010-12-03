@@ -32,5 +32,13 @@
 #endif
 #endif
 
+#if defined( _MSC_VER )
+#define LIBBFIO_UNREFERENCED_PARAMETER( parameter ) \
+	UNREFERENCED_PARAMETER( parameter );
+#else
+#define LIBBFIO_UNREFERENCED_PARAMETER( parameter ) \
+	/* parameter */
+#endif
+
 #endif
 

@@ -34,21 +34,23 @@
 extern "C" {
 #endif
 
-LIBBFIO_EXTERN int libbfio_file_pool_append_handles_for_names(
-                    libbfio_pool_t *pool,
-                    char * const names[],
-                    int number_of_names,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_pool_append_handles_for_names(
+     libbfio_pool_t *pool,
+     char * const names[],
+     int number_of_names,
+     int access_flags,
+     liberror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-LIBBFIO_EXTERN int libbfio_file_pool_append_handles_for_names_wide(
-                    libbfio_pool_t *pool,
-                    wchar_t * const names[],
-                    int number_of_names,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_pool_append_handles_for_names_wide(
+     libbfio_pool_t *pool,
+     wchar_t * const names[],
+     int number_of_names,
+     int access_flags,
+     liberror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

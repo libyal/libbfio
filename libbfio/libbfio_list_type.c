@@ -49,8 +49,8 @@ int libbfio_list_element_initialize(
 	}
 	if( *element == NULL )
 	{
-		*element = (libbfio_list_element_t *) memory_allocate(
-		                                       sizeof( libbfio_list_element_t ) );
+		*element = memory_allocate_structure(
+		            libbfio_list_element_t );
 
 		if( *element == NULL )
 		{
@@ -61,7 +61,7 @@ int libbfio_list_element_initialize(
 			 "%s: unable to create list element.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *element,
@@ -75,15 +75,20 @@ int libbfio_list_element_initialize(
 			 "%s: unable to clear list element.",
 			 function );
 
-			memory_free(
-			 *element );
-
-			*element = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( *element != NULL )
+	{
+		memory_free(
+		 *element );
+
+		*element = NULL;
+	}
+	return( -1 );
 }
 
 /* Frees a list element
@@ -234,8 +239,8 @@ int libbfio_list_initialize(
 	}
 	if( *list == NULL )
 	{
-		*list = (libbfio_list_t *) memory_allocate(
-		                            sizeof( libbfio_list_t ) );
+		*list = memory_allocate_structure(
+		         libbfio_list_t );
 
 		if( *list == NULL )
 		{
@@ -246,7 +251,7 @@ int libbfio_list_initialize(
 			 "%s: unable to create list.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *list,
@@ -260,15 +265,20 @@ int libbfio_list_initialize(
 			 "%s: unable to clear list.",
 			 function );
 
-			memory_free(
-			 *list );
-
-			*list = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( *list != NULL )
+	{
+		memory_free(
+		 *list );
+
+		*list = NULL;
+	}
+	return( -1 );
 }
 
 /* Frees a list including the elements

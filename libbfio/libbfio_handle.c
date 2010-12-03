@@ -94,8 +94,8 @@ int libbfio_handle_initialize(
 	}
 	if( *handle == NULL )
 	{
-		internal_handle = (libbfio_internal_handle_t *) memory_allocate(
-		                                                 sizeof( libbfio_internal_handle_t ) );
+		internal_handle = memory_allocate_structure(
+		                   libbfio_internal_handle_t );
 
 		if( internal_handle == NULL )
 		{
@@ -106,7 +106,7 @@ int libbfio_handle_initialize(
 			 "%s: unable to create handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     internal_handle,
@@ -120,10 +120,20 @@ int libbfio_handle_initialize(
 			 "%s: unable to clear handle.",
 			 function );
 
-			memory_free(
-			 internal_handle );
+			goto on_error;
+		}
+		if( libbfio_offset_list_initialize(
+		     &( internal_handle->offsets_read ),
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create read offsets list.",
+			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		internal_handle->io_handle       = io_handle;
 		internal_handle->flags           = flags;
@@ -138,25 +148,17 @@ int libbfio_handle_initialize(
 		internal_handle->is_open         = is_open;
 		internal_handle->get_size        = get_size;
 
-		if( libbfio_offset_list_initialize(
-		     &( internal_handle->offsets_read ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create read offsets list.",
-			 function );
-
-			memory_free(
-			 internal_handle );
-
-			return( -1 );
-		}
 		*handle = (libbfio_handle_t *) internal_handle;
 	}
 	return( 1 );
+
+on_error:
+	if( internal_handle != NULL )
+	{
+		memory_free(
+		 internal_handle );
+	}
+	return( -1 );
 }
 
 /* Frees the handle

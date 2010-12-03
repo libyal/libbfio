@@ -210,101 +210,120 @@ int libbfio_handle_initialize(
      uint8_t flags,
      liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_free(
-                    libbfio_handle_t **handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_free(
+     libbfio_handle_t **handle,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_clone(
-                    libbfio_handle_t **destination_handle,
-                    libbfio_handle_t *source_handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_clone(
+     libbfio_handle_t **destination_handle,
+     libbfio_handle_t *source_handle,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_open(
-                    libbfio_handle_t *handle,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_open(
+     libbfio_handle_t *handle,
+     int access_flags,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_reopen(
-                    libbfio_handle_t *handle,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_reopen(
+     libbfio_handle_t *handle,
+     int access_flags,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_close(
-                    libbfio_handle_t *handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_close(
+     libbfio_handle_t *handle,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN ssize_t libbfio_handle_read(
-                        libbfio_handle_t *handle,
-                        uint8_t *buffer,
-                        size_t size,
-                        liberror_error_t **error );
+LIBBFIO_EXTERN \
+ssize_t libbfio_handle_read(
+         libbfio_handle_t *handle,
+         uint8_t *buffer,
+         size_t size,
+         liberror_error_t **error );
 
-LIBBFIO_EXTERN ssize_t libbfio_handle_write(
-                        libbfio_handle_t *handle,
-                        const uint8_t *buffer,
-                        size_t size,
-                        liberror_error_t **error );
+LIBBFIO_EXTERN \
+ssize_t libbfio_handle_write(
+         libbfio_handle_t *handle,
+         const uint8_t *buffer,
+         size_t size,
+         liberror_error_t **error );
 
-LIBBFIO_EXTERN off64_t libbfio_handle_seek_offset(
-                        libbfio_handle_t *handle,
-                        off64_t offset,
-                        int whence,
-                        liberror_error_t **error );
+LIBBFIO_EXTERN \
+off64_t libbfio_handle_seek_offset(
+         libbfio_handle_t *handle,
+         off64_t offset,
+         int whence,
+         liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_exists(
-                    libbfio_handle_t *handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_exists(
+     libbfio_handle_t *handle,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_is_open(
-                    libbfio_handle_t *handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_is_open(
+     libbfio_handle_t *handle,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_io_handle(
-                    libbfio_handle_t *handle,
-                    intptr_t **io_handle,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_io_handle(
+     libbfio_handle_t *handle,
+     intptr_t **io_handle,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_access_flags(
-                    libbfio_handle_t *handle,
-                    int *access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_access_flags(
+     libbfio_handle_t *handle,
+     int *access_flags,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_set_access_flags(
-                    libbfio_handle_t *handle,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_set_access_flags(
+     libbfio_handle_t *handle,
+     int access_flags,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_size(
-                    libbfio_handle_t *handle,
-                    size64_t *size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_size(
+     libbfio_handle_t *handle,
+     size64_t *size,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_offset(
-                    libbfio_handle_t *handle,
-                    off64_t *offset,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_offset(
+     libbfio_handle_t *handle,
+     off64_t *offset,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_set_open_on_demand(
-                    libbfio_handle_t *handle,
-                    uint8_t open_on_demand,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_set_open_on_demand(
+     libbfio_handle_t *handle,
+     uint8_t open_on_demand,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_set_track_offsets_read(
-                    libbfio_handle_t *handle,
-                    uint8_t track_offsets_read,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_set_track_offsets_read(
+     libbfio_handle_t *handle,
+     uint8_t track_offsets_read,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_number_of_offsets_read(
-                    libbfio_handle_t *handle,
-                    int *number_of_read_offsets,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_number_of_offsets_read(
+     libbfio_handle_t *handle,
+     int *number_of_read_offsets,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_offset_read(
-                    libbfio_handle_t *handle,
-                    int index,
-                    off64_t *offset,
-                    size64_t *size,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_offset_read(
+     libbfio_handle_t *handle,
+     int index,
+     off64_t *offset,
+     size64_t *size,
+     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

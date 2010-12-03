@@ -36,58 +36,67 @@ extern "C" {
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
-LIBBFIO_EXTERN int libbfio_handle_get_flags(
-                    libbfio_handle_t *handle,
-                    int *flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_flags(
+     libbfio_handle_t *handle,
+     int *flags,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_set_flags(
-                    libbfio_handle_t *handle,
-                    int flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_set_flags(
+     libbfio_handle_t *handle,
+     int flags,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_handle_get_amount_of_offsets_read(
-                    libbfio_handle_t *handle,
-                    int *amount_of_read_offsets,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_handle_get_amount_of_offsets_read(
+     libbfio_handle_t *handle,
+     int *amount_of_read_offsets,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_get_amount_of_handles(
-                    libbfio_pool_t *pool,
-                    int *amount_of_handles,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_pool_get_amount_of_handles(
+     libbfio_pool_t *pool,
+     int *amount_of_handles,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_add_handle(
-                    libbfio_pool_t *pool,
-                    int *entry,
-                    libbfio_handle_t *handle,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_pool_add_handle(
+     libbfio_pool_t *pool,
+     int *entry,
+     libbfio_handle_t *handle,
+     int access_flags,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_get_maximum_amount_of_open_handles(
-                    libbfio_pool_t *pool,
-                    int *maximum_amount_of_open_handles,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_pool_get_maximum_amount_of_open_handles(
+     libbfio_pool_t *pool,
+     int *maximum_amount_of_open_handles,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_pool_set_maximum_amount_of_open_handles(
-                    libbfio_pool_t *pool,
-                    int maximum_amount_of_open_handles,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_pool_set_maximum_amount_of_open_handles(
+     libbfio_pool_t *pool,
+     int maximum_amount_of_open_handles,
+     liberror_error_t **error );
 
-LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names(
-                    libbfio_pool_t *pool,
-                    char * const names[],
-                    int number_of_names,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_pool_add_handles_for_names(
+     libbfio_pool_t *pool,
+     char * const names[],
+     int number_of_names,
+     int access_flags,
+     liberror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-LIBBFIO_EXTERN int libbfio_file_pool_add_handles_for_names_wide(
-                    libbfio_pool_t *pool,
-                    wchar_t * const names[],
-                    int number_of_names,
-                    int access_flags,
-                    liberror_error_t **error );
+LIBBFIO_EXTERN \
+int libbfio_file_pool_add_handles_for_names_wide(
+     libbfio_pool_t *pool,
+     wchar_t * const names[],
+     int number_of_names,
+     int access_flags,
+     liberror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

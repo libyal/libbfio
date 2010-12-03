@@ -50,8 +50,8 @@ int libbfio_offset_list_value_initialize(
 	}
 	if( *offset_list_value == NULL )
 	{
-		*offset_list_value = (libbfio_offset_list_value_t *) memory_allocate(
-		                                                      sizeof( libbfio_offset_list_value_t ) );
+		*offset_list_value = memory_allocate_structure(
+		                      libbfio_offset_list_value_t );
 
 		if( *offset_list_value == NULL )
 		{
@@ -62,7 +62,7 @@ int libbfio_offset_list_value_initialize(
 			 "%s: unable to create offset list value.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *offset_list_value,
@@ -76,15 +76,20 @@ int libbfio_offset_list_value_initialize(
 			 "%s: unable to clear offset list value.",
 			 function );
 
-			memory_free(
-			 *offset_list_value );
-
-			*offset_list_value = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( *offset_list_value != NULL )
+	{
+		memory_free(
+		 *offset_list_value );
+
+		*offset_list_value = NULL;
+	}
+	return( -1 );
 }
 
 /* Frees an offset list value
@@ -134,8 +139,8 @@ int libbfio_offset_list_initialize(
 	}
 	if( *offset_list == NULL )
 	{
-		*offset_list = (libbfio_offset_list_t *) memory_allocate(
-		                                          sizeof( libbfio_offset_list_t ) );
+		*offset_list = memory_allocate_structure(
+		                libbfio_offset_list_t );
 
 		if( *offset_list == NULL )
 		{
@@ -146,7 +151,7 @@ int libbfio_offset_list_initialize(
 			 "%s: unable to create offset list.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *offset_list,
@@ -160,15 +165,20 @@ int libbfio_offset_list_initialize(
 			 "%s: unable to clear offset list.",
 			 function );
 
-			memory_free(
-			 *offset_list );
-
-			*offset_list = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( *offset_list != NULL )
+	{
+		memory_free(
+		 *offset_list );
+
+		*offset_list = NULL;
+	}
+	return( -1 );
 }
 
 /* Frees an offset list including the elements
