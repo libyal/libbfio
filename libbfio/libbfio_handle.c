@@ -304,14 +304,9 @@ int libbfio_handle_clone(
 	}
 	if( source_handle == NULL )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid source handle.",
-		 function );
+		*destination_handle = NULL;
 
-		return( -1 );
+		return( 1 );
 	}
 	internal_source_handle = (libbfio_internal_handle_t *) source_handle;
 
@@ -334,7 +329,7 @@ int libbfio_handle_clone(
 				 "%s: invalid handle - missing clone IO handle function.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 			if( internal_source_handle->clone_io_handle(
 			     &destination_io_handle,
@@ -348,7 +343,7 @@ int libbfio_handle_clone(
 				 "%s: unable to clone IO handle.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 			destination_flags = LIBBFIO_FLAG_IO_HANDLE_MANAGED;
 		}
@@ -376,22 +371,10 @@ int libbfio_handle_clone(
 		 "%s: unable to create destination handle.",
 		 function );
 
-		if( internal_source_handle->io_handle != NULL )
-		{
-			if( internal_source_handle->free_io_handle == NULL )
-			{
-				memory_free(
-				 destination_io_handle );
-			}
-			else
-			{
-				internal_source_handle->free_io_handle(
-				 destination_io_handle,
-				 NULL );
-			}
-		}
-		return( -1 );
+		goto on_error;
 	}
+	destination_io_handle = NULL;
+
 	if( libbfio_handle_open(
 	     *destination_handle,
 	     internal_source_handle->access_flags,
@@ -404,11 +387,7 @@ int libbfio_handle_clone(
 		 "%s: unable to open destination handle.",
 		 function );
 
-		libbfio_handle_free(
-		 destination_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_handle_seek_offset(
 	     *destination_handle,
@@ -423,13 +402,32 @@ int libbfio_handle_clone(
 		 "%s: unable to seek offset in destination handle.",
 		 function );
 
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( destination_io_handle != NULL )
+	{
+		if( internal_source_handle->free_io_handle == NULL )
+		{
+			memory_free(
+			 destination_io_handle );
+		}
+		else
+		{
+			internal_source_handle->free_io_handle(
+			 destination_io_handle,
+			 NULL );
+		}
+	}
+	if( destination_handle != NULL )
+	{
 		libbfio_handle_free(
 		 destination_handle,
 		 NULL );
-
-		return( -1 );
 	}
-	return( 1 );
+	return( -1 );
 }
 
 /* Opens the handle
@@ -763,7 +761,7 @@ int libbfio_handle_close(
 }
 
 /* Reads a buffer from the handle
- * Returns the number of bytes read if successful, or -1 on errror
+ * Returns the number of bytes read if successful, or -1 on error
  */
 ssize_t libbfio_handle_read(
          libbfio_handle_t *handle,
@@ -975,7 +973,7 @@ ssize_t libbfio_handle_read(
 }
 
 /* Writes a buffer to the handle
- * Returns the number of bytes written if successful, or -1 on errror
+ * Returns the number of bytes written if successful, or -1 on error
  */
 ssize_t libbfio_handle_write(
          libbfio_handle_t *handle,

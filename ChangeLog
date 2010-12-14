@@ -28,6 +28,12 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20101214
+* worked on gettext support
+* updated common, list type, offset list
+* worked on pool clone
+* code clean up
+
 20101203
 * updated common, liberror, libuna
 * updated list type

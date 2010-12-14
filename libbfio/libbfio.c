@@ -25,6 +25,8 @@
 #include <windows.h>
 #endif
 
+#include "libbfio_unused.h"
+
 /* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
  */
 #if !defined( HAVE_LOCAL_LIBBFIO )
@@ -42,6 +44,8 @@ BOOL WINAPI DllMain(
              DWORD fdwReason,
              LPVOID lpvReserved )
 {
+	LIBBFIO_UNREFERENCED_PARAMETER( lpvReserved )
+
 	switch( fdwReason )
 	{
 		case DLL_PROCESS_ATTACH:
@@ -61,7 +65,16 @@ BOOL WINAPI DllMain(
 	return( TRUE );
 }
 
-#endif
+/* Function that indicates the library is a DLL
+ * Returns 1
+ */
+int libbfio_is_dll(
+     void )
+{
+	return( 1 );
+}
 
-#endif
+#endif /* defined( WINAPI ) */
+
+#endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 

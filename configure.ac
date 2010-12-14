@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20101203],
+ [20101214],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -41,9 +41,29 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
+dnl Support of internationalization (i18n)
+AM_GNU_GETTEXT([external])
+
 dnl Check for compiler language support
 AC_C_CONST
 AC_C_VOLATILE
+
+dnl Automatically enable winapi support for mingw
+AS_IF(
+ [test "x$ac_cv_libbfio_enable_winapi" = xauto-detect],
+ [ac_libbfio_target_string="$target";
+
+ AS_IF(
+  [test "x$ac_libbfio_target_string" = x],
+  [ac_libbfio_target_string="$build"])
+
+ AS_CASE(
+  [$ac_libbfio_target_string],
+  [*mingw*],[AC_MSG_NOTICE(
+             [Detected MinGW enabling WINAPI support for cross-compilation])
+            ac_cv_libbfio_enable_winapi=yes],
+  [*],[ac_cv_libbfio_enable_winapi=no])
+ ])
 
 dnl Check for headers
 dnl Headers included in libbfio/types.h
@@ -741,6 +761,8 @@ AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([liberror/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
+AC_CONFIG_FILES([po/Makefile.in])
+AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([macosx/Makefile])
 AC_CONFIG_FILES([borlandc/Makefile])

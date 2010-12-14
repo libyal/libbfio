@@ -117,6 +117,85 @@ int libbfio_offset_list_value_free(
 	return( 1 );
 }
 
+/* Clones the offset list value
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_value_clone(
+     intptr_t **destination_offset_list_value,
+     intptr_t *source_offset_list_value,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_offset_list_value_clone";
+
+	if( destination_offset_list_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid destination offset list value.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_offset_list_value != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid destination offset list value value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_offset_list_value == NULL )
+	{
+		*destination_offset_list_value = NULL;
+
+		return( 1 );
+	}
+	*destination_offset_list_value = (intptr_t *) memory_allocate(
+			                               sizeof( libbfio_offset_list_value_t ) );
+
+	if( *destination_offset_list_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create destination offset list value.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_copy(
+	     *destination_offset_list_value,
+	     source_offset_list_value,
+	     sizeof( libbfio_offset_list_value_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy source to destination offset list value.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( *destination_offset_list_value != NULL )
+	{
+		memory_free(
+		 *destination_offset_list_value );
+
+		*destination_offset_list_value = NULL;
+	}
+	return( -1 );
+}
+
 /* Creates an offset list
  * Returns 1 if successful or -1 on error
  */
@@ -305,6 +384,177 @@ int libbfio_offset_list_empty(
 		offset_list->current_element_index = 0;
 	}
 	return( result );
+}
+
+/* Clones the offset list
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_clone(
+     libbfio_offset_list_t **destination_offset_list,
+     libbfio_offset_list_t *source_offset_list,
+     liberror_error_t **error )
+{
+	libbfio_list_element_t *destination_list_element = NULL;
+	libbfio_list_element_t *source_list_element      = NULL;
+	intptr_t *destination_value                      = NULL;
+	static char *function                            = "libbfio_offset_list_clone";
+	int element_index                                = 0;
+
+	if( destination_offset_list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid destination offset list.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_offset_list != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid destination offset list value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_offset_list == NULL )
+	{
+		*destination_offset_list = NULL;
+
+		return( 1 );
+	}
+	if( libbfio_offset_list_initialize(
+	     destination_offset_list,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create destination offset list.",
+		 function );
+
+		goto on_error;
+	}
+	if( *destination_offset_list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing destination offset list.",
+		 function );
+
+		goto on_error;
+	}
+	source_list_element = source_offset_list->first_element;
+
+	for( element_index = 0;
+	     element_index < source_offset_list->number_of_elements;
+	     element_index++ )
+	{
+		if( source_list_element == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: corruption detected in source offset list element: %d.",
+			 function,
+			 element_index );
+
+			goto on_error;
+		}
+		if( libbfio_list_element_initialize(
+		     &destination_list_element,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create destination list element: %d.",
+			 function,
+			 element_index );
+
+			goto on_error;
+		}
+		if( libbfio_offset_list_value_clone(
+		     &destination_value,
+		     source_list_element->value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to clone value of offset list element: %d.",
+			 function,
+			 element_index );
+
+			goto on_error;
+		}
+		if( libbfio_list_element_set_value(
+		     destination_list_element,
+		     destination_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to set value of destination list element: %d.",
+			 function,
+			 element_index );
+
+			goto on_error;
+		}
+		destination_value = NULL;
+
+		if( ( *destination_offset_list )->first_element == NULL )
+		{
+			( *destination_offset_list )->first_element = destination_list_element;
+		}
+		if( ( *destination_offset_list )->last_element != NULL )
+		{
+			( *destination_offset_list )->last_element->next_element = destination_list_element;
+			destination_list_element->previous_element               = ( *destination_offset_list )->last_element;
+		}
+		( *destination_offset_list )->last_element        = destination_list_element;
+		( *destination_offset_list )->number_of_elements += 1;
+
+		destination_list_element = NULL;
+
+		source_list_element = source_list_element->next_element;
+	}
+	return( 1 );
+
+on_error:
+	if( destination_value != NULL )
+	{
+		libbfio_offset_list_value_free(
+		 destination_value,
+		 NULL );
+	}
+	if( destination_list_element != NULL )
+	{
+		libbfio_list_element_free(
+		 &destination_list_element,
+		 &libbfio_offset_list_value_free,
+		 NULL );
+	}
+	if( *destination_offset_list != NULL )
+	{
+		libbfio_offset_list_free(
+		 destination_offset_list,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Retrieves the number of elements in the offset list

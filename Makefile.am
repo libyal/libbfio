@@ -7,10 +7,18 @@ SUBDIRS = \
 	liberror \
 	libuna \
 	libbfio \
+	po \
 	manuals \
 	macosx \
 	borlandc \
 	msvscpp
+
+GETTEXT_FILES = \
+	config.rpath \
+	po/Makevars.in
+
+PKGCONFIG_FILES = \
+	libbfio.pc.in
 
 SPEC_FILES = \
 	libbfio.spec \
@@ -18,7 +26,8 @@ SPEC_FILES = \
 
 EXTRA_DIST = \
 	README.mingw \
-	libbfio.pc.in \
+        $(GETTEXT_FILES) \
+        $(PKGCONFIG_FILES) \
         $(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \

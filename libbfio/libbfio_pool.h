@@ -79,6 +79,12 @@ int libbfio_pool_free(
      liberror_error_t **error );
 
 LIBBFIO_EXTERN \
+int libbfio_pool_clone(
+     libbfio_pool_t **destination_pool,
+     libbfio_pool_t *source_pool,
+     liberror_error_t **error );
+
+LIBBFIO_EXTERN \
 int libbfio_pool_resize(
      libbfio_pool_t *pool,
      int number_of_handles,

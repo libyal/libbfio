@@ -205,7 +205,7 @@ int libbfio_handle_close(
      libbfio_error_t **error );
 
 /* Reads a buffer from the handle
- * Returns the number of bytes read if successful, or -1 on errror
+ * Returns the number of bytes read if successful, or -1 on error
  */
 LIBBFIO_EXTERN \
 ssize_t libbfio_handle_read(
@@ -215,7 +215,7 @@ ssize_t libbfio_handle_read(
          libbfio_error_t **error );
 
 /* Writes a buffer to the handle
- * Returns the number of bytes written if successful, or -1 on errror
+ * Returns the number of bytes written if successful, or -1 on error
  */
 LIBBFIO_EXTERN \
 ssize_t libbfio_handle_write(
@@ -505,6 +505,16 @@ int libbfio_pool_initialize(
 LIBBFIO_EXTERN \
 int libbfio_pool_free(
      libbfio_pool_t **pool,
+     libbfio_error_t **error );
+
+/* Clones (duplicates) the pool
+ * The values in the offsets read list are not duplicated
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_pool_clone(
+     libbfio_pool_t **destination_pool,
+     libbfio_pool_t *source_pool,
      libbfio_error_t **error );
 
 /* Resizes the pool

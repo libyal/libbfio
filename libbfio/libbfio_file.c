@@ -2195,7 +2195,7 @@ int libbfio_file_close(
 }
 
 /* Reads a buffer from the file handle
- * Returns the number of bytes read if successful, or -1 on errror
+ * Returns the number of bytes read if successful, or -1 on error
  */
 ssize_t libbfio_file_read(
          intptr_t *io_handle,
@@ -2390,7 +2390,7 @@ ssize_t libbfio_file_read(
 }
 
 /* Writes a buffer to the file handle
- * Returns the number of bytes written if successful, or -1 on errror
+ * Returns the number of bytes written if successful, or -1 on error
  */
 ssize_t libbfio_file_write(
          intptr_t *io_handle,

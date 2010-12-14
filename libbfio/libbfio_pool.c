@@ -271,6 +271,113 @@ int libbfio_pool_free(
 	return( result );
 }
 
+/* Clones (duplicates) the pool
+ * The values in the offsets read list are not duplicated
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_pool_clone(
+     libbfio_pool_t **destination_pool,
+     libbfio_pool_t *source_pool,
+     liberror_error_t **error )
+{
+	libbfio_internal_pool_t *internal_source_pool = NULL;
+	static char *function                         = "libbfio_pool_clone";
+	int handle_iterator                           = 0;
+
+	if( destination_pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid destination pool.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_pool != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: destination pool already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_pool == NULL )
+	{
+		*destination_pool = NULL;
+
+		return( 1 );
+	}
+	internal_source_pool = (libbfio_internal_pool_t *) source_pool;
+
+	if( libbfio_pool_initialize(
+	     destination_pool,
+	     internal_source_pool->number_of_handles,
+	     internal_source_pool->maximum_number_of_open_handles,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create destination handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( *destination_pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing destination pool.",
+		 function );
+
+		goto on_error;
+	}
+	if( internal_source_pool->handles != NULL )
+	{
+		for( handle_iterator = 0;
+		     handle_iterator < internal_source_pool->number_of_handles;
+		     handle_iterator++ )
+		{
+			if( internal_source_pool->handles[ handle_iterator ] != NULL )
+			{
+				if( libbfio_handle_clone(
+				     &( ( (libbfio_internal_pool_t *) *destination_pool )->handles[ handle_iterator ] ),
+				     internal_source_pool->handles[ handle_iterator ],
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+					 "%s: unable to clone pool handle: %d.",
+					 function,
+					 handle_iterator );
+
+					goto on_error;
+				}
+			}
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( *destination_pool != NULL )
+	{
+		libbfio_pool_free(
+		 destination_pool,
+		 NULL );
+	}
+	return( -1 );
+}
+
 /* Resizes the pool
  * Returns 1 if successful or -1 on error
  */

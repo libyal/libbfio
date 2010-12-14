@@ -79,6 +79,11 @@ int libbfio_offset_list_value_free(
      intptr_t *offset_list_value,
      liberror_error_t **error );
 
+int libbfio_offset_list_value_clone(
+     intptr_t **destination_offset_list_value,
+     intptr_t *source_offset_list_value,
+     liberror_error_t **error );
+
 int libbfio_offset_list_initialize(
      libbfio_offset_list_t **offset_list,
      liberror_error_t **error );
@@ -89,6 +94,11 @@ int libbfio_offset_list_free(
 
 int libbfio_offset_list_empty(
      libbfio_offset_list_t *offset_list,
+     liberror_error_t **error );
+
+int libbfio_offset_list_clone(
+     libbfio_offset_list_t **destination_offset_list,
+     libbfio_offset_list_t *source_offset_list,
      liberror_error_t **error );
 
 int libbfio_offset_list_get_number_of_elements(
