@@ -28,6 +28,9 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20101219
+* code clean up;
+
 20101216
 * update to makefile
 

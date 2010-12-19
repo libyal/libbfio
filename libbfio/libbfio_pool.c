@@ -105,7 +105,10 @@ int libbfio_pool_initialize(
 			 "%s: unable to clear pool.",
 			 function );
 
-			goto on_error;
+			memory_free(
+			 internal_pool );
+
+			return( -1 );
 		}
 		if( libbfio_list_initialize(
 		     &( internal_pool->last_used_list ),
