@@ -155,8 +155,8 @@ int libbfio_offset_list_value_clone(
 
 		return( 1 );
 	}
-	*destination_offset_list_value = (intptr_t *) memory_allocate(
-			                               sizeof( libbfio_offset_list_value_t ) );
+	*destination_offset_list_value = memory_allocate_structure_as_value(
+	                                  libbfio_offset_list_value_t );
 
 	if( *destination_offset_list_value == NULL )
 	{
