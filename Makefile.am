@@ -9,6 +9,7 @@ SUBDIRS = \
 	libbfio \
 	po \
 	manuals \
+	examples \
 	macosx \
 	borlandc \
 	msvscpp
