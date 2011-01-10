@@ -28,6 +28,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20110110
+* updated libcstring
+* code clean up
+
 20110108
 * updated libuna
 * added open_close example

@@ -284,51 +284,55 @@ int libbfio_file_io_handle_clone(
 
 		return( -1 );
 	}
-	( (libbfio_file_io_handle_t *) *destination_io_handle )->name = (libcstring_system_character_t *) memory_allocate(
-	                                                                                                   sizeof( libcstring_system_character_t ) * ( (libbfio_file_io_handle_t *) source_io_handle )->name_size );
-
-	if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->name == NULL )
+	if( ( (libbfio_file_io_handle_t *) source_io_handle )->name_size > 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create name.",
-		 function );
+		( (libbfio_file_io_handle_t *) *destination_io_handle )->name = libcstring_system_string_allocate(
+		                                                                 ( (libbfio_file_io_handle_t *) source_io_handle )->name_size );
 
-		libbfio_file_io_handle_free(
-		 *destination_io_handle,
-		 NULL );
+		if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->name == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create name.",
+			 function );
 
-		*destination_io_handle = NULL;
+			goto on_error;
+		}
+		if( ( (libbfio_file_io_handle_t *) source_io_handle )->name_size > 1 )
+		{
+			if( libcstring_system_string_copy(
+			     ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
+			     ( (libbfio_file_io_handle_t *) source_io_handle )->name,
+			     ( (libbfio_file_io_handle_t *) source_io_handle )->name_size ) == NULL )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_MEMORY,
+				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 "%s: unable to copy name.",
+				 function );
 
-		return( -1 );
+				goto on_error;
+			}
+		}
+		( (libbfio_file_io_handle_t *) *destination_io_handle )->name[ ( (libbfio_file_io_handle_t *) source_io_handle )->name_size - 1 ] = 0;
+
+		( (libbfio_file_io_handle_t *) *destination_io_handle )->name_size = ( (libbfio_file_io_handle_t *) source_io_handle )->name_size;
 	}
-	if( libcstring_system_string_copy(
-	     ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
-	     ( (libbfio_file_io_handle_t *) source_io_handle )->name,
-	     ( (libbfio_file_io_handle_t *) source_io_handle )->name_size ) == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to set name.",
-		 function );
-
-		libbfio_file_io_handle_free(
-		 *destination_io_handle,
-		 NULL );
-
-		*destination_io_handle = NULL;
-
-		return( -1 );
-	}
-	( (libbfio_file_io_handle_t *) *destination_io_handle )->name[ ( (libbfio_file_io_handle_t *) source_io_handle )->name_size - 1 ] = 0;
-
-	( (libbfio_file_io_handle_t *) *destination_io_handle )->name_size = ( (libbfio_file_io_handle_t *) source_io_handle )->name_size;
-
 	return( 1 );
+
+on_error:
+	if( *destination_io_handle != NULL )
+	{
+		libbfio_file_io_handle_free(
+		 *destination_io_handle,
+		 NULL );
+
+		*destination_io_handle = NULL;
+	}
+	return( -1 );
 }
 
 /* Retrieves the name size of the file handle
@@ -640,21 +644,27 @@ int libbfio_file_get_name(
 		return( -1 );
 	}
 #else
-	if( libcstring_system_string_copy(
-	     name,
-	     io_handle->name,
-	     io_handle->name_size ) == NULL )
+	if( io_handle->name_size > 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to set name.",
-		 function );
+		if( io_handle->name_size > 1 )
+		{
+			if( libcstring_system_string_copy(
+			     name,
+			     io_handle->name,
+			     io_handle->name_size ) == NULL )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_MEMORY,
+				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 "%s: unable to set name.",
+				 function );
 
-		return( -1 );
+				return( -1 );
+			}
+		}
+		name[ io_handle->name_size - 1 ] = 0;
 	}
-	name[ io_handle->name_size - 1 ] = 0;
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	return( 1 );
@@ -814,8 +824,8 @@ int libbfio_file_set_name(
 	io_handle->name_size = name_length + 1;
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
-	io_handle->name = (libcstring_system_character_t *) memory_allocate(
-	                                                     sizeof( libcstring_system_character_t ) * io_handle->name_size );
+	io_handle->name = libcstring_system_string_allocate(
+	                   io_handle->name_size );
 
 	if( io_handle->name == NULL )
 	{
@@ -883,23 +893,26 @@ int libbfio_file_set_name(
 		goto on_error;
 	}
 #else
-	if( libcstring_system_string_copy(
-	     io_handle->name,
-	     name,
-	     name_length + 1 ) == NULL )
+	if( name_length > 1 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to set name.",
-		 function );
+		if( libcstring_system_string_copy(
+		     io_handle->name,
+		     name,
+		     name_length ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to set name.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
 	}
 	io_handle->name[ name_length ] = 0;
-#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 	return( 1 );
 
 on_error:
@@ -1171,21 +1184,27 @@ int libbfio_file_get_name_wide(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_system_string_copy(
-	     name,
-	     io_handle->name,
-	     io_handle->name_size ) == NULL )
+	if( io_handle->name_size > 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to set name.",
-		 function );
+		if( io_handle->name_size > 1 )
+		{
+			if( libcstring_system_string_copy(
+			     name,
+			     io_handle->name,
+			     io_handle->name_size ) == NULL )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_MEMORY,
+				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 "%s: unable to set name.",
+				 function );
 
-		return( -1 );
+				return( -1 );
+			}
+		}
+		name[ io_handle->name_size - 1 ] = 0;
 	}
-	name[ io_handle->name_size - 1 ] = 0;
 #else
 	if( libcstring_narrow_system_string_codepage == 0 )
 	{
@@ -1399,8 +1418,8 @@ int libbfio_file_set_name_wide(
 	}
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
-	io_handle->name = (libcstring_system_character_t *) memory_allocate(
-	                                                     sizeof( libcstring_system_character_t ) * io_handle->name_size );
+	io_handle->name = libcstring_system_string_allocate(
+	                   io_handle->name_size );
 
 	if( io_handle->name == NULL )
 	{
@@ -1414,19 +1433,22 @@ int libbfio_file_set_name_wide(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_system_string_copy(
-	     io_handle->name,
-	     name,
-	     name_length + 1 ) == NULL )
+	if( name_length > 1 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to set name.",
-		 function );
+		if( libcstring_system_string_copy(
+		     io_handle->name,
+		     name,
+		     name_length ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to set name.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
 	}
 	io_handle->name[ name_length ] = 0;
 #else
@@ -1891,8 +1913,8 @@ int libbfio_file_open(
 
 		return( -1 );
 	}
-	narrow_filename = (char *) memory_allocate(
-				    sizeof( char ) * narrow_filename_size );
+	narrow_filename = libcstring_narrow_string_allocate(
+	                   narrow_filename_size );
 
 	if( narrow_filename == NULL )
 	{
@@ -3290,8 +3312,8 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
-	narrow_filename = (char *) memory_allocate(
-	                            sizeof( char ) * narrow_filename_size );
+	narrow_filename = libcstring_narrow_string_allocate(
+	                   narrow_filename_size );
 
 	if( narrow_filename == NULL )
 	{
@@ -3537,8 +3559,8 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
-	narrow_filename = (char *) memory_allocate(
-	                            sizeof( char ) * narrow_filename_size );
+	narrow_filename = libcstring_narrow_string_allocate(
+	                   narrow_filename_size );
 
 	if( narrow_filename == NULL )
 	{
