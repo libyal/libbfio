@@ -58,13 +58,13 @@
 #define HAVE_DEBUG_OUTPUT	1
  */
 
+/* Disable warning C4127: conditional expression is constant
+ */
+#pragma warning( disable : 4127 )
+
 /* Disable warning C4201: nonstandard extension used : nameless struct/union
  */
 #pragma warning( disable : 4201 )
-
-/* Enable the v1 API
- */
-#define HAVE_V1_API		1
 
 #endif
 
