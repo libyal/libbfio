@@ -96,7 +96,7 @@ int libbfio_error_string_copy_from_error_number(
 	      SUBLANG_DEFAULT ),
 	     string,
 	     (DWORD) string_size,
-	     NULL ) != 0 )
+	     NULL ) == 0 )
 #else
 	if( FormatMessageA(
 	     FORMAT_MESSAGE_FROM_SYSTEM,
@@ -107,7 +107,7 @@ int libbfio_error_string_copy_from_error_number(
 	     SUBLANG_DEFAULT ),
 	     string,
 	     (DWORD) string_size,
-	     NULL ) != 0 )
+	     NULL ) == 0 )
 #endif
 	{
 		liberror_error_set(

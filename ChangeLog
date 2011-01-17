@@ -28,6 +28,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20110117
+* updated libuna
+* fix for return value of FormatMessage
+
 20110113
 * updated common
 
