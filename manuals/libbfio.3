@@ -1,4 +1,4 @@
-.Dd August 23, 2010
+.Dd December 14, 2010
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -88,28 +88,6 @@ Available when compiled with wide character string support:
 .Fn libbfio_file_get_name_wide "libbfio_handle_t *handle, wchar_t *name, size_t name_size, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_file_set_name_wide "libbfio_handle_t *handle, const wchar_t *name, size_t name_length, libbfio_error_t **error"
-.Pp
-File range functions
-.Ft int
-.Fn libbfio_file_range_initialize "libbfio_handle_t **handle, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_range_get_name_size "libbfio_handle_t *handle, size_t *name_size, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_range_get_name "libbfio_handle_t *handle, char *name, size_t name_size, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_range_set_name "libbfio_handle_t *handle, const char *name, size_t name_length, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_range_get "libbfio_handle_t *handle, off64_t *range_offset, size64_t *range_size, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_range_set "libbfio_handle_t *handle, off64_t range_offset, size64_t range_size, libbfio_error_t **error"
-.Pp
-Available when compiled with wide character string support:
-.Ft int
-.Fn libbfio_file_range_get_name_size_wide "libbfio_handle_t *handle, size_t *name_size, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_range_get_name_wide "libbfio_handle_t *handle, wchar_t *name, size_t name_size, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_file_range_set_name_wide "libbfio_handle_t *handle, const wchar_t *name, size_t name_length, libbfio_error_t **error"
 .Pp
 Memory range functions
 .Ft int

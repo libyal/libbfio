@@ -28,24 +28,6 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
-20110823
-* worked on file range back end
-
-20110818
-* worked on file range back end
-
-20110816
-* updated configure.ac
-* worked on file range back end
-
-20110625
-* updated configure.ac, libbfio/codepage.h, common, list type
-* updated libuna, libcstring
-
-20110312
-* updated libuna
-* msvscpp added VSDebug build
-
 20110303
 * update for Cygwin WINAPI support
 * updated libcstring

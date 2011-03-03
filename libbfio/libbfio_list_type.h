@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-/* The list comparison definitions
+/* The array comparison definitions
  */
 enum LIBBFIO_LIST_COMPARE_DEFINITIONS
 {
@@ -48,7 +48,7 @@ enum LIBBFIO_LIST_COMPARE_DEFINITIONS
         LIBBFIO_LIST_COMPARE_GREATER
 };
 
-/* The list insert flag definitions
+/* The array insert flag definitions
  */
 enum LIBBFIO_LIST_INSERT_FLAGS
 {

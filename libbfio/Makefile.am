@@ -17,7 +17,6 @@ libbfio_la_SOURCES = \
 	libbfio_extern.h \
 	libbfio_file.c libbfio_file.h \
 	libbfio_file_pool.c libbfio_file_pool.h \
-	libbfio_file_range.c libbfio_file_range.h \
 	libbfio_handle.c libbfio_handle.h \
 	libbfio_legacy.c libbfio_legacy.h \
 	libbfio_libuna.h \

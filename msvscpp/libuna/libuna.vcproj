@@ -20,7 +20,6 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
-			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -43,68 +42,6 @@
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA"
 				RuntimeLibrary="2"
 				WarningLevel="4"
-				CompileAs="1"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\libuna.lib"
-				ModuleDefinitionFile=""
-				IgnoreAllDefaultLibraries="false"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="VSDebug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\liberror"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA"
-				RuntimeLibrary="2"
-				WarningLevel="4"
-				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
 			<Tool
@@ -224,18 +161,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libuna\libuna_codepage_windows_874.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libuna\libuna_codepage_windows_932.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libuna\libuna_codepage_windows_936.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libuna\libuna_codepage_windows_1250.c"
 				>
 			</File>
@@ -272,11 +197,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libuna\libuna_codepage_windows_874.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libuna\libuna_support.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libuna\libuna_unicode_character.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libuna\libuna_url_stream.c"
 				>
 			</File>
 			<File
@@ -334,7 +267,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libuna\libuna_codepage_iso_8859_1.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libuna\libuna_codepage_iso_8859_10.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libuna\libuna_codepage_iso_8859_11.h"
 				>
 			</File>
 			<File
@@ -394,18 +335,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libuna\libuna_codepage_windows_874.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libuna\libuna_codepage_windows_932.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libuna\libuna_codepage_windows_936.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libuna\libuna_codepage_windows_1250.h"
 				>
 			</File>
@@ -442,6 +371,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libuna\libuna_codepage_windows_874.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libuna\libuna_definitions.h"
 				>
 			</File>
@@ -471,6 +404,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libuna\libuna_unused.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libuna\libuna_url_stream.h"
 				>
 			</File>
 			<File
