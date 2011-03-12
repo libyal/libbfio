@@ -23,16 +23,25 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|Win32 = Release|Win32
+		VSDebug|Win32 = VSDebug|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B5225323-AC67-411D-8FBA-199E9467FAB5}.Release|Win32.ActiveCfg = Release|Win32
 		{B5225323-AC67-411D-8FBA-199E9467FAB5}.Release|Win32.Build.0 = Release|Win32
+		{B5225323-AC67-411D-8FBA-199E9467FAB5}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{B5225323-AC67-411D-8FBA-199E9467FAB5}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{BC27FF34-C859-4A1A-95D6-FC89952E1910}.Release|Win32.ActiveCfg = Release|Win32
 		{BC27FF34-C859-4A1A-95D6-FC89952E1910}.Release|Win32.Build.0 = Release|Win32
+		{BC27FF34-C859-4A1A-95D6-FC89952E1910}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{BC27FF34-C859-4A1A-95D6-FC89952E1910}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}.Release|Win32.ActiveCfg = Release|Win32
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}.Release|Win32.Build.0 = Release|Win32
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}.Release|Win32.ActiveCfg = Release|Win32
 		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}.Release|Win32.Build.0 = Release|Win32
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}.VSDebug|Win32.Build.0 = VSDebug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
