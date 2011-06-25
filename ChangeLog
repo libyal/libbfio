@@ -28,6 +28,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20110625
+* updated configure.ac, libbfio/codepage.h, common, list type
+* updated libuna, libcstring
+
 20110312
 * updated libuna
 * msvscpp added VSDebug build

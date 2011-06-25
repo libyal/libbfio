@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20110312],
+ [20110625],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -303,6 +303,15 @@ AC_CHECK_FUNCS(
   [1]) ])
 
 dnl Check for localization functions in libcstring/libcstring_locale.c
+AS_IF(
+ [test "x$ac_cv_libbfio_enable_winapi" = xno],
+ [AC_CHECK_FUNCS(
+  [localeconv],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: localeconv],
+   [1]) ]) ])
+
 AC_CHECK_FUNCS(
  [setlocale],
  [],
