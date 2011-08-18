@@ -28,6 +28,13 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20110818
+* worked on file range back end
+
+20110816
+* updated configure.ac
+* worked on file range back end
+
 20110625
 * updated configure.ac, libbfio/codepage.h, common, list type
 * updated libuna, libcstring

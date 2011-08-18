@@ -1258,8 +1258,8 @@ int libbfio_file_io_handle_get_name_size_wide(
  */
 int libbfio_file_io_handle_get_name_wide(
      libbfio_file_io_handle_t *file_io_handle,
-     char *name,
-     size_t *name_size,
+     wchar_t *name,
+     size_t name_size,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_get_name_wide";

@@ -734,6 +734,7 @@ int libbfio_file_range_get(
 }
 
 /* Sets the range of the file range handle
+ * A range size of 0 represents that the range continues until the end of the file
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_range_set(
@@ -745,7 +746,6 @@ int libbfio_file_range_set(
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
 	static char *function                                = "libbfio_file_range_set";
-	size64_t file_size                                   = 0;
 
 	if( handle == NULL )
 	{
@@ -784,51 +784,13 @@ int libbfio_file_range_set(
 
 		return( -1 );
 	}
-	if( range_size < (size64_t) INT64_MAX )
+	if( range_size > (size64_t) INT64_MAX )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid range size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( libbfio_file_get_size(
-	     file_range_io_handle->file_io_handle,
-	     &file_size,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size from file IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( range_offset >= (off64_t) file_size )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid range offset value exceeds file size.",
-		 function );
-
-		return( -1 );
-	}
-	file_size -= range_offset;
-
-	if( range_size > file_size )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid range size value exceeds file size.",
 		 function );
 
 		return( -1 );
@@ -848,6 +810,7 @@ int libbfio_file_range_open(
      liberror_error_t **error )
 {
 	static char *function = "libbfio_file_range_open";
+	size64_t file_size    = 0;
 
 	if( file_range_io_handle == NULL )
 	{
@@ -870,6 +833,44 @@ int libbfio_file_range_open(
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_get_size(
+	     file_range_io_handle->file_io_handle,
+	     &file_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve size from file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( file_range_io_handle->range_offset >= (off64_t) file_size )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid range offset value exceeds file size.",
+		 function );
+
+		return( -1 );
+	}
+	file_size -= file_range_io_handle->range_offset;
+
+	if( file_range_io_handle->range_size > file_size )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid range size value exceeds file size.",
 		 function );
 
 		return( -1 );
@@ -980,13 +981,16 @@ ssize_t libbfio_file_range_read(
 
 		return( -1 );
 	}
-	if( file_offset >= file_range_io_handle->range_offset )
+	if( file_range_io_handle->range_size != 0 )
 	{
-		return( 0 );
-	}
-	if( ( file_offset + size ) >= file_range_io_handle->range_offset )
-	{
-		size = file_range_io_handle->range_offset - file_offset;
+		if( (size64_t) file_offset >= file_range_io_handle->range_size )
+		{
+			return( 0 );
+		}
+		if( (size64_t) ( file_offset + size ) >= file_range_io_handle->range_size )
+		{
+			size = (size_t) ( file_range_io_handle->range_offset - file_offset );
+		}
 	}
 	read_count = libbfio_file_read(
 	              file_range_io_handle->file_io_handle,
@@ -1060,13 +1064,16 @@ ssize_t libbfio_file_range_write(
 
 		return( -1 );
 	}
-	if( file_offset >= file_range_io_handle->range_offset )
+	if( file_range_io_handle->range_size != 0 )
 	{
-		return( 0 );
-	}
-	if( ( file_offset + size ) >= file_range_io_handle->range_offset )
-	{
-		size = file_range_io_handle->range_offset - file_offset;
+		if( (size64_t) file_offset >= file_range_io_handle->range_size )
+		{
+			return( 0 );
+		}
+		if( (size64_t) ( file_offset + size ) >= file_range_io_handle->range_size )
+		{
+			size = (size_t) ( file_range_io_handle->range_offset - file_offset );
+		}
 	}
 	write_count = libbfio_file_write(
 	               file_range_io_handle->file_io_handle,
@@ -1098,6 +1105,7 @@ off64_t libbfio_file_range_seek_offset(
          liberror_error_t **error )
 {
 	static char *function = "libbfio_file_range_seek_offset";
+	off64_t file_offset   = 0;
 
 	if( file_range_io_handle == NULL )
 	{
@@ -1109,6 +1117,67 @@ off64_t libbfio_file_range_seek_offset(
 		 function );
 
 		return( -1 );
+	}
+	if( ( whence != SEEK_CUR )
+	 && ( whence != SEEK_END )
+	 && ( whence != SEEK_SET ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported whence.",
+		 function );
+
+		return( -1 );
+	}
+	if( whence == SEEK_CUR )
+	{
+		file_offset = libbfio_file_seek_offset(
+			       file_range_io_handle->file_io_handle,
+			       0,
+			       SEEK_CUR,
+			       error );
+
+		if( file_offset == -1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve current offset from file IO handle.",
+			 function );
+
+			return( -1 );
+		}
+		offset += file_offset;
+		whence  = SEEK_SET;
+	}
+	else if( whence == SEEK_END )
+	{
+		if( file_range_io_handle->range_size != 0 )
+		{
+			offset += file_range_io_handle->range_size;
+			whence  = SEEK_SET;
+		}
+	}
+	else if( whence == SEEK_SET )
+	{
+		offset += file_range_io_handle->range_offset;
+	}
+	if( whence == SEEK_SET )
+	{
+		if( offset < file_range_io_handle->range_offset )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid offset value out of bounds.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	offset = libbfio_file_seek_offset(
 	          file_range_io_handle->file_io_handle,
@@ -1240,8 +1309,28 @@ int libbfio_file_range_get_size(
 
 		return( -1 );
 	}
-	*size = file_range_io_handle->range_size;
+	if( file_range_io_handle->range_size == 0 )
+	{
+		if( libbfio_file_get_size(
+		     file_range_io_handle->file_io_handle,
+		     size,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to determine size.",
+			 function );
 
+			return( -1 );
+		}
+		*size -= file_range_io_handle->range_offset;
+	}
+	else
+	{
+		*size = file_range_io_handle->range_size;
+	}
 	return( 1 );
 }
 
