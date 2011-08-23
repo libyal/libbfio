@@ -135,8 +135,8 @@ int libbfio_file_initialize(
      libbfio_handle_t **handle,
      liberror_error_t **error )
 {
-	libbfio_file_io_handle_t *io_handle = NULL;
-	static char *function               = "libbfio_file_initialize";
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_initialize";
 
 	if( handle == NULL )
 	{
@@ -152,7 +152,7 @@ int libbfio_file_initialize(
 	if( *handle == NULL )
 	{
 		if( libbfio_file_io_handle_initialize(
-		     &io_handle,
+		     &file_io_handle,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -162,21 +162,21 @@ int libbfio_file_initialize(
 			 "%s: unable to create file IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( libbfio_handle_initialize(
 		     handle,
-		     (intptr_t *) io_handle,
-		     libbfio_file_io_handle_free,
-		     libbfio_file_io_handle_clone,
-		     libbfio_file_open,
-		     libbfio_file_close,
-		     libbfio_file_read,
-		     libbfio_file_write,
-		     libbfio_file_seek_offset,
-		     libbfio_file_exists,
-		     libbfio_file_is_open,
-		     libbfio_file_get_size,
+		     (intptr_t *) file_io_handle,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_io_handle_free,
+		     (int (*)(intptr_t **, intptr_t *, liberror_error_t **)) libbfio_file_io_handle_clone,
+		     (int (*)(intptr_t *, int, liberror_error_t **)) libbfio_file_open,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_close,
+		     (ssize_t (*)(intptr_t *, uint8_t *, size_t, liberror_error_t **)) libbfio_file_read,
+		     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, liberror_error_t **)) libbfio_file_write,
+		     (off64_t (*)(intptr_t *, off64_t, int, liberror_error_t **)) libbfio_file_seek_offset,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_exists,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_is_open,
+		     (int (*)(intptr_t *, size64_t *, liberror_error_t **)) libbfio_file_get_size,
 		     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
 		     error ) != 1 )
 		{
@@ -187,43 +187,48 @@ int libbfio_file_initialize(
 			 "%s: unable to create handle.",
 			 function );
 
-			libbfio_file_io_handle_free(
-			 (intptr_t *) io_handle,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_file_io_handle_free(
+		 file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Frees the file IO handle and its attributes
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_io_handle_free(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_free";
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( ( libbfio_file_io_handle_t *) io_handle )->name != NULL )
+	if( file_io_handle->name != NULL )
 	{
 		memory_free(
-		 ( ( libbfio_file_io_handle_t *) io_handle )->name );
+		 file_io_handle->name );
 	}
 	memory_free(
-	 io_handle );
+	 file_io_handle );
 
 	return( 1 );
 }
@@ -232,64 +237,70 @@ int libbfio_file_io_handle_free(
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_file_io_handle_clone(
-     intptr_t **destination_io_handle,
-     intptr_t *source_io_handle,
+     libbfio_file_io_handle_t **destination_file_io_handle,
+     libbfio_file_io_handle_t *source_file_io_handle,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_clone";
 
-	if( destination_io_handle == NULL )
+	if( destination_file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid destination IO handle.",
+		 "%s: invalid destination file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	if( *destination_io_handle != NULL )
+	if( *destination_file_io_handle != NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: destination IO handle already set.",
+		 "%s: destination file IO handle already set.",
 		 function );
 
 		return( -1 );
 	}
-	if( source_io_handle == NULL )
+	if( source_file_io_handle == NULL )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid source IO handle.",
-		 function );
+		*destination_file_io_handle = NULL;
 
-		return( -1 );
+		return( 1 );
 	}
 	if( libbfio_file_io_handle_initialize(
-	     (libbfio_file_io_handle_t **) destination_io_handle,
+	     destination_file_io_handle,
 	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create handle.",
+		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	if( ( (libbfio_file_io_handle_t *) source_io_handle )->name_size > 0 )
+	if( *destination_file_io_handle == NULL )
 	{
-		( (libbfio_file_io_handle_t *) *destination_io_handle )->name = libcstring_system_string_allocate(
-		                                                                 ( (libbfio_file_io_handle_t *) source_io_handle )->name_size );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing destination file IO handle.",
+		 function );
 
-		if( ( (libbfio_file_io_handle_t *) *destination_io_handle )->name == NULL )
+		goto on_error;
+	}
+	if( source_file_io_handle->name_size > 0 )
+	{
+		( *destination_file_io_handle )->name = libcstring_system_string_allocate(
+		                                         source_file_io_handle->name_size );
+
+		if( ( *destination_file_io_handle )->name == NULL )
 		{
 			liberror_error_set(
 			 error,
@@ -300,12 +311,12 @@ int libbfio_file_io_handle_clone(
 
 			goto on_error;
 		}
-		if( ( (libbfio_file_io_handle_t *) source_io_handle )->name_size > 1 )
+		if( source_file_io_handle->name_size > 1 )
 		{
 			if( libcstring_system_string_copy(
-			     ( (libbfio_file_io_handle_t *) *destination_io_handle )->name,
-			     ( (libbfio_file_io_handle_t *) source_io_handle )->name,
-			     ( (libbfio_file_io_handle_t *) source_io_handle )->name_size ) == NULL )
+			     ( *destination_file_io_handle )->name,
+			     source_file_io_handle->name,
+			     source_file_io_handle->name_size ) == NULL )
 			{
 				liberror_error_set(
 				 error,
@@ -317,20 +328,20 @@ int libbfio_file_io_handle_clone(
 				goto on_error;
 			}
 		}
-		( (libbfio_file_io_handle_t *) *destination_io_handle )->name[ ( (libbfio_file_io_handle_t *) source_io_handle )->name_size - 1 ] = 0;
+		( *destination_file_io_handle )->name[ source_file_io_handle->name_size - 1 ] = 0;
 
-		( (libbfio_file_io_handle_t *) *destination_io_handle )->name_size = ( (libbfio_file_io_handle_t *) source_io_handle )->name_size;
+		( *destination_file_io_handle )->name_size = source_file_io_handle->name_size;
 	}
 	return( 1 );
 
 on_error:
-	if( *destination_io_handle != NULL )
+	if( *destination_file_io_handle != NULL )
 	{
 		libbfio_file_io_handle_free(
-		 *destination_io_handle,
+		 *destination_file_io_handle,
 		 NULL );
 
-		*destination_io_handle = NULL;
+		*destination_file_io_handle = NULL;
 	}
 	return( -1 );
 }
@@ -345,12 +356,7 @@ int libbfio_file_get_name_size(
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name_size";
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	int result                                 = 0;
-#endif
 
 	if( handle == NULL )
 	{
@@ -365,26 +371,143 @@ int libbfio_file_get_name_size(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( internal_handle->io_handle == NULL )
+	if( libbfio_file_io_handle_get_name_size(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     name_size,
+	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve name size.",
 		 function );
 
 		return( -1 );
 	}
-	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
+	return( 1 );
+}
 
-	if( io_handle->name == NULL )
+/* Retrieves the name of the file handle
+ * The name size should include the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_get_name(
+     libbfio_handle_t *handle,
+     char *name,
+     size_t name_size,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_file_get_name";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( libbfio_file_io_handle_get_name(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     name,
+	     name_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Sets the name for the file handle
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_set_name(
+     libbfio_handle_t *handle,
+     const char *name,
+     size_t name_length,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_file_set_name";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( libbfio_file_io_handle_set_name(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     name,
+	     name_length,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the name size of the file IO handle
+ * The name size includes the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_io_handle_get_name_size(
+     libbfio_file_io_handle_t *file_io_handle,
+     size_t *name_size,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_file_io_handle_get_name_size";
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result            = 0;
+#endif
+
+	if( file_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -405,14 +528,14 @@ int libbfio_file_get_name_size(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf8_string_size_from_utf16(
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          name_size,
 		          error );
 #else
@@ -423,15 +546,15 @@ int libbfio_file_get_name_size(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_byte_stream_size_from_utf32(
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
@@ -451,64 +574,47 @@ int libbfio_file_get_name_size(
 		return( -1 );
 	}
 #else
-	*name_size = io_handle->name_size;
+	*name_size = file_io_handle->name_size;
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	return( 1 );
 }
 
-/* Retrieves the name of the file handle
+/* Retrieves the name of the file IO handle
  * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
-int libbfio_file_get_name(
-     libbfio_handle_t *handle,
+int libbfio_file_io_handle_get_name(
+     libbfio_file_io_handle_t *file_io_handle,
      char *name,
      size_t name_size,
      liberror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle = NULL;
-	libbfio_file_io_handle_t *io_handle        = NULL;
-	static char *function                      = "libbfio_file_get_name";
-	size_t narrow_name_size                    = 0;
+	static char *function   = "libbfio_file_io_handle_get_name";
+	size_t narrow_name_size = 0;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	int result                                 = 0;
+	int result              = 0;
 #endif
 
-	if( handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	internal_handle = (libbfio_internal_handle_t *) handle;
-
-	if( internal_handle->io_handle == NULL )
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
-
-	if( io_handle->name == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -529,14 +635,14 @@ int libbfio_file_get_name(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          &narrow_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf8_string_size_from_utf16(
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          &narrow_name_size,
 		          error );
 #else
@@ -547,15 +653,15 @@ int libbfio_file_get_name(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_byte_stream_size_from_utf32(
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          &narrow_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          &narrow_name_size,
 		          error );
@@ -575,7 +681,7 @@ int libbfio_file_get_name(
 		return( -1 );
 	}
 #else
-	narrow_name_size = io_handle->name_size;
+	narrow_name_size = file_io_handle->name_size;
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	if( name_size < narrow_name_size )
@@ -596,15 +702,15 @@ int libbfio_file_get_name(
 		result = libuna_utf8_string_copy_from_utf32(
 		          (libuna_utf8_character_t *) name,
 		          name_size,
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf8_string_copy_from_utf16(
 		          (libuna_utf8_character_t *) name,
 		          name_size,
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -617,16 +723,16 @@ int libbfio_file_get_name(
 		          (uint8_t *) name,
 		          name_size,
 		          libcstring_narrow_system_string_codepage,
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_copy_from_utf16(
 		          (uint8_t *) name,
 		          name_size,
 		          libcstring_narrow_system_string_codepage,
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -644,14 +750,14 @@ int libbfio_file_get_name(
 		return( -1 );
 	}
 #else
-	if( io_handle->name_size > 0 )
+	if( file_io_handle->name_size > 0 )
 	{
-		if( io_handle->name_size > 1 )
+		if( file_io_handle->name_size > 1 )
 		{
 			if( libcstring_system_string_copy(
 			     name,
-			     io_handle->name,
-			     io_handle->name_size ) == NULL )
+			     file_io_handle->name,
+			     file_io_handle->name_size ) == NULL )
 			{
 				liberror_error_set(
 				 error,
@@ -663,56 +769,39 @@ int libbfio_file_get_name(
 				return( -1 );
 			}
 		}
-		name[ io_handle->name_size - 1 ] = 0;
+		name[ file_io_handle->name_size - 1 ] = 0;
 	}
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	return( 1 );
 }
 
-/* Sets the name for the file handle
+/* Sets the name for the file IO handle
  * Returns 1 if succesful or -1 on error
  */
-int libbfio_file_set_name(
-     libbfio_handle_t *handle,
+int libbfio_file_io_handle_set_name(
+     libbfio_file_io_handle_t *file_io_handle,
      const char *name,
      size_t name_length,
      liberror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle = NULL;
-	libbfio_file_io_handle_t *io_handle        = NULL;
-	static char *function                      = "libbfio_file_set_name";
+	static char *function = "libbfio_file_io_handle_set_name";
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	int result                                 = 0;
+	int result            = 0;
 #endif
 
-	if( handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	internal_handle = (libbfio_internal_handle_t *) handle;
-
-	if( internal_handle->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
-
 	if( name == NULL )
 	{
 		liberror_error_set(
@@ -746,12 +835,12 @@ int libbfio_file_set_name(
 
 		return( -1 );
 	}
-	if( io_handle->name != NULL )
+	if( file_io_handle->name != NULL )
 	{
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-		if( io_handle->file_handle != INVALID_HANDLE_VALUE )
+		if( file_io_handle->file_handle != INVALID_HANDLE_VALUE )
 #else
-		if( io_handle->file_descriptor != -1 )
+		if( file_io_handle->file_descriptor != -1 )
 #endif
 		{
 			liberror_error_set(
@@ -760,15 +849,15 @@ int libbfio_file_set_name(
 			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 			 "%s: name already set: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
-			 io_handle->name );
+			 file_io_handle->name );
 
 			return( -1 );
 		}
 		memory_free(
-		  io_handle->name );
+		  file_io_handle->name );
 
-		 io_handle->name      = NULL;
-		 io_handle->name_size = 0;
+		 file_io_handle->name      = NULL;
+		 file_io_handle->name_size = 0;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcstring_narrow_system_string_codepage == 0 )
@@ -777,13 +866,13 @@ int libbfio_file_set_name(
 		result = libuna_utf32_string_size_from_utf8(
 		          (libuna_utf8_character_t *) name,
 		          name_length + 1,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_utf8(
 		          (libuna_utf8_character_t *) name,
 		          name_length + 1,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -796,14 +885,14 @@ int libbfio_file_set_name(
 		          (uint8_t *) name,
 		          name_length + 1,
 		          libcstring_narrow_system_string_codepage,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) name,
 		          name_length + 1,
 		          libcstring_narrow_system_string_codepage,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -821,13 +910,13 @@ int libbfio_file_set_name(
 		return( -1 );
 	}
 #else
-	io_handle->name_size = name_length + 1;
+	file_io_handle->name_size = name_length + 1;
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
-	io_handle->name = libcstring_system_string_allocate(
-	                   io_handle->name_size );
+	file_io_handle->name = libcstring_system_string_allocate(
+	                        file_io_handle->name_size );
 
-	if( io_handle->name == NULL )
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -843,15 +932,15 @@ int libbfio_file_set_name(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_copy_from_utf8(
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          (libuna_utf8_character_t *) name,
 		          name_length + 1,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_utf8(
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          (libuna_utf8_character_t *) name,
 		          name_length + 1,
 		          error );
@@ -863,16 +952,16 @@ int libbfio_file_set_name(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_copy_from_byte_stream(
-		          (libuna_utf32_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf32_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          (uint8_t *) name,
 		          name_length + 1,
 		          libcstring_narrow_system_string_codepage,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_byte_stream(
-		          (libuna_utf16_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf16_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          (uint8_t *) name,
 		          name_length + 1,
 		          libcstring_narrow_system_string_codepage,
@@ -896,7 +985,7 @@ int libbfio_file_set_name(
 	if( name_length > 1 )
 	{
 		if( libcstring_system_string_copy(
-		     io_handle->name,
+		     file_io_handle->name,
 		     name,
 		     name_length ) == NULL )
 		{
@@ -910,19 +999,19 @@ int libbfio_file_set_name(
 			goto on_error;
 		}
 	}
-	io_handle->name[ name_length ] = 0;
+	file_io_handle->name[ name_length ] = 0;
 
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 	return( 1 );
 
 on_error:
-	if( io_handle->name != NULL )
+	if( file_io_handle->name != NULL )
 	{
 		memory_free(
-		 io_handle->name );
+		 file_io_handle->name );
 
-		io_handle->name      = NULL;
-		io_handle->name_size = 0;
+		file_io_handle->name      = NULL;
+		file_io_handle->name_size = 0;
 	}
 	return( -1 );
 }
@@ -939,12 +1028,7 @@ int libbfio_file_get_name_size_wide(
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	libbfio_file_io_handle_t *io_handle        = NULL;
 	static char *function                      = "libbfio_file_get_name_size_wide";
-
-#if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	int result                                 = 0;
-#endif
 
 	if( handle == NULL )
 	{
@@ -959,20 +1043,137 @@ int libbfio_file_get_name_size_wide(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( internal_handle->io_handle == NULL )
+	if( libbfio_file_io_handle_get_name_size_wide(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     name_size,
+	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve name size.",
 		 function );
 
 		return( -1 );
 	}
-	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
+	return( 1 );
+}
 
-	if( io_handle->name == NULL )
+/* Retrieves the name of the file handle
+ * The name size should include the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_get_name_wide(
+     libbfio_handle_t *handle,
+     wchar_t *name,
+     size_t name_size,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_file_get_name_wide";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( libbfio_file_io_handle_get_name_wide(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     name,
+	     name_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Sets the name for the file handle
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_set_name_wide(
+     libbfio_handle_t *handle,
+     const wchar_t *name,
+     size_t name_length,
+     liberror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_file_set_name_wide";
+
+	if( handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( libbfio_file_io_handle_set_name_wide(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     name,
+	     name_length,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the name size of the file IO handle
+ * The name size includes the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_io_handle_get_name_size_wide(
+     libbfio_file_io_handle_t *file_io_handle,
+     size_t *name_size,
+     liberror_error_t **error )
+{
+	static char *function = "libbfio_file_io_handle_get_name_size_wide";
+
+#if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	int result            = 0;
+#endif
+
+	if( file_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -995,20 +1196,20 @@ int libbfio_file_get_name_size_wide(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	*name_size = io_handle->name_size;
+	*name_size = file_io_handle->name_size;
 #else
 	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_utf8(
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          name_size,
 		          error );
 #else
@@ -1019,15 +1220,15 @@ int libbfio_file_get_name_size_wide(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_byte_stream(
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          name_size,
 		          error );
@@ -1051,52 +1252,35 @@ int libbfio_file_get_name_size_wide(
 	return( 1 );
 }
 
-/* Retrieves the name of the file handle
+/* Retrieves the name of the file IO handle
  * The name size should include the end of string character
  * Returns 1 if succesful or -1 on error
  */
-int libbfio_file_get_name_wide(
-     libbfio_handle_t *handle,
+int libbfio_file_io_handle_get_name_wide(
+     libbfio_file_io_handle_t *file_io_handle,
      wchar_t *name,
      size_t name_size,
      liberror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle = NULL;
-	libbfio_file_io_handle_t *io_handle        = NULL;
-	static char *function                      = "libbfio_file_get_name_wide";
-	size_t wide_name_size                      = 0;
+	static char *function = "libbfio_file_io_handle_get_name_wide";
+	size_t wide_name_size = 0;
 
 #if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	int result                                 = 0;
+	int result            = 0;
 #endif
 
-	if( handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	internal_handle = (libbfio_internal_handle_t *) handle;
-
-	if( internal_handle->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
-
-	if( io_handle->name == NULL )
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -1119,20 +1303,20 @@ int libbfio_file_get_name_wide(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	wide_name_size = io_handle->name_size;
+	wide_name_size = file_io_handle->name_size;
 #else
 	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          &wide_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_utf8(
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          &wide_name_size,
 		          error );
 #else
@@ -1143,15 +1327,15 @@ int libbfio_file_get_name_wide(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_byte_stream(
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          &wide_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          &wide_name_size,
 		          error );
@@ -1184,14 +1368,14 @@ int libbfio_file_get_name_wide(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( io_handle->name_size > 0 )
+	if( file_io_handle->name_size > 0 )
 	{
-		if( io_handle->name_size > 1 )
+		if( file_io_handle->name_size > 1 )
 		{
 			if( libcstring_system_string_copy(
 			     name,
-			     io_handle->name,
-			     io_handle->name_size ) == NULL )
+			     file_io_handle->name,
+			     file_io_handle->name_size ) == NULL )
 			{
 				liberror_error_set(
 				 error,
@@ -1203,7 +1387,7 @@ int libbfio_file_get_name_wide(
 				return( -1 );
 			}
 		}
-		name[ io_handle->name_size - 1 ] = 0;
+		name[ file_io_handle->name_size - 1 ] = 0;
 	}
 #else
 	if( libcstring_narrow_system_string_codepage == 0 )
@@ -1212,15 +1396,15 @@ int libbfio_file_get_name_wide(
 		result = libuna_utf32_string_copy_from_utf8(
 		          (libuna_utf32_character_t *) name,
 		          name_size,
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_utf8(
 		          (libuna_utf16_character_t *) name,
 		          name_size,
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -1232,16 +1416,16 @@ int libbfio_file_get_name_wide(
 		result = libuna_utf32_string_copy_from_byte_stream(
 		          (libuna_utf32_character_t *) name,
 		          name_size,
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_byte_stream(
 		          (libuna_utf16_character_t *) name,
 		          name_size,
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          error );
 #else
@@ -1264,49 +1448,32 @@ int libbfio_file_get_name_wide(
 	return( 1 );
 }
 
-/* Sets the name for the file handle
+/* Sets the name for the file IO handle
  * Returns 1 if succesful or -1 on error
  */
-int libbfio_file_set_name_wide(
-     libbfio_handle_t *handle,
+int libbfio_file_io_handle_set_name_wide(
+     libbfio_file_io_handle_t *file_io_handle,
      const wchar_t *name,
      size_t name_length,
      liberror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle = NULL;
-	libbfio_file_io_handle_t *io_handle        = NULL;
-	static char *function                      = "libbfio_file_set_name_wide";
+	static char *function = "libbfio_file_io_handle_set_name_wide";
 
 #if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	int result                                 = 0;
+	int result            = 0;
 #endif
 
-	if( handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	internal_handle = (libbfio_internal_handle_t *) handle;
-
-	if( internal_handle->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	io_handle = (libbfio_file_io_handle_t *) internal_handle->io_handle;
-
 	if( name == NULL )
 	{
 		liberror_error_set(
@@ -1340,12 +1507,12 @@ int libbfio_file_set_name_wide(
 
 		return( -1 );
 	}
-	if( io_handle->name != NULL )
+	if( file_io_handle->name != NULL )
 	{
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-		if( io_handle->file_handle != INVALID_HANDLE_VALUE )
+		if( file_io_handle->file_handle != INVALID_HANDLE_VALUE )
 #else
-		if( io_handle->file_descriptor != -1 )
+		if( file_io_handle->file_descriptor != -1 )
 #endif
 		{
 			liberror_error_set(
@@ -1354,18 +1521,18 @@ int libbfio_file_set_name_wide(
 			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 			 "%s: name already set: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
-			 io_handle->name );
+			 file_io_handle->name );
 
 			return( -1 );
 		}
 		memory_free(
-		  io_handle->name );
+		  file_io_handle->name );
 
-		 io_handle->name      = NULL;
-		 io_handle->name_size = 0;
+		 file_io_handle->name      = NULL;
+		 file_io_handle->name_size = 0;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	io_handle->name_size = name_length + 1;
+	file_io_handle->name_size = name_length + 1;
 #else
 	if( libcstring_narrow_system_string_codepage == 0 )
 	{
@@ -1373,13 +1540,13 @@ int libbfio_file_set_name_wide(
 		result = libuna_utf8_string_size_from_utf32(
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf8_string_size_from_utf16(
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -1392,14 +1559,14 @@ int libbfio_file_set_name_wide(
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
 		          libcstring_narrow_system_string_codepage,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
 		          libcstring_narrow_system_string_codepage,
-		          &( io_handle->name_size ),
+		          &( file_io_handle->name_size ),
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -1418,10 +1585,10 @@ int libbfio_file_set_name_wide(
 	}
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
-	io_handle->name = libcstring_system_string_allocate(
-	                   io_handle->name_size );
+	file_io_handle->name = libcstring_system_string_allocate(
+	                        file_io_handle->name_size );
 
-	if( io_handle->name == NULL )
+	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
@@ -1436,7 +1603,7 @@ int libbfio_file_set_name_wide(
 	if( name_length > 1 )
 	{
 		if( libcstring_system_string_copy(
-		     io_handle->name,
+		     file_io_handle->name,
 		     name,
 		     name_length ) == NULL )
 		{
@@ -1450,21 +1617,21 @@ int libbfio_file_set_name_wide(
 			goto on_error;
 		}
 	}
-	io_handle->name[ name_length ] = 0;
+	file_io_handle->name[ name_length ] = 0;
 #else
 	if( libcstring_narrow_system_string_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_copy_from_utf32(
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf8_string_copy_from_utf16(
-		          (libuna_utf8_character_t *) io_handle->name,
-		          io_handle->name_size,
+		          (libuna_utf8_character_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
 		          error );
@@ -1476,16 +1643,16 @@ int libbfio_file_set_name_wide(
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_byte_stream_copy_from_utf32(
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_copy_from_utf16(
-		          (uint8_t *) io_handle->name,
-		          io_handle->name_size,
+		          (uint8_t *) file_io_handle->name,
+		          file_io_handle->name_size,
 		          libcstring_narrow_system_string_codepage,
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
@@ -1510,13 +1677,13 @@ int libbfio_file_set_name_wide(
 	return( 1 );
 
 on_error:
-	if( io_handle->name != NULL )
+	if( file_io_handle->name != NULL )
 	{
 		memory_free(
-		 io_handle->name );
+		 file_io_handle->name );
 
-		io_handle->name      = NULL;
-		io_handle->name_size = 0;
+		file_io_handle->name      = NULL;
+		file_io_handle->name_size = 0;
 	}
 	return( -1 );
 }
@@ -1527,52 +1694,49 @@ on_error:
  * Returns 1 if successful or -1 on error
  */
 int libbfio_file_open(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      int access_flags,
      liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle  = NULL;
-	static char *function                     = "libbfio_file_open";
+	static char *function         = "libbfio_file_open";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	DWORD error_code                          = 0;
-	DWORD file_io_access_flags                = 0;
-	DWORD file_io_creation_flags              = 0;
-	DWORD file_io_shared_flags                = 0;
+	DWORD error_code              = 0;
+	DWORD file_io_access_flags    = 0;
+	DWORD file_io_creation_flags  = 0;
+	DWORD file_io_shared_flags    = 0;
 #else
 #if defined( WINAPI )
-	int file_io_shared_flags                  = 0;
-	int file_io_persmission_flags             = 0;
+	int file_io_shared_flags      = 0;
+	int file_io_persmission_flags = 0;
 #endif
-	int file_io_flags                         = 0;
+	int file_io_flags             = 0;
 #endif
 #if !defined( WINAPI ) && defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	char *narrow_filename                     = NULL;
-	size_t narrow_filename_size               = 0;
+	char *narrow_filename         = NULL;
+	size_t narrow_filename_size   = 0;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -1620,7 +1784,7 @@ int libbfio_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: file handle already set.",
+		 "%s: invalid file IO handle - file handle already set.",
 		 function );
 
 		return( -1 );
@@ -1756,7 +1920,7 @@ int libbfio_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: file descriptor already set.",
+		 "%s: invalid file IO handle - file descriptor already set.",
 		 function );
 
 		return( -1 );
@@ -1985,14 +2149,14 @@ int libbfio_file_open(
 	}
 #if defined( HAVE_GLIB_H )
 	file_io_handle->file_descriptor = g_open(
-					   narrow_filename,
-					   file_io_flags,
-					   0644 );
+	                                   narrow_filename,
+	                                   file_io_flags,
+	                                   0644 );
 #else
 	file_io_handle->file_descriptor = open(
-					   narrow_filename,
-					   file_io_flags,
-					   0644 );
+	                                   narrow_filename,
+	                                   file_io_flags,
+	                                   0644 );
 #endif /* HAVE_GLIB_H */
 
 	memory_free(
@@ -2000,14 +2164,14 @@ int libbfio_file_open(
 #else
 #if defined( HAVE_GLIB_H )
 	file_io_handle->file_descriptor = g_open(
-					   file_io_handle->name,
-					   file_io_flags,
-					   0644 );
+	                                   file_io_handle->name,
+	                                   file_io_flags,
+	                                   0644 );
 #else
 	file_io_handle->file_descriptor = open(
-					   file_io_handle->name,
-					   file_io_flags,
-					   0644 );
+	                                   file_io_handle->name,
+	                                   file_io_flags,
+	                                   0644 );
 #endif /* HAVE_GLIB_H */
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
@@ -2078,38 +2242,35 @@ int libbfio_file_open(
  * Returns 0 if successful or -1 on error
  */
 int libbfio_file_close(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_close";
+	static char *function = "libbfio_file_close";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	DWORD error_code                         = 0;
+	DWORD error_code      = 0;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -2121,7 +2282,7 @@ int libbfio_file_close(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file handle.",
+		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -2133,7 +2294,7 @@ int libbfio_file_close(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file descriptor.",
+		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );
@@ -2220,41 +2381,38 @@ int libbfio_file_close(
  * Returns the number of bytes read if successful, or -1 on error
  */
 ssize_t libbfio_file_read(
-         intptr_t *io_handle,
+         libbfio_file_io_handle_t *file_io_handle,
          uint8_t *buffer,
          size_t size,
          liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_read";
-	ssize_t read_count                       = 0;
+	static char *function = "libbfio_file_read";
+	ssize_t read_count    = 0;
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	DWORD error_code                         = 0;
+	DWORD error_code      = 0;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -2266,7 +2424,7 @@ ssize_t libbfio_file_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file handle.",
+		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -2278,7 +2436,7 @@ ssize_t libbfio_file_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file descriptor.",
+		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );
@@ -2415,41 +2573,38 @@ ssize_t libbfio_file_read(
  * Returns the number of bytes written if successful, or -1 on error
  */
 ssize_t libbfio_file_write(
-         intptr_t *io_handle,
+         libbfio_file_io_handle_t *file_io_handle,
          const uint8_t *buffer,
          size_t size,
          liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_write";
-	ssize_t write_count                      = 0;
+	static char *function = "libbfio_file_write";
+	ssize_t write_count   = 0;
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	DWORD error_code                         = 0;
+	DWORD error_code      = 0;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -2461,7 +2616,7 @@ ssize_t libbfio_file_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file handle.",
+		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -2473,7 +2628,7 @@ ssize_t libbfio_file_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file descriptor.",
+		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );
@@ -2731,42 +2886,39 @@ BOOL libbfio_SetFilePointerEx(
  * Returns the offset if the seek is successful or -1 on error
  */
 off64_t libbfio_file_seek_offset(
-         intptr_t *io_handle,
+         libbfio_file_io_handle_t *file_io_handle,
          off64_t offset,
          int whence,
          liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_seek_offset";
+	static char *function              = "libbfio_file_seek_offset";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	LARGE_INTEGER large_integer_offset       = LIBBFIO_LARGE_INTEGER_ZERO;
-	DWORD error_code                         = 0;
-	DWORD move_method                        = 0;
+	LARGE_INTEGER large_integer_offset = LIBBFIO_LARGE_INTEGER_ZERO;
+	DWORD error_code                   = 0;
+	DWORD move_method                  = 0;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -2778,7 +2930,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file handle.",
+		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -2790,7 +2942,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file descriptor.",
+		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );
@@ -2958,37 +3110,34 @@ off64_t libbfio_file_seek_offset(
  * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_exists";
-	int result                               = 1;
-	DWORD error_code                         = 0;
-	DWORD file_attributes                    = 0;
+	static char *function = "libbfio_file_exists";
+	int result            = 1;
+	DWORD error_code      = 0;
+	DWORD file_attributes = 0;
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -3065,36 +3214,33 @@ int libbfio_file_exists(
  * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_exists";
-	int result                               = 1;
-	DWORD error_code                         = 0;
+	static char *function = "libbfio_file_exists";
+	int result            = 1;
+	DWORD error_code      = 0;
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -3219,42 +3365,39 @@ int libbfio_file_exists(
  * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      liberror_error_t **error )
 {
 	struct stat file_statistics;
 
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_exists";
-	int result                               = 1;
+	static char *function       = "libbfio_file_exists";
+	int result                  = 1;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	char *narrow_filename                    = NULL;
-	size_t narrow_filename_size              = 0;
+	char *narrow_filename       = NULL;
+	size_t narrow_filename_size = 0;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -3452,40 +3595,37 @@ int libbfio_file_exists(
  * Returns 1 if file exists, 0 if not or -1 on error
  */
 int libbfio_file_exists(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      liberror_error_t **error )
 {
 	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_exists";
-	int result                               = 1;
+	static char *function       = "libbfio_file_exists";
+	int result                  = 1;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) && !defined( WINAPI )
-	char *narrow_filename                    = NULL;
-	size_t narrow_filename_size              = 0;
+	char *narrow_filename       = NULL;
+	size_t narrow_filename_size = 0;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 	if( file_io_handle->name == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle - missing name.",
+		 "%s: invalid file IO handle - missing name.",
 		 function );
 
 		return( -1 );
@@ -3751,25 +3891,22 @@ int libbfio_file_exists(
  * Returns 1 if open, 0 if not or -1 on error
  */
 int libbfio_file_is_open(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      liberror_error_t **error )
 {
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_is_open";
+	static char *function = "libbfio_file_is_open";
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
@@ -3868,15 +4005,14 @@ BOOL libbfio_GetFileSizeEx(
  * Returns 1 if successful or -1 on error
  */
 int libbfio_file_get_size(
-     intptr_t *io_handle,
+     libbfio_file_io_handle_t *file_io_handle,
      size64_t *size,
      liberror_error_t **error )
 {
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_get_size";
+	static char *function            = "libbfio_file_get_size";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	LARGE_INTEGER large_integer_size         = LIBBFIO_LARGE_INTEGER_ZERO;
+	LARGE_INTEGER large_integer_size = LIBBFIO_LARGE_INTEGER_ZERO;
 #elif defined( _MSC_VER )
 	struct __stat64 file_stat;
 #elif defined( __BORLANDC__ )
@@ -3885,19 +4021,17 @@ int libbfio_file_get_size(
 	struct stat file_stat;
 #endif
 
-	if( io_handle == NULL )
+	if( file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_io_handle = (libbfio_file_io_handle_t *) io_handle;
-
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
@@ -3905,7 +4039,7 @@ int libbfio_file_get_size(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file handle.",
+		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
 		return( -1 );
@@ -3917,7 +4051,7 @@ int libbfio_file_get_size(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid file descriptor.",
+		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
 		return( -1 );

@@ -101,8 +101,8 @@ int libbfio_memory_range_initialize(
      libbfio_handle_t **handle,
      liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *io_handle = NULL;
-	static char *function                       = "libbfio_memory_range_initialize";
+	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
+	static char *function                                    = "libbfio_memory_range_initialize";
 
 	if( handle == NULL )
 	{
@@ -118,7 +118,7 @@ int libbfio_memory_range_initialize(
 	if( *handle == NULL )
 	{
 		if( libbfio_memory_range_io_handle_initialize(
-		     &io_handle,
+		     &memory_range_io_handle,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -128,21 +128,21 @@ int libbfio_memory_range_initialize(
 			 "%s: unable to create memory range IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( libbfio_handle_initialize(
 		     handle,
-		     (intptr_t *) io_handle,
-		     libbfio_memory_range_io_handle_free,
-		     libbfio_memory_range_io_handle_clone,
-		     libbfio_memory_range_open,
-		     libbfio_memory_range_close,
-		     libbfio_memory_range_read,
-		     libbfio_memory_range_write,
-		     libbfio_memory_range_seek_offset,
-		     libbfio_memory_range_exists,
-		     libbfio_memory_range_is_open,
-		     libbfio_memory_range_get_size,
+		     (intptr_t *) memory_range_io_handle,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_io_handle_free,
+		     (int (*)(intptr_t **, intptr_t *, liberror_error_t **)) libbfio_memory_range_io_handle_clone,
+		     (int (*)(intptr_t *, int, liberror_error_t **)) libbfio_memory_range_open,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_close,
+		     (ssize_t (*)(intptr_t *, uint8_t *, size_t, liberror_error_t **)) libbfio_memory_range_read,
+		     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, liberror_error_t **)) libbfio_memory_range_write,
+		     (off64_t (*)(intptr_t *, off64_t, int, liberror_error_t **)) libbfio_memory_range_seek_offset,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_exists,
+		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_is_open,
+		     (int (*)(intptr_t *, size64_t *, liberror_error_t **)) libbfio_memory_range_get_size,
 		     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
 		     error ) != 1 )
 		{
@@ -153,38 +153,43 @@ int libbfio_memory_range_initialize(
 			 "%s: unable to create handle.",
 			 function );
 
-			libbfio_memory_range_io_handle_free(
-			 (intptr_t *) io_handle,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( memory_range_io_handle != NULL )
+	{
+		libbfio_memory_range_io_handle_free(
+		 memory_range_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Frees the memory range IO handle and its attributes
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_memory_range_io_handle_free(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_memory_range_io_handle_free";
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
 	memory_free(
-	 io_handle );
+	 memory_range_io_handle );
 
 	return( 1 );
 }
@@ -193,62 +198,68 @@ int libbfio_memory_range_io_handle_free(
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_memory_range_io_handle_clone(
-     intptr_t **destination_io_handle,
-     intptr_t *source_io_handle,
+     libbfio_memory_range_io_handle_t **destination_memory_range_io_handle,
+     libbfio_memory_range_io_handle_t *source_memory_range_io_handle,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_memory_range_io_handle_clone";
 
-	if( destination_io_handle == NULL )
+	if( destination_memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid destination IO handle.",
+		 "%s: invalid destination memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	if( *destination_io_handle != NULL )
+	if( *destination_memory_range_io_handle != NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: destination IO handle already set.",
+		 "%s: destination memory range IO handle already set.",
 		 function );
 
 		return( -1 );
 	}
-	if( source_io_handle == NULL )
+	if( source_memory_range_io_handle == NULL )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid source IO handle.",
-		 function );
+		*destination_memory_range_io_handle = NULL;
 
-		return( -1 );
+		return( 1 );
 	}
 	if( libbfio_memory_range_io_handle_initialize(
-	     (libbfio_memory_range_io_handle_t **) destination_io_handle,
+	     destination_memory_range_io_handle,
 	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create handle.",
+		 "%s: unable to create memory range handle.",
 		 function );
 
 		return( -1 );
 	}
-	( (libbfio_memory_range_io_handle_t *) *destination_io_handle )->range_start  = ( (libbfio_memory_range_io_handle_t *) source_io_handle )->range_start;
-	( (libbfio_memory_range_io_handle_t *) *destination_io_handle )->range_size   = ( (libbfio_memory_range_io_handle_t *) source_io_handle )->range_size;
-	( (libbfio_memory_range_io_handle_t *) *destination_io_handle )->range_offset = ( (libbfio_memory_range_io_handle_t *) source_io_handle )->range_offset;
-	( (libbfio_memory_range_io_handle_t *) *destination_io_handle )->access_flags = ( (libbfio_memory_range_io_handle_t *) source_io_handle )->access_flags;
+	if( *destination_memory_range_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing destination memory range IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	( *destination_memory_range_io_handle )->range_start  = source_memory_range_io_handle->range_start;
+	( *destination_memory_range_io_handle )->range_size   = source_memory_range_io_handle->range_size;
+	( *destination_memory_range_io_handle )->range_offset = source_memory_range_io_handle->range_offset;
+	( *destination_memory_range_io_handle )->access_flags = source_memory_range_io_handle->access_flags;
 
 	return( 1 );
 }
@@ -262,9 +273,9 @@ int libbfio_memory_range_get(
      size_t *range_size,
      liberror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle  = NULL;
-	libbfio_memory_range_io_handle_t *io_handle = NULL;
-	static char *function                       = "libbfio_memory_range_get";
+	libbfio_internal_handle_t *internal_handle               = NULL;
+	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
+	static char *function                                    = "libbfio_memory_range_get";
 
 	if( handle == NULL )
 	{
@@ -290,7 +301,7 @@ int libbfio_memory_range_get(
 
 		return( -1 );
 	}
-	io_handle = (libbfio_memory_range_io_handle_t *) internal_handle->io_handle;
+	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) internal_handle->io_handle;
 
 	if( range_start == NULL )
 	{
@@ -314,8 +325,8 @@ int libbfio_memory_range_get(
 
 		return( -1 );
 	}
-	*range_start = io_handle->range_start;
-	*range_size  = io_handle->range_size;
+	*range_start = memory_range_io_handle->range_start;
+	*range_size  = memory_range_io_handle->range_size;
 
 	return( 1 );
 }
@@ -329,9 +340,9 @@ int libbfio_memory_range_set(
      size_t range_size,
      liberror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle  = NULL;
-	libbfio_memory_range_io_handle_t *io_handle = NULL;
-	static char *function                       = "libbfio_memory_range_set";
+	libbfio_internal_handle_t *internal_handle               = NULL;
+	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
+	static char *function                                    = "libbfio_memory_range_set";
 
 	if( handle == NULL )
 	{
@@ -357,7 +368,7 @@ int libbfio_memory_range_set(
 
 		return( -1 );
 	}
-	io_handle = (libbfio_memory_range_io_handle_t *) internal_handle->io_handle;
+	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) internal_handle->io_handle;
 
 	if( range_start == NULL )
 	{
@@ -381,8 +392,8 @@ int libbfio_memory_range_set(
 
 		return( -1 );
 	}
-	io_handle->range_start = range_start;
-	io_handle->range_size  = range_size;
+	memory_range_io_handle->range_start = range_start;
+	memory_range_io_handle->range_size  = range_size;
 
 	return( 1 );
 }
@@ -391,33 +402,30 @@ int libbfio_memory_range_set(
  * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_open(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      int access_flags,
      liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_open";
+	static char *function = "libbfio_memory_range_open";
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing range start.",
+		 "%s: invalid memory range IO handle - missing range start.",
 		 function );
 
 		return( -1 );
@@ -428,7 +436,7 @@ int libbfio_memory_range_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: IO handle already open.",
+		 "%s: invalid memory range IO handle - already open.",
 		 function );
 
 		return( -1 );
@@ -458,32 +466,29 @@ int libbfio_memory_range_open(
  * Returns 0 if successful or -1 on error
  */
 int libbfio_memory_range_close(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_close";
+	static char *function = "libbfio_memory_range_close";
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing range start.",
+		 "%s: invalid memory range IO handle - missing range start.",
 		 function );
 
 		return( -1 );
@@ -494,7 +499,7 @@ int libbfio_memory_range_close(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - not open.",
+		 "%s: invalid memory range IO handle - not open.",
 		 function );
 
 		return( -1 );
@@ -508,35 +513,32 @@ int libbfio_memory_range_close(
  * Returns the number of bytes read if successful, or -1 on error
  */
 ssize_t libbfio_memory_range_read(
-         intptr_t *io_handle,
+         libbfio_memory_range_io_handle_t *memory_range_io_handle,
          uint8_t *buffer,
          size_t size,
          liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_read";
-	size_t read_size                                         = 0;
+	static char *function = "libbfio_memory_range_read";
+	size_t read_size      = 0;
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid range start.",
+		 "%s: invalid memory range IO handle - invalid range start.",
 		 function );
 
 		return( -1 );
@@ -547,7 +549,7 @@ ssize_t libbfio_memory_range_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - not open.",
+		 "%s: invalid memory range IO handle - not open.",
 		 function );
 
 		return( -1 );
@@ -558,7 +560,7 @@ ssize_t libbfio_memory_range_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - no read access.",
+		 "%s: invalid memory range IO handle - no read access.",
 		 function );
 
 		return( -1 );
@@ -635,35 +637,32 @@ ssize_t libbfio_memory_range_read(
  * Returns the number of bytes written if successful, or -1 on error
  */
 ssize_t libbfio_memory_range_write(
-         intptr_t *io_handle,
+         libbfio_memory_range_io_handle_t *memory_range_io_handle,
          const uint8_t *buffer,
          size_t size,
          liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_write";
-	size_t write_size                                        = 0;
+	static char *function = "libbfio_memory_range_write";
+	size_t write_size     = 0;
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid range start.",
+		 "%s: invalid memory range IO handle - invalid range start.",
 		 function );
 
 		return( -1 );
@@ -674,7 +673,7 @@ ssize_t libbfio_memory_range_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - not open.",
+		 "%s: invalid memory range IO handle - not open.",
 		 function );
 
 		return( -1 );
@@ -685,7 +684,7 @@ ssize_t libbfio_memory_range_write(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - no write access.",
+		 "%s: invalid memory range IO handle - no write access.",
 		 function );
 
 		return( -1 );
@@ -756,34 +755,31 @@ ssize_t libbfio_memory_range_write(
  * Returns the offset if the seek is successful or -1 on error
  */
 off64_t libbfio_memory_range_seek_offset(
-         intptr_t *io_handle,
+         libbfio_memory_range_io_handle_t *memory_range_io_handle,
          off64_t offset,
          int whence,
          liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_seek_offset";
+	static char *function = "libbfio_memory_range_seek_offset";
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid range start.",
+		 "%s: invalid memory range IO handle - invalid range start.",
 		 function );
 
 		return( -1 );
@@ -794,7 +790,7 @@ off64_t libbfio_memory_range_seek_offset(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - not open.",
+		 "%s: invalid memory range IO handle - not open.",
 		 function );
 
 		return( -1 );
@@ -862,25 +858,22 @@ off64_t libbfio_memory_range_seek_offset(
  * Returns 1 if the memory range exists, 0 if not or -1 on error
  */
 int libbfio_memory_range_exists(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_exists";
+	static char *function = "libbfio_memory_range_exists";
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		return( 0 );
@@ -892,32 +885,29 @@ int libbfio_memory_range_exists(
  * Returns 1 if open, 0 if not or -1 on error
  */
 int libbfio_memory_range_is_open(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_is_open";
+	static char *function = "libbfio_memory_range_is_open";
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid range start.",
+		 "%s: invalid memory range IO handle - invalid range start.",
 		 function );
 
 		return( -1 );
@@ -933,33 +923,30 @@ int libbfio_memory_range_is_open(
  * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_get_size(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      size64_t *size,
      liberror_error_t **error )
 {
-	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-	static char *function                                    = "libbfio_memory_range_get_size";
+	static char *function = "libbfio_memory_range_get_size";
 
-	if( io_handle == NULL )
+	if( memory_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid memory range IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	memory_range_io_handle = (libbfio_memory_range_io_handle_t *) io_handle;
-
 	if( memory_range_io_handle->range_start == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - invalid range start.",
+		 "%s: invalid memory range IO handle - invalid range start.",
 		 function );
 
 		return( -1 );

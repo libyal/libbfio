@@ -69,12 +69,12 @@ int libbfio_memory_range_initialize(
      liberror_error_t **error );
 
 int libbfio_memory_range_io_handle_free(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error );
 
 int libbfio_memory_range_io_handle_clone(
-     intptr_t **destination_io_handle,
-     intptr_t *source_io_handle,
+     libbfio_memory_range_io_handle_t **destination_memory_range_io_handle,
+     libbfio_memory_range_io_handle_t *source_memory_range_io_handle,
      liberror_error_t **error );
 
 LIBBFIO_EXTERN \
@@ -92,42 +92,42 @@ int libbfio_memory_range_set(
      liberror_error_t **error );
 
 int libbfio_memory_range_open(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      int access_flags,
      liberror_error_t **error );
 
 int libbfio_memory_range_close(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error );
 
 ssize_t libbfio_memory_range_read(
-         intptr_t *io_handle,
+         libbfio_memory_range_io_handle_t *memory_range_io_handle,
          uint8_t *buffer,
          size_t size,
          liberror_error_t **error );
 
 ssize_t libbfio_memory_range_write(
-         intptr_t *io_handle,
+         libbfio_memory_range_io_handle_t *memory_range_io_handle,
          const uint8_t *buffer,
          size_t size,
          liberror_error_t **error );
 
 off64_t libbfio_memory_range_seek_offset(
-         intptr_t *io_handle,
+         libbfio_memory_range_io_handle_t *memory_range_io_handle,
          off64_t offset,
          int whence,
          liberror_error_t **error );
 
 int libbfio_memory_range_exists(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error );
 
 int libbfio_memory_range_is_open(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      liberror_error_t **error );
 
 int libbfio_memory_range_get_size(
-     intptr_t *io_handle,
+     libbfio_memory_range_io_handle_t *memory_range_io_handle,
      size64_t *size,
      liberror_error_t **error );
 
