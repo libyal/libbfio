@@ -265,29 +265,38 @@ int libbfio_file_range_io_handle_clone(
 
 		return( 1 );
 	}
-	if( libbfio_file_range_io_handle_initialize(
-	     destination_file_range_io_handle,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file range IO handle.",
-		 function );
+	*destination_file_range_io_handle = memory_allocate_structure(
+	                                     libbfio_file_range_io_handle_t );
 
-		goto on_error;
-	}
 	if( *destination_file_range_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing destination file range IO handle.",
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create destination file range IO handle.",
 		 function );
 
 		goto on_error;
+	}
+	if( memory_set(
+	     *destination_file_range_io_handle,
+	     0,
+	     sizeof( libbfio_file_range_io_handle_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear destination file range IO handle.",
+		 function );
+
+		memory_free(
+		 *destination_file_range_io_handle );
+
+		*destination_file_range_io_handle = NULL;
+
+		return( -1 );
 	}
 	if( libbfio_file_io_handle_clone(
 	     &( ( *destination_file_range_io_handle )->file_io_handle ),
@@ -1196,6 +1205,19 @@ off64_t libbfio_file_range_seek_offset(
 
 		return( -1 );
 	}
+	if( offset < file_range_io_handle->range_offset )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid offset value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	offset -= file_range_io_handle->range_offset;
+
 	return( offset );
 }
 

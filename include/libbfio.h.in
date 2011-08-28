@@ -454,6 +454,103 @@ int libbfio_file_set_name_wide(
 #endif
 
 /* -------------------------------------------------------------------------
+ * File range functions
+ * ------------------------------------------------------------------------- */
+
+/* Initializes the file range handle
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_initialize(
+     libbfio_handle_t **handle,
+     libbfio_error_t **error );
+
+/* Retrieves a name size of the file range handle
+ * The name size includes the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_get_name_size(
+     libbfio_handle_t *handle,
+     size_t *name_size,
+     libbfio_error_t **error );
+
+/* Retrieves a name of the file range handle
+ * The name size should include the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_get_name(
+     libbfio_handle_t *handle,
+     char *name,
+     size_t name_size,
+     libbfio_error_t **error );
+
+/* Sets a name for the file range handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_set_name(
+     libbfio_handle_t *handle,
+     const char *name,
+     size_t name_length,
+     libbfio_error_t **error );
+
+#if defined( LIBBFIO_WIDE_CHARACTER_TYPE )
+
+/* Retrieves a name size of the file range handle
+ * The name size includes the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_get_name_size_wide(
+     libbfio_handle_t *handle,
+     size_t *name_size,
+     libbfio_error_t **error );
+
+/* Retrieves a name of the file range handle
+ * The name size should include the end of string character
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_get_name_wide(
+     libbfio_handle_t *handle,
+     wchar_t *name,
+     size_t name_size,
+     libbfio_error_t **error );
+
+/* Sets a name for the file range handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_set_name_wide(
+     libbfio_handle_t *handle,
+     const wchar_t *name,
+     size_t name_length,
+     libbfio_error_t **error );
+#endif
+
+/* Retrieves the range of the file range handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_get(
+     libbfio_handle_t *handle,
+     off64_t *range_offset,
+     size64_t *range_size,
+     libbfio_error_t **error );
+
+/* Sets the range of the file range handle
+ * Returns 1 if succesful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_range_set(
+     libbfio_handle_t *handle,
+     off64_t range_offset,
+     size64_t range_size,
+     libbfio_error_t **error );
+
+/* -------------------------------------------------------------------------
  * Memory range functions
  * ------------------------------------------------------------------------- */
 
