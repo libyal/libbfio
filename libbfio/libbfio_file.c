@@ -4013,12 +4013,16 @@ int libbfio_file_get_size(
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	LARGE_INTEGER large_integer_size = LIBBFIO_LARGE_INTEGER_ZERO;
-#elif defined( _MSC_VER )
+#else
+	off64_t offset                   = 0;
+
+#if defined( _MSC_VER )
 	struct __stat64 file_stat;
 #elif defined( __BORLANDC__ )
 	struct stati64 file_stat;
 #else
 	struct stat file_stat;
+#endif
 #endif
 
 	if( file_io_handle == NULL )
@@ -4117,7 +4121,52 @@ int libbfio_file_get_size(
 
 		return( -1 );
 	}
-	*size = (size64_t) file_stat.st_size;
+	if( S_ISBLK( file_stat.st_mode )
+	 || S_ISCHR( file_stat.st_mode ) )
+	{
+		/* If the file is a device try to seek the end of the file
+		 */
+		offset = libbfio_file_seek_offset(
+		          file_io_handle,
+		          0,
+		          SEEK_END,
+		          error );
+
+		if( offset == -1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_SEEK_FAILED,
+			 "%s: unable to find end of file.",
+			 function );
+
+			return( -1 );
+		}
+		*size = (size64_t) offset;
+
+		offset = libbfio_file_seek_offset(
+		          file_io_handle,
+		          0,
+		          SEEK_SET,
+		          error );
+
+		if( offset == -1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_SEEK_FAILED,
+			 "%s: unable to find start of file.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	else
+	{
+		*size = (size64_t) file_stat.st_size;
+	}
 #endif
 	return( 1 );
 }

@@ -28,6 +28,12 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20110921
+* updated libuna
+
+20110918
+* code clean up
+
 20110830
 * updated libuna
 * updated codegear files
