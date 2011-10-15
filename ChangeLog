@@ -28,6 +28,11 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20111015
+* updated configure.ac and m4 files
+* updated spec and pc files
+* updated common
+
 20110921
 * updated libuna
 

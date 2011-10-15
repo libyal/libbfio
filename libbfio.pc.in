@@ -7,6 +7,6 @@ Name: libbfio
 Description: Library to support (abstracted) basic file IO
 Version: @VERSION@
 Libs: -L${libdir} -lbfio
-Libs.private: @libbfio_pc_libs_private_libuna@
+Libs.private: @ax_libuna_pc_libs_private@
 Cflags: -I${includedir}
 

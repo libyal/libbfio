@@ -1,13 +1,13 @@
 include_HEADERS = \
-        libbfio.h
+	libbfio.h
 
 pkginclude_HEADERS = \
-        libbfio/codepage.h \
-        libbfio/definitions.h \
-        libbfio/error.h \
-        libbfio/extern.h \
-        libbfio/features.h \
-        libbfio/types.h
+	libbfio/codepage.h \
+	libbfio/definitions.h \
+	libbfio/error.h \
+	libbfio/extern.h \
+	libbfio/features.h \
+	libbfio/types.h
 
 EXTRA_DIST = \
 	libbfio.h.in \
