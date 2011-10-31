@@ -28,6 +28,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20111031
+* updated libcstring, libuna
+* updated msvscpp files
+
 20111015
 * updated configure.ac and m4 files
 * updated spec and pc files

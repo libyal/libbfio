@@ -108,9 +108,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libuna;..\..\libbfio"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBBFIO;LIBBFIO_DLL_EXPORT"
-				RuntimeLibrary="2"
+				BasicRuntimeChecks="3"
+				SmallerTypeCheck="true"
+				RuntimeLibrary="3"
 				WarningLevel="4"
 				DebugInformationFormat="3"
 				CompileAs="1"
@@ -128,6 +131,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\libbfio.dll"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
+				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)\libbfio.lib"

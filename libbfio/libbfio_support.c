@@ -96,6 +96,8 @@ int libbfio_set_codepage(
 	 && ( codepage != LIBBFIO_CODEPAGE_KOI8_R )
 	 && ( codepage != LIBBFIO_CODEPAGE_KOI8_U )
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_874 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_932 )
+	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_936 )
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1250 )
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1251 )
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1252 )
