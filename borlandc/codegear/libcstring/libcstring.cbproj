@@ -47,7 +47,7 @@
 			<None Include="..\..\..\libcstring\libcstring_definitions.h">
 				<BuildOrder>7</BuildOrder>
 			</None>
-			<None Include="..\..\..\libcstring\libcstring_narrow.h">
+			<None Include="..\..\..\libcstring\libcstring_narrow_string.h">
 				<BuildOrder>9</BuildOrder>
 			</None>
 			<None Include="..\..\..\libcstring\libcstring_string.h">
@@ -62,10 +62,10 @@
 			<None Include="..\..\..\libcstring\libcstring_types.h">
 				<BuildOrder>2</BuildOrder>
 			</None>
-			<CppCompile Include="..\..\..\libcstring\libcstring_wide.c">
+			<CppCompile Include="..\..\..\libcstring\libcstring_wide_string.c">
 				<BuildOrder>4</BuildOrder>
 			</CppCompile>
-			<None Include="..\..\..\libcstring\libcstring_wide.h">
+			<None Include="..\..\..\libcstring\libcstring_wide_string.h">
 				<BuildOrder>3</BuildOrder>
 			</None>
 			<BuildConfiguration Include="Base">

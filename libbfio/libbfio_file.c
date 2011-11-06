@@ -57,6 +57,7 @@
 #include "libbfio_file.h"
 #include "libbfio_handle.h"
 #include "libbfio_libuna.h"
+#include "libbfio_path.h"
 #include "libbfio_types.h"
 
 /* Initializes the file IO handle
@@ -442,7 +443,9 @@ int libbfio_file_set_name(
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
+	char *full_name                            = NULL;
 	static char *function                      = "libbfio_file_set_name";
+	size_t full_name_size                      = 0;
 
 	if( handle == NULL )
 	{
@@ -457,10 +460,26 @@ int libbfio_file_set_name(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_file_io_handle_set_name(
-	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	if( libbfio_path_get_full_path(
 	     name,
 	     name_length,
+	     &full_name,
+	     &full_name_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to determine full path.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_file_io_handle_set_name(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     full_name,
+	     full_name_size - 1,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -470,9 +489,24 @@ int libbfio_file_set_name(
 		 "%s: unable to set name.",
 		 function );
 
-		return( -1 );
+		goto on_error;
+	}
+	if( ( full_name != NULL )
+	 && ( full_name != name ) )
+	{
+		memory_free(
+		 full_name );
 	}
 	return( 1 );
+
+on_error:
+	if( ( full_name != NULL )
+	 && ( full_name != name ) )
+	{
+		memory_free(
+		 full_name );
+	}
+	return( -1 );
 }
 
 /* Retrieves the name size of the file IO handle
@@ -1114,7 +1148,9 @@ int libbfio_file_set_name_wide(
      liberror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
+	wchar_t *full_name                         = NULL;
 	static char *function                      = "libbfio_file_set_name_wide";
+	size_t full_name_size                      = 0;
 
 	if( handle == NULL )
 	{
@@ -1129,10 +1165,26 @@ int libbfio_file_set_name_wide(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_file_io_handle_set_name_wide(
-	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	if( libbfio_path_get_full_path_wide(
 	     name,
 	     name_length,
+	     &full_name,
+	     &full_name_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to determine full path.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_file_io_handle_set_name_wide(
+	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
+	     full_name,
+	     full_name_size - 1,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1142,9 +1194,24 @@ int libbfio_file_set_name_wide(
 		 "%s: unable to set name.",
 		 function );
 
-		return( -1 );
+		goto on_error;
+	}
+	if( ( full_name != NULL )
+	 && ( full_name != name ) )
+	{
+		memory_free(
+		 full_name );
 	}
 	return( 1 );
+
+on_error:
+	if( ( full_name != NULL )
+	 && ( full_name != name ) )
+	{
+		memory_free(
+		 full_name );
+	}
+	return( -1 );
 }
 
 /* Retrieves the name size of the file IO handle

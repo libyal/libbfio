@@ -23,11 +23,16 @@ libbfio_la_SOURCES = \
 	libbfio_libuna.h \
 	libbfio_list_type.c libbfio_list_type.h \
 	libbfio_memory_range.c libbfio_memory_range.h \
+	libbfio_narrow_split_string.c libbfio_narrow_split_string.h \
+	libbfio_narrow_string.c libbfio_narrow_string.h \
 	libbfio_offset_list.c libbfio_offset_list.h \
+	libbfio_path.c libbfio_path.h \
 	libbfio_pool.c libbfio_pool.h \
 	libbfio_support.c libbfio_support.h \
 	libbfio_types.h \
-	libbfio_unused.h
+	libbfio_unused.h \
+	libbfio_wide_split_string.c libbfio_wide_split_string.h \
+	libbfio_wide_string.c libbfio_wide_string.h
 
 libbfio_la_LIBADD = \
 	../libcstring/libcstring.la \
