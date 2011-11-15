@@ -119,7 +119,7 @@ int libbfio_handle_initialize(
      libbfio_handle_t **handle,
      intptr_t *io_handle,
      int (*free_io_handle)(
-            intptr_t *io_handle,
+            intptr_t **io_handle,
             libbfio_error_t **error ),
      int (*clone_io_handle)(
             intptr_t **destination_io_handle,

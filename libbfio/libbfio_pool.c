@@ -55,6 +55,17 @@ int libbfio_pool_initialize(
 
 		return( -1 );
 	}
+	if( *pool != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid pool value already set.",
+		 function );
+
+		return( -1 );
+	}
 	if( number_of_handles < 0 )
 	{
 		liberror_error_set(
@@ -77,101 +88,99 @@ int libbfio_pool_initialize(
 
 		return( -1 );
 	}
-	if( *pool == NULL )
-	{
-		internal_pool = memory_allocate_structure(
-		                 libbfio_internal_pool_t );
+	internal_pool = memory_allocate_structure(
+	                 libbfio_internal_pool_t );
 
-		if( internal_pool == NULL )
+	if( internal_pool == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create pool.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_pool,
+	     0,
+	     sizeof( libbfio_internal_pool_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear pool.",
+		 function );
+
+		memory_free(
+		 internal_pool );
+
+		return( -1 );
+	}
+	if( libbfio_list_initialize(
+	     &( internal_pool->last_used_list ),
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create last used list.",
+		 function );
+
+		goto on_error;
+	}
+	if( number_of_handles > 0 )
+	{
+		handles_size = sizeof( libbfio_handle_t * ) * number_of_handles;
+
+		if( handles_size > (size_t) SSIZE_MAX )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid handles size value exceeds maximum.",
+			 function );
+
+			return( -1 );
+		}
+		internal_pool->handles = (libbfio_handle_t **) memory_allocate(
+		                                                handles_size );
+
+		if( internal_pool->handles == NULL )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create pool.",
+			 "%s: unable to create handles.",
 			 function );
 
 			goto on_error;
 		}
 		if( memory_set(
-		     internal_pool,
+		     internal_pool->handles,
 		     0,
-		     sizeof( libbfio_internal_pool_t ) ) == NULL )
+		     handles_size ) == NULL )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear pool.",
-			 function );
-
-			memory_free(
-			 internal_pool );
-
-			return( -1 );
-		}
-		if( libbfio_list_initialize(
-		     &( internal_pool->last_used_list ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create last used list.",
+			 "%s: unable to clear handles.",
 			 function );
 
 			goto on_error;
 		}
-		if( number_of_handles > 0 )
-		{
-			handles_size = sizeof( libbfio_handle_t * ) * number_of_handles;
-
-			if( handles_size > (size_t) SSIZE_MAX )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-				 "%s: invalid handles size value exceeds maximum.",
-				 function );
-
-				return( -1 );
-			}
-			internal_pool->handles = (libbfio_handle_t **) memory_allocate(
-			                                                handles_size );
-
-			if( internal_pool->handles == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create handles.",
-				 function );
-
-				goto on_error;
-			}
-			if( memory_set(
-			     internal_pool->handles,
-			     0,
-			     handles_size ) == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_SET_FAILED,
-				 "%s: unable to clear handles.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		internal_pool->number_of_handles              = number_of_handles;
-		internal_pool->maximum_number_of_open_handles = maximum_number_of_open_handles;
-
-		*pool = (libbfio_pool_t *) internal_pool;
 	}
+	internal_pool->number_of_handles              = number_of_handles;
+	internal_pool->maximum_number_of_open_handles = maximum_number_of_open_handles;
+
+	*pool = (libbfio_pool_t *) internal_pool;
+
 	return( 1 );
 
 on_error:

@@ -96,7 +96,7 @@ struct libbfio_internal_handle
 	/* The free IO handle function
 	 */
 	int (*free_io_handle)(
-	       intptr_t *io_handle,
+	       intptr_t **io_handle,
 	       liberror_error_t **error );
 
 	/* The clone (duplicate) IO handle function
@@ -169,7 +169,7 @@ int libbfio_handle_initialize(
      libbfio_handle_t **handle,
      intptr_t *io_handle,
      int (*free_io_handle)(
-            intptr_t *io_handle,
+            intptr_t **io_handle,
             liberror_error_t **error ),
      int (*clone_io_handle)(
             intptr_t **destination_io_handle,

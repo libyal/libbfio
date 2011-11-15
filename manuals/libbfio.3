@@ -1,4 +1,4 @@
-.Dd August 23, 2010
+.Dd November 15, 2011
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -31,7 +31,7 @@ Error functions
 .Pp
 Handle functions
 .Ft int
-.Fn libbfio_handle_initialize "libbfio_handle_t **handle, intptr_t *io_handle, int (*free_io_handle)( intptr_t *io_handle, libbfio_error_t **error ), int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, libbfio_error_t **error ), int (*open)( intptr_t *io_handle, int access_flags, libbfio_error_t **error ), int (*close)( intptr_t *io_handle, libbfio_error_t **error ), ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), ssize_t (*write)( intptr_t *io_handle, const uint8_t *buffer, size_t size, libbfio_error_t **error ), off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ), int (*exists)( intptr_t *io_handle, libbfio_error_t **error ), int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ), int (*get_size)( intptr_t *io_handle, size64_t *size, libbfio_error_t **error ), libbfio_error_t **error"
+.Fn libbfio_handle_initialize "libbfio_handle_t **handle, intptr_t *io_handle, int (*free_io_handle)( intptr_t **io_handle, libbfio_error_t **error ), int (*clone_io_handle)( intptr_t **destination_io_handle, intptr_t *source_io_handle, libbfio_error_t **error ), int (*open)( intptr_t *io_handle, int access_flags, libbfio_error_t **error ), int (*close)( intptr_t *io_handle, libbfio_error_t **error ), ssize_t (*read)( intptr_t *io_handle, uint8_t *buffer, size_t size, libbfio_error_t **error ), ssize_t (*write)( intptr_t *io_handle, const uint8_t *buffer, size_t size, libbfio_error_t **error ), off64_t (*seek_offset)( intptr_t *io_handle, off64_t offset, int whence, libbfio_error_t **error ), int (*exists)( intptr_t *io_handle, libbfio_error_t **error ), int (*is_open)( intptr_t *io_handle, libbfio_error_t **error ), int (*get_size)( intptr_t *io_handle, size64_t *size, libbfio_error_t **error ), libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_free "libbfio_handle_t **handle, libbfio_error_t **error"
 .Ft int
@@ -196,7 +196,7 @@ http://libbfio.sourceforge.net/
 .Sh AUTHOR
 These man pages were written by Joachim Metz.
 .Sh COPYRIGHT
-Copyright 2009-2010 Joachim Metz <jbmetz@users.sourceforge.net>.
+Copyright 2009-2011 Joachim Metz <jbmetz@users.sourceforge.net>.
 This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
 the libbfio.h include file

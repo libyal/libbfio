@@ -37,7 +37,7 @@ int libbfio_handle_initialize(
       libbfio_handle_t **handle,
       intptr_t *io_handle,
       int (*free_io_handle)(
-             intptr_t *io_handle,
+             intptr_t **io_handle,
              liberror_error_t **error ),
       int (*clone_io_handle)(
              intptr_t **destination_io_handle,
@@ -92,64 +92,73 @@ int libbfio_handle_initialize(
 
 		return( -1 );
 	}
-	if( *handle == NULL )
+	if( *handle != NULL )
 	{
-		internal_handle = memory_allocate_structure(
-		                   libbfio_internal_handle_t );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid handle value already set.",
+		 function );
 
-		if( internal_handle == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create handle.",
-			 function );
-
-			goto on_error;
-		}
-		if( memory_set(
-		     internal_handle,
-		     0,
-		     sizeof( libbfio_internal_handle_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear handle.",
-			 function );
-
-			goto on_error;
-		}
-		if( libbfio_offset_list_initialize(
-		     &( internal_handle->offsets_read ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create read offsets list.",
-			 function );
-
-			goto on_error;
-		}
-		internal_handle->io_handle       = io_handle;
-		internal_handle->flags           = flags;
-		internal_handle->free_io_handle  = free_io_handle;
-		internal_handle->clone_io_handle = clone_io_handle;
-		internal_handle->open            = open;
-		internal_handle->close           = close;
-		internal_handle->read            = read;
-		internal_handle->write           = write;
-		internal_handle->seek_offset     = seek_offset;
-		internal_handle->exists          = exists;
-		internal_handle->is_open         = is_open;
-		internal_handle->get_size        = get_size;
-
-		*handle = (libbfio_handle_t *) internal_handle;
+		return( -1 );
 	}
+	internal_handle = memory_allocate_structure(
+	                   libbfio_internal_handle_t );
+
+	if( internal_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_handle,
+	     0,
+	     sizeof( libbfio_internal_handle_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_offset_list_initialize(
+	     &( internal_handle->offsets_read ),
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create read offsets list.",
+		 function );
+
+		goto on_error;
+	}
+	internal_handle->io_handle       = io_handle;
+	internal_handle->flags           = flags;
+	internal_handle->free_io_handle  = free_io_handle;
+	internal_handle->clone_io_handle = clone_io_handle;
+	internal_handle->open            = open;
+	internal_handle->close           = close;
+	internal_handle->read            = read;
+	internal_handle->write           = write;
+	internal_handle->seek_offset     = seek_offset;
+	internal_handle->exists          = exists;
+	internal_handle->is_open         = is_open;
+	internal_handle->get_size        = get_size;
+
+	*handle = (libbfio_handle_t *) internal_handle;
+
 	return( 1 );
 
 on_error:
@@ -230,7 +239,7 @@ int libbfio_handle_free(
 					 internal_handle->io_handle );
 				}
 				else if( internal_handle->free_io_handle(
-					  internal_handle->io_handle,
+					  &( internal_handle->io_handle ),
 					  error ) != 1 )
 				{
 					liberror_error_set(
@@ -417,7 +426,7 @@ on_error:
 		else
 		{
 			internal_source_handle->free_io_handle(
-			 destination_io_handle,
+			 &destination_io_handle,
 			 NULL );
 		}
 	}

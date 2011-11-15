@@ -72,7 +72,7 @@ int libbfio_file_initialize(
      liberror_error_t **error );
 
 int libbfio_file_io_handle_free(
-     libbfio_file_io_handle_t *file_io_handle,
+     libbfio_file_io_handle_t **file_io_handle,
      liberror_error_t **error );
 
 int libbfio_file_io_handle_clone(

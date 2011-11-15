@@ -50,36 +50,44 @@ int libbfio_memory_range_io_handle_initialize(
 
 		return( -1 );
 	}
+	if( *memory_range_io_handle != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid memory range IO handle value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*memory_range_io_handle = memory_allocate_structure(
+	                           libbfio_memory_range_io_handle_t );
+
 	if( *memory_range_io_handle == NULL )
 	{
-		*memory_range_io_handle = memory_allocate_structure(
-		                           libbfio_memory_range_io_handle_t );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create memory range IO handle.",
+		 function );
 
-		if( *memory_range_io_handle == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create memory range IO handle.",
-			 function );
+		goto on_error;
+	}
+	if( memory_set(
+	     *memory_range_io_handle,
+	     0,
+	     sizeof( libbfio_memory_range_io_handle_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear memory range IO handle.",
+		 function );
 
-			goto on_error;
-		}
-		if( memory_set(
-		     *memory_range_io_handle,
-		     0,
-		     sizeof( libbfio_memory_range_io_handle_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear memory range IO handle.",
-			 function );
-
-			goto on_error;
-		}
+		goto on_error;
 	}
 	return( 1 );
 
@@ -115,46 +123,54 @@ int libbfio_memory_range_initialize(
 
 		return( -1 );
 	}
-	if( *handle == NULL )
+	if( *handle != NULL )
 	{
-		if( libbfio_memory_range_io_handle_initialize(
-		     &memory_range_io_handle,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create memory range IO handle.",
-			 function );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid handle value already set.",
+		 function );
 
-			goto on_error;
-		}
-		if( libbfio_handle_initialize(
-		     handle,
-		     (intptr_t *) memory_range_io_handle,
-		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_io_handle_free,
-		     (int (*)(intptr_t **, intptr_t *, liberror_error_t **)) libbfio_memory_range_io_handle_clone,
-		     (int (*)(intptr_t *, int, liberror_error_t **)) libbfio_memory_range_open,
-		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_close,
-		     (ssize_t (*)(intptr_t *, uint8_t *, size_t, liberror_error_t **)) libbfio_memory_range_read,
-		     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, liberror_error_t **)) libbfio_memory_range_write,
-		     (off64_t (*)(intptr_t *, off64_t, int, liberror_error_t **)) libbfio_memory_range_seek_offset,
-		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_exists,
-		     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_is_open,
-		     (int (*)(intptr_t *, size64_t *, liberror_error_t **)) libbfio_memory_range_get_size,
-		     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create handle.",
-			 function );
+		return( -1 );
+	}
+	if( libbfio_memory_range_io_handle_initialize(
+	     &memory_range_io_handle,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create memory range IO handle.",
+		 function );
 
-			goto on_error;
-		}
+		goto on_error;
+	}
+	if( libbfio_handle_initialize(
+	     handle,
+	     (intptr_t *) memory_range_io_handle,
+	     (int (*)(intptr_t **, liberror_error_t **)) libbfio_memory_range_io_handle_free,
+	     (int (*)(intptr_t **, intptr_t *, liberror_error_t **)) libbfio_memory_range_io_handle_clone,
+	     (int (*)(intptr_t *, int, liberror_error_t **)) libbfio_memory_range_open,
+	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_close,
+	     (ssize_t (*)(intptr_t *, uint8_t *, size_t, liberror_error_t **)) libbfio_memory_range_read,
+	     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, liberror_error_t **)) libbfio_memory_range_write,
+	     (off64_t (*)(intptr_t *, off64_t, int, liberror_error_t **)) libbfio_memory_range_seek_offset,
+	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_exists,
+	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_memory_range_is_open,
+	     (int (*)(intptr_t *, size64_t *, liberror_error_t **)) libbfio_memory_range_get_size,
+	     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create handle.",
+		 function );
+
+		goto on_error;
 	}
 	return( 1 );
 
@@ -162,7 +178,7 @@ on_error:
 	if( memory_range_io_handle != NULL )
 	{
 		libbfio_memory_range_io_handle_free(
-		 memory_range_io_handle,
+		 &memory_range_io_handle,
 		 NULL );
 	}
 	return( -1 );
@@ -172,7 +188,7 @@ on_error:
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_memory_range_io_handle_free(
-     libbfio_memory_range_io_handle_t *memory_range_io_handle,
+     libbfio_memory_range_io_handle_t **memory_range_io_handle,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_memory_range_io_handle_free";
@@ -188,9 +204,13 @@ int libbfio_memory_range_io_handle_free(
 
 		return( -1 );
 	}
-	memory_free(
-	 memory_range_io_handle );
+	if( *memory_range_io_handle != NULL )
+	{
+		memory_free(
+		 *memory_range_io_handle );
 
+		*memory_range_io_handle = NULL;
+	}
 	return( 1 );
 }
 

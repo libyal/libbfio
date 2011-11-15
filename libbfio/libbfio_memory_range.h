@@ -69,7 +69,7 @@ int libbfio_memory_range_initialize(
      liberror_error_t **error );
 
 int libbfio_memory_range_io_handle_free(
-     libbfio_memory_range_io_handle_t *memory_range_io_handle,
+     libbfio_memory_range_io_handle_t **memory_range_io_handle,
      liberror_error_t **error );
 
 int libbfio_memory_range_io_handle_clone(

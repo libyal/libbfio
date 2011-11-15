@@ -51,6 +51,17 @@ int libbfio_narrow_split_string_initialize(
 
 		return( 1 );
 	}
+	if( *split_string != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid split string value already set.",
+		 function );
+
+		return( -1 );
+	}
 	if( number_of_segments < 0 )
 	{
 		liberror_error_set(
@@ -62,136 +73,134 @@ int libbfio_narrow_split_string_initialize(
 
 		return( -1 );
 	}
+	*split_string = memory_allocate_structure(
+			 libbfio_narrow_split_string_t );
+
 	if( *split_string == NULL )
 	{
-		*split_string = memory_allocate_structure(
-		                 libbfio_narrow_split_string_t );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create split string.",
+		 function );
 
-		if( *split_string == NULL )
+		goto on_error;
+	}
+	if( memory_set(
+	     *split_string,
+	     0,
+	     sizeof( libbfio_narrow_split_string_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear split string.",
+		 function );
+
+		memory_free(
+		 *split_string );
+
+		*split_string = NULL;
+
+		return( -1 );
+	}
+	if( ( string != NULL )
+	 && ( string_size > 0 ) )
+	{
+		( *split_string )->string = libcstring_narrow_string_allocate(
+		                             string_size );
+
+		if( ( *split_string )->string == NULL )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create split string.",
+			 "%s: unable to create string.",
 			 function );
 
 			goto on_error;
 		}
-		if( memory_set(
-		     *split_string,
-		     0,
-		     sizeof( libbfio_narrow_split_string_t ) ) == NULL )
+		if( memory_copy(
+		     ( *split_string )->string,
+		     string,
+		     sizeof( char ) * ( string_size - 1 ) ) == NULL )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear split string.",
+			 "%s: unable to copy string.",
 			 function );
 
-			memory_free(
-			 *split_string );
-
-			*split_string = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
-		if( ( string != NULL )
-		 && ( string_size > 0 ) )
-		{
-			( *split_string )->string = libcstring_narrow_string_allocate(
-			                             string_size );
-
-			if( ( *split_string )->string == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create string.",
-				 function );
-
-				goto on_error;
-			}
-			if( memory_copy(
-			     ( *split_string )->string,
-			     string,
-			     sizeof( char ) * ( string_size - 1 ) ) == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_SET_FAILED,
-				 "%s: unable to copy string.",
-				 function );
-
-				goto on_error;
-			}
-			( *split_string )->string[ string_size - 1 ] = 0;
-			( *split_string )->string_size               = string_size;
-		}
-		if( number_of_segments > 0 )
-		{
-			( *split_string )->segments = (char **) memory_allocate(
-			                                         sizeof( char * ) * number_of_segments );
-
-			if( ( *split_string )->segments == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create segments.",
-				 function );
-
-				goto on_error;
-			}
-			if( memory_set(
-			     ( *split_string )->segments,
-			     0,
-			     sizeof( char * ) * number_of_segments ) == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_SET_FAILED,
-				 "%s: unable to clear segments.",
-				 function );
-
-				goto on_error;
-			}
-			( *split_string )->segment_sizes = (size_t *) memory_allocate(
-			                                               sizeof( size_t ) * number_of_segments );
-
-			if( ( *split_string )->segment_sizes == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create segment sizes.",
-				 function );
-
-				goto on_error;
-			}
-			if( memory_set(
-			     ( *split_string )->segment_sizes,
-			     0,
-			     sizeof( size_t ) * number_of_segments ) == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_SET_FAILED,
-				 "%s: unable to clear segment sizes.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		( *split_string )->number_of_segments = number_of_segments;
+		( *split_string )->string[ string_size - 1 ] = 0;
+		( *split_string )->string_size               = string_size;
 	}
+	if( number_of_segments > 0 )
+	{
+		( *split_string )->segments = (char **) memory_allocate(
+		                                         sizeof( char * ) * number_of_segments );
+
+		if( ( *split_string )->segments == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create segments.",
+			 function );
+
+			goto on_error;
+		}
+		if( memory_set(
+		     ( *split_string )->segments,
+		     0,
+		     sizeof( char * ) * number_of_segments ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear segments.",
+			 function );
+
+			goto on_error;
+		}
+		( *split_string )->segment_sizes = (size_t *) memory_allocate(
+		                                               sizeof( size_t ) * number_of_segments );
+
+		if( ( *split_string )->segment_sizes == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create segment sizes.",
+			 function );
+
+			goto on_error;
+		}
+		if( memory_set(
+		     ( *split_string )->segment_sizes,
+		     0,
+		     sizeof( size_t ) * number_of_segments ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear segment sizes.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	( *split_string )->number_of_segments = number_of_segments;
+
 	return( 1 );
 
 on_error:

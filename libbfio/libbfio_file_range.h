@@ -63,7 +63,7 @@ int libbfio_file_range_initialize(
      liberror_error_t **error );
 
 int libbfio_file_range_io_handle_free(
-     libbfio_file_range_io_handle_t *file_range_io_handle,
+     libbfio_file_range_io_handle_t **file_range_io_handle,
      liberror_error_t **error );
 
 int libbfio_file_range_io_handle_clone(

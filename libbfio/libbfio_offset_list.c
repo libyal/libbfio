@@ -48,36 +48,44 @@ int libbfio_offset_list_value_initialize(
 
 		return( -1 );
 	}
+	if( *offset_list_value != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid offset list value value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*offset_list_value = memory_allocate_structure(
+	                      libbfio_offset_list_value_t );
+
 	if( *offset_list_value == NULL )
 	{
-		*offset_list_value = memory_allocate_structure(
-		                      libbfio_offset_list_value_t );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create offset list value.",
+		 function );
 
-		if( *offset_list_value == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create offset list value.",
-			 function );
+		goto on_error;
+	}
+	if( memory_set(
+	     *offset_list_value,
+	     0,
+	     sizeof( libbfio_offset_list_value_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear offset list value.",
+		 function );
 
-			goto on_error;
-		}
-		if( memory_set(
-		     *offset_list_value,
-		     0,
-		     sizeof( libbfio_offset_list_value_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear offset list value.",
-			 function );
-
-			goto on_error;
-		}
+		goto on_error;
 	}
 	return( 1 );
 
@@ -95,7 +103,7 @@ on_error:
 /* Frees an offset list value
  */
 int libbfio_offset_list_value_free(
-     intptr_t *offset_list_value,
+     libbfio_offset_list_value_t **offset_list_value,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_value_free";
@@ -111,9 +119,13 @@ int libbfio_offset_list_value_free(
 
 		return( -1 );
 	}
-	memory_free(
-	 offset_list_value );
+	if( *offset_list_value != NULL )
+	{
+		memory_free(
+		 *offset_list_value );
 
+		*offset_list_value = NULL;
+	}
 	return( 1 );
 }
 
@@ -121,8 +133,8 @@ int libbfio_offset_list_value_free(
  * Returns 1 if successful or -1 on error
  */
 int libbfio_offset_list_value_clone(
-     intptr_t **destination_offset_list_value,
-     intptr_t *source_offset_list_value,
+     libbfio_offset_list_value_t **destination_offset_list_value,
+     libbfio_offset_list_value_t *source_offset_list_value,
      liberror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_value_clone";
@@ -155,7 +167,7 @@ int libbfio_offset_list_value_clone(
 
 		return( 1 );
 	}
-	*destination_offset_list_value = memory_allocate_structure_as_value(
+	*destination_offset_list_value = memory_allocate_structure(
 	                                  libbfio_offset_list_value_t );
 
 	if( *destination_offset_list_value == NULL )
@@ -216,36 +228,44 @@ int libbfio_offset_list_initialize(
 
 		return( -1 );
 	}
+	if( *offset_list != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid offset list value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*offset_list = memory_allocate_structure(
+	                libbfio_offset_list_t );
+
 	if( *offset_list == NULL )
 	{
-		*offset_list = memory_allocate_structure(
-		                libbfio_offset_list_t );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create offset list.",
+		 function );
 
-		if( *offset_list == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create offset list.",
-			 function );
+		goto on_error;
+	}
+	if( memory_set(
+	     *offset_list,
+	     0,
+	     sizeof( libbfio_offset_list_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear offset list.",
+		 function );
 
-			goto on_error;
-		}
-		if( memory_set(
-		     *offset_list,
-		     0,
-		     sizeof( libbfio_offset_list_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear offset list.",
-			 function );
-
-			goto on_error;
-		}
+		goto on_error;
 	}
 	return( 1 );
 
@@ -366,7 +386,7 @@ int libbfio_offset_list_empty(
 
 			if( libbfio_list_element_free(
 			     &list_element,
-			     &libbfio_offset_list_value_free,
+			     (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 			     error ) != 1 )
 			{
 				liberror_error_set(
@@ -396,7 +416,7 @@ int libbfio_offset_list_clone(
 {
 	libbfio_list_element_t *destination_list_element = NULL;
 	libbfio_list_element_t *source_list_element      = NULL;
-	intptr_t *destination_value                      = NULL;
+	libbfio_offset_list_value_t *destination_value   = NULL;
 	static char *function                            = "libbfio_offset_list_clone";
 	int element_index                                = 0;
 
@@ -486,7 +506,7 @@ int libbfio_offset_list_clone(
 		}
 		if( libbfio_offset_list_value_clone(
 		     &destination_value,
-		     source_list_element->value,
+		     (libbfio_offset_list_value_t *) source_list_element->value,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -501,7 +521,7 @@ int libbfio_offset_list_clone(
 		}
 		if( libbfio_list_element_set_value(
 		     destination_list_element,
-		     destination_value,
+		     (intptr_t *) destination_value,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -538,14 +558,14 @@ on_error:
 	if( destination_value != NULL )
 	{
 		libbfio_offset_list_value_free(
-		 destination_value,
+		 &destination_value,
 		 NULL );
 	}
 	if( destination_list_element != NULL )
 	{
 		libbfio_list_element_free(
 		 &destination_list_element,
-		 &libbfio_offset_list_value_free,
+		 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 		 NULL );
 	}
 	if( *destination_offset_list != NULL )
@@ -980,7 +1000,7 @@ int libbfio_offset_list_append_offset(
 
 					if( libbfio_list_element_free(
 					     &remove_element,
-					     &libbfio_offset_list_value_free,
+					     (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 					     error ) != 1 )
 					{
 						liberror_error_set(
@@ -1058,7 +1078,7 @@ int libbfio_offset_list_append_offset(
 
 					if( libbfio_list_element_free(
 					     &remove_element,
-					     &libbfio_offset_list_value_free,
+					     (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 					     error ) != 1 )
 					{
 						liberror_error_set(
@@ -1120,7 +1140,7 @@ int libbfio_offset_list_append_offset(
 			 function );
 
 			libbfio_offset_list_value_free(
-			 (intptr_t *) offset_list_value,
+			 &offset_list_value,
 			 NULL );
 
 			return( -1 );
@@ -1135,9 +1155,10 @@ int libbfio_offset_list_append_offset(
 			 function );
 
 			libbfio_offset_list_value_free(
-			 (intptr_t *) offset_list_value,
+			 &offset_list_value,
 			 NULL );
 
+			return( -1 );
 		}
 		list_element->value = (intptr_t *) offset_list_value;
 
@@ -1154,7 +1175,7 @@ int libbfio_offset_list_append_offset(
 
 				libbfio_list_element_free(
 				 &list_element,
-				 &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
@@ -1170,7 +1191,7 @@ int libbfio_offset_list_append_offset(
 
 				libbfio_list_element_free(
 				 &list_element,
-				 &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
@@ -1191,7 +1212,7 @@ int libbfio_offset_list_append_offset(
 
 				libbfio_list_element_free(
 				 &list_element,
-				 &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
@@ -1207,7 +1228,7 @@ int libbfio_offset_list_append_offset(
 
 				libbfio_list_element_free(
 				 &list_element,
-				 &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
