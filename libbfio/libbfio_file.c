@@ -2595,9 +2595,8 @@ ssize_t libbfio_file_read(
 					 function,
 					 file_io_handle->name );
 				}
-				break;
+				return( -1 );
 		}
-		return( -1 );
 	}
 	if( read_count < 0 )
 	{

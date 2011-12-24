@@ -460,17 +460,6 @@ int libbfio_wide_split_string_set_segment_by_index(
 
 		return( -1 );
 	}
-	if( string_segment == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid string segment.",
-		 function );
-
-		return( 1 );
-	}
 	if( string_segment_size > (size_t) SSIZE_MAX )
 	{
 		liberror_error_set(

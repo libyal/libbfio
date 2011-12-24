@@ -1,5 +1,7 @@
 TODO
 * complete full path functions
+  - implement libbfio_path_get_full_path_wide
+  - POSIX: add support for absolute paths with x/../y
 * WINAPI add LIBERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE support
 
 Pool
@@ -9,6 +11,10 @@ File
 * add errno error strings to liberror notifications
 * convert filename for g_open to UTF-8 ? or use codepage setting ?
 * check if codepage before gopen is UTF8 ?
+* WINAPI ReadFile
+  When the file is UNBUFFERED it appears that nNumberOfBytesToRead must be a
+  multiple of sector size. Any other value will result in error 0x57
+  (ERROR_INVALID_PARAMETER).
 
 Memory range
 * add callback function to resize memory range if needed?
@@ -28,6 +34,12 @@ Beta release
 
 Deployment:
 * check if libbfio.3 is up to date
+
+20111224
+* updated libcstring, libuna
+* worked on full path functions
+* code clean up
+* removed deprecated functions
 
 20111115
 * code clean up

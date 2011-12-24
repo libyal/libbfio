@@ -1545,7 +1545,7 @@ int libbfio_offset_list_get_offset_by_value(
 		offset_list_value = (libbfio_offset_list_value_t *) list_element->value;
 
 		if( ( offset_value >= offset_list_value->offset )
-		 && ( offset_value <= (off64_t) ( offset_list_value->offset + offset_list_value->size ) ) )
+		 && ( offset_value < (off64_t) ( offset_list_value->offset + offset_list_value->size ) ) )
 		{
 			*offset = offset_list_value->offset;
 			*size   = offset_list_value->size;

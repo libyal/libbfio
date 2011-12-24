@@ -31,6 +31,13 @@
 extern "C" {
 #endif
 
+#if defined( WINAPI )
+#define LIBBFIO_PATH_SEPARATOR		'\\'
+
+#else
+#define LIBBFIO_PATH_SEPARATOR		'/'
+#endif
+
 int libbfio_path_get_current_working_directory(
      char **current_working_directory,
      size_t *current_working_directory_size,
@@ -45,7 +52,12 @@ int libbfio_path_get_full_path(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-int libbfio_path_get_full_path(
+int libbfio_path_get_current_working_directory_wide(
+     wchar_t **current_working_directory,
+     size_t *current_working_directory_size,
+     liberror_error_t **error );
+
+int libbfio_path_get_full_path_wide(
      const wchar_t *path,
      size_t path_length,
      wchar_t **full_path,
