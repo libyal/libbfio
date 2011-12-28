@@ -32,14 +32,6 @@
 #include "libbfio_offset_list.h"
 #include "libbfio_types.h"
 
-#if defined( _MSC_VER ) || defined( __BORLANDC__ )
-
-/* This inclusion is needed otherwise some linkers
- * mess up exporting the legacy functions
- */
-#include "libbfio_legacy.h"
-#endif
-
 #if defined( __cplusplus )
 extern "C" {
 #endif

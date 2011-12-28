@@ -27,15 +27,10 @@
 
 #include <liberror.h>
 
+#include "libbfio_extern.h"
+
 #if defined( __cplusplus )
 extern "C" {
-#endif
-
-#if defined( WINAPI )
-#define LIBBFIO_PATH_SEPARATOR		'\\'
-
-#else
-#define LIBBFIO_PATH_SEPARATOR		'/'
 #endif
 
 int libbfio_path_get_current_working_directory(
@@ -43,6 +38,7 @@ int libbfio_path_get_current_working_directory(
      size_t *current_working_directory_size,
      liberror_error_t **error );
 
+LIBBFIO_EXTERN \
 int libbfio_path_get_full_path(
      const char *path,
      size_t path_length,
@@ -57,6 +53,7 @@ int libbfio_path_get_current_working_directory_wide(
      size_t *current_working_directory_size,
      liberror_error_t **error );
 
+LIBBFIO_EXTERN \
 int libbfio_path_get_full_path_wide(
      const wchar_t *path,
      size_t path_length,

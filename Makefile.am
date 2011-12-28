@@ -9,6 +9,7 @@ SUBDIRS = \
 	libbfio \
 	po \
 	manuals \
+	tests \
 	examples \
 	macosx \
 	borlandc \
