@@ -35,6 +35,9 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20120102
+* 2012 update
+
 20111226
 * worked on absolute path support with /../
 
