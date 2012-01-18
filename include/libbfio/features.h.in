@@ -25,8 +25,11 @@
 /* The libbfio type support features
  */
 #if defined( WINAPI ) || @HAVE_WIDE_CHARACTER_TYPE@
-#define LIBBFIO_WIDE_CHARACTER_TYPE      1
+#define LIBBFIO_HAVE_WIDE_CHARACTER_TYPE	1
 
+/* Old definition kept for compatibility (for now)
+ */
+#define LIBBFIO_WIDE_CHARACTER_TYPE		1
 #endif
 
 #if !defined( LIBBFIO_DEPRECATED )

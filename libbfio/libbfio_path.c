@@ -34,6 +34,7 @@
 #endif
 
 #include "libbfio_error_string.h"
+#include "libbfio_libuna.h"
 #include "libbfio_narrow_split_string.h"
 #include "libbfio_narrow_string.h"
 #include "libbfio_path.h"
@@ -2124,6 +2125,7 @@ int libbfio_path_get_current_working_directory_wide(
 #if !defined( WINAPI )
 	char *narrow_current_working_directory       = 0;
 	size_t narrow_current_working_directory_size = 0;
+	int result                                   = 0;
 #endif
 
 	if( current_working_directory == NULL )
@@ -2262,14 +2264,14 @@ int libbfio_path_get_current_working_directory_wide(
 	else
 	{
 #if SIZEOF_WCHAR_T == 4
-		result = libuna_utf32_size_from_byte_stream(
+		result = libuna_utf32_string_size_from_byte_stream(
 		          (uint8_t *) narrow_current_working_directory,
 		          narrow_current_working_directory_size,
 		          libcstring_narrow_system_string_codepage,
 		          current_working_directory_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
-		result = libuna_utf16_size_from_byte_stream(
+		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) narrow_current_working_directory,
 		          narrow_current_working_directory_size,
 		          libcstring_narrow_system_string_codepage,
@@ -2392,7 +2394,7 @@ int libbfio_path_get_current_working_directory_wide(
 	else
 	{
 #if SIZEOF_WCHAR_T == 4
-		result = libuna_utf32_copy_from_byte_stream(
+		result = libuna_utf32_string_copy_from_byte_stream(
 		          (libuna_utf32_character_t *) *current_working_directory,
 		          *current_working_directory_size,
 		          (uint8_t *) narrow_current_working_directory,
@@ -2400,7 +2402,7 @@ int libbfio_path_get_current_working_directory_wide(
 		          libcstring_narrow_system_string_codepage,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
-		result = libuna_utf16_copy_from_byte_stream(
+		result = libuna_utf16_string_copy_from_byte_stream(
 		          (libuna_utf16_character_t *) *current_working_directory,
 		          *current_working_directory_size,
 		          (uint8_t *) narrow_current_working_directory,
@@ -3613,20 +3615,20 @@ on_error:
  *
  * Returns 1 if succesful or -1 on error
  */
-int libbfio_path_get_full_path(
-     const char *path,
+int libbfio_path_get_full_path_wide(
+     const wchar_t *path,
      size_t path_length,
-     char **full_path,
+     wchar_t **full_path,
      size_t *full_path_size,
      liberror_error_t **error )
 {
 	libbfio_wide_split_string_t *current_directory_split_string = NULL;
 	libbfio_wide_split_string_t *path_split_string              = NULL;
-	char *current_directory                                     = NULL;
-	char *current_directory_string_segment                      = NULL;
-	char *last_used_path_string_segment                         = NULL;
-	char *path_string_segment                                   = NULL;
-	static char *function                                       = "libbfio_path_get_full_path";
+	wchar_t *current_directory                                  = NULL;
+	wchar_t *current_directory_string_segment                   = NULL;
+	wchar_t *last_used_path_string_segment                      = NULL;
+	wchar_t *path_string_segment                                = NULL;
+	static char *function                                       = "libbfio_path_get_full_path_wide";
 	size_t current_directory_size                               = 0;
 	size_t current_directory_string_segment_size                = 0;
 	size_t full_path_index                                      = 0;
