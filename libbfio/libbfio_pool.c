@@ -692,7 +692,7 @@ int libbfio_pool_append_handle_to_last_used_list(
 
 			/* Make sure the truncate flag is removed from the handle
 			 */
-			( (libbfio_internal_handle_t *) last_used_list_element->value )->access_flags &= ~LIBBFIO_ACCESS_FLAG_TRUNCATE;
+			( (libbfio_internal_handle_t *) last_used_list_element->value )->access_flags &= ~( LIBBFIO_ACCESS_FLAG_TRUNCATE );
 		}
 		/* The last used list element is reused to contain the new last used entry
 		 */
@@ -2385,7 +2385,7 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 
 		/* Make sure the truncate flag is removed from the handle
 		 */
-		( (libbfio_internal_handle_t *) last_used_list_element->value )->access_flags &= ~LIBBFIO_ACCESS_FLAG_TRUNCATE;
+		( (libbfio_internal_handle_t *) last_used_list_element->value )->access_flags &= ~( LIBBFIO_ACCESS_FLAG_TRUNCATE );
 
 		if( libbfio_list_element_free(
 		     &last_used_list_element,
