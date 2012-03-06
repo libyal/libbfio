@@ -319,6 +319,18 @@ int libbfio_file_io_handle_clone(
 	}
 	if( source_file_io_handle->name_size > 0 )
 	{
+		if( ( source_file_io_handle->name_size > (size_t) SSIZE_MAX )
+		 || ( ( sizeof( libcstring_system_character_t ) * source_file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid source file IO handle - name size value exceeds maximum.",
+			 function );
+
+			goto on_error;
+		}
 		( *destination_file_io_handle )->name = libcstring_system_string_allocate(
 		                                         source_file_io_handle->name_size );
 
@@ -966,6 +978,18 @@ int libbfio_file_io_handle_set_name(
 	file_io_handle->name_size = name_length + 1;
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
+	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
+	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid file IO handle - name size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 	file_io_handle->name = libcstring_system_string_allocate(
 	                        file_io_handle->name_size );
 
@@ -1671,6 +1695,18 @@ int libbfio_file_io_handle_set_name_wide(
 	}
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
+	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
+	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid file IO handle - name size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 	file_io_handle->name = libcstring_system_string_allocate(
 	                        file_io_handle->name_size );
 
