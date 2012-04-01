@@ -1,8 +1,8 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	-I$(top_srcdir)/libcstring \
-	-I$(top_srcdir)/liberror \
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@
 
@@ -13,12 +13,13 @@ libbfio_la_SOURCES = \
 	libbfio_codepage.h \
 	libbfio_definitions.h \
 	libbfio_error.c libbfio_error.h \
-	libbfio_error_string.c libbfio_error_string.h \
 	libbfio_extern.h \
 	libbfio_file.c libbfio_file.h \
 	libbfio_file_pool.c libbfio_file_pool.h \
 	libbfio_file_range.c libbfio_file_range.h \
 	libbfio_handle.c libbfio_handle.h \
+	libbfio_libcerror.h \
+	libbfio_libcstring.h \
 	libbfio_libuna.h \
 	libbfio_list_type.c libbfio_list_type.h \
 	libbfio_memory_range.c libbfio_memory_range.h \
@@ -34,8 +35,8 @@ libbfio_la_SOURCES = \
 	libbfio_wide_string.c libbfio_wide_string.h
 
 libbfio_la_LIBADD = \
-	../libcstring/libcstring.la \
-	../liberror/liberror.la \
+	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
 	@LIBUNA_LIBADD@
 
 libbfio_la_LDFLAGS = -no-undefined -version-info 1:0:0

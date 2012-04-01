@@ -23,9 +23,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #if defined( HAVE_ERRNO_H ) || defined( WINAPI )
 #include <errno.h>
 #endif
@@ -53,9 +50,10 @@
 #endif
 
 #include "libbfio_definitions.h"
-#include "libbfio_error_string.h"
 #include "libbfio_file.h"
 #include "libbfio_handle.h"
+#include "libbfio_libcerror.h"
+#include "libbfio_libcstring.h"
 #include "libbfio_libuna.h"
 #include "libbfio_path.h"
 #include "libbfio_types.h"
@@ -65,16 +63,16 @@
  */
 int libbfio_file_io_handle_initialize(
      libbfio_file_io_handle_t **file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_initialize";
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -82,10 +80,10 @@ int libbfio_file_io_handle_initialize(
 	}
 	if( *file_io_handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid file IO handle value already set.",
 		 function );
 
@@ -96,10 +94,10 @@ int libbfio_file_io_handle_initialize(
 
 	if( *file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -110,10 +108,10 @@ int libbfio_file_io_handle_initialize(
 	     0,
 	     sizeof( libbfio_file_io_handle_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear file IO handle.",
 		 function );
 
@@ -143,17 +141,17 @@ on_error:
  */
 int libbfio_file_initialize(
      libbfio_handle_t **handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	static char *function                    = "libbfio_file_initialize";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -161,10 +159,10 @@ int libbfio_file_initialize(
 	}
 	if( *handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid handle value already set.",
 		 function );
 
@@ -174,10 +172,10 @@ int libbfio_file_initialize(
 	     &file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -186,23 +184,23 @@ int libbfio_file_initialize(
 	if( libbfio_handle_initialize(
 	     handle,
 	     (intptr_t *) file_io_handle,
-	     (int (*)(intptr_t **, liberror_error_t **)) libbfio_file_io_handle_free,
-	     (int (*)(intptr_t **, intptr_t *, liberror_error_t **)) libbfio_file_io_handle_clone,
-	     (int (*)(intptr_t *, int, liberror_error_t **)) libbfio_file_open,
-	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_close,
-	     (ssize_t (*)(intptr_t *, uint8_t *, size_t, liberror_error_t **)) libbfio_file_read,
-	     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, liberror_error_t **)) libbfio_file_write,
-	     (off64_t (*)(intptr_t *, off64_t, int, liberror_error_t **)) libbfio_file_seek_offset,
-	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_exists,
-	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_is_open,
-	     (int (*)(intptr_t *, size64_t *, liberror_error_t **)) libbfio_file_get_size,
+	     (int (*)(intptr_t **, libcerror_error_t **)) libbfio_file_io_handle_free,
+	     (int (*)(intptr_t **, intptr_t *, libcerror_error_t **)) libbfio_file_io_handle_clone,
+	     (int (*)(intptr_t *, int, libcerror_error_t **)) libbfio_file_open,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_close,
+	     (ssize_t (*)(intptr_t *, uint8_t *, size_t, libcerror_error_t **)) libbfio_file_read,
+	     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, libcerror_error_t **)) libbfio_file_write,
+	     (off64_t (*)(intptr_t *, off64_t, int, libcerror_error_t **)) libbfio_file_seek_offset,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_exists,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_is_open,
+	     (int (*)(intptr_t *, size64_t *, libcerror_error_t **)) libbfio_file_get_size,
 	     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create handle.",
 		 function );
 
@@ -225,16 +223,16 @@ on_error:
  */
 int libbfio_file_io_handle_free(
      libbfio_file_io_handle_t **file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_free";
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -261,16 +259,16 @@ int libbfio_file_io_handle_free(
 int libbfio_file_io_handle_clone(
      libbfio_file_io_handle_t **destination_file_io_handle,
      libbfio_file_io_handle_t *source_file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_clone";
 
 	if( destination_file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid destination file IO handle.",
 		 function );
 
@@ -278,10 +276,10 @@ int libbfio_file_io_handle_clone(
 	}
 	if( *destination_file_io_handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: destination file IO handle already set.",
 		 function );
 
@@ -297,10 +295,10 @@ int libbfio_file_io_handle_clone(
 	     destination_file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -308,10 +306,10 @@ int libbfio_file_io_handle_clone(
 	}
 	if( *destination_file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing destination file IO handle.",
 		 function );
 
@@ -322,10 +320,10 @@ int libbfio_file_io_handle_clone(
 		if( ( source_file_io_handle->name_size > (size_t) SSIZE_MAX )
 		 || ( ( sizeof( libcstring_system_character_t ) * source_file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
 			 "%s: invalid source file IO handle - name size value exceeds maximum.",
 			 function );
 
@@ -336,10 +334,10 @@ int libbfio_file_io_handle_clone(
 
 		if( ( *destination_file_io_handle )->name == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create name.",
 			 function );
 
@@ -352,10 +350,10 @@ int libbfio_file_io_handle_clone(
 			     source_file_io_handle->name,
 			     source_file_io_handle->name_size ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 				 "%s: unable to copy name.",
 				 function );
 
@@ -385,17 +383,17 @@ on_error:
 int libbfio_file_get_name_size(
      libbfio_handle_t *handle,
      size_t *name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_file_get_name_size";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -408,10 +406,10 @@ int libbfio_file_get_name_size(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name size.",
 		 function );
 
@@ -428,17 +426,17 @@ int libbfio_file_get_name(
      libbfio_handle_t *handle,
      char *name,
      size_t name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_file_get_name";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -452,10 +450,10 @@ int libbfio_file_get_name(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name.",
 		 function );
 
@@ -471,7 +469,7 @@ int libbfio_file_set_name(
      libbfio_handle_t *handle,
      const char *name,
      size_t name_length,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	char *full_name                            = NULL;
@@ -480,10 +478,10 @@ int libbfio_file_set_name(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -498,10 +496,10 @@ int libbfio_file_set_name(
 	     &full_name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to determine full path.",
 		 function );
 
@@ -513,10 +511,10 @@ int libbfio_file_set_name(
 	     full_name_size - 1,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set name.",
 		 function );
 
@@ -547,7 +545,7 @@ on_error:
 int libbfio_file_io_handle_get_name_size(
      libbfio_file_io_handle_t *file_io_handle,
      size_t *name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_get_name_size";
 
@@ -557,10 +555,10 @@ int libbfio_file_io_handle_get_name_size(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -568,10 +566,10 @@ int libbfio_file_io_handle_get_name_size(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -579,10 +577,10 @@ int libbfio_file_io_handle_get_name_size(
 	}
 	if( name_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid name size.",
 		 function );
 
@@ -629,10 +627,10 @@ int libbfio_file_io_handle_get_name_size(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine name size.",
 		 function );
 
@@ -653,7 +651,7 @@ int libbfio_file_io_handle_get_name(
      libbfio_file_io_handle_t *file_io_handle,
      char *name,
      size_t name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function   = "libbfio_file_io_handle_get_name";
 	size_t narrow_name_size = 0;
@@ -664,10 +662,10 @@ int libbfio_file_io_handle_get_name(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -675,10 +673,10 @@ int libbfio_file_io_handle_get_name(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -686,10 +684,10 @@ int libbfio_file_io_handle_get_name(
 	}
 	if( name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid name.",
 		 function );
 
@@ -736,10 +734,10 @@ int libbfio_file_io_handle_get_name(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine name size.",
 		 function );
 
@@ -751,10 +749,10 @@ int libbfio_file_io_handle_get_name(
 
 	if( name_size < narrow_name_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
 		 "%s: name too small.",
 		 function );
 
@@ -805,10 +803,10 @@ int libbfio_file_io_handle_get_name(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set name.",
 		 function );
 
@@ -824,10 +822,10 @@ int libbfio_file_io_handle_get_name(
 			     file_io_handle->name,
 			     file_io_handle->name_size ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 				 "%s: unable to set name.",
 				 function );
 
@@ -848,7 +846,7 @@ int libbfio_file_io_handle_set_name(
      libbfio_file_io_handle_t *file_io_handle,
      const char *name,
      size_t name_length,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_set_name";
 
@@ -858,10 +856,10 @@ int libbfio_file_io_handle_set_name(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -869,10 +867,10 @@ int libbfio_file_io_handle_set_name(
 	}
 	if( name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid name.",
 		 function );
 
@@ -880,10 +878,10 @@ int libbfio_file_io_handle_set_name(
 	}
 	if( name_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid name length is zero.",
 		 function );
 
@@ -891,10 +889,10 @@ int libbfio_file_io_handle_set_name(
 	}
 	if( name_length >= (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid name length value exceeds maximum.",
 		 function );
 
@@ -908,10 +906,10 @@ int libbfio_file_io_handle_set_name(
 		if( file_io_handle->file_descriptor != -1 )
 #endif
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 			 "%s: name already set: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
@@ -965,10 +963,10 @@ int libbfio_file_io_handle_set_name(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine name size.",
 		 function );
 
@@ -981,10 +979,10 @@ int libbfio_file_io_handle_set_name(
 	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
 	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid file IO handle - name size value exceeds maximum.",
 		 function );
 
@@ -995,10 +993,10 @@ int libbfio_file_io_handle_set_name(
 
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create name.",
 		 function );
 
@@ -1049,10 +1047,10 @@ int libbfio_file_io_handle_set_name(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set name.",
 		 function );
 
@@ -1066,10 +1064,10 @@ int libbfio_file_io_handle_set_name(
 		     name,
 		     name_length ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 			 "%s: unable to set name.",
 			 function );
 
@@ -1102,17 +1100,17 @@ on_error:
 int libbfio_file_get_name_size_wide(
      libbfio_handle_t *handle,
      size_t *name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_file_get_name_size_wide";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1125,10 +1123,10 @@ int libbfio_file_get_name_size_wide(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name size.",
 		 function );
 
@@ -1145,17 +1143,17 @@ int libbfio_file_get_name_wide(
      libbfio_handle_t *handle,
      wchar_t *name,
      size_t name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_file_get_name_wide";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1169,10 +1167,10 @@ int libbfio_file_get_name_wide(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name.",
 		 function );
 
@@ -1188,7 +1186,7 @@ int libbfio_file_set_name_wide(
      libbfio_handle_t *handle,
      const wchar_t *name,
      size_t name_length,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	wchar_t *full_name                         = NULL;
@@ -1197,10 +1195,10 @@ int libbfio_file_set_name_wide(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1215,10 +1213,10 @@ int libbfio_file_set_name_wide(
 	     &full_name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to determine full path.",
 		 function );
 
@@ -1230,10 +1228,10 @@ int libbfio_file_set_name_wide(
 	     full_name_size - 1,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set name.",
 		 function );
 
@@ -1264,7 +1262,7 @@ on_error:
 int libbfio_file_io_handle_get_name_size_wide(
      libbfio_file_io_handle_t *file_io_handle,
      size_t *name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_get_name_size_wide";
 
@@ -1274,10 +1272,10 @@ int libbfio_file_io_handle_get_name_size_wide(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -1285,10 +1283,10 @@ int libbfio_file_io_handle_get_name_size_wide(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - invalid IO handle - missing name.",
 		 function );
 
@@ -1296,10 +1294,10 @@ int libbfio_file_io_handle_get_name_size_wide(
 	}
 	if( name_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid name size.",
 		 function );
 
@@ -1348,10 +1346,10 @@ int libbfio_file_io_handle_get_name_size_wide(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine name size.",
 		 function );
 
@@ -1370,7 +1368,7 @@ int libbfio_file_io_handle_get_name_wide(
      libbfio_file_io_handle_t *file_io_handle,
      wchar_t *name,
      size_t name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_get_name_wide";
 	size_t wide_name_size = 0;
@@ -1381,10 +1379,10 @@ int libbfio_file_io_handle_get_name_wide(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -1392,10 +1390,10 @@ int libbfio_file_io_handle_get_name_wide(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - invalid IO handle - missing name.",
 		 function );
 
@@ -1403,10 +1401,10 @@ int libbfio_file_io_handle_get_name_wide(
 	}
 	if( name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid name.",
 		 function );
 
@@ -1455,10 +1453,10 @@ int libbfio_file_io_handle_get_name_wide(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine name size.",
 		 function );
 
@@ -1468,10 +1466,10 @@ int libbfio_file_io_handle_get_name_wide(
 
 	if( name_size < wide_name_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
 		 "%s: name too small.",
 		 function );
 
@@ -1487,10 +1485,10 @@ int libbfio_file_io_handle_get_name_wide(
 			     file_io_handle->name,
 			     file_io_handle->name_size ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 				 "%s: unable to set name.",
 				 function );
 
@@ -1544,10 +1542,10 @@ int libbfio_file_io_handle_get_name_wide(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set name.",
 		 function );
 
@@ -1565,7 +1563,7 @@ int libbfio_file_io_handle_set_name_wide(
      libbfio_file_io_handle_t *file_io_handle,
      const wchar_t *name,
      size_t name_length,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_set_name_wide";
 
@@ -1575,10 +1573,10 @@ int libbfio_file_io_handle_set_name_wide(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -1586,10 +1584,10 @@ int libbfio_file_io_handle_set_name_wide(
 	}
 	if( name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid name.",
 		 function );
 
@@ -1597,10 +1595,10 @@ int libbfio_file_io_handle_set_name_wide(
 	}
 	if( name_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid name length is zero.",
 		 function );
 
@@ -1608,10 +1606,10 @@ int libbfio_file_io_handle_set_name_wide(
 	}
 	if( name_length >= (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid name length value exceeds maximum.",
 		 function );
 
@@ -1625,10 +1623,10 @@ int libbfio_file_io_handle_set_name_wide(
 		if( file_io_handle->file_descriptor != -1 )
 #endif
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 			 "%s: name already set: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
@@ -1684,10 +1682,10 @@ int libbfio_file_io_handle_set_name_wide(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine name size.",
 		 function );
 
@@ -1698,10 +1696,10 @@ int libbfio_file_io_handle_set_name_wide(
 	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
 	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid file IO handle - name size value exceeds maximum.",
 		 function );
 
@@ -1712,10 +1710,10 @@ int libbfio_file_io_handle_set_name_wide(
 
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create name.",
 		 function );
 
@@ -1729,10 +1727,10 @@ int libbfio_file_io_handle_set_name_wide(
 		     name,
 		     name_length ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 			 "%s: unable to set name.",
 			 function );
 
@@ -1785,10 +1783,10 @@ int libbfio_file_io_handle_set_name_wide(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set name.",
 		 function );
 
@@ -1818,10 +1816,8 @@ on_error:
 int libbfio_file_open(
      libbfio_file_io_handle_t *file_io_handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function         = "libbfio_file_open";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
@@ -1843,10 +1839,10 @@ int libbfio_file_open(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -1854,10 +1850,10 @@ int libbfio_file_open(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -1885,10 +1881,10 @@ int libbfio_file_open(
 	}
 	else
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags: 0x%02x.",
 		 function,
 		 access_flags );
@@ -1902,10 +1898,10 @@ int libbfio_file_open(
 	}
 	if( file_io_handle->file_handle != INVALID_HANDLE_VALUE )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid file IO handle - file handle already set.",
 		 function );
 
@@ -1927,10 +1923,10 @@ int libbfio_file_open(
 		switch( error_code )
 		{
 			case ERROR_ACCESS_DENIED:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_ACCESS_DENIED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_ACCESS_DENIED,
 				 "%s: access denied to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
@@ -1939,10 +1935,10 @@ int libbfio_file_open(
 
 			case ERROR_FILE_NOT_FOUND:
 			case ERROR_PATH_NOT_FOUND:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_INVALID_RESOURCE,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_INVALID_RESOURCE,
 				 "%s: no such file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
@@ -1950,31 +1946,15 @@ int libbfio_file_open(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     error_code,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 error_code,
+				 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				break;
 		}
 		return( -1 );
@@ -2018,10 +1998,10 @@ int libbfio_file_open(
 	}
 	else
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags.",
 		 function );
 
@@ -2038,10 +2018,10 @@ int libbfio_file_open(
 	}
 	if( file_io_handle->file_descriptor != -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid file IO handle - file descriptor already set.",
 		 function );
 
@@ -2083,10 +2063,10 @@ int libbfio_file_open(
 		switch( errno )
 		{
 			case EACCES:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_ACCESS_DENIED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_ACCESS_DENIED,
 				 "%s: access denied to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
@@ -2094,10 +2074,10 @@ int libbfio_file_open(
 				break;
 
 			case ENOENT:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_INVALID_RESOURCE,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_INVALID_RESOURCE,
 				 "%s: no such file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
@@ -2105,31 +2085,15 @@ int libbfio_file_open(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     errno,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 errno,
+				 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				break;
 		}
 		return( -1 );
@@ -2137,10 +2101,10 @@ int libbfio_file_open(
 #if defined( _MSC_VER )
 	if( file_io_handle->file_descriptor == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: invalid file descriptor: %d returned.",
 		 function,
 		 file_io_handle->file_descriptor );
@@ -2190,10 +2154,10 @@ int libbfio_file_open(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine narrow character filename size.",
 		 function );
 
@@ -2204,10 +2168,10 @@ int libbfio_file_open(
 
 	if( narrow_filename == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create narrow character filename.",
 		 function );
 
@@ -2257,10 +2221,10 @@ int libbfio_file_open(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set narrow character filename.",
 		 function );
 
@@ -2302,10 +2266,10 @@ int libbfio_file_open(
 		switch( errno )
 		{
 			case EACCES:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_ACCESS_DENIED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_ACCESS_DENIED,
 				 "%s: access denied to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
@@ -2313,10 +2277,10 @@ int libbfio_file_open(
 				break;
 
 			case ENOENT:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_INVALID_RESOURCE,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_INVALID_RESOURCE,
 				 "%s: no such file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
@@ -2324,31 +2288,15 @@ int libbfio_file_open(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     errno,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 errno,
+				 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				break;
 		}
 		return( -1 );
@@ -2365,10 +2313,8 @@ int libbfio_file_open(
  */
 int libbfio_file_close(
      libbfio_file_io_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function = "libbfio_file_close";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
@@ -2377,10 +2323,10 @@ int libbfio_file_close(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -2388,10 +2334,10 @@ int libbfio_file_close(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -2400,10 +2346,10 @@ int libbfio_file_close(
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
@@ -2412,10 +2358,10 @@ int libbfio_file_close(
 #else
 	if( file_io_handle->file_descriptor == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
@@ -2428,31 +2374,15 @@ int libbfio_file_close(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     error_code,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 error_code,
+		 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
+
 		return( -1 );
 	}
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
@@ -2465,31 +2395,15 @@ int libbfio_file_close(
 	     file_io_handle->file_descriptor ) != 0 )
 #endif
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     errno,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 errno,
+		 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
+
 		return( -1 );
 	}
 	file_io_handle->file_descriptor = -1;
@@ -2506,10 +2420,8 @@ ssize_t libbfio_file_read(
          libbfio_file_io_handle_t *file_io_handle,
          uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function = "libbfio_file_read";
 	ssize_t read_count    = 0;
 
@@ -2519,10 +2431,10 @@ ssize_t libbfio_file_read(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -2530,10 +2442,10 @@ ssize_t libbfio_file_read(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -2542,10 +2454,10 @@ ssize_t libbfio_file_read(
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
@@ -2554,10 +2466,10 @@ ssize_t libbfio_file_read(
 #else
 	if( file_io_handle->file_descriptor == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
@@ -2566,10 +2478,10 @@ ssize_t libbfio_file_read(
 #endif
 	if( buffer == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid buffer.",
 		 function );
 
@@ -2581,10 +2493,10 @@ ssize_t libbfio_file_read(
 	if( size > (size_t) SSIZE_MAX )
 #endif
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 
@@ -2606,40 +2518,24 @@ ssize_t libbfio_file_read(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     error_code,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 error_code,
+				 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				return( -1 );
 		}
 	}
 	if( read_count < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: invalid read count: %" PRIzd " returned.",
 		 function,
 		 read_count );
@@ -2659,31 +2555,15 @@ ssize_t libbfio_file_read(
 
 	if( read_count < 0 )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     errno,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 errno,
+		 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
+
 		return( -1 );
 	}
 #endif
@@ -2697,10 +2577,8 @@ ssize_t libbfio_file_write(
          libbfio_file_io_handle_t *file_io_handle,
          const uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function = "libbfio_file_write";
 	ssize_t write_count   = 0;
 
@@ -2710,10 +2588,10 @@ ssize_t libbfio_file_write(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -2721,10 +2599,10 @@ ssize_t libbfio_file_write(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -2733,10 +2611,10 @@ ssize_t libbfio_file_write(
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
@@ -2745,10 +2623,10 @@ ssize_t libbfio_file_write(
 #else
 	if( file_io_handle->file_descriptor == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
@@ -2757,10 +2635,10 @@ ssize_t libbfio_file_write(
 #endif
 	if( buffer == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid buffer.",
 		 function );
 
@@ -2772,10 +2650,10 @@ ssize_t libbfio_file_write(
 	if( size > (size_t) SSIZE_MAX )
 #endif
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 
@@ -2791,39 +2669,23 @@ ssize_t libbfio_file_write(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     error_code,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 error_code,
+		 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
+
 		return( -1 );
 	}
 	if( write_count < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_WRITE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
 		 "%s: invalid write count: %" PRIzd " returned.",
 		 function,
 		 write_count );
@@ -2846,10 +2708,10 @@ ssize_t libbfio_file_write(
 		switch( errno )
 		{
 			case ENOSPC:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_OUTPUT,
-				 LIBERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE,
+				 LIBCERROR_ERROR_DOMAIN_OUTPUT,
+				 LIBCERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE,
 				 "%s: insufficient space to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 file_io_handle->name );
@@ -2857,31 +2719,15 @@ ssize_t libbfio_file_write(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     errno,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_WRITE_FAILED,
-					 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_WRITE_FAILED,
-					 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_WRITE_FAILED,
+				 errno,
+				 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				break;
 		}
 		return( -1 );
@@ -2890,10 +2736,10 @@ ssize_t libbfio_file_write(
 	{
 		if( errno == ENOSPC )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_OUTPUT,
-			 LIBERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE,
+			 LIBCERROR_ERROR_DOMAIN_OUTPUT,
+			 LIBCERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE,
 			 "%s: insufficient space to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 file_io_handle->name );
@@ -3010,10 +2856,8 @@ off64_t libbfio_file_seek_offset(
          libbfio_file_io_handle_t *file_io_handle,
          off64_t offset,
          int whence,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function              = "libbfio_file_seek_offset";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
@@ -3024,10 +2868,10 @@ off64_t libbfio_file_seek_offset(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -3035,10 +2879,10 @@ off64_t libbfio_file_seek_offset(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -3047,10 +2891,10 @@ off64_t libbfio_file_seek_offset(
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
@@ -3059,10 +2903,10 @@ off64_t libbfio_file_seek_offset(
 #else
 	if( file_io_handle->file_descriptor == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
@@ -3071,10 +2915,10 @@ off64_t libbfio_file_seek_offset(
 #endif
 	if( offset > (off64_t) INT64_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid offset value exceeds maximum.",
 		 function );
 
@@ -3084,10 +2928,10 @@ off64_t libbfio_file_seek_offset(
 	 && ( whence != SEEK_END )
 	 && ( whence != SEEK_SET ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported whence.",
 		 function );
 
@@ -3129,33 +2973,16 @@ off64_t libbfio_file_seek_offset(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     error_code,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 offset,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 offset,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 error_code,
+		 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 offset,
+		 file_io_handle->name );
+
 		return( -1 );
 	}
 #if defined( __BORLANDC__ ) && __BORLANDC__ <= 0x520
@@ -3166,10 +2993,10 @@ off64_t libbfio_file_seek_offset(
 
 	if( offset < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: invalid offset: %" PRIi64 " returned.",
 		 function,
 		 offset );
@@ -3191,33 +3018,16 @@ off64_t libbfio_file_seek_offset(
 
 	if( offset < 0 )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     errno,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 offset,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 offset,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 errno,
+		 "%s: unable to find offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 offset,
+		 file_io_handle->name );
+
 		return( -1 );
 	}
 #endif
@@ -3232,10 +3042,8 @@ off64_t libbfio_file_seek_offset(
  */
 int libbfio_file_exists(
      libbfio_file_io_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function = "libbfio_file_exists";
 	int result            = 1;
 	DWORD error_code      = 0;
@@ -3243,10 +3051,10 @@ int libbfio_file_exists(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -3254,10 +3062,10 @@ int libbfio_file_exists(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -3296,31 +3104,15 @@ int libbfio_file_exists(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     error_code,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_GENERIC,
-					 "%s: unable to determine attributes of file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_GENERIC,
-					 "%s: unable to determine attributes of file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_GENERIC,
+				 error_code,
+				 "%s: unable to determine attributes of file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				result = -1;
 
 				break;
@@ -3336,20 +3128,18 @@ int libbfio_file_exists(
  */
 int libbfio_file_exists(
      libbfio_file_io_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function = "libbfio_file_exists";
 	int result            = 1;
 	DWORD error_code      = 0;
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -3357,10 +3147,10 @@ int libbfio_file_exists(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -3412,31 +3202,15 @@ int libbfio_file_exists(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     error_code,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 error_code,
+				 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				result = -1;
 
 				break;
@@ -3447,31 +3221,15 @@ int libbfio_file_exists(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     error_code,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 error_code,
+		 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
+
 		return( -1 );
 	}
 	file_io_handle->file_handle = INVALID_HANDLE_VALUE;
@@ -3487,11 +3245,9 @@ int libbfio_file_exists(
  */
 int libbfio_file_exists(
      libbfio_file_io_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	struct stat file_statistics;
-
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
 
 	static char *function       = "libbfio_file_exists";
 	int result                  = 1;
@@ -3503,10 +3259,10 @@ int libbfio_file_exists(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -3514,10 +3270,10 @@ int libbfio_file_exists(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -3567,10 +3323,10 @@ int libbfio_file_exists(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine narrow character filename size.",
 		 function );
 
@@ -3581,10 +3337,10 @@ int libbfio_file_exists(
 
 	if( narrow_filename == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create narrow character filename.",
 		 function );
 
@@ -3634,10 +3390,10 @@ int libbfio_file_exists(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set narrow character filename.",
 		 function );
 
@@ -3673,31 +3429,15 @@ int libbfio_file_exists(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     errno,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_GENERIC,
-					 "%s: unable to stat file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_GENERIC,
-					 "%s: unable to stat file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_GENERIC,
+				 errno,
+				 "%s: unable to stat file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				result = -1;
 
 				break;
@@ -3717,10 +3457,8 @@ int libbfio_file_exists(
  */
 int libbfio_file_exists(
      libbfio_file_io_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ LIBBFIO_ERROR_STRING_SIZE ];
-
 	static char *function       = "libbfio_file_exists";
 	int result                  = 1;
 
@@ -3731,10 +3469,10 @@ int libbfio_file_exists(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -3742,10 +3480,10 @@ int libbfio_file_exists(
 	}
 	if( file_io_handle->name == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle - missing name.",
 		 function );
 
@@ -3811,10 +3549,10 @@ int libbfio_file_exists(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine narrow character filename size.",
 		 function );
 
@@ -3825,10 +3563,10 @@ int libbfio_file_exists(
 
 	if( narrow_filename == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create narrow character filename.",
 		 function );
 
@@ -3878,10 +3616,10 @@ int libbfio_file_exists(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set narrow character filename.",
 		 function );
 
@@ -3937,31 +3675,15 @@ int libbfio_file_exists(
 				break;
 
 			default:
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     LIBBFIO_ERROR_STRING_SIZE,
-				     errno,
-				     error ) == 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 file_io_handle->name,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_OPEN_FAILED,
-					 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 file_io_handle->name );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 errno,
+				 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 file_io_handle->name );
+
 				result = -1;
 
 				break;
@@ -3975,31 +3697,14 @@ int libbfio_file_exists(
 		  file_io_handle->file_descriptor ) != 0 )
 #endif
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     LIBBFIO_ERROR_STRING_SIZE,
-		     errno,
-		     error ) == 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM " with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 file_io_handle->name,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 file_io_handle->name );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 errno,
+		 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 file_io_handle->name );
 	}
 	file_io_handle->file_descriptor = -1;	
 
@@ -4013,16 +3718,16 @@ int libbfio_file_exists(
  */
 int libbfio_file_is_open(
      libbfio_file_io_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_is_open";
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -4128,7 +3833,7 @@ BOOL libbfio_GetFileSizeEx(
 int libbfio_file_get_size(
      libbfio_file_io_handle_t *file_io_handle,
      size64_t *size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function            = "libbfio_file_get_size";
 
@@ -4148,10 +3853,10 @@ int libbfio_file_get_size(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -4160,10 +3865,10 @@ int libbfio_file_get_size(
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
 	if( file_io_handle->file_handle == INVALID_HANDLE_VALUE )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file handle.",
 		 function );
 
@@ -4172,10 +3877,10 @@ int libbfio_file_get_size(
 #else
 	if( file_io_handle->file_descriptor == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file IO handle - invalid file descriptor.",
 		 function );
 
@@ -4184,10 +3889,10 @@ int libbfio_file_get_size(
 #endif
 	if( size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid size.",
 		 function );
 
@@ -4204,10 +3909,10 @@ int libbfio_file_get_size(
 	     &large_integer_size ) == 0 )
 #endif
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve file size.",
 		 function );
 
@@ -4233,10 +3938,10 @@ int libbfio_file_get_size(
 	     &file_stat ) != 0 )
 #endif
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: file stat failed.",
 		 function );
 
@@ -4255,10 +3960,10 @@ int libbfio_file_get_size(
 
 		if( offset == -1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_SEEK_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_SEEK_FAILED,
 			 "%s: unable to find end of file.",
 			 function );
 
@@ -4274,10 +3979,10 @@ int libbfio_file_get_size(
 
 		if( offset == -1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_SEEK_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_SEEK_FAILED,
 			 "%s: unable to find start of file.",
 			 function );
 

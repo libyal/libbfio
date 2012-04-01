@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libbfio_extern.h"
+#include "libbfio_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -42,12 +41,12 @@ const char *libbfio_get_version(
 LIBBFIO_EXTERN \
 int libbfio_get_codepage(
      int *codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
 int libbfio_set_codepage(
      int codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 

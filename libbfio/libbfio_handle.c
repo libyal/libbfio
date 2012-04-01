@@ -23,10 +23,9 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libbfio_definitions.h"
 #include "libbfio_handle.h"
+#include "libbfio_libcerror.h"
 #include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 
@@ -38,55 +37,55 @@ int libbfio_handle_initialize(
       intptr_t *io_handle,
       int (*free_io_handle)(
              intptr_t **io_handle,
-             liberror_error_t **error ),
+             libcerror_error_t **error ),
       int (*clone_io_handle)(
              intptr_t **destination_io_handle,
              intptr_t *source_io_handle,
-             liberror_error_t **error ),
+             libcerror_error_t **error ),
       int (*open)(
              intptr_t *io_handle,
              int access_flags,
-             liberror_error_t **error ),
+             libcerror_error_t **error ),
       int (*close)(
              intptr_t *io_handle,
-             liberror_error_t **error ),
+             libcerror_error_t **error ),
       ssize_t (*read)(
                  intptr_t *io_handle,
                  uint8_t *buffer,
                  size_t size,
-                 liberror_error_t **error ),
+                 libcerror_error_t **error ),
       ssize_t (*write)(
                  intptr_t *io_handle,
                  const uint8_t *buffer,
                  size_t size,
-                 liberror_error_t **error ),
+                 libcerror_error_t **error ),
       off64_t (*seek_offset)(
                  intptr_t *io_handle,
                  off64_t offset,
                  int whence,
-                 liberror_error_t **error ),
+                 libcerror_error_t **error ),
       int (*exists)(
              intptr_t *io_handle,
-             liberror_error_t **error ),
+             libcerror_error_t **error ),
       int (*is_open)(
              intptr_t *io_handle,
-             liberror_error_t **error ),
+             libcerror_error_t **error ),
       int (*get_size)(
              intptr_t *io_handle,
              size64_t *size,
-             liberror_error_t **error ),
+             libcerror_error_t **error ),
       uint8_t flags,
-      liberror_error_t **error )
+      libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_initialize";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -94,10 +93,10 @@ int libbfio_handle_initialize(
 	}
 	if( *handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid handle value already set.",
 		 function );
 
@@ -108,10 +107,10 @@ int libbfio_handle_initialize(
 
 	if( internal_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create handle.",
 		 function );
 
@@ -122,10 +121,10 @@ int libbfio_handle_initialize(
 	     0,
 	     sizeof( libbfio_internal_handle_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear handle.",
 		 function );
 
@@ -135,10 +134,10 @@ int libbfio_handle_initialize(
 	     &( internal_handle->offsets_read ),
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create read offsets list.",
 		 function );
 
@@ -175,7 +174,7 @@ on_error:
  */
 int libbfio_handle_free(
      libbfio_handle_t **handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_free";
@@ -184,10 +183,10 @@ int libbfio_handle_free(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -204,10 +203,10 @@ int libbfio_handle_free(
 
 		if( is_open == -1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to determine if handle is open.",
 			 function );
 
@@ -219,10 +218,10 @@ int libbfio_handle_free(
 			     internal_handle->io_handle,
 			     error ) != 0 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 				 "%s: unable to close handle.",
 				 function );
 
@@ -242,10 +241,10 @@ int libbfio_handle_free(
 					  &( internal_handle->io_handle ),
 					  error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 					 "%s: unable to free IO handle.",
 					 function );
 
@@ -259,10 +258,10 @@ int libbfio_handle_free(
 			     &( internal_handle->offsets_read ),
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 				 "%s: unable to free read offsets list.",
 				 function );
 
@@ -282,7 +281,7 @@ int libbfio_handle_free(
 int libbfio_handle_clone(
      libbfio_handle_t **destination_handle,
      libbfio_handle_t *source_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_source_handle = NULL;
 	intptr_t *destination_io_handle                   = NULL;
@@ -291,10 +290,10 @@ int libbfio_handle_clone(
 
 	if( destination_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid destination handle.",
 		 function );
 
@@ -302,10 +301,10 @@ int libbfio_handle_clone(
 	}
 	if( *destination_handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: destination handle already set.",
 		 function );
 
@@ -331,10 +330,10 @@ int libbfio_handle_clone(
 		{
 			if( internal_source_handle->clone_io_handle == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: invalid handle - missing clone IO handle function.",
 				 function );
 
@@ -345,10 +344,10 @@ int libbfio_handle_clone(
 			     internal_source_handle->io_handle,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 				 "%s: unable to clone IO handle.",
 				 function );
 
@@ -373,10 +372,10 @@ int libbfio_handle_clone(
 	     destination_flags,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create destination handle.",
 		 function );
 
@@ -389,10 +388,10 @@ int libbfio_handle_clone(
 	     internal_source_handle->access_flags,
 	     error ) == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open destination handle.",
 		 function );
 
@@ -404,10 +403,10 @@ int libbfio_handle_clone(
 	     SEEK_SET,
 	     error ) == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek offset in destination handle.",
 		 function );
 
@@ -445,17 +444,17 @@ on_error:
 int libbfio_handle_open(
      libbfio_handle_t *handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_open";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -465,10 +464,10 @@ int libbfio_handle_open(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -476,10 +475,10 @@ int libbfio_handle_open(
 	}
 	if( internal_handle->open == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing open function.",
 		 function );
 
@@ -488,10 +487,10 @@ int libbfio_handle_open(
 	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
 	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags: 0x%02x.",
 		 function,
 		 access_flags );
@@ -505,10 +504,10 @@ int libbfio_handle_open(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open handle.",
 			 function );
 
@@ -517,10 +516,10 @@ int libbfio_handle_open(
 	}
 	else if( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: open on demand cannot be used in combination with write access.",
 		 function );
 
@@ -537,17 +536,17 @@ int libbfio_handle_open(
 int libbfio_handle_reopen(
      libbfio_handle_t *handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_reopen";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -557,10 +556,10 @@ int libbfio_handle_reopen(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -568,10 +567,10 @@ int libbfio_handle_reopen(
 	}
 	if( internal_handle->close == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing close function.",
 		 function );
 
@@ -579,10 +578,10 @@ int libbfio_handle_reopen(
 	}
 	if( internal_handle->open == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing open function.",
 		 function );
 
@@ -590,10 +589,10 @@ int libbfio_handle_reopen(
 	}
 	if( internal_handle->seek_offset == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing seek offset function.",
 		 function );
 
@@ -602,10 +601,10 @@ int libbfio_handle_reopen(
 	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
 	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags.",
 		 function );
 
@@ -619,10 +618,10 @@ int libbfio_handle_reopen(
 		     internal_handle->io_handle,
 		     error ) != 0 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 			 "%s: unable to close handle.",
 			 function );
 
@@ -635,10 +634,10 @@ int libbfio_handle_reopen(
 			     access_flags,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_OPEN_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
 				 "%s: unable to open handle.",
 				 function );
 
@@ -659,10 +658,10 @@ int libbfio_handle_reopen(
 				     SEEK_CUR,
 				     error ) == -1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_SEEK_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_SEEK_FAILED,
 					 "%s: unable to seek offset in handle.",
 					 function );
 
@@ -679,7 +678,7 @@ int libbfio_handle_reopen(
  */
 int libbfio_handle_close(
      libbfio_handle_t *handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_close";
@@ -687,10 +686,10 @@ int libbfio_handle_close(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -700,10 +699,10 @@ int libbfio_handle_close(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -711,10 +710,10 @@ int libbfio_handle_close(
 	}
 	if( internal_handle->close == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing close function.",
 		 function );
 
@@ -724,10 +723,10 @@ int libbfio_handle_close(
 	{
 		if( internal_handle->is_open == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing is open function.",
 			 function );
 
@@ -739,10 +738,10 @@ int libbfio_handle_close(
 
 		if( is_open == -1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to determine if handle is open.",
 			 function );
 
@@ -757,10 +756,10 @@ int libbfio_handle_close(
 	     internal_handle->io_handle,
 	     error ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 		 "%s: unable to close handle.",
 		 function );
 
@@ -776,7 +775,7 @@ ssize_t libbfio_handle_read(
          libbfio_handle_t *handle,
          uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_read";
@@ -785,10 +784,10 @@ ssize_t libbfio_handle_read(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -798,10 +797,10 @@ ssize_t libbfio_handle_read(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -809,10 +808,10 @@ ssize_t libbfio_handle_read(
 	}
 	if( internal_handle->read == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing read function.",
 		 function );
 
@@ -820,10 +819,10 @@ ssize_t libbfio_handle_read(
 	}
 	if( size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 
@@ -833,10 +832,10 @@ ssize_t libbfio_handle_read(
 	{
 		if( internal_handle->is_open == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing is open function.",
 			 function );
 
@@ -844,10 +843,10 @@ ssize_t libbfio_handle_read(
 		}
 		if( internal_handle->open == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing open function.",
 			 function );
 
@@ -855,10 +854,10 @@ ssize_t libbfio_handle_read(
 		}
 		if( internal_handle->seek_offset == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing seek offset function.",
 			 function );
 
@@ -870,10 +869,10 @@ ssize_t libbfio_handle_read(
 
 		if( is_open == -1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to determine if handle is open.",
 			 function );
 
@@ -886,10 +885,10 @@ ssize_t libbfio_handle_read(
 			     internal_handle->access_flags,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_OPEN_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
 				 "%s: unable to open handle on demand.",
 				 function );
 
@@ -901,10 +900,10 @@ ssize_t libbfio_handle_read(
 			     SEEK_SET,
 			     error ) == -1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_SEEK_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_SEEK_FAILED,
 				 "%s: unable to find current offset: %" PRIi64 " in handle.",
 				 function,
 				 internal_handle->offset );
@@ -921,10 +920,10 @@ ssize_t libbfio_handle_read(
 
 	if( read_count < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read from handle.",
 		 function );
 
@@ -939,10 +938,10 @@ ssize_t libbfio_handle_read(
 		     1,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to append offset range to offsets read table.",
 			 function );
 
@@ -955,10 +954,10 @@ ssize_t libbfio_handle_read(
 	{
 		if( internal_handle->close == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing close function.",
 			 function );
 
@@ -968,10 +967,10 @@ ssize_t libbfio_handle_read(
 		     internal_handle->io_handle,
 		     error ) != 0 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to close handle on demand.",
 			 function );
 
@@ -988,7 +987,7 @@ ssize_t libbfio_handle_write(
          libbfio_handle_t *handle,
          const uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_write";
@@ -996,10 +995,10 @@ ssize_t libbfio_handle_write(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1009,10 +1008,10 @@ ssize_t libbfio_handle_write(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -1020,10 +1019,10 @@ ssize_t libbfio_handle_write(
 	}
 	if( internal_handle->write == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing write function.",
 		 function );
 
@@ -1031,10 +1030,10 @@ ssize_t libbfio_handle_write(
 	}
 	if( size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 
@@ -1048,10 +1047,10 @@ ssize_t libbfio_handle_write(
 
 	if( write_count < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_WRITE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
 		 "%s: unable to write to handle.",
 		 function );
 
@@ -1073,7 +1072,7 @@ off64_t libbfio_handle_seek_offset(
          libbfio_handle_t *handle,
          off64_t offset,
          int whence,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_seek_offset";
@@ -1081,10 +1080,10 @@ off64_t libbfio_handle_seek_offset(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1094,10 +1093,10 @@ off64_t libbfio_handle_seek_offset(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -1105,10 +1104,10 @@ off64_t libbfio_handle_seek_offset(
 	}
 	if( internal_handle->seek_offset == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing seek offset function.",
 		 function );
 
@@ -1118,10 +1117,10 @@ off64_t libbfio_handle_seek_offset(
 	 && ( whence != SEEK_END )
 	 && ( whence != SEEK_SET ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported whence.",
 		 function );
 
@@ -1131,10 +1130,10 @@ off64_t libbfio_handle_seek_offset(
 	{
 		if( internal_handle->is_open == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing is open function.",
 			 function );
 
@@ -1142,10 +1141,10 @@ off64_t libbfio_handle_seek_offset(
 		}
 		if( internal_handle->open == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing open function.",
 			 function );
 
@@ -1157,10 +1156,10 @@ off64_t libbfio_handle_seek_offset(
 
 		if( is_open == -1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to determine if handle is open.",
 			 function );
 
@@ -1173,10 +1172,10 @@ off64_t libbfio_handle_seek_offset(
 			     internal_handle->access_flags,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_OPEN_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
 				 "%s: unable to open handle on demand.",
 				 function );
 
@@ -1188,10 +1187,10 @@ off64_t libbfio_handle_seek_offset(
 			     SEEK_SET,
 			     error ) == -1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_SEEK_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_SEEK_FAILED,
 				 "%s: unable to find current offset: %" PRIi64 " in handle.",
 				 function,
 				 internal_handle->offset );
@@ -1208,10 +1207,10 @@ off64_t libbfio_handle_seek_offset(
 
 	if( offset == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to find offset: %" PRIi64 " in handle.",
 		 function,
 		 offset );
@@ -1228,7 +1227,7 @@ off64_t libbfio_handle_seek_offset(
  */
 int libbfio_handle_exists(
      libbfio_handle_t *handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_exists";
@@ -1236,10 +1235,10 @@ int libbfio_handle_exists(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1249,10 +1248,10 @@ int libbfio_handle_exists(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -1260,10 +1259,10 @@ int libbfio_handle_exists(
 	}
 	if( internal_handle->exists == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing exists function.",
 		 function );
 
@@ -1275,10 +1274,10 @@ int libbfio_handle_exists(
 
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if handle exists.",
 		 function );
 
@@ -1292,7 +1291,7 @@ int libbfio_handle_exists(
  */
 int libbfio_handle_is_open(
      libbfio_handle_t *handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_is_open";
@@ -1300,10 +1299,10 @@ int libbfio_handle_is_open(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1313,10 +1312,10 @@ int libbfio_handle_is_open(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -1324,10 +1323,10 @@ int libbfio_handle_is_open(
 	}
 	if( internal_handle->is_open == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing is open function.",
 		 function );
 
@@ -1339,10 +1338,10 @@ int libbfio_handle_is_open(
 
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if handle is open.",
 		 function );
 
@@ -1357,17 +1356,17 @@ int libbfio_handle_is_open(
 int libbfio_handle_get_io_handle(
      libbfio_handle_t *handle,
      intptr_t **io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_io_handle";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1377,10 +1376,10 @@ int libbfio_handle_get_io_handle(
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -1397,17 +1396,17 @@ int libbfio_handle_get_io_handle(
 int libbfio_handle_get_access_flags(
      libbfio_handle_t *handle,
      int *access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_access_flags";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1417,10 +1416,10 @@ int libbfio_handle_get_access_flags(
 
 	if( access_flags == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid access flags.",
 		 function );
 
@@ -1437,17 +1436,17 @@ int libbfio_handle_get_access_flags(
 int libbfio_handle_set_access_flags(
      libbfio_handle_t *handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_set_access_flags";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1458,10 +1457,10 @@ int libbfio_handle_set_access_flags(
 	if( ( ( access_flags & LIBBFIO_ACCESS_FLAG_READ ) == 0 )
 	 && ( ( access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags.",
 		 function );
 
@@ -1478,17 +1477,17 @@ int libbfio_handle_set_access_flags(
 int libbfio_handle_get_size(
      libbfio_handle_t *handle,
      size64_t *size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_size";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1498,10 +1497,10 @@ int libbfio_handle_get_size(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -1509,10 +1508,10 @@ int libbfio_handle_get_size(
 	}
 	if( size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid size",
 		 function );
 
@@ -1522,10 +1521,10 @@ int libbfio_handle_get_size(
 	{
 		if( internal_handle->get_size == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: invalid handle - missing get size function.",
 			 function );
 
@@ -1536,10 +1535,10 @@ int libbfio_handle_get_size(
 		     &( internal_handle->size ),
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve size.",
 			 function );
 
@@ -1558,17 +1557,17 @@ int libbfio_handle_get_size(
 int libbfio_handle_get_offset(
      libbfio_handle_t *handle,
      off64_t *offset,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_offset";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1578,10 +1577,10 @@ int libbfio_handle_get_offset(
 
 	if( offset == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset.",
 		 function );
 
@@ -1600,17 +1599,17 @@ int libbfio_handle_get_offset(
 int libbfio_handle_set_open_on_demand(
      libbfio_handle_t *handle,
      uint8_t open_on_demand,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_set_open_on_demand";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1621,10 +1620,10 @@ int libbfio_handle_set_open_on_demand(
 	if( ( ( internal_handle->access_flags & LIBBFIO_ACCESS_FLAG_WRITE ) != 0 )
 	 && ( open_on_demand != 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: open on demand cannot be used in combination with write access.",
 		 function );
 
@@ -1642,17 +1641,17 @@ int libbfio_handle_set_open_on_demand(
 int libbfio_handle_set_track_offsets_read(
      libbfio_handle_t *handle,
      uint8_t track_offsets_read,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_set_track_offsets_read";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1671,17 +1670,17 @@ int libbfio_handle_set_track_offsets_read(
 int libbfio_handle_get_number_of_offsets_read(
      libbfio_handle_t *handle,
      int *number_of_read_offsets,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_number_of_offsets_read";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1694,10 +1693,10 @@ int libbfio_handle_get_number_of_offsets_read(
 	     number_of_read_offsets,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of read offsets.",
 		 function );
 
@@ -1714,17 +1713,17 @@ int libbfio_handle_get_offset_read(
      int index,
      off64_t *offset,
      size64_t *size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_offset_read";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1739,10 +1738,10 @@ int libbfio_handle_get_offset_read(
 	     size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve read offset.",
 		 function );
 

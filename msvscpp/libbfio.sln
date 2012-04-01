@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libuna", "libuna\libuna.vcp
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liberror", "liberror\liberror.vcproj", "{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcerror", "libcerror\libcerror.vcproj", "{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
 	EndProjectSection

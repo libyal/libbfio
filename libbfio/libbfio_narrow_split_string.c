@@ -23,9 +23,8 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
+#include "libbfio_libcerror.h"
+#include "libbfio_libcstring.h"
 #include "libbfio_narrow_split_string.h"
 
 /* Initializes the split string
@@ -36,16 +35,16 @@ int libbfio_narrow_split_string_initialize(
      const char *string,
      size_t string_size,
      int number_of_segments,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_narrow_split_string_initialize";
 
 	if( split_string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid split string.",
 		 function );
 
@@ -53,10 +52,10 @@ int libbfio_narrow_split_string_initialize(
 	}
 	if( *split_string != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid split string value already set.",
 		 function );
 
@@ -64,10 +63,10 @@ int libbfio_narrow_split_string_initialize(
 	}
 	if( number_of_segments < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
 		 "%s: invalid number of segments less than zero.",
 		 function );
 
@@ -78,10 +77,10 @@ int libbfio_narrow_split_string_initialize(
 
 	if( *split_string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create split string.",
 		 function );
 
@@ -92,10 +91,10 @@ int libbfio_narrow_split_string_initialize(
 	     0,
 	     sizeof( libbfio_narrow_split_string_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear split string.",
 		 function );
 
@@ -114,10 +113,10 @@ int libbfio_narrow_split_string_initialize(
 
 		if( ( *split_string )->string == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create string.",
 			 function );
 
@@ -128,10 +127,10 @@ int libbfio_narrow_split_string_initialize(
 		     string,
 		     sizeof( char ) * ( string_size - 1 ) ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to copy string.",
 			 function );
 
@@ -147,10 +146,10 @@ int libbfio_narrow_split_string_initialize(
 
 		if( ( *split_string )->segments == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create segments.",
 			 function );
 
@@ -161,10 +160,10 @@ int libbfio_narrow_split_string_initialize(
 		     0,
 		     sizeof( char * ) * number_of_segments ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear segments.",
 			 function );
 
@@ -175,10 +174,10 @@ int libbfio_narrow_split_string_initialize(
 
 		if( ( *split_string )->segment_sizes == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create segment sizes.",
 			 function );
 
@@ -189,10 +188,10 @@ int libbfio_narrow_split_string_initialize(
 		     0,
 		     sizeof( size_t ) * number_of_segments ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear segment sizes.",
 			 function );
 
@@ -232,16 +231,16 @@ on_error:
  */
 int libbfio_narrow_split_string_free(
      libbfio_narrow_split_string_t **split_string,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_narrow_split_string_free";
 
 	if( split_string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid split string.",
 		 function );
 
@@ -279,16 +278,16 @@ int libbfio_narrow_split_string_get_string(
      libbfio_narrow_split_string_t *split_string,
      char **string,
      size_t *string_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_narrow_split_string_get_string";
 
 	if( split_string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid split string.",
 		 function );
 
@@ -296,10 +295,10 @@ int libbfio_narrow_split_string_get_string(
 	}
 	if( string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid string.",
 		 function );
 
@@ -307,10 +306,10 @@ int libbfio_narrow_split_string_get_string(
 	}
 	if( string_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid string size.",
 		 function );
 
@@ -328,16 +327,16 @@ int libbfio_narrow_split_string_get_string(
 int libbfio_narrow_split_string_get_number_of_segments(
      libbfio_narrow_split_string_t *split_string,
      int *number_of_segments,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_narrow_split_string_get_number_of_segments";
 
 	if( split_string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid split string.",
 		 function );
 
@@ -345,10 +344,10 @@ int libbfio_narrow_split_string_get_number_of_segments(
 	}
 	if( number_of_segments == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid number of segments.",
 		 function );
 
@@ -367,16 +366,16 @@ int libbfio_narrow_split_string_get_segment_by_index(
      int segment_index,
      char **string_segment,
      size_t *string_segment_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_narrow_split_string_get_segment_by_index";
 
 	if( split_string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid split string.",
 		 function );
 
@@ -385,10 +384,10 @@ int libbfio_narrow_split_string_get_segment_by_index(
 	if( ( segment_index < 0 )
 	 || ( segment_index >= split_string->number_of_segments ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid segment index value out of bounds.",
 		 function );
 
@@ -396,10 +395,10 @@ int libbfio_narrow_split_string_get_segment_by_index(
 	}
 	if( string_segment == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid string segment.",
 		 function );
 
@@ -407,10 +406,10 @@ int libbfio_narrow_split_string_get_segment_by_index(
 	}
 	if( string_segment_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid string segment size.",
 		 function );
 
@@ -430,17 +429,17 @@ int libbfio_narrow_split_string_set_segment_by_index(
      int segment_index,
      char *string_segment,
      size_t string_segment_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function        = "libbfio_narrow_split_string_set_segment_by_index";
 	size_t string_segment_offset = 0;
 
 	if( split_string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid split string.",
 		 function );
 
@@ -449,10 +448,10 @@ int libbfio_narrow_split_string_set_segment_by_index(
 	if( ( segment_index < 0 )
 	 || ( segment_index >= split_string->number_of_segments ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid segment index value out of bounds.",
 		 function );
 
@@ -460,10 +459,10 @@ int libbfio_narrow_split_string_set_segment_by_index(
 	}
 	if( string_segment_size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid string segment size value exceeds maximum.",
 		 function );
 
@@ -473,10 +472,10 @@ int libbfio_narrow_split_string_set_segment_by_index(
 	{
 		if( string_segment_size != 0 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-			 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 			 "%s: invalid string segment size value out of bounds.",
 			 function );
 
@@ -487,10 +486,10 @@ int libbfio_narrow_split_string_set_segment_by_index(
 	{
 		if( string_segment < split_string->string )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-			 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 			 "%s: invalid string segment value out of bounds.",
 			 function );
 
@@ -500,10 +499,10 @@ int libbfio_narrow_split_string_set_segment_by_index(
 
 		if( string_segment_offset > split_string->string_size )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-			 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 			 "%s: invalid string segment value out of bounds.",
 			 function );
 
@@ -513,10 +512,10 @@ int libbfio_narrow_split_string_set_segment_by_index(
 
 		if( string_segment_offset > split_string->string_size )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-			 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 			 "%s: invalid string segment value out of bounds.",
 			 function );
 

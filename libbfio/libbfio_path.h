@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libbfio_extern.h"
+#include "libbfio_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -36,7 +35,7 @@ extern "C" {
 int libbfio_path_get_current_working_directory(
      char **current_working_directory,
      size_t *current_working_directory_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
 int libbfio_path_get_full_path(
@@ -44,14 +43,14 @@ int libbfio_path_get_full_path(
      size_t path_length,
      char **full_path,
      size_t *full_path_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 int libbfio_path_get_current_working_directory_wide(
      wchar_t **current_working_directory,
      size_t *current_working_directory_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
 int libbfio_path_get_full_path_wide(
@@ -59,7 +58,7 @@ int libbfio_path_get_full_path_wide(
      size_t path_length,
      wchar_t **full_path,
      size_t *full_path_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

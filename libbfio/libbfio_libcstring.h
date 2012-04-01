@@ -1,5 +1,5 @@
 /*
- * Error string functions
+ * The internal libcstring header
  *
  * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,29 +19,36 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBBFIO_ERROR_STRING_H )
-#define _LIBBFIO_ERROR_STRING_H
+#if !defined( _LIBCERROR_LIBCSTRING_H )
+#define _LIBCERROR_LIBCSTRING_H
 
 #include <common.h>
-#include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
+/* Define HAVE_LOCAL_LIBCSTRING for local use of libcstring
+ */
+#if defined( HAVE_LOCAL_LIBCSTRING )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libcstring_codepage.h>
+#include <libcstring_definitions.h>
+#include <libcstring_locale.h>
+#include <libcstring_narrow_string.h>
+#include <libcstring_system_string.h>
+#include <libcstring_types.h>
+#include <libcstring_wide_string.h>
+
+#elif defined( HAVE_LIBCSTRING_H )
+
+/* If libtool DLL support is enabled set LIBCSTRING_DLL_IMPORT
+ * before including libcstring.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCSTRING_DLL_IMPORT
 #endif
 
-#define LIBBFIO_ERROR_STRING_SIZE	128
+#include <libcstring.h>
 
-int libbfio_error_string_copy_from_error_number(
-     libcstring_system_character_t *error_string,
-     size_t error_string_size,
-     int error_number,
-     liberror_error_t **error );
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libcstring.h
 #endif
 
 #endif

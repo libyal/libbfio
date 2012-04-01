@@ -23,8 +23,7 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-
+#include "libbfio_libcerror.h"
 #include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 
@@ -33,16 +32,16 @@
  */
 int libbfio_offset_list_value_initialize(
      libbfio_offset_list_value_t **offset_list_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_value_initialize";
 
 	if( offset_list_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list value.",
 		 function );
 
@@ -50,10 +49,10 @@ int libbfio_offset_list_value_initialize(
 	}
 	if( *offset_list_value != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid offset list value value already set.",
 		 function );
 
@@ -64,10 +63,10 @@ int libbfio_offset_list_value_initialize(
 
 	if( *offset_list_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create offset list value.",
 		 function );
 
@@ -78,10 +77,10 @@ int libbfio_offset_list_value_initialize(
 	     0,
 	     sizeof( libbfio_offset_list_value_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear offset list value.",
 		 function );
 
@@ -104,16 +103,16 @@ on_error:
  */
 int libbfio_offset_list_value_free(
      libbfio_offset_list_value_t **offset_list_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_value_free";
 
 	if( offset_list_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list value.",
 		 function );
 
@@ -135,16 +134,16 @@ int libbfio_offset_list_value_free(
 int libbfio_offset_list_value_clone(
      libbfio_offset_list_value_t **destination_offset_list_value,
      libbfio_offset_list_value_t *source_offset_list_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_value_clone";
 
 	if( destination_offset_list_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid destination offset list value.",
 		 function );
 
@@ -152,10 +151,10 @@ int libbfio_offset_list_value_clone(
 	}
 	if( *destination_offset_list_value != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid destination offset list value value already set.",
 		 function );
 
@@ -172,10 +171,10 @@ int libbfio_offset_list_value_clone(
 
 	if( *destination_offset_list_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create destination offset list value.",
 		 function );
 
@@ -186,10 +185,10 @@ int libbfio_offset_list_value_clone(
 	     source_offset_list_value,
 	     sizeof( libbfio_offset_list_value_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 		 "%s: unable to copy source to destination offset list value.",
 		 function );
 
@@ -213,16 +212,16 @@ on_error:
  */
 int libbfio_offset_list_initialize(
      libbfio_offset_list_t **offset_list,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_initialize";
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -230,10 +229,10 @@ int libbfio_offset_list_initialize(
 	}
 	if( *offset_list != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid offset list value already set.",
 		 function );
 
@@ -244,10 +243,10 @@ int libbfio_offset_list_initialize(
 
 	if( *offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create offset list.",
 		 function );
 
@@ -258,10 +257,10 @@ int libbfio_offset_list_initialize(
 	     0,
 	     sizeof( libbfio_offset_list_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear offset list.",
 		 function );
 
@@ -285,17 +284,17 @@ on_error:
  */
 int libbfio_offset_list_free(
      libbfio_offset_list_t **offset_list,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_free";
 	int result            = 1;
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -309,10 +308,10 @@ int libbfio_offset_list_free(
 
 		if( result != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to empty offset list.",
 			 function );
 		}
@@ -329,7 +328,7 @@ int libbfio_offset_list_free(
  */
 int libbfio_offset_list_empty(
      libbfio_offset_list_t *offset_list,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_list_element_t *list_element = NULL;
 	static char *function                = "libbfio_offset_list_empty";
@@ -339,10 +338,10 @@ int libbfio_offset_list_empty(
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -360,10 +359,10 @@ int libbfio_offset_list_empty(
 
 			if( list_element == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected in element: %d.",
 				 function,
 				 element_index );
@@ -386,13 +385,13 @@ int libbfio_offset_list_empty(
 
 			if( libbfio_list_element_free(
 			     &list_element,
-			     (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+			     (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 				 "%s: unable to free element: %d.",
 				 function,
 				 element_index );
@@ -412,7 +411,7 @@ int libbfio_offset_list_empty(
 int libbfio_offset_list_clone(
      libbfio_offset_list_t **destination_offset_list,
      libbfio_offset_list_t *source_offset_list,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_list_element_t *destination_list_element = NULL;
 	libbfio_list_element_t *source_list_element      = NULL;
@@ -422,10 +421,10 @@ int libbfio_offset_list_clone(
 
 	if( destination_offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid destination offset list.",
 		 function );
 
@@ -433,10 +432,10 @@ int libbfio_offset_list_clone(
 	}
 	if( *destination_offset_list != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid destination offset list value already set.",
 		 function );
 
@@ -452,10 +451,10 @@ int libbfio_offset_list_clone(
 	     destination_offset_list,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create destination offset list.",
 		 function );
 
@@ -463,10 +462,10 @@ int libbfio_offset_list_clone(
 	}
 	if( *destination_offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing destination offset list.",
 		 function );
 
@@ -480,10 +479,10 @@ int libbfio_offset_list_clone(
 	{
 		if( source_list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: corruption detected in source offset list element: %d.",
 			 function,
 			 element_index );
@@ -494,10 +493,10 @@ int libbfio_offset_list_clone(
 		     &destination_list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create destination list element: %d.",
 			 function,
 			 element_index );
@@ -509,10 +508,10 @@ int libbfio_offset_list_clone(
 		     (libbfio_offset_list_value_t *) source_list_element->value,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to clone value of offset list element: %d.",
 			 function,
 			 element_index );
@@ -524,10 +523,10 @@ int libbfio_offset_list_clone(
 		     (intptr_t *) destination_value,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to set value of destination list element: %d.",
 			 function,
 			 element_index );
@@ -565,7 +564,7 @@ on_error:
 	{
 		libbfio_list_element_free(
 		 &destination_list_element,
-		 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+		 (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 		 NULL );
 	}
 	if( *destination_offset_list != NULL )
@@ -583,16 +582,16 @@ on_error:
 int libbfio_offset_list_get_number_of_elements(
      libbfio_offset_list_t *offset_list,
      int *number_of_elements,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_get_number_of_elements";
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -600,10 +599,10 @@ int libbfio_offset_list_get_number_of_elements(
 	}
 	if( number_of_elements == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid number of elements.",
 		 function );
 
@@ -622,7 +621,7 @@ int libbfio_offset_list_append_offset(
      off64_t offset,
      size64_t size,
      uint8_t merge_ranges,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_list_element_t *last_list_element      = NULL;
 	libbfio_list_element_t *list_element           = NULL;
@@ -638,10 +637,10 @@ int libbfio_offset_list_append_offset(
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -649,10 +648,10 @@ int libbfio_offset_list_append_offset(
 	}
 	if( offset < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
 		 "%s: invalid offset value less than zero.",
 		 function );
 
@@ -660,10 +659,10 @@ int libbfio_offset_list_append_offset(
 	}
 	if( size > (size64_t) INT64_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 
@@ -687,10 +686,10 @@ int libbfio_offset_list_append_offset(
 
 		if( list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: corruption detected for list element: %d.",
 			 function,
 			 offset_list->number_of_elements - 1 );
@@ -699,10 +698,10 @@ int libbfio_offset_list_append_offset(
 		}
 		if( list_element->value == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing offset list value for list element: %d.",
 			 function,
 			 offset_list->number_of_elements - 1 );
@@ -767,10 +766,10 @@ int libbfio_offset_list_append_offset(
 				{
 					if( list_element == NULL )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: corruption detected for list element: %d.",
 						 function,
 						 element_index );
@@ -779,10 +778,10 @@ int libbfio_offset_list_append_offset(
 					}
 					if( list_element->value == NULL )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: missing offset list value for list element: %d.",
 						 function,
 						 element_index );
@@ -856,10 +855,10 @@ int libbfio_offset_list_append_offset(
 				{
 					if( list_element == NULL )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: corruption detected for list element: %d.",
 						 function,
 						 element_index );
@@ -868,10 +867,10 @@ int libbfio_offset_list_append_offset(
 					}
 					if( list_element->value == NULL )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: missing offset list value for list element: %d.",
 						 function,
 						 element_index );
@@ -942,10 +941,10 @@ int libbfio_offset_list_append_offset(
 		{
 			if( list_element == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: invalid list element.",
 				 function );
 
@@ -955,10 +954,10 @@ int libbfio_offset_list_append_offset(
 			{
 				if( list_element->previous_element->value == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing offset list value for previous list element.",
 					 function );
 
@@ -1000,13 +999,13 @@ int libbfio_offset_list_append_offset(
 
 					if( libbfio_list_element_free(
 					     &remove_element,
-					     (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+					     (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 					     error ) != 1 )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 						 "%s: unable to free element: %d.",
 						 function,
 						 element_index );
@@ -1022,10 +1021,10 @@ int libbfio_offset_list_append_offset(
 		{
 			if( list_element == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: invalid list element.",
 				 function );
 
@@ -1035,10 +1034,10 @@ int libbfio_offset_list_append_offset(
 			{
 				if( list_element->next_element->value == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing offset list value for next list element.",
 					 function );
 
@@ -1078,13 +1077,13 @@ int libbfio_offset_list_append_offset(
 
 					if( libbfio_list_element_free(
 					     &remove_element,
-					     (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+					     (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 					     error ) != 1 )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 						 "%s: unable to free element: %d.",
 						 function,
 						 element_index );
@@ -1103,10 +1102,10 @@ int libbfio_offset_list_append_offset(
 		     &offset_list_value,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create offset list value.",
 			 function );
 
@@ -1114,10 +1113,10 @@ int libbfio_offset_list_append_offset(
 		}
 		if( offset_list_value == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing offset list value.",
 			 function );
 
@@ -1132,10 +1131,10 @@ int libbfio_offset_list_append_offset(
 		     &list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create list element.",
 			 function );
 
@@ -1147,10 +1146,10 @@ int libbfio_offset_list_append_offset(
 		}
 		if( list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing list element.",
 			 function );
 
@@ -1166,32 +1165,32 @@ int libbfio_offset_list_append_offset(
 		{
 			if( offset_list->first_element != NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected - first element already set.",
 				 function );
 
 				libbfio_list_element_free(
 				 &list_element,
-				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
 			}
 			if( offset_list->last_element != NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected - last element already set.",
 				 function );
 
 				libbfio_list_element_free(
 				 &list_element,
-				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
@@ -1203,32 +1202,32 @@ int libbfio_offset_list_append_offset(
 		{
 			if( offset_list->first_element == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected - missing first.",
 				 function );
 
 				libbfio_list_element_free(
 				 &list_element,
-				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
 			}
 			if( offset_list->last_element == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: corruption detected - missing last.",
 				 function );
 
 				libbfio_list_element_free(
 				 &list_element,
-				 (int (*)(intptr_t **, liberror_error_t **)) &libbfio_offset_list_value_free,
+				 (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 				 NULL );
 
 				return( -1 );
@@ -1251,10 +1250,10 @@ int libbfio_offset_list_append_offset(
 				}
 				else if( last_list_element->next_element == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: corruption detected - missing next in last list element.",
 					 function );
 
@@ -1280,17 +1279,17 @@ int libbfio_offset_list_get_offset(
      int index,
      off64_t *offset,
      size64_t *size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_offset_list_value_t *offset_list_value = NULL;
 	static char *function                          = "libbfio_offset_list_get_offset";
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -1299,10 +1298,10 @@ int libbfio_offset_list_get_offset(
 	if( ( index < 0 )
 	 || ( index >= offset_list->number_of_elements ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid index value out of bounds.",
 		 function );
 
@@ -1310,10 +1309,10 @@ int libbfio_offset_list_get_offset(
 	}
 	if( offset == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset.",
 		 function );
 
@@ -1321,10 +1320,10 @@ int libbfio_offset_list_get_offset(
 	}
 	if( size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid size.",
 		 function );
 
@@ -1341,10 +1340,10 @@ int libbfio_offset_list_get_offset(
 				{
 					if( offset_list->current_element == NULL )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: corruption detected in element: %d.",
 						 function,
 						 offset_list->current_element_index );
@@ -1365,10 +1364,10 @@ int libbfio_offset_list_get_offset(
 				{
 					if( offset_list->current_element == NULL )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: corruption detected in element: %d.",
 						 function,
 						 offset_list->current_element_index );
@@ -1395,10 +1394,10 @@ int libbfio_offset_list_get_offset(
 			{
 				if( offset_list->current_element == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: corruption detected in element: %d.",
 					 function,
 					 offset_list->current_element_index );
@@ -1418,10 +1417,10 @@ int libbfio_offset_list_get_offset(
 			{
 				if( offset_list->current_element == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: corruption detected in element: %d.",
 					 function,
 					 offset_list->current_element_index );
@@ -1434,10 +1433,10 @@ int libbfio_offset_list_get_offset(
 	}
 	if( offset_list->current_element == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing offset list element: %d.",
 		 function,
 		 offset_list->current_element_index );
@@ -1446,10 +1445,10 @@ int libbfio_offset_list_get_offset(
 	}
 	if( offset_list->current_element->value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing offset list value for list element: %d.",
 		 function,
 		 offset_list->current_element_index );
@@ -1472,7 +1471,7 @@ int libbfio_offset_list_get_offset_by_value(
      off64_t offset_value,
      off64_t *offset,
      size64_t *size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_list_element_t *list_element           = NULL;
 	libbfio_offset_list_value_t *offset_list_value = NULL;
@@ -1481,10 +1480,10 @@ int libbfio_offset_list_get_offset_by_value(
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -1492,10 +1491,10 @@ int libbfio_offset_list_get_offset_by_value(
 	}
 	if( offset == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset.",
 		 function );
 
@@ -1503,10 +1502,10 @@ int libbfio_offset_list_get_offset_by_value(
 	}
 	if( size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid size.",
 		 function );
 
@@ -1520,10 +1519,10 @@ int libbfio_offset_list_get_offset_by_value(
 	{
 		if( list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: corruption detected for list element: %d.",
 			 function,
 			 element_index );
@@ -1532,10 +1531,10 @@ int libbfio_offset_list_get_offset_by_value(
 		}
 		if( list_element->value == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing offset list value for list element: %d.",
 			 function,
 			 element_index );
@@ -1564,7 +1563,7 @@ int libbfio_offset_list_range_is_present(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_list_element_t *list_element           = NULL;
 	libbfio_offset_list_value_t *offset_list_value = NULL;
@@ -1574,10 +1573,10 @@ int libbfio_offset_list_range_is_present(
 
 	if( offset_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid offset list.",
 		 function );
 
@@ -1585,10 +1584,10 @@ int libbfio_offset_list_range_is_present(
 	}
 	if( offset < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
 		 "%s: invalid offset value less than zero.",
 		 function );
 
@@ -1596,10 +1595,10 @@ int libbfio_offset_list_range_is_present(
 	}
 	if( size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 
@@ -1614,10 +1613,10 @@ int libbfio_offset_list_range_is_present(
 	{
 		if( list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: corruption detected for list element: %d.",
 			 function,
 			 element_index );
@@ -1626,10 +1625,10 @@ int libbfio_offset_list_range_is_present(
 		}
 		if( list_element->value == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing offset list value for list element: %d.",
 			 function,
 			 element_index );

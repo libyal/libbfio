@@ -23,10 +23,9 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libbfio_definitions.h"
 #include "libbfio_handle.h"
+#include "libbfio_libcerror.h"
 #include "libbfio_list_type.h"
 #include "libbfio_pool.h"
 #include "libbfio_types.h"
@@ -38,7 +37,7 @@ int libbfio_pool_initialize(
      libbfio_pool_t **pool,
      int number_of_handles,
      int maximum_number_of_open_handles,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_initialize";
@@ -46,10 +45,10 @@ int libbfio_pool_initialize(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -57,10 +56,10 @@ int libbfio_pool_initialize(
 	}
 	if( *pool != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid pool value already set.",
 		 function );
 
@@ -68,10 +67,10 @@ int libbfio_pool_initialize(
 	}
 	if( number_of_handles < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
 		 "%s: invalid number of handles value less than zero.",
 		 function );
 
@@ -79,10 +78,10 @@ int libbfio_pool_initialize(
 	}
 	if( maximum_number_of_open_handles < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
 		 "%s: invalid maximum number of open handles value less than zero.",
 		 function );
 
@@ -93,10 +92,10 @@ int libbfio_pool_initialize(
 
 	if( internal_pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create pool.",
 		 function );
 
@@ -107,10 +106,10 @@ int libbfio_pool_initialize(
 	     0,
 	     sizeof( libbfio_internal_pool_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear pool.",
 		 function );
 
@@ -123,10 +122,10 @@ int libbfio_pool_initialize(
 	     &( internal_pool->last_used_list ),
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create last used list.",
 		 function );
 
@@ -138,10 +137,10 @@ int libbfio_pool_initialize(
 
 		if( handles_size > (size_t) SSIZE_MAX )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
 			 "%s: invalid handles size value exceeds maximum.",
 			 function );
 
@@ -152,10 +151,10 @@ int libbfio_pool_initialize(
 
 		if( internal_pool->handles == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create handles.",
 			 function );
 
@@ -166,10 +165,10 @@ int libbfio_pool_initialize(
 		     0,
 		     handles_size ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear handles.",
 			 function );
 
@@ -209,7 +208,7 @@ on_error:
  */
 int libbfio_pool_free(
      libbfio_pool_t **pool,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_free";
@@ -218,10 +217,10 @@ int libbfio_pool_free(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -243,10 +242,10 @@ int libbfio_pool_free(
 					     &( internal_pool->handles[ handle_iterator ] ),
 					     error ) != 1 )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_IO,
-						 LIBERROR_IO_ERROR_CLOSE_FAILED,
+						 LIBCERROR_ERROR_DOMAIN_IO,
+						 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 						 "%s: unable to free handle: %d.",
 						 function,
 						 handle_iterator );
@@ -265,10 +264,10 @@ int libbfio_pool_free(
 			     NULL,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 				 "%s: unable to free last used list.",
 				 function );
 
@@ -290,7 +289,7 @@ int libbfio_pool_free(
 int libbfio_pool_clone(
      libbfio_pool_t **destination_pool,
      libbfio_pool_t *source_pool,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_source_pool = NULL;
 	static char *function                         = "libbfio_pool_clone";
@@ -298,10 +297,10 @@ int libbfio_pool_clone(
 
 	if( destination_pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid destination pool.",
 		 function );
 
@@ -309,10 +308,10 @@ int libbfio_pool_clone(
 	}
 	if( *destination_pool != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: destination pool already set.",
 		 function );
 
@@ -332,10 +331,10 @@ int libbfio_pool_clone(
 	     internal_source_pool->maximum_number_of_open_handles,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create destination handle.",
 		 function );
 
@@ -343,10 +342,10 @@ int libbfio_pool_clone(
 	}
 	if( *destination_pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing destination pool.",
 		 function );
 
@@ -365,10 +364,10 @@ int libbfio_pool_clone(
 				     internal_source_pool->handles[ handle_iterator ],
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 					 "%s: unable to clone pool handle: %d.",
 					 function,
 					 handle_iterator );
@@ -396,7 +395,7 @@ on_error:
 int libbfio_pool_resize(
      libbfio_pool_t *pool,
      int number_of_handles,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	void *reallocation                     = NULL;
@@ -405,10 +404,10 @@ int libbfio_pool_resize(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -418,10 +417,10 @@ int libbfio_pool_resize(
 
 	if( number_of_handles <= 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid number of handles value zero or less.",
 		 function );
 
@@ -433,10 +432,10 @@ int libbfio_pool_resize(
 
 		if( handles_size > (size_t) SSIZE_MAX )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
 			 "%s: invalid handles size value exceeds maximum.",
 			 function );
 
@@ -448,10 +447,10 @@ int libbfio_pool_resize(
 
 		if( reallocation == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to resize handles.",
 			 function );
 
@@ -464,10 +463,10 @@ int libbfio_pool_resize(
 		     0,
 		     sizeof( libbfio_handle_t * ) * ( number_of_handles - internal_pool->number_of_handles ) ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear handles.",
 			 function );
 
@@ -485,17 +484,17 @@ int libbfio_pool_open_handle(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_pool_open_handle";
 	int is_open           = 0;
 
 	if( internal_pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -503,10 +502,10 @@ int libbfio_pool_open_handle(
 	}
 	if( internal_pool->last_used_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing last used list.",
 		 function );
 
@@ -514,10 +513,10 @@ int libbfio_pool_open_handle(
 	}
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -529,10 +528,10 @@ int libbfio_pool_open_handle(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if handle is open.",
 		 function );
 
@@ -549,10 +548,10 @@ int libbfio_pool_open_handle(
 		     handle,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to append handle to last used list.",
 			 function );
 
@@ -564,10 +563,10 @@ int libbfio_pool_open_handle(
 	     access_flags,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open handle.",
 		 function );
 
@@ -579,10 +578,10 @@ int libbfio_pool_open_handle(
 	     SEEK_SET,
 	     error ) == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek offset.",
 		 function );
 
@@ -598,17 +597,17 @@ int libbfio_pool_open_handle(
 int libbfio_pool_append_handle_to_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_list_element_t *last_used_list_element = NULL;
 	static char *function                          = "libbfio_pool_append_handle_to_last_used_list";
 
 	if( internal_pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -616,10 +615,10 @@ int libbfio_pool_append_handle_to_last_used_list(
 	}
 	if( internal_pool->last_used_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing last used list.",
 		 function );
 
@@ -627,10 +626,10 @@ int libbfio_pool_append_handle_to_last_used_list(
 	}
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -648,10 +647,10 @@ int libbfio_pool_append_handle_to_last_used_list(
 		     last_used_list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
 			 "%s: unable to remove last used list element from list.",
 			 function );
 
@@ -659,10 +658,10 @@ int libbfio_pool_append_handle_to_last_used_list(
 		}
 		if( last_used_list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing last used list element.",
 			 function );
 
@@ -674,10 +673,10 @@ int libbfio_pool_append_handle_to_last_used_list(
 			     (libbfio_handle_t *) last_used_list_element->value,
 			     error ) != 0 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 				 "%s: unable to close handle.",
 				 function );
 
@@ -703,10 +702,10 @@ int libbfio_pool_append_handle_to_last_used_list(
 		     &last_used_list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create last used list element.",
 			 function );
 
@@ -723,10 +722,10 @@ int libbfio_pool_append_handle_to_last_used_list(
 	     last_used_list_element,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 		 "%s: unable to prepend last used list element to list.",
 		 function );
 
@@ -746,17 +745,17 @@ int libbfio_pool_append_handle_to_last_used_list(
 int libbfio_pool_move_handle_to_front_of_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_list_element_t *last_used_list_element = NULL;
 	static char *function                          = "libbfio_pool_move_handle_to_front_of_last_used_list";
 
 	if( internal_pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -764,10 +763,10 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 	}
 	if( internal_pool->last_used_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing last used list.",
 		 function );
 
@@ -775,10 +774,10 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 	}
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -788,10 +787,10 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 
 	if( last_used_list_element == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing last used list element.",
 		 function );
 
@@ -804,10 +803,10 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 		     last_used_list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
 			 "%s: unable to remove last used list element from list.",
 			 function );
 
@@ -818,10 +817,10 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 		     last_used_list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to prepend last used list element to list.",
 			 function );
 
@@ -844,17 +843,17 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 int libbfio_pool_get_number_of_handles(
      libbfio_pool_t *pool,
      int *number_of_handles,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_number_of_handles";
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -864,10 +863,10 @@ int libbfio_pool_get_number_of_handles(
 
 	if( number_of_handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid number of handles.",
 		 function );
 
@@ -885,17 +884,17 @@ int libbfio_pool_get_handle(
      libbfio_pool_t *pool,
      int entry,
      libbfio_handle_t **handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_handle";
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -905,10 +904,10 @@ int libbfio_pool_get_handle(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -917,10 +916,10 @@ int libbfio_pool_get_handle(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry value out of bounds.",
 		 function );
 
@@ -928,10 +927,10 @@ int libbfio_pool_get_handle(
 	}
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -951,7 +950,7 @@ int libbfio_pool_append_handle(
      int *entry,
      libbfio_handle_t *handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_append_handle";
@@ -959,10 +958,10 @@ int libbfio_pool_append_handle(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -972,10 +971,10 @@ int libbfio_pool_append_handle(
 
 	if( internal_pool->last_used_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing last used list.",
 		 function );
 
@@ -983,10 +982,10 @@ int libbfio_pool_append_handle(
 	}
 	if( entry == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid entry.",
 		 function );
 
@@ -994,10 +993,10 @@ int libbfio_pool_append_handle(
 	}
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1011,10 +1010,10 @@ int libbfio_pool_append_handle(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if handle is open.",
 		 function );
 
@@ -1029,10 +1028,10 @@ int libbfio_pool_append_handle(
 		     internal_pool->number_of_handles + 1,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_RESIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_RESIZE_FAILED,
 			 "%s: unable to resize pool.",
 			 function );
 
@@ -1054,10 +1053,10 @@ int libbfio_pool_append_handle(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to set access flags.",
 			 function );
 
@@ -1071,10 +1070,10 @@ int libbfio_pool_append_handle(
 		     handle,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to append handle to last used list.",
 			 function );
 
@@ -1092,7 +1091,7 @@ int libbfio_pool_set_handle(
      int entry,
      libbfio_handle_t *handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_set_handle";
@@ -1100,10 +1099,10 @@ int libbfio_pool_set_handle(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1113,10 +1112,10 @@ int libbfio_pool_set_handle(
 
 	if( internal_pool->last_used_list == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing last used list.",
 		 function );
 
@@ -1124,10 +1123,10 @@ int libbfio_pool_set_handle(
 	}
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -1136,10 +1135,10 @@ int libbfio_pool_set_handle(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry value out of bounds.",
 		 function );
 
@@ -1152,10 +1151,10 @@ int libbfio_pool_set_handle(
 	{
 		( (libbfio_internal_handle_t *) ( internal_pool->handles[ entry ] ) )->pool_last_used_list_element = NULL;
 
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid entry value already set.",
 		 function );
 
@@ -1169,10 +1168,10 @@ int libbfio_pool_set_handle(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if handle is open.",
 		 function );
 
@@ -1189,10 +1188,10 @@ int libbfio_pool_set_handle(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to set access flags.",
 			 function );
 
@@ -1206,10 +1205,10 @@ int libbfio_pool_set_handle(
 		     handle,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to append handle to last used list.",
 			 function );
 
@@ -1226,7 +1225,7 @@ int libbfio_pool_open(
      libbfio_pool_t *pool,
      int entry,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_open";
@@ -1234,10 +1233,10 @@ int libbfio_pool_open(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1247,10 +1246,10 @@ int libbfio_pool_open(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -1259,10 +1258,10 @@ int libbfio_pool_open(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry value out of bounds.",
 		 function );
 
@@ -1276,10 +1275,10 @@ int libbfio_pool_open(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if entry: %d is open.",
 		 function,
 	         entry );
@@ -1288,10 +1287,10 @@ int libbfio_pool_open(
 	}
 	else if( is_open == 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: entry: %d is already open.",
 		 function,
 	         entry );
@@ -1304,10 +1303,10 @@ int libbfio_pool_open(
 	     access_flags,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open entry: %d.",
 		 function,
 		 entry );
@@ -1324,17 +1323,17 @@ int libbfio_pool_reopen(
      libbfio_pool_t *pool,
      int entry,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_reopen";
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1344,10 +1343,10 @@ int libbfio_pool_reopen(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -1356,10 +1355,10 @@ int libbfio_pool_reopen(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry.",
 		 function );
 
@@ -1370,10 +1369,10 @@ int libbfio_pool_reopen(
 	     access_flags,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to reopen handle for entry: %d.",
 		 function,
 		 entry );
@@ -1389,7 +1388,7 @@ int libbfio_pool_reopen(
 int libbfio_pool_close(
      libbfio_pool_t *pool,
      int entry,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool         = NULL;
 	libbfio_list_element_t *last_used_list_element = NULL;
@@ -1397,10 +1396,10 @@ int libbfio_pool_close(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1410,10 +1409,10 @@ int libbfio_pool_close(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -1422,10 +1421,10 @@ int libbfio_pool_close(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry.",
 		 function );
 
@@ -1433,10 +1432,10 @@ int libbfio_pool_close(
 	}
 	if( internal_pool->handles[ entry ] == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handle for entry: %d.",
 		 function,
 		 entry );
@@ -1452,10 +1451,10 @@ int libbfio_pool_close(
 		     last_used_list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
 			 "%s: unable to remove last used list element from list.",
 			 function );
 
@@ -1463,10 +1462,10 @@ int libbfio_pool_close(
 		}
 		if( last_used_list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing last used list element.",
 			 function );
 
@@ -1474,10 +1473,10 @@ int libbfio_pool_close(
 		}
 		if( last_used_list_element->value == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing last used list element value.",
 			 function );
 
@@ -1490,10 +1489,10 @@ int libbfio_pool_close(
 		     NULL,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free last used list element.",
 			 function );
 
@@ -1504,10 +1503,10 @@ int libbfio_pool_close(
 	     internal_pool->handles[ entry ],
 	     error ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 		 "%s: unable to close handle for entry: %d.",
 		 function,
 		 entry );
@@ -1532,7 +1531,7 @@ on_error:
  */
 int libbfio_pool_close_all(
      libbfio_pool_t *pool,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_close_all";
@@ -1542,10 +1541,10 @@ int libbfio_pool_close_all(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1567,10 +1566,10 @@ int libbfio_pool_close_all(
 
 			if( is_open == -1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to determine if entry: %d is open.",
 				 function,
 				 handle_iterator );
@@ -1583,10 +1582,10 @@ int libbfio_pool_close_all(
 				    handle_iterator,
 				    error ) != 0 ) )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 				 "%s: unable to close handle: %d.",
 				 function,
 				 handle_iterator );
@@ -1606,7 +1605,7 @@ ssize_t libbfio_pool_read(
          int entry,
          uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_read";
@@ -1616,10 +1615,10 @@ ssize_t libbfio_pool_read(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1629,10 +1628,10 @@ ssize_t libbfio_pool_read(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -1641,10 +1640,10 @@ ssize_t libbfio_pool_read(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry.",
 		 function );
 
@@ -1658,10 +1657,10 @@ ssize_t libbfio_pool_read(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if entry: %d is open.",
 		 function,
 	         entry );
@@ -1675,10 +1674,10 @@ ssize_t libbfio_pool_read(
 		     &access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve access flags.",
 			 function );
 
@@ -1690,10 +1689,10 @@ ssize_t libbfio_pool_read(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open entry: %d.",
 			 function,
 			 entry );
@@ -1708,10 +1707,10 @@ ssize_t libbfio_pool_read(
 		     internal_pool->handles[ entry ],
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to move handle to front of last used list.",
 			 function );
 
@@ -1726,10 +1725,10 @@ ssize_t libbfio_pool_read(
 
 	if( read_count < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read from entry: %d.",
 		 function,
 		 entry );
@@ -1747,7 +1746,7 @@ ssize_t libbfio_pool_write(
          int entry,
          const uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_write";
@@ -1757,10 +1756,10 @@ ssize_t libbfio_pool_write(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1770,10 +1769,10 @@ ssize_t libbfio_pool_write(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -1782,10 +1781,10 @@ ssize_t libbfio_pool_write(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry.",
 		 function );
 
@@ -1799,10 +1798,10 @@ ssize_t libbfio_pool_write(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if entry: %d is open.",
 		 function,
 	         entry );
@@ -1816,10 +1815,10 @@ ssize_t libbfio_pool_write(
 		     &access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve access flags.",
 			 function );
 
@@ -1831,10 +1830,10 @@ ssize_t libbfio_pool_write(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open entry: %d.",
 			 function,
 			 entry );
@@ -1849,10 +1848,10 @@ ssize_t libbfio_pool_write(
 		     internal_pool->handles[ entry ],
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to move handle to front of last used list.",
 			 function );
 
@@ -1867,10 +1866,10 @@ ssize_t libbfio_pool_write(
 
 	if( write_count < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_WRITE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
 		 "%s: unable to write to entry: %d.",
 		 function,
 		 entry );
@@ -1888,7 +1887,7 @@ off64_t libbfio_pool_seek_offset(
          int entry,
          off64_t offset,
          int whence,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_seek_offset";
@@ -1898,10 +1897,10 @@ off64_t libbfio_pool_seek_offset(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -1911,10 +1910,10 @@ off64_t libbfio_pool_seek_offset(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -1923,10 +1922,10 @@ off64_t libbfio_pool_seek_offset(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry.",
 		 function );
 
@@ -1940,10 +1939,10 @@ off64_t libbfio_pool_seek_offset(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if entry: %d is open.",
 		 function,
 	         entry );
@@ -1957,10 +1956,10 @@ off64_t libbfio_pool_seek_offset(
 		     &access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve access flags.",
 			 function );
 
@@ -1972,10 +1971,10 @@ off64_t libbfio_pool_seek_offset(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open entry: %d.",
 			 function,
 			 entry );
@@ -1990,10 +1989,10 @@ off64_t libbfio_pool_seek_offset(
 		     internal_pool->handles[ entry ],
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to move handle to front of last used list.",
 			 function );
 
@@ -2008,10 +2007,10 @@ off64_t libbfio_pool_seek_offset(
 
 	if( seek_offset == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek offset in entry: %d.",
 		 function,
 		 entry );
@@ -2028,7 +2027,7 @@ int libbfio_pool_get_size(
      libbfio_pool_t *pool,
      int entry,
      size64_t *size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_size";
@@ -2037,10 +2036,10 @@ int libbfio_pool_get_size(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -2050,10 +2049,10 @@ int libbfio_pool_get_size(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -2062,10 +2061,10 @@ int libbfio_pool_get_size(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry.",
 		 function );
 
@@ -2079,10 +2078,10 @@ int libbfio_pool_get_size(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if entry: %d is open.",
 		 function,
 	         entry );
@@ -2096,10 +2095,10 @@ int libbfio_pool_get_size(
 		     &access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve access flags.",
 			 function );
 
@@ -2111,10 +2110,10 @@ int libbfio_pool_get_size(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open entry: %d.",
 			 function,
 			 entry );
@@ -2127,10 +2126,10 @@ int libbfio_pool_get_size(
 	     size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve size of entry: %d.",
 		 function,
 		 entry );
@@ -2147,7 +2146,7 @@ int libbfio_pool_get_offset(
      libbfio_pool_t *pool,
      int entry,
      off64_t *offset,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_offset";
@@ -2156,10 +2155,10 @@ int libbfio_pool_get_offset(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -2169,10 +2168,10 @@ int libbfio_pool_get_offset(
 
 	if( internal_pool->handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid pool - missing handles.",
 		 function );
 
@@ -2181,10 +2180,10 @@ int libbfio_pool_get_offset(
 	if( ( entry < 0 )
 	 || ( entry >= internal_pool->number_of_handles ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid entry.",
 		 function );
 
@@ -2198,10 +2197,10 @@ int libbfio_pool_get_offset(
 
 	if( is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine if entry: %d is open.",
 		 function,
 	         entry );
@@ -2215,10 +2214,10 @@ int libbfio_pool_get_offset(
 		     &access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve access flags.",
 			 function );
 
@@ -2230,10 +2229,10 @@ int libbfio_pool_get_offset(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open entry: %d.",
 			 function,
 			 entry );
@@ -2246,10 +2245,10 @@ int libbfio_pool_get_offset(
 	     offset,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve offset.",
 		 function );
 
@@ -2264,17 +2263,17 @@ int libbfio_pool_get_offset(
 int libbfio_pool_get_maximum_number_of_open_handles(
      libbfio_pool_t *pool,
      int *maximum_number_of_open_handles,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_maximum_number_of_open_handles";
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -2284,10 +2283,10 @@ int libbfio_pool_get_maximum_number_of_open_handles(
 
 	if( maximum_number_of_open_handles == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid maximum number of open handles.",
 		 function );
 
@@ -2304,7 +2303,7 @@ int libbfio_pool_get_maximum_number_of_open_handles(
 int libbfio_pool_set_maximum_number_of_open_handles(
      libbfio_pool_t *pool,
      int maximum_number_of_open_handles,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool         = NULL;
 	libbfio_list_element_t *last_used_list_element = NULL;
@@ -2312,10 +2311,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -2335,10 +2334,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 		     last_used_list_element,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
 			 "%s: unable to remove last used list element from list.",
 			 function );
 
@@ -2346,10 +2345,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 		}
 		if( last_used_list_element == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing last used list element.",
 			 function );
 
@@ -2357,10 +2356,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 		}
 		if( last_used_list_element->value == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing last used list element value.",
 			 function );
 
@@ -2370,10 +2369,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 		     (libbfio_handle_t *) last_used_list_element->value,
 		     error ) != 0 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 			 "%s: unable to close handle.",
 			 function );
 
@@ -2392,10 +2391,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 		     NULL,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free last used list element.",
 			 function );
 

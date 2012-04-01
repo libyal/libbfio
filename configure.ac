@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20120305],
+ [20120401],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -47,8 +47,12 @@ AX_TYPES_CHECK_LOCAL
 
 dnl Checks for libraries and library functions
 AX_COMMON_CHECK_LOCAL
-AX_LIBCSTRING_CHECK_LOCAL
-AX_LIBERROR_CHECK_LOCAL
+
+dnl Check for enabling libcstring for cross-platform C string functions
+AX_LIBCSTRING_CHECK_ENABLE
+
+dnl Check for enabling libcerror for cross-platform C error functions
+AX_LIBCERROR_CHECK_ENABLE
 
 dnl Check for enabling libuna for Unicode string support
 AX_LIBUNA_CHECK_ENABLE
@@ -58,7 +62,7 @@ AX_LIBBFIO_CHECK_LOCAL
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libuna" = xyes],
+ [test "x$ac_cv_libstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libuna" = xyes],
  [AC_SUBST(
   [libbfio_spec_requires],
   [Requires:])
@@ -92,7 +96,7 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
-AC_CONFIG_FILES([liberror/Makefile])
+AC_CONFIG_FILES([libcerror/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
@@ -123,6 +127,8 @@ AC_OUTPUT
 dnl Print a summary
 AC_MSG_NOTICE([
 Building:
+   libcstring support:          $ac_cv_libcstring
+   libcerror support:           $ac_cv_libcerror
    libuna support:              $ac_cv_libuna
 
 Features:

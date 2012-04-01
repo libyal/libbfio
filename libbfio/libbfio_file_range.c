@@ -23,12 +23,11 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libbfio_definitions.h"
 #include "libbfio_file.h"
 #include "libbfio_file_range.h"
 #include "libbfio_handle.h"
+#include "libbfio_libcerror.h"
 #include "libbfio_types.h"
 
 /* Initializes the file range IO handle
@@ -36,16 +35,16 @@
  */
 int libbfio_file_range_io_handle_initialize(
      libbfio_file_range_io_handle_t **file_range_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_io_handle_initialize";
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -53,10 +52,10 @@ int libbfio_file_range_io_handle_initialize(
 	}
 	if( *file_range_io_handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid file range IO handle value already set.",
 		 function );
 
@@ -67,10 +66,10 @@ int libbfio_file_range_io_handle_initialize(
 
 	if( *file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create file range IO handle.",
 		 function );
 
@@ -81,10 +80,10 @@ int libbfio_file_range_io_handle_initialize(
 	     0,
 	     sizeof( libbfio_file_range_io_handle_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear file range IO handle.",
 		 function );
 
@@ -94,10 +93,10 @@ int libbfio_file_range_io_handle_initialize(
 	     &( ( *file_range_io_handle )->file_io_handle ),
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to initialize file IO handle.",
 		 function );
 
@@ -121,17 +120,17 @@ on_error:
  */
 int libbfio_file_range_initialize(
      libbfio_handle_t **handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
 	static char *function                                = "libbfio_range_file_initialize";
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -139,10 +138,10 @@ int libbfio_file_range_initialize(
 	}
 	if( *handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid handle value already set.",
 		 function );
 
@@ -152,10 +151,10 @@ int libbfio_file_range_initialize(
 	     &file_range_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file range IO handle.",
 		 function );
 
@@ -164,23 +163,23 @@ int libbfio_file_range_initialize(
 	if( libbfio_handle_initialize(
 	     handle,
 	     (intptr_t *) file_range_io_handle,
-	     (int (*)(intptr_t **, liberror_error_t **)) libbfio_file_range_io_handle_free,
-	     (int (*)(intptr_t **, intptr_t *, liberror_error_t **)) libbfio_file_range_io_handle_clone,
-	     (int (*)(intptr_t *, int, liberror_error_t **)) libbfio_file_range_open,
-	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_range_close,
-	     (ssize_t (*)(intptr_t *, uint8_t *, size_t, liberror_error_t **)) libbfio_file_range_read,
-	     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, liberror_error_t **)) libbfio_file_range_write,
-	     (off64_t (*)(intptr_t *, off64_t, int, liberror_error_t **)) libbfio_file_range_seek_offset,
-	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_range_exists,
-	     (int (*)(intptr_t *, liberror_error_t **)) libbfio_file_range_is_open,
-	     (int (*)(intptr_t *, size64_t *, liberror_error_t **)) libbfio_file_range_get_size,
+	     (int (*)(intptr_t **, libcerror_error_t **)) libbfio_file_range_io_handle_free,
+	     (int (*)(intptr_t **, intptr_t *, libcerror_error_t **)) libbfio_file_range_io_handle_clone,
+	     (int (*)(intptr_t *, int, libcerror_error_t **)) libbfio_file_range_open,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_range_close,
+	     (ssize_t (*)(intptr_t *, uint8_t *, size_t, libcerror_error_t **)) libbfio_file_range_read,
+	     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, libcerror_error_t **)) libbfio_file_range_write,
+	     (off64_t (*)(intptr_t *, off64_t, int, libcerror_error_t **)) libbfio_file_range_seek_offset,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_range_exists,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_range_is_open,
+	     (int (*)(intptr_t *, size64_t *, libcerror_error_t **)) libbfio_file_range_get_size,
 	     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create handle.",
 		 function );
 
@@ -203,17 +202,17 @@ on_error:
  */
 int libbfio_file_range_io_handle_free(
      libbfio_file_range_io_handle_t **file_range_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_io_handle_free";
 	int result            = 1;
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -225,10 +224,10 @@ int libbfio_file_range_io_handle_free(
 		     &( ( *file_range_io_handle )->file_io_handle ),
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free file IO handle.",
 			 function );
 
@@ -248,16 +247,16 @@ int libbfio_file_range_io_handle_free(
 int libbfio_file_range_io_handle_clone(
      libbfio_file_range_io_handle_t **destination_file_range_io_handle,
      libbfio_file_range_io_handle_t *source_file_range_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_io_handle_clone";
 
 	if( destination_file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid destination file range IO handle.",
 		 function );
 
@@ -265,10 +264,10 @@ int libbfio_file_range_io_handle_clone(
 	}
 	if( *destination_file_range_io_handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: destination file range IO handle already set.",
 		 function );
 
@@ -285,10 +284,10 @@ int libbfio_file_range_io_handle_clone(
 
 	if( *destination_file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create destination file range IO handle.",
 		 function );
 
@@ -299,10 +298,10 @@ int libbfio_file_range_io_handle_clone(
 	     0,
 	     sizeof( libbfio_file_range_io_handle_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear destination file range IO handle.",
 		 function );
 
@@ -318,10 +317,10 @@ int libbfio_file_range_io_handle_clone(
 	     source_file_range_io_handle->file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -349,7 +348,7 @@ on_error:
 int libbfio_file_range_get_name_size(
      libbfio_handle_t *handle,
      size_t *name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -357,10 +356,10 @@ int libbfio_file_range_get_name_size(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -370,10 +369,10 @@ int libbfio_file_range_get_name_size(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -386,10 +385,10 @@ int libbfio_file_range_get_name_size(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name size from file IO handle.",
 		 function );
 
@@ -406,7 +405,7 @@ int libbfio_file_range_get_name(
      libbfio_handle_t *handle,
      char *name,
      size_t name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -414,10 +413,10 @@ int libbfio_file_range_get_name(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -427,10 +426,10 @@ int libbfio_file_range_get_name(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -444,10 +443,10 @@ int libbfio_file_range_get_name(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name from file IO handle.",
 		 function );
 
@@ -463,7 +462,7 @@ int libbfio_file_range_set_name(
      libbfio_handle_t *handle,
      const char *name,
      size_t name_length,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -471,10 +470,10 @@ int libbfio_file_range_set_name(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -484,10 +483,10 @@ int libbfio_file_range_set_name(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -501,10 +500,10 @@ int libbfio_file_range_set_name(
 	     name_length,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set name in file IO handle.",
 		 function );
 
@@ -522,7 +521,7 @@ int libbfio_file_range_set_name(
 int libbfio_file_range_get_name_size_wide(
      libbfio_handle_t *handle,
      size_t *name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -530,10 +529,10 @@ int libbfio_file_range_get_name_size_wide(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -543,10 +542,10 @@ int libbfio_file_range_get_name_size_wide(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -559,10 +558,10 @@ int libbfio_file_range_get_name_size_wide(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name size from file IO handle.",
 		 function );
 
@@ -579,7 +578,7 @@ int libbfio_file_range_get_name_wide(
      libbfio_handle_t *handle,
      wchar_t *name,
      size_t name_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -587,10 +586,10 @@ int libbfio_file_range_get_name_wide(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -600,10 +599,10 @@ int libbfio_file_range_get_name_wide(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -617,10 +616,10 @@ int libbfio_file_range_get_name_wide(
 	     name_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve name from file IO handle.",
 		 function );
 
@@ -636,7 +635,7 @@ int libbfio_file_range_set_name_wide(
      libbfio_handle_t *handle,
      const wchar_t *name,
      size_t name_length,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -644,10 +643,10 @@ int libbfio_file_range_set_name_wide(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -657,10 +656,10 @@ int libbfio_file_range_set_name_wide(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -674,10 +673,10 @@ int libbfio_file_range_set_name_wide(
 	     name_length,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set name in file IO handle.",
 		 function );
 
@@ -695,7 +694,7 @@ int libbfio_file_range_get(
      libbfio_handle_t *handle,
      off64_t *range_offset,
      size64_t *range_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -703,10 +702,10 @@ int libbfio_file_range_get(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -716,10 +715,10 @@ int libbfio_file_range_get(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -729,10 +728,10 @@ int libbfio_file_range_get(
 
 	if( range_offset == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid range offset.",
 		 function );
 
@@ -740,10 +739,10 @@ int libbfio_file_range_get(
 	}
 	if( range_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid range size.",
 		 function );
 
@@ -763,7 +762,7 @@ int libbfio_file_range_set(
      libbfio_handle_t *handle,
      off64_t range_offset,
      size64_t range_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle           = NULL;
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
@@ -771,10 +770,10 @@ int libbfio_file_range_set(
 
 	if( handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
 		 function );
 
@@ -784,10 +783,10 @@ int libbfio_file_range_set(
 
 	if( internal_handle->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
 		 function );
 
@@ -797,10 +796,10 @@ int libbfio_file_range_set(
 
 	if( range_offset < 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
 		 "%s: invalid range offset value less than zero.",
 		 function );
 
@@ -808,10 +807,10 @@ int libbfio_file_range_set(
 	}
 	if( range_size > (size64_t) INT64_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid range size value exceeds maximum.",
 		 function );
 
@@ -829,17 +828,17 @@ int libbfio_file_range_set(
 int libbfio_file_range_open(
      libbfio_file_range_io_handle_t *file_range_io_handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_open";
 	size64_t file_size    = 0;
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -850,10 +849,10 @@ int libbfio_file_range_open(
 	     access_flags,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open file IO handle.",
 		 function );
 
@@ -864,10 +863,10 @@ int libbfio_file_range_open(
 	     &file_size,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve size from file IO handle.",
 		 function );
 
@@ -875,10 +874,10 @@ int libbfio_file_range_open(
 	}
 	if( file_range_io_handle->range_offset >= (off64_t) file_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid range offset value exceeds file size.",
 		 function );
 
@@ -888,10 +887,10 @@ int libbfio_file_range_open(
 
 	if( file_range_io_handle->range_size > file_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid range size value exceeds file size.",
 		 function );
 
@@ -903,10 +902,10 @@ int libbfio_file_range_open(
 	     SEEK_SET,
 	     error ) == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek range offset in file IO handle.",
 		 function );
 
@@ -920,16 +919,16 @@ int libbfio_file_range_open(
  */
 int libbfio_file_range_close(
      libbfio_file_range_io_handle_t *file_range_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_close";
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -939,10 +938,10 @@ int libbfio_file_range_close(
 	     file_range_io_handle->file_io_handle,
 	     error ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 		 "%s: unable to close file IO handle.",
 		 function );
 
@@ -958,7 +957,7 @@ ssize_t libbfio_file_range_read(
          libbfio_file_range_io_handle_t *file_range_io_handle,
          uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_read";
 	off64_t file_offset   = 0;
@@ -966,10 +965,10 @@ ssize_t libbfio_file_range_read(
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -983,10 +982,10 @@ ssize_t libbfio_file_range_read(
 
 	if( file_offset == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve current offset from file IO handle.",
 		 function );
 
@@ -994,10 +993,10 @@ ssize_t libbfio_file_range_read(
 	}
 	if( file_offset < file_range_io_handle->range_offset )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid file offset value out of bounds.",
 		 function );
 
@@ -1022,10 +1021,10 @@ ssize_t libbfio_file_range_read(
 
 	if( read_count == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read from file IO handle.",
 		 function );
 
@@ -1041,7 +1040,7 @@ ssize_t libbfio_file_range_write(
          libbfio_file_range_io_handle_t *file_range_io_handle,
          const uint8_t *buffer,
          size_t size,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_write";
 	off64_t file_offset   = 0;
@@ -1049,10 +1048,10 @@ ssize_t libbfio_file_range_write(
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -1066,10 +1065,10 @@ ssize_t libbfio_file_range_write(
 
 	if( file_offset == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve current offset from file IO handle.",
 		 function );
 
@@ -1077,10 +1076,10 @@ ssize_t libbfio_file_range_write(
 	}
 	if( file_offset < file_range_io_handle->range_offset )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid file offset value out of bounds.",
 		 function );
 
@@ -1105,10 +1104,10 @@ ssize_t libbfio_file_range_write(
 
 	if( write_count == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to write to file IO handle.",
 		 function );
 
@@ -1124,17 +1123,17 @@ off64_t libbfio_file_range_seek_offset(
          libbfio_file_range_io_handle_t *file_range_io_handle,
          off64_t offset,
          int whence,
-         liberror_error_t **error )
+         libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_seek_offset";
 	off64_t file_offset   = 0;
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -1144,10 +1143,10 @@ off64_t libbfio_file_range_seek_offset(
 	 && ( whence != SEEK_END )
 	 && ( whence != SEEK_SET ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported whence.",
 		 function );
 
@@ -1163,10 +1162,10 @@ off64_t libbfio_file_range_seek_offset(
 
 		if( file_offset == -1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve current offset from file IO handle.",
 			 function );
 
@@ -1191,10 +1190,10 @@ off64_t libbfio_file_range_seek_offset(
 	{
 		if( offset < file_range_io_handle->range_offset )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 			 "%s: invalid offset value out of bounds.",
 			 function );
 
@@ -1209,10 +1208,10 @@ off64_t libbfio_file_range_seek_offset(
 
 	if( offset == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek offset in file IO handle.",
 		 function );
 
@@ -1220,10 +1219,10 @@ off64_t libbfio_file_range_seek_offset(
 	}
 	if( offset < file_range_io_handle->range_offset )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid offset value out of bounds.",
 		 function );
 
@@ -1239,17 +1238,17 @@ off64_t libbfio_file_range_seek_offset(
  */
 int libbfio_file_range_exists(
      libbfio_file_range_io_handle_t *file_range_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_exists";
 	int result            = 0;
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -1261,10 +1260,10 @@ int libbfio_file_range_exists(
 
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_GENERIC,
 		 "%s: unable to determine if file exists.",
 		 function );
 
@@ -1278,17 +1277,17 @@ int libbfio_file_range_exists(
  */
 int libbfio_file_range_is_open(
      libbfio_file_range_io_handle_t *file_range_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_is_open";
 	int result            = 0;
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -1300,10 +1299,10 @@ int libbfio_file_range_is_open(
 
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_GENERIC,
 		 "%s: unable to determine if file is open.",
 		 function );
 
@@ -1318,16 +1317,16 @@ int libbfio_file_range_is_open(
 int libbfio_file_range_get_size(
      libbfio_file_range_io_handle_t *file_range_io_handle,
      size64_t *size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_range_get_size";
 
 	if( file_range_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file range IO handle.",
 		 function );
 
@@ -1335,10 +1334,10 @@ int libbfio_file_range_get_size(
 	}
 	if( size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid size.",
 		 function );
 
@@ -1351,10 +1350,10 @@ int libbfio_file_range_get_size(
 		     size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to determine size.",
 			 function );
 

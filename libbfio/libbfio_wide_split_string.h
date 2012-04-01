@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libbfio_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -63,36 +63,36 @@ int libbfio_wide_split_string_initialize(
      const wchar_t *string,
      size_t string_size,
      int number_of_segments,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_wide_split_string_free(
      libbfio_wide_split_string_t **split_string,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_wide_split_string_get_string(
      libbfio_wide_split_string_t *split_string,
      wchar_t **string,
      size_t *string_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_wide_split_string_get_number_of_segments(
      libbfio_wide_split_string_t *split_string,
      int *number_of_segments,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_wide_split_string_get_segment_by_index(
      libbfio_wide_split_string_t *split_string,
      int segment_index,
      wchar_t **string_segment,
      size_t *string_segment_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_wide_split_string_set_segment_by_index(
      libbfio_wide_split_string_t *split_string,
      int segment_index,
      wchar_t *string_segment,
      size_t string_segment_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

@@ -25,8 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
+#include "libbfio_libcerror.h"
 #include "libbfio_wide_split_string.h"
 
 #if defined( __cplusplus )
@@ -40,7 +39,7 @@ int libbfio_wide_string_split(
      size_t string_size,
      wchar_t delimiter,
      libbfio_wide_split_string_t **split_string,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

@@ -4,7 +4,7 @@ SUBDIRS = \
 	include \
 	common \
 	libcstring \
-	liberror \
+	libcerror \
 	libuna \
 	libbfio \
 	po \
@@ -51,7 +51,7 @@ lib: library
 library:
 	(cd $(srcdir)/common && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcstring && $(MAKE) $(AM_MAKEFLAGS))
-	(cd $(srcdir)/liberror && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcerror && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
@@ -70,7 +70,7 @@ distclean: clean
 
 splint:
 	(cd $(srcdir)/libcstring && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/liberror && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcerror && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))

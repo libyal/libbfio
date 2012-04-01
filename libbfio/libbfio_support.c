@@ -22,13 +22,12 @@
 #include <common.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #include <stdio.h>
 
 #include "libbfio_codepage.h"
 #include "libbfio_definitions.h"
+#include "libbfio_libcerror.h"
+#include "libbfio_libcstring.h"
 #include "libbfio_support.h"
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
@@ -47,16 +46,16 @@ const char *libbfio_get_version(
  */
 int libbfio_get_codepage(
      int *codepage,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_get_codepage";
 
 	if( codepage == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid codepage.",
 		 function );
 
@@ -73,7 +72,7 @@ int libbfio_get_codepage(
  */
 int libbfio_set_codepage(
      int codepage,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libbfio_set_codepage";
 
@@ -108,10 +107,10 @@ int libbfio_set_codepage(
 	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1258 )
 	 && ( codepage != 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported codepage.",
 		 function );
 

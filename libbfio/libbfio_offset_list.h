@@ -25,8 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
+#include "libbfio_libcerror.h"
 #include "libbfio_list_type.h"
 
 #if defined( __cplusplus )
@@ -73,65 +72,65 @@ struct libbfio_offset_list
 
 int libbfio_offset_list_value_initialize(
      libbfio_offset_list_value_t **offset_list_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_value_free(
      libbfio_offset_list_value_t **offset_list_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_value_clone(
      libbfio_offset_list_value_t **destination_offset_list_value,
      libbfio_offset_list_value_t *source_offset_list_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_initialize(
      libbfio_offset_list_t **offset_list,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_free(
      libbfio_offset_list_t **offset_list,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_empty(
      libbfio_offset_list_t *offset_list,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_clone(
      libbfio_offset_list_t **destination_offset_list,
      libbfio_offset_list_t *source_offset_list,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_get_number_of_elements(
      libbfio_offset_list_t *offset_list,
      int *number_of_elements,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_append_offset(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
      uint8_t merge_ranges,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_get_offset(
      libbfio_offset_list_t *offset_list,
      int index,
      off64_t *offset,
      size64_t *size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_get_offset_by_value(
      libbfio_offset_list_t *offset_list,
      off64_t offset_value,
      off64_t *offset,
      size64_t *size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_offset_list_range_is_present(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
      size64_t size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

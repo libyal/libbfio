@@ -22,13 +22,12 @@
 #include <common.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #include "libbfio_definitions.h"
 #include "libbfio_file.h"
 #include "libbfio_file_pool.h"
 #include "libbfio_handle.h"
+#include "libbfio_libcerror.h"
+#include "libbfio_libcstring.h"
 #include "libbfio_pool.h"
 #include "libbfio_types.h"
 
@@ -40,7 +39,7 @@ int libbfio_file_pool_append_handles_for_names(
      char * const names[],
      int number_of_names,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	static char *function            = "libbfio_file_pool_append_handles_for_names";
@@ -50,10 +49,10 @@ int libbfio_file_pool_append_handles_for_names(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -61,10 +60,10 @@ int libbfio_file_pool_append_handles_for_names(
 	}
 	if( names == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid names.",
 		 function );
 
@@ -72,10 +71,10 @@ int libbfio_file_pool_append_handles_for_names(
 	}
 	if( number_of_names <= 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid number of names zero or less.",
 		 function );
 
@@ -92,10 +91,10 @@ int libbfio_file_pool_append_handles_for_names(
 		     &file_io_handle,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create file IO handle: %d.",
 			 function,
 			 name_iterator );
@@ -108,10 +107,10 @@ int libbfio_file_pool_append_handles_for_names(
 		     name_length + 1,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set name in file IO handle: %d.",
 			 function,
 			 name_iterator );
@@ -129,10 +128,10 @@ int libbfio_file_pool_append_handles_for_names(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to append file IO handle: %d to pool.",
 			 function,
 			 name_iterator );
@@ -158,7 +157,7 @@ int libbfio_file_pool_append_handles_for_names_wide(
      wchar_t * const names[],
      int number_of_names,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	static char *function            = "libbfio_file_pool_append_handles_for_names_wide";
@@ -168,10 +167,10 @@ int libbfio_file_pool_append_handles_for_names_wide(
 
 	if( pool == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid pool.",
 		 function );
 
@@ -179,10 +178,10 @@ int libbfio_file_pool_append_handles_for_names_wide(
 	}
 	if( names == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid names.",
 		 function );
 
@@ -190,10 +189,10 @@ int libbfio_file_pool_append_handles_for_names_wide(
 	}
 	if( number_of_names <= 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid number of names zero or less.",
 		 function );
 
@@ -210,10 +209,10 @@ int libbfio_file_pool_append_handles_for_names_wide(
 		     &file_io_handle,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create file IO handle: %d.",
 			 function,
 			 name_iterator );
@@ -226,10 +225,10 @@ int libbfio_file_pool_append_handles_for_names_wide(
 		     name_length + 1,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set name in file IO handle: %d.",
 			 function,
 			 name_iterator );
@@ -247,10 +246,10 @@ int libbfio_file_pool_append_handles_for_names_wide(
 		     access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to append file IO handle: %d to pool.",
 			 function,
 			 name_iterator );

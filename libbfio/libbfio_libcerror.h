@@ -1,5 +1,5 @@
 /*
- * Narrow character string functions
+ * The internal libcerror header
  *
  * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,28 +19,33 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBBFIO_NARROW_STRING_H )
-#define _LIBBFIO_NARROW_STRING_H
+#if !defined( _LIBBFIO_LIBCERROR_H )
+#define _LIBBFIO_LIBCERROR_H
 
 #include <common.h>
-#include <types.h>
 
-#include "libbfio_libcerror.h"
-#include "libbfio_narrow_split_string.h"
+/* Define HAVE_LOCAL_LIBCERROR for local use of libcerror
+ */
+#if defined( HAVE_LOCAL_LIBCERROR )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libcerror_definitions.h>
+#include <libcerror_error.h>
+#include <libcerror_system.h>
+#include <libcerror_types.h>
+
+#elif defined( HAVE_LIBCERROR_H )
+
+/* If libtool DLL support is enabled set LIBCERROR_DLL_IMPORT
+ * before including libcerror.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCERROR_DLL_IMPORT
 #endif
 
-int libbfio_narrow_string_split(
-     const char *string,
-     size_t string_size,
-     char delimiter,
-     libbfio_narrow_split_string_t **split_string,
-     libcerror_error_t **error );
+#include <libcerror.h>
 
-#if defined( __cplusplus )
-}
+#else
+#error Missing libcerror.h
 #endif
 
 #endif

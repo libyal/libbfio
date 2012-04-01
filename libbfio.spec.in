@@ -7,8 +7,8 @@ License: LGPL
 Source: %{name}-%{version}.tar.gz
 URL: http://libbfio.sourceforge.net
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-@libbfio_spec_requires@ @ax_libuna_spec_requires@
-@libbfio_spec_build_requires@ @ax_libuna_spec_build_requires@
+@libbfio_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcstring_spec_requires@ @ax_libuna_spec_requires@
+@libbfio_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcstring_spec_build_requires@ @ax_libuna_spec_build_requires@
 
 %description
 libbfio is a library to support (abstracted) basic file IO
@@ -55,6 +55,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man3/*
 
 %changelog
+* Sun Apr  1 2012 Joachim Metz <jbmetz@users.sourceforge.net> 20120401-1
+- Changes for libsystem code clean up
+
 * Sat Oct 15 2011 Joachim Metz <jbmetz@users.sourceforge.net> 20111015-1
 - Update for configure changes and README files
 

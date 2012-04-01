@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libbfio_extern.h"
+#include "libbfio_libcerror.h"
 #include "libbfio_types.h"
 
 #if defined( __cplusplus )
@@ -40,7 +39,7 @@ int libbfio_file_pool_append_handles_for_names(
      char * const names[],
      int number_of_names,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
@@ -50,7 +49,7 @@ int libbfio_file_pool_append_handles_for_names_wide(
      wchar_t * const names[],
      int number_of_names,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

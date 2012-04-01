@@ -22,9 +22,6 @@
 #include <common.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #if defined( HAVE_ERRNO_H ) || defined( WINAPI )
 #include <errno.h>
 #endif
@@ -33,7 +30,8 @@
 #include <unistd.h>
 #endif
 
-#include "libbfio_error_string.h"
+#include "libbfio_libcerror.h"
+#include "libbfio_libcstring.h"
 #include "libbfio_libuna.h"
 #include "libbfio_narrow_split_string.h"
 #include "libbfio_narrow_string.h"
@@ -66,10 +64,8 @@ enum LIBBFIO_PATH_TYPES
 int libbfio_path_get_current_working_directory(
      char **current_working_directory,
      size_t *current_working_directory_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ 128 ];
-
 	static char *function                     = "libbfio_path_get_current_working_directory";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
@@ -79,10 +75,10 @@ int libbfio_path_get_current_working_directory(
 
 	if( current_working_directory == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid current working directory.",
 		 function );
 
@@ -90,10 +86,10 @@ int libbfio_path_get_current_working_directory(
 	}
 	if( *current_working_directory != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid current working directory value already set.",
 		 function );
 
@@ -101,10 +97,10 @@ int libbfio_path_get_current_working_directory(
 	}
 	if( current_working_directory_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid current working directory size.",
 		 function );
 
@@ -117,10 +113,10 @@ int libbfio_path_get_current_working_directory(
 
 	if( safe_current_working_directory_size == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve current working directory size.",
 		 function );
 
@@ -128,10 +124,10 @@ int libbfio_path_get_current_working_directory(
 	}
 	if( (size_t) safe_current_working_directory_size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: current working directory size value out of bounds.",
 		 function );
 
@@ -152,10 +148,10 @@ int libbfio_path_get_current_working_directory(
 
 	if( *current_working_directory == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create current working directory.",
 		 function );
 
@@ -168,29 +164,14 @@ int libbfio_path_get_current_working_directory(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     128,
-		     error_code,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory.",
-			 function );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 error_code,
+		 "%s: unable to retrieve current working directory.",
+		 function );
+
 		goto on_error;
 	}
 #elif defined( WINAPI )
@@ -198,29 +179,14 @@ int libbfio_path_get_current_working_directory(
 	     *current_working_directory,
 	     *current_working_directory_size ) == NULL )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     128,
-		     errno,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory.",
-			 function );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 errno,
+		 "%s: unable to retrieve current working directory.",
+		 function );
+
 		goto on_error;
 	}
 #else
@@ -228,29 +194,14 @@ int libbfio_path_get_current_working_directory(
 	     *current_working_directory,
 	     *current_working_directory_size ) == NULL )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     128,
-		     errno,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory.",
-			 function );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 errno,
+		 "%s: unable to retrieve current working directory.",
+		 function );
+
 		goto on_error;
 	}
 #endif
@@ -298,10 +249,8 @@ int libbfio_path_get_full_path(
      size_t path_length,
      char **full_path,
      size_t *full_path_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ 128 ];
-
 	libbfio_narrow_split_string_t *current_directory_split_string = NULL;
 	libbfio_narrow_split_string_t *path_split_string              = NULL;
 	char *change_volume_name                                      = NULL;
@@ -335,10 +284,10 @@ int libbfio_path_get_full_path(
 
 	if( path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid path.",
 		 function );
 
@@ -346,10 +295,10 @@ int libbfio_path_get_full_path(
 	}
 	if( path_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid path length is zero.",
 		 function );
 
@@ -357,10 +306,10 @@ int libbfio_path_get_full_path(
 	}
 	if( path_length >= (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid path length value exceeds maximum.",
 		 function );
 
@@ -368,10 +317,10 @@ int libbfio_path_get_full_path(
 	}
 	if( full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path.",
 		 function );
 
@@ -379,10 +328,10 @@ int libbfio_path_get_full_path(
 	}
 	if( *full_path != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid full path value already set.",
 		 function );
 
@@ -390,10 +339,10 @@ int libbfio_path_get_full_path(
 	}
 	if( full_path_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path size.",
 		 function );
 
@@ -460,10 +409,10 @@ int libbfio_path_get_full_path(
 				}
 				if( share_name_index > path_length )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: invalid path - missing share name.",
 					 function );
 
@@ -501,10 +450,10 @@ int libbfio_path_get_full_path(
 			     &current_working_directory_size,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve current working directory.",
 				 function );
 
@@ -515,10 +464,10 @@ int libbfio_path_get_full_path(
 
 			if( change_volume_name == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 				 "%s: unable to create change volume name.",
 				 function );
 
@@ -529,10 +478,10 @@ int libbfio_path_get_full_path(
 			     volume_name,
 			     volume_name_length ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 				 "%s: unable to set change volume name.",
 				 function );
 
@@ -547,58 +496,28 @@ int libbfio_path_get_full_path(
 			{
 				error_code = GetLastError();
 
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     error_code,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 error_code,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #else
 			if( _chdir(
 			     change_volume_name ) != 0 )
 			{
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     errno,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 errno,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #endif
@@ -612,10 +531,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve current directory.",
 			 function );
 
@@ -630,58 +549,28 @@ int libbfio_path_get_full_path(
 			{
 				error_code = GetLastError();
 
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     error_code,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 error_code,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #else
 			if( _chdir(
 			     current_working_directory ) != 0 )
 			{
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     errno,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 errno,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #endif
@@ -734,10 +623,10 @@ int libbfio_path_get_full_path(
 				 && ( current_directory[ 2 ] == '.' )
 				 && ( current_directory[ 3 ] == '\\' ) )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-					 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+					 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+					 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 					 "%s: unsupported current directory.",
 					 function );
 
@@ -759,10 +648,10 @@ int libbfio_path_get_full_path(
 					}
 					if( share_name_index >= current_directory_size )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: invalid path - missing share name.",
 						 function );
 
@@ -796,10 +685,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to split current directory.",
 			 function );
 
@@ -813,10 +702,10 @@ int libbfio_path_get_full_path(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to split path.",
 		 function );
 
@@ -863,10 +752,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_number_of_segments,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve number of current directory string segments.",
 			 function );
 
@@ -879,10 +768,10 @@ int libbfio_path_get_full_path(
 	     &path_number_of_segments,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of path string segments.",
 		 function );
 
@@ -899,10 +788,10 @@ int libbfio_path_get_full_path(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -911,10 +800,10 @@ int libbfio_path_get_full_path(
 		}
 		if( path_string_segment == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -937,10 +826,10 @@ int libbfio_path_get_full_path(
 				     &current_directory_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -949,10 +838,10 @@ int libbfio_path_get_full_path(
 				}
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -971,10 +860,10 @@ int libbfio_path_get_full_path(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -992,10 +881,10 @@ int libbfio_path_get_full_path(
 				     &last_used_path_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve last used path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -1004,10 +893,10 @@ int libbfio_path_get_full_path(
 				}
 				if( last_used_path_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing last used path string string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -1026,10 +915,10 @@ int libbfio_path_get_full_path(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -1049,10 +938,10 @@ int libbfio_path_get_full_path(
 					     &last_used_path_string_segment_size,
 					     error ) != 1 )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 						 "%s: unable to retrieve last used path string segment: %d.",
 						 function,
 						 last_used_path_segment_index );
@@ -1072,10 +961,10 @@ int libbfio_path_get_full_path(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -1095,10 +984,10 @@ int libbfio_path_get_full_path(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -1117,10 +1006,10 @@ int libbfio_path_get_full_path(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -1147,10 +1036,10 @@ int libbfio_path_get_full_path(
 
 	if( *full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create full path.",
 		 function );
 
@@ -1171,10 +1060,10 @@ int libbfio_path_get_full_path(
 	     full_path_prefix,
 	     full_path_prefix_length ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set prefix in full path.",
 		 function );
 
@@ -1191,10 +1080,10 @@ int libbfio_path_get_full_path(
 		     "UNC\\",
 		     4 ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set UNC\\ prefix in full path.",
 			 function );
 
@@ -1209,10 +1098,10 @@ int libbfio_path_get_full_path(
 		     volume_name,
 		     volume_name_length ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set volume name in full path.",
 			 function );
 
@@ -1241,10 +1130,10 @@ int libbfio_path_get_full_path(
 			     &current_directory_string_segment_size,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve current directory string segment: %d.",
 				 function,
 				 current_directory_segment_index );
@@ -1255,10 +1144,10 @@ int libbfio_path_get_full_path(
 			{
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -1270,10 +1159,10 @@ int libbfio_path_get_full_path(
 				     current_directory_string_segment,
 				     current_directory_string_segment_size - 1 ) == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory split value: %d in full path.",
 					 function,
 					 current_directory_segment_index );
@@ -1299,10 +1188,10 @@ int libbfio_path_get_full_path(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -1313,10 +1202,10 @@ int libbfio_path_get_full_path(
 		{
 			if( path_string_segment == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: missing path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -1328,10 +1217,10 @@ int libbfio_path_get_full_path(
 			     path_string_segment,
 			     path_string_segment_size - 1 ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path split value: %d in full path.",
 				 function,
 				 path_segment_index );
@@ -1351,10 +1240,10 @@ int libbfio_path_get_full_path(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 		 "%s: unable to free path split string.",
 		 function );
 
@@ -1366,10 +1255,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free current directory split string.",
 			 function );
 
@@ -1440,7 +1329,7 @@ int libbfio_path_get_full_path(
      size_t path_length,
      char **full_path,
      size_t *full_path_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_narrow_split_string_t *current_directory_split_string = NULL;
 	libbfio_narrow_split_string_t *path_split_string              = NULL;
@@ -1463,10 +1352,10 @@ int libbfio_path_get_full_path(
 
 	if( path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid path.",
 		 function );
 
@@ -1474,10 +1363,10 @@ int libbfio_path_get_full_path(
 	}
 	if( path_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid path length is zero.",
 		 function );
 
@@ -1485,10 +1374,10 @@ int libbfio_path_get_full_path(
 	}
 	if( path_length >= (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid path length value exceeds maximum.",
 		 function );
 
@@ -1496,10 +1385,10 @@ int libbfio_path_get_full_path(
 	}
 	if( full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path.",
 		 function );
 
@@ -1507,10 +1396,10 @@ int libbfio_path_get_full_path(
 	}
 	if( *full_path != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid full path value already set.",
 		 function );
 
@@ -1518,10 +1407,10 @@ int libbfio_path_get_full_path(
 	}
 	if( full_path_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path size.",
 		 function );
 
@@ -1538,10 +1427,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve current directory.",
 			 function );
 
@@ -1558,10 +1447,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to split current directory.",
 			 function );
 
@@ -1575,10 +1464,10 @@ int libbfio_path_get_full_path(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to split path.",
 		 function );
 
@@ -1614,10 +1503,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_number_of_segments,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve number of current directory string segments.",
 			 function );
 
@@ -1630,10 +1519,10 @@ int libbfio_path_get_full_path(
 	     &path_number_of_segments,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of path string segments.",
 		 function );
 
@@ -1650,10 +1539,10 @@ int libbfio_path_get_full_path(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -1662,10 +1551,10 @@ int libbfio_path_get_full_path(
 		}
 		if( path_string_segment == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -1688,10 +1577,10 @@ int libbfio_path_get_full_path(
 				     &current_directory_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -1700,10 +1589,10 @@ int libbfio_path_get_full_path(
 				}
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -1722,10 +1611,10 @@ int libbfio_path_get_full_path(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -1743,10 +1632,10 @@ int libbfio_path_get_full_path(
 				     &last_used_path_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve last used path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -1755,10 +1644,10 @@ int libbfio_path_get_full_path(
 				}
 				if( last_used_path_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing last used path string string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -1777,10 +1666,10 @@ int libbfio_path_get_full_path(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -1800,10 +1689,10 @@ int libbfio_path_get_full_path(
 					     &last_used_path_string_segment_size,
 					     error ) != 1 )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 						 "%s: unable to retrieve last used path string segment: %d.",
 						 function,
 						 last_used_path_segment_index );
@@ -1823,10 +1712,10 @@ int libbfio_path_get_full_path(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -1846,10 +1735,10 @@ int libbfio_path_get_full_path(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -1868,10 +1757,10 @@ int libbfio_path_get_full_path(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -1898,10 +1787,10 @@ int libbfio_path_get_full_path(
 
 	if( *full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create full path.",
 		 function );
 
@@ -1930,10 +1819,10 @@ int libbfio_path_get_full_path(
 			     &current_directory_string_segment_size,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve current directory string segment: %d.",
 				 function,
 				 current_directory_segment_index );
@@ -1944,10 +1833,10 @@ int libbfio_path_get_full_path(
 			{
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -1959,10 +1848,10 @@ int libbfio_path_get_full_path(
 				     current_directory_string_segment,
 				     current_directory_string_segment_size - 1 ) == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory split value: %d in full path.",
 					 function,
 					 current_directory_segment_index );
@@ -1988,10 +1877,10 @@ int libbfio_path_get_full_path(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -2002,10 +1891,10 @@ int libbfio_path_get_full_path(
 		{
 			if( path_string_segment == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: missing path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -2017,10 +1906,10 @@ int libbfio_path_get_full_path(
 			     path_string_segment,
 			     path_string_segment_size - 1 ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path split value: %d in full path.",
 				 function,
 				 path_segment_index );
@@ -2040,10 +1929,10 @@ int libbfio_path_get_full_path(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 		 "%s: unable to free path split string.",
 		 function );
 
@@ -2055,10 +1944,10 @@ int libbfio_path_get_full_path(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free current directory split string.",
 			 function );
 
@@ -2112,10 +2001,8 @@ on_error:
 int libbfio_path_get_current_working_directory_wide(
      wchar_t **current_working_directory,
      size_t *current_working_directory_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ 128 ];
-
 	static char *function                        = "libbfio_path_get_current_working_directory_wide";
 
 #if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
@@ -2130,10 +2017,10 @@ int libbfio_path_get_current_working_directory_wide(
 
 	if( current_working_directory == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid current working directory.",
 		 function );
 
@@ -2141,10 +2028,10 @@ int libbfio_path_get_current_working_directory_wide(
 	}
 	if( *current_working_directory != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid current working directory value already set.",
 		 function );
 
@@ -2152,10 +2039,10 @@ int libbfio_path_get_current_working_directory_wide(
 	}
 	if( current_working_directory_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid current working directory size.",
 		 function );
 
@@ -2168,10 +2055,10 @@ int libbfio_path_get_current_working_directory_wide(
 
 	if( safe_current_working_directory_size == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve current working directory size.",
 		 function );
 
@@ -2179,10 +2066,10 @@ int libbfio_path_get_current_working_directory_wide(
 	}
 	if( (size_t) safe_current_working_directory_size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: current working directory size value out of bounds.",
 		 function );
 
@@ -2199,10 +2086,10 @@ int libbfio_path_get_current_working_directory_wide(
 
 	if( narrow_current_working_directory == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create narrow current working directory.",
 		 function );
 
@@ -2212,29 +2099,14 @@ int libbfio_path_get_current_working_directory_wide(
 	     narrow_current_working_directory,
 	     PATH_MAX ) == NULL )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     128,
-		     errno,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory.",
-			 function );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 errno,
+		 "%s: unable to retrieve current working directory.",
+		 function );
+
 		goto on_error;
 	}
 	narrow_current_working_directory_size = 1 + libcstring_narrow_string_length(
@@ -2283,10 +2155,10 @@ int libbfio_path_get_current_working_directory_wide(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to determine wide character current working directory size.",
 		 function );
 
@@ -2299,10 +2171,10 @@ int libbfio_path_get_current_working_directory_wide(
 
 	if( *current_working_directory == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create current working directory.",
 		 function );
 
@@ -2315,29 +2187,14 @@ int libbfio_path_get_current_working_directory_wide(
 	{
 		error_code = GetLastError();
 
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     128,
-		     error_code,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory.",
-			 function );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 error_code,
+		 "%s: unable to retrieve current working directory.",
+		 function );
+
 		goto on_error;
 	}
 #elif defined( WINAPI )
@@ -2345,29 +2202,14 @@ int libbfio_path_get_current_working_directory_wide(
 	     *current_working_directory,
 	     *current_working_directory_size ) == NULL )
 	{
-		if( libbfio_error_string_copy_from_error_number(
-		     error_string,
-		     128,
-		     errno,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve current working directory.",
-			 function );
-		}
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 errno,
+		 "%s: unable to retrieve current working directory.",
+		 function );
+
 		goto on_error;
 	}
 #else
@@ -2415,10 +2257,10 @@ int libbfio_path_get_current_working_directory_wide(
 	}
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
 		 "%s: unable to set current working directory.",
 		 function );
 
@@ -2476,10 +2318,8 @@ int libbfio_path_get_full_path_wide(
      size_t path_length,
      wchar_t **full_path,
      size_t *full_path_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libcstring_system_character_t error_string[ 128 ];
-
 	libbfio_wide_split_string_t *current_directory_split_string = NULL;
 	libbfio_wide_split_string_t *path_split_string              = NULL;
 	wchar_t *change_volume_name                                 = NULL;
@@ -2513,10 +2353,10 @@ int libbfio_path_get_full_path_wide(
 
 	if( path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid path.",
 		 function );
 
@@ -2524,10 +2364,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( path_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid path length is zero.",
 		 function );
 
@@ -2535,10 +2375,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( path_length >= (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid path length value exceeds maximum.",
 		 function );
 
@@ -2546,10 +2386,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path.",
 		 function );
 
@@ -2557,10 +2397,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( *full_path != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid full path value already set.",
 		 function );
 
@@ -2568,10 +2408,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( full_path_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path size.",
 		 function );
 
@@ -2638,10 +2478,10 @@ int libbfio_path_get_full_path_wide(
 				}
 				if( share_name_index > path_length )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: invalid path - missing share name.",
 					 function );
 
@@ -2679,10 +2519,10 @@ int libbfio_path_get_full_path_wide(
 			     &current_working_directory_size,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve current working directory.",
 				 function );
 
@@ -2693,10 +2533,10 @@ int libbfio_path_get_full_path_wide(
 
 			if( change_volume_name == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 				 "%s: unable to create change volume name.",
 				 function );
 
@@ -2707,10 +2547,10 @@ int libbfio_path_get_full_path_wide(
 			     volume_name,
 			     volume_name_length ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 				 "%s: unable to set change volume name.",
 				 function );
 
@@ -2725,58 +2565,28 @@ int libbfio_path_get_full_path_wide(
 			{
 				error_code = GetLastError();
 
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     error_code,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 error_code,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #else
 			if( _wchdir(
 			     change_volume_name ) != 0 )
 			{
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     errno,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 errno,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #endif
@@ -2790,10 +2600,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve current directory.",
 			 function );
 
@@ -2808,58 +2618,28 @@ int libbfio_path_get_full_path_wide(
 			{
 				error_code = GetLastError();
 
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     error_code,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 error_code,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #else
 			if( _wchdir(
 			     current_working_directory ) != 0 )
 			{
-				if( libbfio_error_string_copy_from_error_number(
-				     error_string,
-				     128,
-				     errno,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory with error: %" PRIs_LIBCSTRING_SYSTEM "",
-					 function,
-					 error_string );
-				}
-				else
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to change current working directory.",
-					 function );
-				}
+				libcerror_system_set_error(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 errno,
+				 "%s: unable to change current working directory.",
+				 function );
+
 				goto on_error;
 			}
 #endif
@@ -2912,10 +2692,10 @@ int libbfio_path_get_full_path_wide(
 				 && ( current_directory[ 2 ] == (wchar_t) '.' )
 				 && ( current_directory[ 3 ] == (wchar_t) '\\' ) )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-					 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+					 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+					 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 					 "%s: unsupported current directory.",
 					 function );
 
@@ -2937,10 +2717,10 @@ int libbfio_path_get_full_path_wide(
 					}
 					if( share_name_index >= current_directory_size )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 						 "%s: invalid path - missing share name.",
 						 function );
 
@@ -2974,10 +2754,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to split current directory.",
 			 function );
 
@@ -2991,10 +2771,10 @@ int libbfio_path_get_full_path_wide(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to split path.",
 		 function );
 
@@ -3043,10 +2823,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_number_of_segments,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve number of current directory string segments.",
 			 function );
 
@@ -3059,10 +2839,10 @@ int libbfio_path_get_full_path_wide(
 	     &path_number_of_segments,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of path string segments.",
 		 function );
 
@@ -3079,10 +2859,10 @@ int libbfio_path_get_full_path_wide(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -3091,10 +2871,10 @@ int libbfio_path_get_full_path_wide(
 		}
 		if( path_string_segment == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -3117,10 +2897,10 @@ int libbfio_path_get_full_path_wide(
 				     &current_directory_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -3129,10 +2909,10 @@ int libbfio_path_get_full_path_wide(
 				}
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -3151,10 +2931,10 @@ int libbfio_path_get_full_path_wide(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -3172,10 +2952,10 @@ int libbfio_path_get_full_path_wide(
 				     &last_used_path_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve last used path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -3184,10 +2964,10 @@ int libbfio_path_get_full_path_wide(
 				}
 				if( last_used_path_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing last used path string string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -3206,10 +2986,10 @@ int libbfio_path_get_full_path_wide(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -3229,10 +3009,10 @@ int libbfio_path_get_full_path_wide(
 					     &last_used_path_string_segment_size,
 					     error ) != 1 )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 						 "%s: unable to retrieve last used path string segment: %d.",
 						 function,
 						 last_used_path_segment_index );
@@ -3252,10 +3032,10 @@ int libbfio_path_get_full_path_wide(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -3275,10 +3055,10 @@ int libbfio_path_get_full_path_wide(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -3297,10 +3077,10 @@ int libbfio_path_get_full_path_wide(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -3327,10 +3107,10 @@ int libbfio_path_get_full_path_wide(
 
 	if( *full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create full path.",
 		 function );
 
@@ -3351,10 +3131,10 @@ int libbfio_path_get_full_path_wide(
 	     full_path_prefix,
 	     full_path_prefix_length ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set prefix in full path.",
 		 function );
 
@@ -3371,10 +3151,10 @@ int libbfio_path_get_full_path_wide(
 		     L"UNC\\",
 		     4 ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set UNC\\ prefix in full path.",
 			 function );
 
@@ -3389,10 +3169,10 @@ int libbfio_path_get_full_path_wide(
 		     volume_name,
 		     volume_name_length ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set volume name in full path.",
 			 function );
 
@@ -3421,10 +3201,10 @@ int libbfio_path_get_full_path_wide(
 			     &current_directory_string_segment_size,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve current directory string segment: %d.",
 				 function,
 				 current_directory_segment_index );
@@ -3435,10 +3215,10 @@ int libbfio_path_get_full_path_wide(
 			{
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -3450,10 +3230,10 @@ int libbfio_path_get_full_path_wide(
 				     current_directory_string_segment,
 				     current_directory_string_segment_size - 1 ) == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory split value: %d in full path.",
 					 function,
 					 current_directory_segment_index );
@@ -3479,10 +3259,10 @@ int libbfio_path_get_full_path_wide(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -3493,10 +3273,10 @@ int libbfio_path_get_full_path_wide(
 		{
 			if( path_string_segment == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: missing path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -3508,10 +3288,10 @@ int libbfio_path_get_full_path_wide(
 			     path_string_segment,
 			     path_string_segment_size - 1 ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path split value: %d in full path.",
 				 function,
 				 path_segment_index );
@@ -3531,10 +3311,10 @@ int libbfio_path_get_full_path_wide(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 		 "%s: unable to free path split string.",
 		 function );
 
@@ -3546,10 +3326,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free current directory split string.",
 			 function );
 
@@ -3620,7 +3400,7 @@ int libbfio_path_get_full_path_wide(
      size_t path_length,
      wchar_t **full_path,
      size_t *full_path_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_wide_split_string_t *current_directory_split_string = NULL;
 	libbfio_wide_split_string_t *path_split_string              = NULL;
@@ -3643,10 +3423,10 @@ int libbfio_path_get_full_path_wide(
 
 	if( path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid path.",
 		 function );
 
@@ -3654,10 +3434,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( path_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
 		 "%s: invalid path length is zero.",
 		 function );
 
@@ -3665,10 +3445,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( path_length >= (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid path length value exceeds maximum.",
 		 function );
 
@@ -3676,10 +3456,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path.",
 		 function );
 
@@ -3687,10 +3467,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( *full_path != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid full path value already set.",
 		 function );
 
@@ -3698,10 +3478,10 @@ int libbfio_path_get_full_path_wide(
 	}
 	if( full_path_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid full path size.",
 		 function );
 
@@ -3718,10 +3498,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve current directory.",
 			 function );
 
@@ -3738,10 +3518,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to split current directory.",
 			 function );
 
@@ -3755,10 +3535,10 @@ int libbfio_path_get_full_path_wide(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to split path.",
 		 function );
 
@@ -3794,10 +3574,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_number_of_segments,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve number of current directory string segments.",
 			 function );
 
@@ -3810,10 +3590,10 @@ int libbfio_path_get_full_path_wide(
 	     &path_number_of_segments,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of path string segments.",
 		 function );
 
@@ -3830,10 +3610,10 @@ int libbfio_path_get_full_path_wide(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -3842,10 +3622,10 @@ int libbfio_path_get_full_path_wide(
 		}
 		if( path_string_segment == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 			 "%s: missing path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -3868,10 +3648,10 @@ int libbfio_path_get_full_path_wide(
 				     &current_directory_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -3880,10 +3660,10 @@ int libbfio_path_get_full_path_wide(
 				}
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -3902,10 +3682,10 @@ int libbfio_path_get_full_path_wide(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -3923,10 +3703,10 @@ int libbfio_path_get_full_path_wide(
 				     &last_used_path_string_segment_size,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 					 "%s: unable to retrieve last used path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -3935,10 +3715,10 @@ int libbfio_path_get_full_path_wide(
 				}
 				if( last_used_path_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing last used path string string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -3957,10 +3737,10 @@ int libbfio_path_get_full_path_wide(
 				     0,
 				     error ) != 1 )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set path string segment: %d.",
 					 function,
 					 last_used_path_segment_index );
@@ -3980,10 +3760,10 @@ int libbfio_path_get_full_path_wide(
 					     &last_used_path_string_segment_size,
 					     error ) != 1 )
 					{
-						liberror_error_set(
+						libcerror_error_set(
 						 error,
-						 LIBERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 						 "%s: unable to retrieve last used path string segment: %d.",
 						 function,
 						 last_used_path_segment_index );
@@ -4003,10 +3783,10 @@ int libbfio_path_get_full_path_wide(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -4026,10 +3806,10 @@ int libbfio_path_get_full_path_wide(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -4048,10 +3828,10 @@ int libbfio_path_get_full_path_wide(
 			     0,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -4078,10 +3858,10 @@ int libbfio_path_get_full_path_wide(
 
 	if( *full_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create full path.",
 		 function );
 
@@ -4110,10 +3890,10 @@ int libbfio_path_get_full_path_wide(
 			     &current_directory_string_segment_size,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve current directory string segment: %d.",
 				 function,
 				 current_directory_segment_index );
@@ -4124,10 +3904,10 @@ int libbfio_path_get_full_path_wide(
 			{
 				if( current_directory_string_segment == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 					 "%s: missing current directory string segment: %d.",
 					 function,
 					 current_directory_segment_index );
@@ -4139,10 +3919,10 @@ int libbfio_path_get_full_path_wide(
 				     current_directory_string_segment,
 				     current_directory_string_segment_size - 1 ) == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 					 "%s: unable to set current directory split value: %d in full path.",
 					 function,
 					 current_directory_segment_index );
@@ -4168,10 +3948,10 @@ int libbfio_path_get_full_path_wide(
 		     &path_string_segment_size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve path string segment: %d.",
 			 function,
 			 path_segment_index );
@@ -4182,10 +3962,10 @@ int libbfio_path_get_full_path_wide(
 		{
 			if( path_string_segment == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 				 "%s: missing path string segment: %d.",
 				 function,
 				 path_segment_index );
@@ -4197,10 +3977,10 @@ int libbfio_path_get_full_path_wide(
 			     path_string_segment,
 			     path_string_segment_size - 1 ) == NULL )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set path split value: %d in full path.",
 				 function,
 				 path_segment_index );
@@ -4220,10 +4000,10 @@ int libbfio_path_get_full_path_wide(
 	     &path_split_string,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 		 "%s: unable to free path split string.",
 		 function );
 
@@ -4235,10 +4015,10 @@ int libbfio_path_get_full_path_wide(
 		     &current_directory_split_string,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free current directory split string.",
 			 function );
 

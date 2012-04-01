@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libbfio_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -61,36 +61,36 @@ int libbfio_narrow_split_string_initialize(
      const char *string,
      size_t string_size,
      int number_of_segments,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_narrow_split_string_free(
      libbfio_narrow_split_string_t **split_string,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_narrow_split_string_get_string(
      libbfio_narrow_split_string_t *split_string,
      char **string,
      size_t *string_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_narrow_split_string_get_number_of_segments(
      libbfio_narrow_split_string_t *split_string,
      int *number_of_segments,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_narrow_split_string_get_segment_by_index(
      libbfio_narrow_split_string_t *split_string,
      int segment_index,
      char **string_segment,
      size_t *string_segment_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_narrow_split_string_set_segment_by_index(
      libbfio_narrow_split_string_t *split_string,
      int segment_index,
      char *string_segment,
      size_t string_segment_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

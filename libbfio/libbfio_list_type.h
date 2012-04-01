@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libbfio_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -97,91 +97,91 @@ struct libbfio_list
 
 int libbfio_list_element_initialize(
      libbfio_list_element_t **element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_element_free(
      libbfio_list_element_t **element,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libbfio_list_element_get_value(
      libbfio_list_element_t *element,
      intptr_t **value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_element_set_value(
      libbfio_list_element_t *element,
      intptr_t *value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_initialize(
      libbfio_list_t **list,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_free(
      libbfio_list_t **list,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libbfio_list_empty(
      libbfio_list_t *list,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libbfio_list_clone(
      libbfio_list_t **destination_list,
      libbfio_list_t *source_list,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      int (*value_clone_function)(
             intptr_t **destination,
             intptr_t *source,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libbfio_list_get_number_of_elements(
      libbfio_list_t *list,
      int *number_of_elements,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_get_element_by_index(
      libbfio_list_t *list,
      int list_element_index,
      libbfio_list_element_t **element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_get_value_by_index(
      libbfio_list_t *list,
      int list_element_index,
      intptr_t **value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_prepend_element(
      libbfio_list_t *list,
      libbfio_list_element_t *element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_prepend_value(
      libbfio_list_t *list,
      intptr_t *value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_append_element(
      libbfio_list_t *list,
      libbfio_list_element_t *element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_append_value(
      libbfio_list_t *list,
      intptr_t *value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_insert_element(
      libbfio_list_t *list,
@@ -189,9 +189,9 @@ int libbfio_list_insert_element(
      int (*value_compare_function)(
             intptr_t *first,
             intptr_t *second,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      uint8_t insert_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_insert_value(
      libbfio_list_t *list,
@@ -199,14 +199,14 @@ int libbfio_list_insert_value(
      int (*value_compare_function)(
             intptr_t *first,
             intptr_t *second,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      uint8_t insert_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libbfio_list_remove_element(
      libbfio_list_t *list,
      libbfio_list_element_t *element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
