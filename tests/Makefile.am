@@ -1,9 +1,8 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	-I$(top_srcdir)/libcstring \
-	-I$(top_srcdir)/liberror \
-	-I$(top_srcdir)/libsystem \
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@
 
 TESTS = \
@@ -19,11 +18,12 @@ check_PROGRAMS = \
 	bfio_test_path
 
 bfio_test_path_SOURCES = \
-	bfio_test_path.c \
-	bfio_test_libbfio.h
+	bfio_test_libcstring.h \
+	bfio_test_libbfio.h \
+	bfio_test_path.c
 
 bfio_test_path_LDADD = \
-	../libcstring/libcstring.la \
+	@LIBCSTRING_LIBADD@ \
 	../libbfio/libbfio.la \
         @MEMWATCH_LIBADD@
 

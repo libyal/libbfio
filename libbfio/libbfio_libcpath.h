@@ -1,5 +1,5 @@
 /*
- * Wide character string functions
+ * The internal libcpath header
  *
  * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,32 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBBFIO_WIDE_STRING_H )
-#define _LIBBFIO_WIDE_STRING_H
+#if !defined( _LIBBFIO_LIBCPATH_H )
+#define _LIBBFIO_LIBCPATH_H
 
 #include <common.h>
-#include <types.h>
 
-#include "libbfio_libcerror.h"
-#include "libbfio_wide_split_string.h"
+/* Define HAVE_LOCAL_LIBCPATH for local use of libcpath
+ */
+#if defined( HAVE_LOCAL_LIBCPATH )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libcpath_definitions.h>
+#include <libcpath_path.h>
+#include <libcpath_types.h>
+
+#elif defined( HAVE_LIBCPATH_H )
+
+/* If libtool DLL support is enabled set LIBCPATH_DLL_IMPORT
+ * before including libcpath.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCPATH_DLL_IMPORT
 #endif
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
+#include <libcpath.h>
 
-int libbfio_wide_string_split(
-     const wchar_t *string,
-     size_t string_size,
-     wchar_t delimiter,
-     libbfio_wide_split_string_t **split_string,
-     libcerror_error_t **error );
-
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libcpath.h
 #endif
 
 #endif

@@ -21,15 +21,14 @@
 
 #include <common.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
 #include <stdio.h>
 
+#include "bfio_test_libcerror.h"
+#include "bfio_test_libcstring.h"
 #include "bfio_test_libbfio.h"
 
 LIBBFIO_EXTERN \
@@ -38,7 +37,7 @@ int libbfio_path_get_full_path(
      size_t path_length,
      char **full_path,
      size_t *full_path_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 LIBBFIO_EXTERN \
@@ -47,7 +46,7 @@ int libbfio_path_get_full_path_wide(
      size_t path_length,
      wchar_t **full_path,
      size_t *full_path_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 #endif
 
 /* The main program
@@ -63,7 +62,7 @@ int main( int argc, char * const argv[] )
 #else
 	char *full_path         = NULL;
 #endif
-	liberror_error_t *error = NULL;
+	libcerror_error_t *error = NULL;
 	size_t full_path_size   = 0;
 
 	if( argc < 2 )
@@ -117,7 +116,7 @@ int main( int argc, char * const argv[] )
 on_error:
 	if( error != NULL )
 	{
-		liberror_error_backtrace_fprint(
+		libcerror_error_backtrace_fprint(
 		 error,
 		 stderr );
 		libbfio_error_free(

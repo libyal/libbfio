@@ -53,9 +53,9 @@
 #include "libbfio_file.h"
 #include "libbfio_handle.h"
 #include "libbfio_libcerror.h"
+#include "libbfio_libcpath.h"
 #include "libbfio_libcstring.h"
 #include "libbfio_libuna.h"
-#include "libbfio_path.h"
 #include "libbfio_types.h"
 
 /* Initializes the file IO handle
@@ -489,7 +489,7 @@ int libbfio_file_set_name(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_path_get_full_path(
+	if( libcpath_path_get_full_path(
 	     name,
 	     name_length,
 	     &full_name,
@@ -970,7 +970,7 @@ int libbfio_file_io_handle_set_name(
 		 "%s: unable to determine name size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #else
 	file_io_handle->name_size = name_length + 1;
@@ -986,7 +986,7 @@ int libbfio_file_io_handle_set_name(
 		 "%s: invalid file IO handle - name size value exceeds maximum.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	file_io_handle->name = libcstring_system_string_allocate(
 	                        file_io_handle->name_size );
@@ -1000,7 +1000,7 @@ int libbfio_file_io_handle_set_name(
 		 "%s: unable to create name.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcstring_narrow_system_string_codepage == 0 )
@@ -1206,7 +1206,7 @@ int libbfio_file_set_name_wide(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_path_get_full_path_wide(
+	if( libcpath_path_get_full_path_wide(
 	     name,
 	     name_length,
 	     &full_name,
@@ -1689,7 +1689,7 @@ int libbfio_file_io_handle_set_name_wide(
 		 "%s: unable to determine name size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
@@ -1703,7 +1703,7 @@ int libbfio_file_io_handle_set_name_wide(
 		 "%s: invalid file IO handle - name size value exceeds maximum.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	file_io_handle->name = libcstring_system_string_allocate(
 	                        file_io_handle->name_size );
@@ -1717,7 +1717,7 @@ int libbfio_file_io_handle_set_name_wide(
 		 "%s: unable to create name.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( name_length > 1 )

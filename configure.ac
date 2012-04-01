@@ -57,6 +57,9 @@ AX_LIBCERROR_CHECK_ENABLE
 dnl Check for enabling libuna for Unicode string support
 AX_LIBUNA_CHECK_ENABLE
 
+dnl Check for enabling libcpath for cross-platform C path functions
+AX_LIBCPATH_CHECK_ENABLE
+
 dnl Check for library function support
 AX_LIBBFIO_CHECK_LOCAL
 
@@ -98,6 +101,7 @@ AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
+AC_CONFIG_FILES([libcpath/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
@@ -130,6 +134,7 @@ Building:
    libcstring support:          $ac_cv_libcstring
    libcerror support:           $ac_cv_libcerror
    libuna support:              $ac_cv_libuna
+   libcpath support:            $ac_cv_libcpath
 
 Features:
    Wide character type support: $ac_cv_enable_wide_character_type

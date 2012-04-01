@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBBFIO_LIBCSTRING_H )
-#define _LIBBFIO_LIBCSTRING_H
+#if !defined( _BFIO_TEST_LIBCSTRING_H )
+#define _BFIO_TEST_LIBCSTRING_H
 
 #include <common.h>
 

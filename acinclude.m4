@@ -68,20 +68,5 @@ AC_DEFUN([AX_LIBBFIO_CHECK_LOCAL],
    [Missing function: write],
    [1])
   ])
-
- dnl Check for error string functions used in libbfio/libbfio_error_string.c
- AC_FUNC_STRERROR_R()
-
- AS_IF(
-  [test "x$ac_cv_have_decl_strerror_r" = xno],
-  [AC_CHECK_FUNCS([strerror])
-
-  AS_IF(
-   [test "x$ac_cv_func_strerror" != xyes],
-   [AC_MSG_FAILURE(
-    [Missing functions: strerror and strerror_r],
-    [1])
-   ])
-  ])
  ])
 

@@ -6,6 +6,7 @@ SUBDIRS = \
 	libcstring \
 	libcerror \
 	libuna \
+	libcpath \
 	libbfio \
 	po \
 	manuals \
@@ -53,6 +54,7 @@ library:
 	(cd $(srcdir)/libcstring && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcerror && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcpath && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 
@@ -72,6 +74,7 @@ splint:
 	(cd $(srcdir)/libcstring && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcerror && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcpath && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))
 
