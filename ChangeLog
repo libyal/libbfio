@@ -1,8 +1,5 @@
 TODO
-* complete full path functions
-  - implement libbfio_path_get_full_path_wide
-  - POSIX: add support for absolute paths with x/../y
-* WINAPI add LIBERROR_OUTPUT_ERROR_INSUFFICIENT_SPACE support
+* fix tests
 
 Pool
 * allow re-set of pool entries?
@@ -34,6 +31,9 @@ Beta release
 
 Deployment:
 * check if libbfio.3 is up to date
+
+20120403
+* updated dependencies
 
 20120401
 * updated .pc and .spec file

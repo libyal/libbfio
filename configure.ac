@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20120401],
+ [20120403],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -65,7 +65,7 @@ AX_LIBBFIO_CHECK_LOCAL
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libuna" = xyes],
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libuna" = xyes],
  [AC_SUBST(
   [libbfio_spec_requires],
   [Requires:])
