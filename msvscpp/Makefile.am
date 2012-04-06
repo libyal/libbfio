@@ -1,8 +1,9 @@
 EXTRA_DIST = \
-	bfio_test_path/bfio_test_path.vcproj \
-	libcstring/libcstring.vcproj \
-	libcerror/libcerror.vcproj \
 	libbfio_dll/libbfio_dll.vcproj \
+	libcerror/libcerror.vcproj \
+	libcfile/libcfile.vcproj \
+	libcpath/libcpath.vcproj \
+	libcstring/libcstring.vcproj \
 	libuna/libuna.vcproj \
 	libbfio.sln
 

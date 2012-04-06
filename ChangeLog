@@ -1,23 +1,14 @@
 TODO
-* fix tests
+* update msvscpp and borlandc files
 
 Pool
 * allow re-set of pool entries?
-
-File
-* add errno error strings to liberror notifications
-* convert filename for g_open to UTF-8 ? or use codepage setting ?
-* check if codepage before gopen is UTF8 ?
-* WINAPI ReadFile
-  When the file is UNBUFFERED it appears that nNumberOfBytesToRead must be a
-  multiple of sector size. Any other value will result in error 0x57
-  (ERROR_INVALID_PARAMETER).
 
 Memory range
 * add callback function to resize memory range if needed?
 
 API
-* what about disk full on write errno = ENOSPC
+* what about disk full on write
 
 Test
 * wide to narrow (ASCII with codepage) conversion
@@ -32,12 +23,15 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20120406
+* worked on libcfile rewrite
+
 20120403
-* updated dependencies
+* worked on libcpath rewrite
 
 20120401
 * updated .pc and .spec file
-* updated dependencies
+* worked on libcpath rewrite
 
 20120305
 * additional checks for system strings

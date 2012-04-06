@@ -1,7 +1,9 @@
 CODEGEAR_FILES = \
-	codegear/libcstring/libcstring.cbproj \
-	codegear/liberror/liberror.cbproj \
 	codegear/libbfio/libbfio.cbproj \
+	codegear/libcerror/libcerror.cbproj \
+	codegear/libcfile/libcfile.cbproj \
+	codegear/libcpath/libcpath.cbproj \
+	codegear/libcstring/libcstring.cbproj \
 	codegear/libuna/libuna.cbproj \
 	codegear/libbfio.groupproj
 

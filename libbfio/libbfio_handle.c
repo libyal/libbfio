@@ -771,14 +771,14 @@ int libbfio_handle_close(
 /* Reads a buffer from the handle
  * Returns the number of bytes read if successful, or -1 on error
  */
-ssize_t libbfio_handle_read(
+ssize_t libbfio_handle_read_buffer(
          libbfio_handle_t *handle,
          uint8_t *buffer,
          size_t size,
          libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_read";
+	static char *function                      = "libbfio_handle_read_buffer";
 	ssize_t read_count                         = 0;
 	int is_open                                = 0;
 
@@ -983,14 +983,14 @@ ssize_t libbfio_handle_read(
 /* Writes a buffer to the handle
  * Returns the number of bytes written if successful, or -1 on error
  */
-ssize_t libbfio_handle_write(
+ssize_t libbfio_handle_write_buffer(
          libbfio_handle_t *handle,
          const uint8_t *buffer,
          size_t size,
          libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_write";
+	static char *function                      = "libbfio_handle_write_buffer";
 	ssize_t write_count                        = 0;
 
 	if( handle == NULL )

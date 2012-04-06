@@ -160,7 +160,7 @@ int libbfio_pool_close_all(
      libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
-ssize_t libbfio_pool_read(
+ssize_t libbfio_pool_read_buffer(
          libbfio_pool_t *pool,
          int entry,
          uint8_t *buffer,
@@ -168,7 +168,7 @@ ssize_t libbfio_pool_read(
          libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
-ssize_t libbfio_pool_write(
+ssize_t libbfio_pool_write_buffer(
          libbfio_pool_t *pool,
          int entry,
          const uint8_t *buffer,

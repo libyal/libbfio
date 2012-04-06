@@ -1,0 +1,22 @@
+Source: libbfio
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <jbmetz@users.sourceforge.net>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.8.3
+Homepage: https://sourceforge.net/projects/libbfio/
+
+Package: libbfio
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library to support (abstracted) basic file IO
+ libbfio is a library to support (abstracted) basic file IO.
+
+Package: libbfio-dev
+Section: libdevel
+Architecture: any
+Depends: libbfio (= ${Source-Version})
+Description: Header files and libraries for developing applications for libbfio
+ Header files and libraries for developing applications for libbfio.
+

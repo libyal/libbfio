@@ -31,6 +31,14 @@
 #include "libbfio_offset_list.h"
 #include "libbfio_types.h"
 
+#if defined( _MSC_VER ) || defined( __BORLANDC__ ) || defined( __MINGW32_VERSION ) || defined( __MINGW64_VERSION_MAJOR )
+
+/* This inclusion is needed otherwise some linkers
+ * mess up exporting the legacy functions
+ */
+#include "libbfio_legacy.h"
+#endif
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -230,14 +238,14 @@ int libbfio_handle_close(
      libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
-ssize_t libbfio_handle_read(
+ssize_t libbfio_handle_read_buffer(
          libbfio_handle_t *handle,
          uint8_t *buffer,
          size_t size,
          libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
-ssize_t libbfio_handle_write(
+ssize_t libbfio_handle_write_buffer(
          libbfio_handle_t *handle,
          const uint8_t *buffer,
          size_t size,

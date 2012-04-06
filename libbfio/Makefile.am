@@ -3,6 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@
@@ -19,7 +20,9 @@ libbfio_la_SOURCES = \
 	libbfio_file_pool.c libbfio_file_pool.h \
 	libbfio_file_range.c libbfio_file_range.h \
 	libbfio_handle.c libbfio_handle.h \
+	libbfio_legacy.c libbfio_legacy.h \
 	libbfio_libcerror.h \
+	libbfio_libcfile.h \
 	libbfio_libcpath.h \
 	libbfio_libcstring.h \
 	libbfio_libuna.h \
@@ -34,6 +37,7 @@ libbfio_la_SOURCES = \
 libbfio_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBUNA_LIBADD@
 

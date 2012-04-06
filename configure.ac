@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20120403],
+ [20120406],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -26,8 +26,13 @@ AC_PROG_CC
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
+
+dnl Check for libtool
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
+
+dnl Check for pkg-config
+AC_PATH_PROG(PKGCONFIG,[pkg-config])
 
 dnl Support of internationalization (i18n)
 AM_GNU_GETTEXT([external])
@@ -57,22 +62,17 @@ AX_LIBCERROR_CHECK_ENABLE
 dnl Check for enabling libuna for Unicode string support
 AX_LIBUNA_CHECK_ENABLE
 
+dnl Check for enabling libcfile for cross-platform C file functions
+AX_LIBCFILE_CHECK_ENABLE
+
 dnl Check for enabling libcpath for cross-platform C path functions
 AX_LIBCPATH_CHECK_ENABLE
 
 dnl Check for library function support
 AX_LIBBFIO_CHECK_LOCAL
 
-dnl Check if requires and build requires should be set in spec file
-AS_IF(
- [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libuna" = xyes],
- [AC_SUBST(
-  [libbfio_spec_requires],
-  [Requires:])
- AC_SUBST(
-  [libbfio_spec_build_requires],
-  [BuildRequires:])
- ])
+dnl Set additional compiler flags
+CFLAGS="$CFLAGS -Wall";
 
 dnl Set memwatch support
 ac_cv_enable_memwatch=no
@@ -91,8 +91,21 @@ AM_CONDITIONAL(
  [HAVE_MEMWATCH],
  [test "x$ac_cv_enable_memwatch" != xno])
 
-dnl Set additional compiler flags
-CFLAGS="$CFLAGS -Wall";
+dnl Check if requires and build requires should be set in spec file
+AS_IF(
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes],
+ [AC_SUBST(
+  [libbfio_spec_requires],
+  [Requires:])
+ AC_SUBST(
+  [libbfio_spec_build_requires],
+  [BuildRequires:])
+ ])
+
+dnl Set the date for dpkg files
+AC_SUBST(
+ [DATE],
+ [`date -R 2> /dev/null`])
 
 dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])
@@ -101,6 +114,7 @@ AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
+AC_CONFIG_FILES([libcfile/Makefile])
 AC_CONFIG_FILES([libcpath/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
@@ -119,6 +133,8 @@ AC_CONFIG_FILES([include/libbfio/types.h])
 AC_CONFIG_FILES([libbfio/libbfio_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([dpkg/changelog])
+AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libbfio/libbfio.rc])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libbfio.pc])
@@ -134,6 +150,7 @@ Building:
    libcstring support:          $ac_cv_libcstring
    libcerror support:           $ac_cv_libcerror
    libuna support:              $ac_cv_libuna
+   libcfile support:            $ac_cv_libcfile
    libcpath support:            $ac_cv_libcpath
 
 Features:

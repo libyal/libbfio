@@ -27,6 +27,7 @@
 
 #include "libbfio_extern.h"
 #include "libbfio_libcerror.h"
+#include "libbfio_libcfile.h"
 #include "libbfio_libcstring.h"
 #include "libbfio_types.h"
 
@@ -46,15 +47,9 @@ struct libbfio_file_io_handle
 	 */
 	size_t name_size;
 
-#if defined( WINAPI ) && !defined( USE_CRT_FUNCTIONS )
-	/* The file handle
+	/* The file (handle)
 	 */
-	HANDLE file_handle;
-#else
-	/* The file descriptor
-	 */
-	int file_descriptor;
-#endif
+	libcfile_file_t *file;
 
 	/* The access flags
 	 */
@@ -177,14 +172,6 @@ ssize_t libbfio_file_write(
          size_t size,
          libcerror_error_t **error );
 
-#if defined( WINAPI ) && ( WINVER < 0x0500 )
-BOOL libbfio_SetFilePointerEx(
-      HANDLE file_handle,
-      LARGE_INTEGER distance_to_move_large_integer,
-      LARGE_INTEGER *new_file_pointer_large_integer,
-      DWORD move_method );
-#endif
-
 off64_t libbfio_file_seek_offset(
          libbfio_file_io_handle_t *file_io_handle,
          off64_t offset,
@@ -198,12 +185,6 @@ int libbfio_file_exists(
 int libbfio_file_is_open(
      libbfio_file_io_handle_t *file_io_handle,
      libcerror_error_t **error );
-
-#if defined( WINAPI ) && ( WINVER < 0x0500 )
-BOOL libbfio_GetFileSizeEx(
-      HANDLE file_handle,
-      LARGE_INTEGER *file_size_large_integer );
-#endif
 
 int libbfio_file_get_size(
      libbfio_file_io_handle_t *file_io_handle,

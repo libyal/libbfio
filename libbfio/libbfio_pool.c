@@ -1597,10 +1597,10 @@ int libbfio_pool_close_all(
 	return( result );
 }
 
-/* Reads from a handle in the pool
+/* Reads a buffer from a handle in the pool
  * Returns the number of bytes read or -1 on error
  */
-ssize_t libbfio_pool_read(
+ssize_t libbfio_pool_read_buffer(
          libbfio_pool_t *pool,
          int entry,
          uint8_t *buffer,
@@ -1608,7 +1608,7 @@ ssize_t libbfio_pool_read(
          libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
-	static char *function                  = "libbfio_pool_read";
+	static char *function                  = "libbfio_pool_read_buffer";
 	ssize_t read_count                     = 0;
 	int access_flags                       = 0;
 	int is_open                            = 0;
@@ -1717,7 +1717,7 @@ ssize_t libbfio_pool_read(
 			return( -1 );
 		}
 	}
-	read_count = libbfio_handle_read(
+	read_count = libbfio_handle_read_buffer(
 	              internal_pool->handles[ entry ],
 	              buffer,
 	              size,
@@ -1738,10 +1738,10 @@ ssize_t libbfio_pool_read(
 	return( read_count );
 }
 
-/* Writes to a handle in the pool
+/* Writes a buffer to a handle in the pool
  * Returns the number of bytes written or -1 on error
  */
-ssize_t libbfio_pool_write(
+ssize_t libbfio_pool_write_buffer(
          libbfio_pool_t *pool,
          int entry,
          const uint8_t *buffer,
@@ -1749,7 +1749,7 @@ ssize_t libbfio_pool_write(
          libcerror_error_t **error )
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
-	static char *function                  = "libbfio_pool_write";
+	static char *function                  = "libbfio_pool_write_buffer";
 	ssize_t write_count                    = 0;
 	int access_flags                       = 0;
 	int is_open                            = 0;
@@ -1858,7 +1858,7 @@ ssize_t libbfio_pool_write(
 			return( -1 );
 		}
 	}
-	write_count = libbfio_handle_write(
+	write_count = libbfio_handle_write_buffer(
 	               internal_pool->handles[ entry ],
 	               buffer,
 	               size,
