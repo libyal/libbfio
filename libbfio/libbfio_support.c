@@ -24,9 +24,9 @@
 
 #include <stdio.h>
 
-#include "libbfio_codepage.h"
 #include "libbfio_definitions.h"
 #include "libbfio_libcerror.h"
+#include "libbfio_libclocale.h"
 #include "libbfio_libcstring.h"
 #include "libbfio_support.h"
 
@@ -50,19 +50,19 @@ int libbfio_get_codepage(
 {
 	static char *function = "libbfio_get_codepage";
 
-	if( codepage == NULL )
+	if( libclocale_codepage_get(
+	     codepage,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid codepage.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve codepage.",
 		 function );
 
 		return( -1 );
 	}
-	*codepage = libcstring_narrow_system_string_codepage;
-
 	return( 1 );
 }
 
@@ -76,48 +76,19 @@ int libbfio_set_codepage(
 {
 	static char *function = "libbfio_set_codepage";
 
-	if( ( codepage != LIBBFIO_CODEPAGE_ASCII )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_1 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_2 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_3 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_4 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_5 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_6 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_7 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_8 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_9 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_10 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_11 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_13 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_14 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_15 )
-	 && ( codepage != LIBBFIO_CODEPAGE_ISO_8859_16 )
-	 && ( codepage != LIBBFIO_CODEPAGE_KOI8_R )
-	 && ( codepage != LIBBFIO_CODEPAGE_KOI8_U )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_874 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_932 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_936 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1250 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1251 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1252 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1253 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1254 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1256 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1257 )
-	 && ( codepage != LIBBFIO_CODEPAGE_WINDOWS_1258 )
-	 && ( codepage != 0 ) )
+	if( libclocale_codepage_set(
+	     codepage,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported codepage.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set codepage.",
 		 function );
 
 		return( -1 );
 	}
-	libcstring_narrow_system_string_codepage = codepage;
-
 	return( 1 );
 }
 

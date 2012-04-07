@@ -1,6 +1,6 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{29F67D0C-B712-4E92-B84F-F412EA14BF13}</ProjectGuid>
+			<ProjectGuid>{958AF3FF-40E1-49DB-B9B1-081C449674D9}</ProjectGuid>
 			<ProjectVersion>12.0</ProjectVersion>
 			<Config Condition="'$(Config)'==''">Release</Config>
 		</PropertyGroup>
@@ -18,15 +18,15 @@
 			<_TCHARMapping>wchar_t</_TCHARMapping>
 			<FinalOutputDir>..\Release</FinalOutputDir>
 			<BCC_waus>false</BCC_waus>
-			<BCC_IncludePath>..\..\..\include;..\..\..\common;..\..\..\libcstring;..\..\..\libcerror;..\..\..\libclocale;..\..\..\libuna;$(BCC_IncludePath)</BCC_IncludePath>
+			<BCC_IncludePath>..\..\..\include;..\..\..\common;..\..\..\libcstring;..\..\..\libcerror;$(BCC_IncludePath)</BCC_IncludePath>
 			<OutputExt>lib</OutputExt>
 			<Multithreaded>true</Multithreaded>
 			<PackageImports>vcl.bpi;rtl.bpi;bcbie.bpi;vclx.bpi;vclactnband.bpi;xmlrtl.bpi;bcbsmp.bpi;dbrtl.bpi;vcldb.bpi;vcldbx.bpi;bdertl.bpi;dsnap.bpi;dsnapcon.bpi;TeeUI.bpi;TeeDB.bpi;Tee.bpi;adortl.bpi;IndyCore.bpi;IndySystem.bpi;IndyProtocols.bpi;dbexpress.bpi;DbxCommonDriver.bpi;DataSnapIndy10ServerTransport.bpi;DataSnapProviderClient.bpi;DataSnapServer.bpi;DbxClientDriver.bpi;DBXInterBaseDriver.bpi;DBXMySQLDriver.bpi;dbxcds.bpi;DBXSybaseASEDriver.bpi;DBXSybaseASADriver.bpi;DBXOracleDriver.bpi;DBXMSSQLDriver.bpi;DBXInformixDriver.bpi;DBXDb2Driver.bpi</PackageImports>
 			<AllPackageLibs>rtl.lib;vcl.lib</AllPackageLibs>
 			<ProjectType>CppStaticLibrary</ProjectType>
 			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
-			<Defines>NO_STRICT;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCPATH;$(Defines)</Defines>
-			<IncludePath>..\..\..\libcpath;$(CG_BOOST_ROOT)\boost\tr1\tr1;$(BDS)\include;$(BDS)\include\dinkumware;$(BDS)\include\vcl;$(CG_BOOST_ROOT);$(IncludePath)</IncludePath>
+			<Defines>NO_STRICT;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCLOCALE;$(Defines)</Defines>
+			<IncludePath>..\..\..\libclocale;$(CG_BOOST_ROOT)\boost\tr1\tr1;$(BDS)\include;$(BDS)\include\dinkumware;$(BDS)\include\vcl;$(CG_BOOST_ROOT);$(IncludePath)</IncludePath>
 			<ILINK_LibraryPath>$(BDS)\lib;$(BDS)\lib\obj;$(BDS)\lib\psdk;$(ILINK_LibraryPath)</ILINK_LibraryPath>
 			<BCC_wpar>false</BCC_wpar>
 			<BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
@@ -38,71 +38,38 @@
 			<TASM_Debugging>None</TASM_Debugging>
 		</PropertyGroup>
 		<ItemGroup>
-			<CppCompile Include="..\..\..\libcpath\libcpath_support.c">
-				<BuildOrder>14</BuildOrder>
-			</CppCompile>
-			<None Include="..\..\..\libcpath\libcpath_support.h">
-				<BuildOrder>15</BuildOrder>
-			</None>
-			<None Include="..\..\..\libcpath\libcpath_path.h">
-				<BuildOrder>13</BuildOrder>
-			</None>
-			<None Include="..\..\..\libcpath\libcpath_narrow_string.h">
-				<BuildOrder>11</BuildOrder>
-			</None>
-			<CppCompile Include="..\..\..\libcpath\libcpath_path.c">
-				<BuildOrder>12</BuildOrder>
-			</CppCompile>
-			<None Include="..\..\..\libcpath\libcpath_wide_split_string.h">
-				<BuildOrder>19</BuildOrder>
-			</None>
-			<CppCompile Include="..\..\..\libcpath\libcpath_wide_string.c">
-				<BuildOrder>20</BuildOrder>
-			</CppCompile>
-			<CppCompile Include="..\..\..\libcpath\libcpath_wide_split_string.c">
-				<BuildOrder>18</BuildOrder>
-			</CppCompile>
-			<None Include="..\..\..\libcpath\libcpath_types.h">
-				<BuildOrder>16</BuildOrder>
-			</None>
-			<None Include="..\..\..\libcpath\libcpath_unused.h">
-				<BuildOrder>17</BuildOrder>
-			</None>
-			<CppCompile Include="..\..\..\libcpath\libcpath_narrow_string.c">
-				<BuildOrder>10</BuildOrder>
-			</CppCompile>
-			<None Include="..\..\..\libcpath\libcpath_error.h">
-				<BuildOrder>3</BuildOrder>
-			</None>
-			<None Include="..\..\..\libcpath\libcpath_extern.h">
-				<BuildOrder>4</BuildOrder>
-			</None>
-			<CppCompile Include="..\..\..\libcpath\libcpath_error.c">
-				<BuildOrder>2</BuildOrder>
-			</CppCompile>
-			<None Include="..\..\..\libcpath\libcpath_wide_string.h">
+			<None Include="..\..\..\libclocale\libclocale_unused.h">
 				<BuildOrder>0</BuildOrder>
 			</None>
-			<None Include="..\..\..\libcpath\libcpath_definitions.h">
+			<CppCompile Include="..\..\..\libclocale\libclocale_codepage.c">
 				<BuildOrder>1</BuildOrder>
-			</None>
-			<CppCompile Include="..\..\..\libcpath\libcpath_narrow_split_string.c">
-				<BuildOrder>8</BuildOrder>
 			</CppCompile>
-			<None Include="..\..\..\libcpath\libcpath_narrow_split_string.h">
-				<BuildOrder>9</BuildOrder>
+			<None Include="..\..\..\libclocale\libclocale_codepage.h">
+				<BuildOrder>2</BuildOrder>
 			</None>
-			<None Include="..\..\..\libcpath\libcpath_libuna.h">
-				<BuildOrder>7</BuildOrder>
+			<None Include="..\..\..\libclocale\libclocale_definitions.h">
+				<BuildOrder>3</BuildOrder>
 			</None>
-			<None Include="..\..\..\libcpath\libcpath_libcerror.h">
+			<None Include="..\..\..\libclocale\libclocale_extern.h">
+				<BuildOrder>4</BuildOrder>
+			</None>
+			<None Include="..\..\..\libclocale\libclocale_libcerror.h">
 				<BuildOrder>5</BuildOrder>
 			</None>
-			<None Include="..\..\..\libcpath\libcpath_libcstring.h">
+			<None Include="..\..\..\libclocale\libclocale_libcstring.h">
 				<BuildOrder>6</BuildOrder>
 			</None>
-			<None Include="..\..\..\libcpath\libcpath_libclocale.h">
-				<BuildOrder>21</BuildOrder>
+			<CppCompile Include="..\..\..\libclocale\libclocale_locale.c">
+				<BuildOrder>7</BuildOrder>
+			</CppCompile>
+			<None Include="..\..\..\libclocale\libclocale_locale.h">
+				<BuildOrder>8</BuildOrder>
+			</None>
+			<CppCompile Include="..\..\..\libclocale\libclocale_support.c">
+				<BuildOrder>9</BuildOrder>
+			</CppCompile>
+			<None Include="..\..\..\libclocale\libclocale_support.h">
+				<BuildOrder>10</BuildOrder>
 			</None>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

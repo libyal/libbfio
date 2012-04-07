@@ -2,6 +2,7 @@ EXTRA_DIST = \
 	libbfio_dll/libbfio_dll.vcproj \
 	libcerror/libcerror.vcproj \
 	libcfile/libcfile.vcproj \
+	libclocale/libclocale.vcproj \
 	libcpath/libcpath.vcproj \
 	libcstring/libcstring.vcproj \
 	libuna/libuna.vcproj \

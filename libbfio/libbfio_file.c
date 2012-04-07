@@ -28,6 +28,7 @@
 #include "libbfio_handle.h"
 #include "libbfio_libcerror.h"
 #include "libbfio_libcfile.h"
+#include "libbfio_libclocale.h"
 #include "libbfio_libcpath.h"
 #include "libbfio_libcstring.h"
 #include "libbfio_libuna.h"
@@ -569,7 +570,7 @@ int libbfio_file_io_handle_get_name_size(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -593,14 +594,14 @@ int libbfio_file_io_handle_get_name_size(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          name_size,
 		          error );
 #else
@@ -676,7 +677,7 @@ int libbfio_file_io_handle_get_name(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -700,14 +701,14 @@ int libbfio_file_io_handle_get_name(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &narrow_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &narrow_name_size,
 		          error );
 #else
@@ -741,7 +742,7 @@ int libbfio_file_io_handle_get_name(
 		return( -1 );
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_copy_from_utf32(
@@ -767,7 +768,7 @@ int libbfio_file_io_handle_get_name(
 		result = libuna_byte_stream_copy_from_utf32(
 		          (uint8_t *) name,
 		          name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          (libuna_utf32_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
 		          error );
@@ -775,7 +776,7 @@ int libbfio_file_io_handle_get_name(
 		result = libuna_byte_stream_copy_from_utf16(
 		          (uint8_t *) name,
 		          name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          (libuna_utf16_character_t *) file_io_handle->name,
 		          file_io_handle->name_size,
 		          error );
@@ -912,7 +913,7 @@ int libbfio_file_io_handle_set_name(
 		 file_io_handle->name_size = 0;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
@@ -936,14 +937,14 @@ int libbfio_file_io_handle_set_name(
 		result = libuna_utf32_string_size_from_byte_stream(
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &( file_io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &( file_io_handle->name_size ),
 		          error );
 #else
@@ -992,7 +993,7 @@ int libbfio_file_io_handle_set_name(
 		goto on_error;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_copy_from_utf8(
@@ -1020,7 +1021,7 @@ int libbfio_file_io_handle_set_name(
 		          file_io_handle->name_size,
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_byte_stream(
@@ -1028,7 +1029,7 @@ int libbfio_file_io_handle_set_name(
 		          file_io_handle->name_size,
 		          (uint8_t *) name,
 		          name_length + 1,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -1295,7 +1296,7 @@ int libbfio_file_io_handle_get_name_size_wide(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	*name_size = file_io_handle->name_size;
 #else
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
@@ -1319,14 +1320,14 @@ int libbfio_file_io_handle_get_name_size_wide(
 		result = libuna_utf32_string_size_from_byte_stream(
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          name_size,
 		          error );
 #else
@@ -1402,7 +1403,7 @@ int libbfio_file_io_handle_get_name_wide(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	wide_name_size = file_io_handle->name_size;
 #else
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_size_from_utf8(
@@ -1426,14 +1427,14 @@ int libbfio_file_io_handle_get_name_wide(
 		result = libuna_utf32_string_size_from_byte_stream(
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &wide_name_size,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_size_from_byte_stream(
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &wide_name_size,
 		          error );
 #else
@@ -1487,7 +1488,7 @@ int libbfio_file_io_handle_get_name_wide(
 		name[ file_io_handle->name_size - 1 ] = 0;
 	}
 #else
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf32_string_copy_from_utf8(
@@ -1515,7 +1516,7 @@ int libbfio_file_io_handle_get_name_wide(
 		          name_size,
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_byte_stream(
@@ -1523,7 +1524,7 @@ int libbfio_file_io_handle_get_name_wide(
 		          name_size,
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          error );
 #else
 #error Unsupported size of wchar_t
@@ -1638,7 +1639,7 @@ int libbfio_file_io_handle_set_name_wide(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	file_io_handle->name_size = name_length + 1;
 #else
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_size_from_utf32(
@@ -1662,14 +1663,14 @@ int libbfio_file_io_handle_set_name_wide(
 		result = libuna_byte_stream_size_from_utf32(
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &( file_io_handle->name_size ),
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_byte_stream_size_from_utf16(
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          &( file_io_handle->name_size ),
 		          error );
 #else
@@ -1735,7 +1736,7 @@ int libbfio_file_io_handle_set_name_wide(
 	}
 	file_io_handle->name[ name_length ] = 0;
 #else
-	if( libcstring_narrow_system_string_codepage == 0 )
+	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
 		result = libuna_utf8_string_copy_from_utf32(
@@ -1761,7 +1762,7 @@ int libbfio_file_io_handle_set_name_wide(
 		result = libuna_byte_stream_copy_from_utf32(
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          (libuna_utf32_character_t *) name,
 		          name_length + 1,
 		          error );
@@ -1769,7 +1770,7 @@ int libbfio_file_io_handle_set_name_wide(
 		result = libuna_byte_stream_copy_from_utf16(
 		          (uint8_t *) file_io_handle->name,
 		          file_io_handle->name_size,
-		          libcstring_narrow_system_string_codepage,
+		          libclocale_codepage,
 		          (libuna_utf16_character_t *) name,
 		          name_length + 1,
 		          error );

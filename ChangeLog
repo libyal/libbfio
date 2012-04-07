@@ -1,5 +1,4 @@
 TODO
-* update msvscpp and borlandc files
 
 Pool
 * allow re-set of pool entries?
@@ -23,8 +22,13 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20120407
+* applied updates
+* updated msvscpp and borlandc files
+
 20120406
 * worked on libcfile rewrite
+* updated msvscpp and borlandc files
 
 20120403
 * worked on libcpath rewrite

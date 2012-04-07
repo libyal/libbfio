@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20120406],
+ [20120407],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -59,6 +59,9 @@ AX_LIBCSTRING_CHECK_ENABLE
 dnl Check for enabling libcerror for cross-platform C error functions
 AX_LIBCERROR_CHECK_ENABLE
 
+dnl Check for enabling libclocale for cross-platform C locale functions
+AX_LIBCLOCALE_CHECK_ENABLE
+
 dnl Check for enabling libuna for Unicode string support
 AX_LIBUNA_CHECK_ENABLE
 
@@ -67,9 +70,6 @@ AX_LIBCFILE_CHECK_ENABLE
 
 dnl Check for enabling libcpath for cross-platform C path functions
 AX_LIBCPATH_CHECK_ENABLE
-
-dnl Check for library function support
-AX_LIBBFIO_CHECK_LOCAL
 
 dnl Set additional compiler flags
 CFLAGS="$CFLAGS -Wall";
@@ -93,7 +93,7 @@ AM_CONDITIONAL(
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes],
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes],
  [AC_SUBST(
   [libbfio_spec_requires],
   [Requires:])
@@ -113,6 +113,7 @@ AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
+AC_CONFIG_FILES([libclocale/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libcfile/Makefile])
 AC_CONFIG_FILES([libcpath/Makefile])
@@ -149,6 +150,7 @@ AC_MSG_NOTICE([
 Building:
    libcstring support:          $ac_cv_libcstring
    libcerror support:           $ac_cv_libcerror
+   libclocale support:          $ac_cv_libclocale
    libuna support:              $ac_cv_libuna
    libcfile support:            $ac_cv_libcfile
    libcpath support:            $ac_cv_libcpath

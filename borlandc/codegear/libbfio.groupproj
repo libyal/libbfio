@@ -9,17 +9,20 @@
 			<Projects Include="libcerror\libcerror.cbproj">
 				<Dependencies>libcstring\libcstring.cbproj</Dependencies>
 			</Projects>
+			<Projects Include="libclocale\libclocale.cbproj">
+				<Dependencies>libcstring\libcstring.cbproj;libcerror\libcerror.cbproj</Dependencies>
+			</Projects>
 			<Projects Include="libuna\libuna.cbproj">
 				<Dependencies>libcstring\libcstring.cbproj;libcerror\libcerror.cbproj</Dependencies>
 			</Projects>
 			<Projects Include="libcfile\libcfile.cbproj">
-				<Dependencies>libcstring\libcstring.cbproj;libuna\libuna.cbproj;libcerror\libcerror.cbproj</Dependencies>
+				<Dependencies>libcstring\libcstring.cbproj;libcerror\libcerror.cbproj;libuna\libuna.cbproj;libclocale\libclocale.cbproj</Dependencies>
 			</Projects>
 			<Projects Include="libcpath\libcpath.cbproj">
-				<Dependencies>libcstring\libcstring.cbproj;libuna\libuna.cbproj;libcerror\libcerror.cbproj</Dependencies>
+				<Dependencies>libcstring\libcstring.cbproj;libcerror\libcerror.cbproj;libuna\libuna.cbproj;libclocale\libclocale.cbproj</Dependencies>
 			</Projects>
 			<Projects Include="libbfio\libbfio.cbproj">
-				<Dependencies>libcstring\libcstring.cbproj;libuna\libuna.cbproj;libcerror\libcerror.cbproj;libcfile\libcfile.cbproj;libcpath\libcpath.cbproj</Dependencies>
+				<Dependencies>libcstring\libcstring.cbproj;libcerror\libcerror.cbproj;libuna\libuna.cbproj;libcfile\libcfile.cbproj;libcpath\libcpath.cbproj;libclocale\libclocale.cbproj</Dependencies>
 			</Projects>
 		</ItemGroup>
 		<ProjectExtensions>
@@ -47,6 +50,15 @@
 		<Target DependsOnTargets="libcstring:Make" Name="libcerror:Make">
 			<MSBuild Targets="Make" Projects="libcerror\libcerror.cbproj"/>
 		</Target>
+		<Target DependsOnTargets="libcstring;libcerror" Name="libclocale">
+			<MSBuild Projects="libclocale\libclocale.cbproj"/>
+		</Target>
+		<Target DependsOnTargets="libcstring:Clean;libcerror:Clean" Name="libclocale:Clean">
+			<MSBuild Targets="Clean" Projects="libclocale\libclocale.cbproj"/>
+		</Target>
+		<Target DependsOnTargets="libcstring:Make;libcerror:Make" Name="libclocale:Make">
+			<MSBuild Targets="Make" Projects="libclocale\libclocale.cbproj"/>
+		</Target>
 		<Target DependsOnTargets="libcstring;libcerror" Name="libuna">
 			<MSBuild Projects="libuna\libuna.cbproj"/>
 		</Target>
@@ -56,41 +68,41 @@
 		<Target DependsOnTargets="libcstring:Make;libcerror:Make" Name="libuna:Make">
 			<MSBuild Targets="Make" Projects="libuna\libuna.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring;libuna;libcerror" Name="libcfile">
+		<Target DependsOnTargets="libcstring;libcerror;libuna;libclocale" Name="libcfile">
 			<MSBuild Projects="libcfile\libcfile.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring:Clean;libuna:Clean;libcerror:Clean" Name="libcfile:Clean">
+		<Target DependsOnTargets="libcstring:Clean;libcerror:Clean;libuna:Clean;libclocale:Clean" Name="libcfile:Clean">
 			<MSBuild Targets="Clean" Projects="libcfile\libcfile.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring:Make;libuna:Make;libcerror:Make" Name="libcfile:Make">
+		<Target DependsOnTargets="libcstring:Make;libcerror:Make;libuna:Make;libclocale:Make" Name="libcfile:Make">
 			<MSBuild Targets="Make" Projects="libcfile\libcfile.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring;libuna;libcerror" Name="libcpath">
+		<Target DependsOnTargets="libcstring;libcerror;libuna;libclocale" Name="libcpath">
 			<MSBuild Projects="libcpath\libcpath.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring:Clean;libuna:Clean;libcerror:Clean" Name="libcpath:Clean">
+		<Target DependsOnTargets="libcstring:Clean;libcerror:Clean;libuna:Clean;libclocale:Clean" Name="libcpath:Clean">
 			<MSBuild Targets="Clean" Projects="libcpath\libcpath.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring:Make;libuna:Make;libcerror:Make" Name="libcpath:Make">
+		<Target DependsOnTargets="libcstring:Make;libcerror:Make;libuna:Make;libclocale:Make" Name="libcpath:Make">
 			<MSBuild Targets="Make" Projects="libcpath\libcpath.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring;libuna;libcerror;libcfile;libcpath" Name="libbfio">
+		<Target DependsOnTargets="libcstring;libcerror;libuna;libcfile;libcpath;libclocale" Name="libbfio">
 			<MSBuild Projects="libbfio\libbfio.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring:Clean;libuna:Clean;libcerror:Clean;libcfile:Clean;libcpath:Clean" Name="libbfio:Clean">
+		<Target DependsOnTargets="libcstring:Clean;libcerror:Clean;libuna:Clean;libcfile:Clean;libcpath:Clean;libclocale:Clean" Name="libbfio:Clean">
 			<MSBuild Targets="Clean" Projects="libbfio\libbfio.cbproj"/>
 		</Target>
-		<Target DependsOnTargets="libcstring:Make;libuna:Make;libcerror:Make;libcfile:Make;libcpath:Make" Name="libbfio:Make">
+		<Target DependsOnTargets="libcstring:Make;libcerror:Make;libuna:Make;libcfile:Make;libcpath:Make;libclocale:Make" Name="libbfio:Make">
 			<MSBuild Targets="Make" Projects="libbfio\libbfio.cbproj"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="libcstring;libcerror;libuna;libcfile;libcpath;libbfio"/>
+			<CallTarget Targets="libcstring;libcerror;libclocale;libuna;libcfile;libcpath;libbfio"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="libcstring:Clean;libcerror:Clean;libuna:Clean;libcfile:Clean;libcpath:Clean;libbfio:Clean"/>
+			<CallTarget Targets="libcstring:Clean;libcerror:Clean;libclocale:Clean;libuna:Clean;libcfile:Clean;libcpath:Clean;libbfio:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="libcstring:Make;libcerror:Make;libuna:Make;libcfile:Make;libcpath:Make;libbfio:Make"/>
+			<CallTarget Targets="libcstring:Make;libcerror:Make;libclocale:Make;libuna:Make;libcfile:Make;libcpath:Make;libbfio:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
