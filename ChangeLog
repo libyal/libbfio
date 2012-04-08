@@ -22,8 +22,11 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20120408
+* updated dependencies
+
 20120407
-* applied updates
+* updated dependencies
 * updated msvscpp and borlandc files
 
 20120406
