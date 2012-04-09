@@ -209,6 +209,7 @@ int libbfio_file_io_handle_free(
      libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_io_handle_free";
+	int result            = 1;
 
 	if( file_io_handle == NULL )
 	{
@@ -228,12 +229,25 @@ int libbfio_file_io_handle_free(
 			memory_free(
 			 ( *file_io_handle )->name );
 		}
+		if( libcfile_file_free(
+		     &( ( *file_io_handle )->file ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free file.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 *file_io_handle );
 
 		*file_io_handle = NULL;
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Clones (duplicates) the file IO handle and its attributes

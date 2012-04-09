@@ -22,6 +22,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20120409
+* updated dependencies
+* fixed memory leak due to recent changes
+
 20120408
 * updated dependencies
 
