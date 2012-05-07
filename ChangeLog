@@ -22,6 +22,9 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20120507
+* updated dependencies
+
 20120425
 * fixes for pkg-config detection of libraries
 
