@@ -7,6 +7,6 @@ Name: libbfio
 Description: Library to support (abstracted) basic file IO
 Version: @VERSION@
 Libs: -L${libdir} -lbfio
-Libs.private: @ax_libcerror_pc_libs_private@ @ax_libcfile_pc_libs_private@ @ax_libclocale_pc_libs_private@ @ax_libcpath_pc_libs_private@ @ax_libcstring_pc_libs_private@ @ax_libuna_pc_libs_private@
+Libs.private: @ax_libcerror_pc_libs_private@ @ax_libcfile_pc_libs_private@ @ax_libclocale_pc_libs_private@ @ax_libcpath_pc_libs_private@ @ax_libcsplit_pc_libs_private@ @ax_libcstring_pc_libs_private@ @ax_libuna_pc_libs_private@
 Cflags: -I${includedir}
 
