@@ -1,7 +1,7 @@
 /*
  * Legacy functions
  *
- * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -196,11 +196,10 @@ ssize_t libbfio_handle_read(
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
-		if( libbfio_offset_list_append_offset(
+		if( libbfio_offset_list_append_range(
 		     internal_handle->offsets_read,
 		     internal_handle->offset,
 		     read_count,
-		     1,
 		     error ) != 1 )
 		{
 			libcerror_error_set(

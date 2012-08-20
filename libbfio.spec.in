@@ -5,7 +5,7 @@ Summary: Library to support (abstracted) basic file IO
 Group: System Environment/Libraries
 License: LGPL
 Source: %{name}-%{version}.tar.gz
-URL: http://libbfio.sourceforge.net
+URL: http://code.google.com/p/libbfio/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 @libbfio_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcfile_spec_requires@ @ax_libclocale_spec_requires@ @ax_libcpath_spec_requires@ @ax_libcsplit_spec_requires@ @ax_libcstring_spec_requires@ @ax_libuna_spec_requires@
 @libbfio_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcfile_spec_build_requires@ @ax_libclocale_spec_build_requires@ @ax_libcpath_spec_build_requires@ @ax_libcpslit_spec_build_requires@ @ax_libcstring_spec_build_requires@ @ax_libuna_spec_build_requires@
@@ -55,18 +55,18 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man3/*
 
 %changelog
-* Sat Apr  7 2012 Joachim Metz <jbmetz@users.sourceforge.net> 20120407-1
+* Sat Apr  7 2012 Joachim Metz <joachim.metz@gmail.com> 20120407-1
 - Changes due to dependency changes
 
-* Fri Apr  6 2012 Joachim Metz <jbmetz@users.sourceforge.net> 20120406-1
+* Fri Apr  6 2012 Joachim Metz <joachim.metz@gmail.com> 20120406-1
 - Changes due to dependency changes
 
-* Sun Apr  1 2012 Joachim Metz <jbmetz@users.sourceforge.net> 20120401-1
+* Sun Apr  1 2012 Joachim Metz <joachim.metz@gmail.com> 20120401-1
 - Changes for libsystem code clean up
 
-* Sat Oct 15 2011 Joachim Metz <jbmetz@users.sourceforge.net> 20111015-1
+* Sat Oct 15 2011 Joachim Metz <joachim.metz@gmail.com> 20111015-1
 - Update for configure changes and README files
 
-* Sun Jun 27 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100627-1
+* Sun Jun 27 2010 Joachim Metz <joachim.metz@gmail.com> 20100627-1
 - Clean up of previous version of spec file
 

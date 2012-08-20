@@ -1,7 +1,7 @@
 /*
  * Offset list
  *
- * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -43,6 +43,10 @@ struct libbfio_offset_list_value
 	/* The size
 	 */
 	size64_t size;
+
+	/* The last offset
+	 */
+	off64_t last_offset;
 };
 
 typedef struct libbfio_offset_list libbfio_offset_list_t;
@@ -105,31 +109,82 @@ int libbfio_offset_list_get_number_of_elements(
      int *number_of_elements,
      libcerror_error_t **error );
 
-int libbfio_offset_list_append_offset(
+int libbfio_offset_list_append_range(
+     libbfio_offset_list_t *offset_list,
+     off64_t range_offset,
+     size64_t range_size,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_append_offset_list(
+     libbfio_offset_list_t *offset_list,
+     libbfio_offset_list_t *source_offset_list,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_insert_element(
+     libbfio_offset_list_t *offset_list,
+     libbfio_list_element_t *offset_list_element,
+     libbfio_list_element_t *element,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_insert_value(
+     libbfio_offset_list_t *offset_list,
+     libbfio_list_element_t *offset_list_element,
+     libbfio_offset_list_value_t *offset_list_value,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_remove_element(
+     libbfio_offset_list_t *offset_list,
+     libbfio_list_element_t *element,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_remove_range(
+     libbfio_offset_list_t *offset_list,
+     off64_t range_offset,
+     size64_t range_size,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_get_element_by_index(
+     libbfio_offset_list_t *offset_list,
+     int element_index,
+     libbfio_list_element_t **element,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_get_element_by_offset(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
-     size64_t size,
-     uint8_t merge_ranges,
+     libbfio_list_element_t **element,
      libcerror_error_t **error );
 
-int libbfio_offset_list_get_offset(
+int libbfio_offset_list_get_value_by_index(
      libbfio_offset_list_t *offset_list,
-     int index,
-     off64_t *offset,
-     size64_t *size,
+     int element_index,
+     libbfio_offset_list_value_t **offset_list_value,
      libcerror_error_t **error );
 
-int libbfio_offset_list_get_offset_by_value(
+int libbfio_offset_list_get_value_by_offset(
      libbfio_offset_list_t *offset_list,
-     off64_t offset_value,
-     off64_t *offset,
-     size64_t *size,
+     off64_t offset,
+     libbfio_offset_list_value_t **offset_list_value,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_get_range(
+     libbfio_offset_list_t *offset_list,
+     int element_index,
+     off64_t *range_offset,
+     size64_t *range_size,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_get_range_by_offset(
+     libbfio_offset_list_t *offset_list,
+     off64_t offset,
+     off64_t *range_offset,
+     size64_t *range_size,
      libcerror_error_t **error );
 
 int libbfio_offset_list_range_is_present(
      libbfio_offset_list_t *offset_list,
-     off64_t offset,
-     size64_t size,
+     off64_t range_offset,
+     size64_t range_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

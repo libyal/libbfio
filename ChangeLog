@@ -1,4 +1,5 @@
 TODO
+* update macosx package maker files
 
 Pool
 * allow re-set of pool entries?
@@ -21,6 +22,10 @@ Beta release
 
 Deployment:
 * check if libbfio.3 is up to date
+
+20120820
+* project move
+* applied updates
 
 20120701
 * changes for libcsplit
