@@ -23,8 +23,8 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 
 /* Creates an offset list value
@@ -330,11 +330,12 @@ int libbfio_offset_list_empty(
      libbfio_offset_list_t *offset_list,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *element = NULL;
-	static char *function           = "libbfio_offset_list_empty";
-	int element_index               = 0;
-	int number_of_elements          = 0;
-	int result                      = 1;
+	libcdata_list_element_t *list_element = NULL;
+	libcdata_list_element_t *next_element = NULL;
+	static char *function                 = "libbfio_offset_list_empty";
+	int element_index                     = 0;
+	int number_of_elements                = 0;
+	int result                            = 1;
 
 	if( offset_list == NULL )
 	{
@@ -351,40 +352,70 @@ int libbfio_offset_list_empty(
 	{
 		number_of_elements = offset_list->number_of_elements;
 
+		list_element = offset_list->first_element;
+
 		for( element_index = 0;
 		     element_index < number_of_elements;
 		     element_index++ )
 		{
-			element = offset_list->first_element;
-
-			if( element == NULL )
+			if( libcdata_list_element_get_next_element(
+			     list_element,
+			     &next_element,
+			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: missing element: %d.",
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve next element from list element: %d.",
 				 function,
 				 element_index );
 
 				return( -1 );
 			}
-			offset_list->first_element = element->next_element;
+			offset_list->first_element = next_element;
 
-			if( offset_list->last_element == element )
+			if( offset_list->last_element == list_element )
 			{
-				offset_list->last_element = element->next_element;
+				offset_list->last_element = next_element;
 			}
 			offset_list->number_of_elements -= 1;
 
-			if( element->next_element != NULL )
+			if( next_element != NULL )
 			{
-				element->next_element->previous_element = NULL;
-			}
-			element->next_element = NULL;
+				if( libcdata_list_element_set_previous_element(
+				     next_element,
+				     NULL,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+					 "%s: unable to set previous element of list element: %d.",
+					 function,
+					 element_index + 1 );
 
-			if( libbfio_list_element_free(
-			     &element,
+					return( -1 );
+				}
+			}
+			if( libcdata_list_element_set_next_element(
+			     list_element,
+			     NULL,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set next element of list element: %d.",
+				 function,
+				 element_index );
+
+				return( -1 );
+			}
+			if( libcdata_list_element_free(
+			     &list_element,
 			     (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 			     error ) != 1 )
 			{
@@ -398,6 +429,7 @@ int libbfio_offset_list_empty(
 
 				result = -1;
 			}
+			list_element = next_element;
 		}
 		offset_list->current_element       = NULL;
 		offset_list->current_element_index = 0;
@@ -413,9 +445,9 @@ int libbfio_offset_list_clone(
      libbfio_offset_list_t *source_offset_list,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *destination_element    = NULL;
-	libbfio_list_element_t *source_element         = NULL;
+	libcdata_list_element_t *source_list_element   = NULL;
 	libbfio_offset_list_value_t *destination_value = NULL;
+	libbfio_offset_list_value_t *source_value      = NULL;
 	static char *function                          = "libbfio_offset_list_clone";
 	int element_index                              = 0;
 
@@ -471,33 +503,22 @@ int libbfio_offset_list_clone(
 
 		goto on_error;
 	}
-	source_element = source_offset_list->first_element;
+	source_list_element = source_offset_list->first_element;
 
 	for( element_index = 0;
 	     element_index < source_offset_list->number_of_elements;
 	     element_index++ )
 	{
-		if( source_element == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing source element: %d.",
-			 function,
-			 element_index );
-
-			goto on_error;
-		}
-		if( libbfio_list_element_initialize(
-		     &destination_element,
+		if( libcdata_list_element_get_value(
+		     source_list_element,
+		     (intptr_t **) &source_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create destination element: %d.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from source list element: %d.",
 			 function,
 			 element_index );
 
@@ -505,7 +526,7 @@ int libbfio_offset_list_clone(
 		}
 		if( libbfio_offset_list_value_clone(
 		     &destination_value,
-		     (libbfio_offset_list_value_t *) source_element->value,
+		     source_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -518,9 +539,9 @@ int libbfio_offset_list_clone(
 
 			goto on_error;
 		}
-		if( libbfio_list_element_set_value(
-		     destination_element,
-		     (intptr_t *) destination_value,
+		if( libbfio_offset_list_append_value(
+		     *destination_offset_list,
+		     destination_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -535,21 +556,21 @@ int libbfio_offset_list_clone(
 		}
 		destination_value = NULL;
 
-		if( ( *destination_offset_list )->first_element == NULL )
+		if( libcdata_list_element_get_next_element(
+		     source_list_element,
+		     &source_list_element,
+		     error ) != 1 )
 		{
-			( *destination_offset_list )->first_element = destination_element;
-		}
-		if( ( *destination_offset_list )->last_element != NULL )
-		{
-			( *destination_offset_list )->last_element->next_element = destination_element;
-			destination_element->previous_element                    = ( *destination_offset_list )->last_element;
-		}
-		( *destination_offset_list )->last_element        = destination_element;
-		( *destination_offset_list )->number_of_elements += 1;
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve next element from list element: %d.",
+			 function,
+			 element_index );
 
-		destination_element = NULL;
-
-		source_element = source_element->next_element;
+			goto on_error;
+		}
 	}
 	return( 1 );
 
@@ -558,13 +579,6 @@ on_error:
 	{
 		libbfio_offset_list_value_free(
 		 &destination_value,
-		 NULL );
-	}
-	if( destination_element != NULL )
-	{
-		libbfio_list_element_free(
-		 &destination_element,
-		 (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 		 NULL );
 	}
 	if( *destination_offset_list != NULL )
@@ -613,6 +627,247 @@ int libbfio_offset_list_get_number_of_elements(
 	return( 1 );
 }
 
+/* Sets the first element in the offset list
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_set_first_element(
+     libbfio_offset_list_t *offset_list,
+     libcdata_list_element_t *element,
+     libcerror_error_t **error )
+{
+	static char *function = "libbfio_offset_list_set_first_element";
+
+	if( offset_list == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid offset list.",
+		 function );
+
+		return( -1 );
+	}
+	if( element != NULL )
+	{
+		if( libcdata_list_element_set_next_element(
+		     element,
+		     offset_list->first_element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set next element of list element.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( offset_list->first_element != NULL )
+	{
+		if( libcdata_list_element_set_previous_element(
+		     offset_list->first_element,
+		     element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set previous element of first element.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	offset_list->first_element = element;
+
+	return( 1 );
+}
+
+/* Sets the last element in the list
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_set_last_element(
+     libbfio_offset_list_t *offset_list,
+     libcdata_list_element_t *element,
+     libcerror_error_t **error )
+{
+	static char *function = "libcdata_list_set_last_element";
+
+	if( offset_list == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid offset list.",
+		 function );
+
+		return( -1 );
+	}
+	if( element != NULL )
+	{
+		if( libcdata_list_element_set_previous_element(
+		     element,
+		     offset_list->last_element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set previous element of list element.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( offset_list->last_element != NULL )
+	{
+		if( libcdata_list_element_set_next_element(
+		     offset_list->last_element,
+		     element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set next element of last element.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	offset_list->last_element = element;
+
+	return( 1 );
+}
+
+/* Append a list element to the list
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_append_element(
+     libbfio_offset_list_t *offset_list,
+     libcdata_list_element_t *element,
+     libcerror_error_t **error )
+{
+	static char *function = "libbfio_offset_list_append_element";
+
+	if( offset_list == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid offset list.",
+		 function );
+
+		return( -1 );
+	}
+	if( element == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid list element.",
+		 function );
+
+		return( -1 );
+	}
+	if( offset_list->first_element == NULL )
+	{
+		offset_list->first_element = element;
+	}
+	if( libbfio_offset_list_set_last_element(
+	     offset_list,
+	     element,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set last element.",
+		 function );
+
+		return( -1 );
+	}
+	offset_list->number_of_elements += 1;
+
+	return( 1 );
+}
+
+/* Append a value to the list
+ * Creates a new list element
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_offset_list_append_value(
+     libbfio_offset_list_t *offset_list,
+     libbfio_offset_list_value_t *value,
+     libcerror_error_t **error )
+{
+	libcdata_list_element_t *list_element = NULL;
+	static char *function                 = "libbfio_offset_list_append_value";
+
+	if( libcdata_list_element_initialize(
+	     &list_element,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create list element.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_offset_list_append_element(
+	     offset_list,
+	     list_element,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+		 "%s: unable to append element to list.",
+		 function );
+
+		goto on_error;
+	}
+	if( libcdata_list_element_set_value(
+	     list_element,
+	     (intptr_t *) value,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to set value of list element.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( list_element != NULL )
+	{
+		libcdata_list_element_free(
+		 &list_element,
+		 NULL,
+		 NULL );
+	}
+	return( -1 );
+}
+
 /* Appends a range
  * Returns 1 if successful, or -1 on error
  */
@@ -622,13 +877,14 @@ int libbfio_offset_list_append_range(
      size64_t range_size,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *element                         = NULL;
-	libbfio_list_element_t *last_element                    = NULL;
-	libbfio_list_element_t *remove_element                  = NULL;
+	libcdata_list_element_t *last_element                   = NULL;
+	libcdata_list_element_t *list_element                   = NULL;
+	libcdata_list_element_t *next_element                   = NULL;
+	libcdata_list_element_t *previous_element               = NULL;
 	libbfio_offset_list_value_t *next_offset_list_value     = NULL;
 	libbfio_offset_list_value_t *offset_list_value          = NULL;
-	libbfio_offset_list_value_t *split_offset_list_value    = NULL;
 	libbfio_offset_list_value_t *previous_offset_list_value = NULL;
+	libbfio_offset_list_value_t *split_offset_list_value    = NULL;
 	static char *function                                   = "libbfio_offset_list_append_range";
 	off64_t range_last_offset                               = 0;
 	int create_element                                      = 0;
@@ -688,34 +944,36 @@ int libbfio_offset_list_append_range(
 	{
 		/* Check the last element first, most often the list will be filled linear 
 		 */
-		element = offset_list->last_element;
+		list_element  = offset_list->last_element;
+		element_index = offset_list->number_of_elements - 1;
 
-		if( element == NULL )
+		if( libcdata_list_element_get_value(
+		     list_element,
+		     (intptr_t **) &offset_list_value,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from list element: %d.",
+			 function,
+			 element_index );
+
+			goto on_error;
+		}
+		if( offset_list_value == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing element: %d.",
+			 "%s: missing offset list value element: %d.",
 			 function,
-			 offset_list->number_of_elements - 1 );
+			 element_index );
 
 			goto on_error;
 		}
-		if( element->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid list element: %d - missing value.",
-			 function,
-			 offset_list->number_of_elements - 1 );
-
-			goto on_error;
-		}
-		offset_list_value = (libbfio_offset_list_value_t *) element->value;
-
 		/* Check if the offset range overlaps at the end of the last offset range
 		 */
 		if( ( range_offset >= offset_list_value->offset )
@@ -758,44 +1016,58 @@ int libbfio_offset_list_append_range(
 		 */
 		else if( range_last_offset > offset_list_value->last_offset )
 		{
-			last_element = element;
+			last_element = list_element;
 		}
 		else if( offset_list->number_of_elements > 1 )
 		{
 			if( range_last_offset > ( offset_list_value->last_offset / 2 ) )
 			{
-				element = element->previous_element;
+				if( libcdata_list_element_get_previous_element(
+				     list_element,
+				     &list_element,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve previous element from list element: %d.",
+					 function,
+					 element_index );
 
+					goto on_error;
+				}
 				for( element_index = ( offset_list->number_of_elements - 2 );
 				     element_index >= 0;
 				     element_index-- )
 				{
-					if( element == NULL )
+					if( libcdata_list_element_get_value(
+					     list_element,
+					     (intptr_t **) &offset_list_value,
+					     error ) != 1 )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-						 "%s: missing element: %d.",
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve value from list element: %d.",
 						 function,
 						 element_index );
 
 						goto on_error;
 					}
-					if( element->value == NULL )
+					if( offset_list_value == NULL )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-						 "%s: invalid element: %d - missing value.",
+						 "%s: missing offset list value element: %d.",
 						 function,
 						 element_index );
 
 						goto on_error;
 					}
-					offset_list_value = (libbfio_offset_list_value_t *) element->value;
-
 					/* Check if the offset range overlaps at the end of an existing offset range
 					 */
 					if( ( range_offset >= offset_list_value->offset )
@@ -843,48 +1115,64 @@ int libbfio_offset_list_append_range(
 					 */
 					if( range_last_offset > offset_list_value->last_offset )
 					{
-						last_element = element;
+						last_element = list_element;
 
 						break;
 					}
-					last_element = element;
-					element      = element->previous_element;
+					last_element = list_element;
+
+					if( libcdata_list_element_get_previous_element(
+					     list_element,
+					     &list_element,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve previous element from list element: %d.",
+						 function,
+						 element_index );
+
+						goto on_error;
+					}
 				}
 			}
 			else
 			{
-				element = offset_list->first_element;
+				list_element = offset_list->first_element;
 
 				for( element_index = 0;
 				     element_index < ( offset_list->number_of_elements - 1 );
 				     element_index++ )
 				{
-					if( element == NULL )
+					if( libcdata_list_element_get_value(
+					     list_element,
+					     (intptr_t **) &offset_list_value,
+					     error ) != 1 )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-						 "%s: missing element: %d.",
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve value from list element: %d.",
 						 function,
 						 element_index );
 
 						goto on_error;
 					}
-					if( element->value == NULL )
+					if( offset_list_value == NULL )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-						 "%s: invalid element: %d - missing value.",
+						 "%s: missing offset list value element: %d.",
 						 function,
 						 element_index );
 
 						goto on_error;
 					}
-					offset_list_value = (libbfio_offset_list_value_t *) element->value;
-
 					/* Check if the offset range overlaps at the end of an existing offset range
 					 */
 					if( ( range_offset >= offset_list_value->offset )
@@ -932,12 +1220,40 @@ int libbfio_offset_list_append_range(
 					 */
 					if( range_last_offset < offset_list_value->last_offset )
 					{
-                                        	last_element = element->previous_element;
+						if( libcdata_list_element_get_previous_element(
+						     list_element,
+						     &last_element,
+						     error ) != 1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+							 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+							 "%s: unable to retrieve previous element from list element: %d.",
+							 function,
+							 element_index );
 
+							goto on_error;
+						}
 						break;
 					}
-                                        last_element = element;
-                                        element      = element->next_element;
+					last_element = list_element;
+
+					if( libcdata_list_element_get_next_element(
+					     list_element,
+					     &list_element,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve next element from list element: %d.",
+						 function,
+						 element_index );
+
+						goto on_error;
+					}
 				}
 			}
 		}
@@ -945,32 +1261,50 @@ int libbfio_offset_list_append_range(
 		 */
 		if( merge_previous_element_check != 0 )
 		{
-			if( element == NULL )
+			if( libcdata_list_element_get_previous_element(
+			     list_element,
+			     &previous_element,
+			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid list element.",
-				 function );
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve previous element from list element: %d.",
+				 function,
+				 element_index );
 
 				goto on_error;
 			}
-			if( element->previous_element != NULL )
+			if( previous_element != NULL )
 			{
-				if( element->previous_element->value == NULL )
+				if( libcdata_list_element_get_value(
+				     previous_element,
+				     (intptr_t **) &previous_offset_list_value,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve value from list element: %d.",
+					 function,
+					 element_index - 1 );
+
+					goto on_error;
+				}
+				if( previous_offset_list_value == NULL )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: missing offset list value for previous list element.",
-					 function );
+					 "%s: missing offset list value element: %d.",
+					 function,
+					 element_index - 1 );
 
 					goto on_error;
 				}
-				previous_offset_list_value = (libbfio_offset_list_value_t *) element->previous_element->value;
-
 				if( offset_list_value->offset <= previous_offset_list_value->last_offset )
 				{
 					/* Merge offset range with previous
@@ -980,25 +1314,23 @@ int libbfio_offset_list_append_range(
 
 					/* Remove previous list element
 					 */
-					remove_element = element->previous_element;
-
 					if( libbfio_offset_list_remove_element(
 					     offset_list,
-					     remove_element,
+					     previous_element,
 					     error ) != 1 )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
-						 "%s: unable to remove element: %d.",
+						 "%s: unable to remove list element: %d.",
 						 function,
-						 element_index );
+						 element_index - 1 );
 
 						goto on_error;
 					}
-					if( libbfio_list_element_free(
-					     &remove_element,
+					if( libcdata_list_element_free(
+					     &previous_element,
 					     (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 					     error ) != 1 )
 					{
@@ -1006,9 +1338,9 @@ int libbfio_offset_list_append_range(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-						 "%s: unable to free element: %d.",
+						 "%s: unable to free list element: %d.",
 						 function,
-						 element_index );
+						 element_index - 1 );
 
 						goto on_error;
 					}
@@ -1019,32 +1351,50 @@ int libbfio_offset_list_append_range(
 		 */
 		if( merge_next_element_check != 0 )
 		{
-			if( element == NULL )
+			if( libcdata_list_element_get_next_element(
+			     list_element,
+			     &next_element,
+			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid element.",
-				 function );
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve next element from list element: %d.",
+				 function,
+				 element_index );
 
 				goto on_error;
 			}
-			if( element->next_element != NULL )
+			if( next_element != NULL )
 			{
-				if( element->next_element->value == NULL )
+				if( libcdata_list_element_get_value(
+				     next_element,
+				     (intptr_t **) &next_offset_list_value,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve value from list element: %d.",
+					 function,
+					 element_index + 1 );
+
+					goto on_error;
+				}
+				if( next_offset_list_value == NULL )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: missing offset list value for next list element.",
-					 function );
+					 "%s: missing offset list value element: %d.",
+					 function,
+					 element_index + 1 );
 
 					goto on_error;
 				}
-				next_offset_list_value = (libbfio_offset_list_value_t *) element->next_element->value;
-
 				if( offset_list_value->last_offset >= next_offset_list_value->offset )
 				{
 					/* Merge offset range with next
@@ -1054,25 +1404,23 @@ int libbfio_offset_list_append_range(
 
 					/* Remove next list element
 					 */
-					remove_element = element->next_element;
-
 					if( libbfio_offset_list_remove_element(
 					     offset_list,
-					     remove_element,
+					     next_element,
 					     error ) != 1 )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
-						 "%s: unable to remove element: %d.",
+						 "%s: unable to remove list element: %d.",
 						 function,
-						 element_index );
+						 element_index + 1 );
 
 						goto on_error;
 					}
-					if( libbfio_list_element_free(
-					     &remove_element,
+					if( libcdata_list_element_free(
+					     &next_element,
 					     (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 					     error ) != 1 )
 					{
@@ -1080,9 +1428,9 @@ int libbfio_offset_list_append_range(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-						 "%s: unable to free element: %d.",
+						 "%s: unable to free list element: %d.",
 						 function,
-						 element_index );
+						 element_index + 1 );
 
 						goto on_error;
 					}
@@ -1157,7 +1505,7 @@ int libbfio_offset_list_append_offset_list(
      libbfio_offset_list_t *source_offset_list,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *source_element                = NULL;
+	libcdata_list_element_t *source_list_element          = NULL;
 	libbfio_offset_list_value_t *source_offset_list_value = NULL;
 	static char *function                                 = "libbfio_offset_list_append_offset_list";
 	int element_index                                     = 0;
@@ -1184,38 +1532,27 @@ int libbfio_offset_list_append_offset_list(
 
 		return( -1 );
 	}
-	source_element = source_offset_list->first_element;
+	source_list_element = source_offset_list->first_element;
 
 	for( element_index = 0;
 	     element_index < source_offset_list->number_of_elements;
 	     element_index++ )
 	{
-		if( source_element == NULL )
+		if( libcdata_list_element_get_value(
+		     source_list_element,
+		     (intptr_t **) &source_offset_list_value,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing source offset element: %d.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from source list element: %d.",
 			 function,
 			 element_index );
 
 			return( -1 );
 		}
-		if( source_element->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid source element: %d - missing offset list value.",
-			 function,
-			 element_index );
-
-			return( -1 );
-		}
-		source_offset_list_value = (libbfio_offset_list_value_t *) source_element->value;
-
 		if( libbfio_offset_list_append_range(
 		     offset_list,
 		     source_offset_list_value->offset,
@@ -1232,21 +1569,38 @@ int libbfio_offset_list_append_offset_list(
 
 			return( -1 );
 		}
-		source_element = source_element->next_element;
+		if( libcdata_list_element_get_next_element(
+		     source_list_element,
+		     &source_list_element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve next element from source list element: %d.",
+			 function,
+			 element_index );
+
+			return( -1 );
+		}
 	}
 	return( 1 );
 }
 
 /* Inserts the element in the offset list after the offset list element
+ * If offset_list_element is NULL the element is inserted before the first element in the list
  * Returns 1 if successful, or -1 on error
  */
 int libbfio_offset_list_insert_element(
      libbfio_offset_list_t *offset_list,
-     libbfio_list_element_t *offset_list_element,
-     libbfio_list_element_t *element,
+     libcdata_list_element_t *offset_list_element,
+     libcdata_list_element_t *element,
      libcerror_error_t **error )
 {
-	static char *function = "libbfio_offset_list_insert_element";
+	libcdata_list_element_t *next_element     = NULL;
+	libcdata_list_element_t *previous_element = NULL;
+	static char *function                     = "libbfio_offset_list_insert_element";
 
 	if( offset_list == NULL )
 	{
@@ -1259,13 +1613,29 @@ int libbfio_offset_list_insert_element(
 
 		return( -1 );
 	}
-	if( element == NULL )
+	if( libcdata_list_element_get_elements(
+	     element,
+	     &previous_element,
+	     &next_element,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid element.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve previous and next element from list element.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( previous_element != NULL )
+	 || ( next_element != NULL ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: list element already part of a list.",
 		 function );
 
 		return( -1 );
@@ -1323,21 +1693,57 @@ int libbfio_offset_list_insert_element(
 		}
 		if( offset_list_element == NULL )
 		{
-			offset_list->first_element->previous_element = element;
-			element->next_element                        = offset_list->first_element;
+			if( libbfio_offset_list_set_first_element(
+			     offset_list,
+			     element,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set first element.",
+				 function );
 
-			offset_list->first_element = element;
+				return( -1 );
+			}
 		}
 		else
 		{
-			element->previous_element = offset_list_element;
-			element->next_element     = offset_list_element->next_element;
+			if( libcdata_list_element_get_next_element(
+			     offset_list_element,
+			     &next_element,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve next element from offset list element.",
+				 function );
 
+				return( -1 );
+			}
+			if( libcdata_list_element_set_elements(
+			     element,
+			     offset_list_element,
+			     next_element,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set previous and next element of list element.",
+				 function );
+
+				return( -1 );
+			}
 			if( offset_list_element == offset_list->last_element )
 			{
 				offset_list->last_element = element;
 			}
-			else if( offset_list_element->next_element == NULL )
+			else if( next_element == NULL )
 			{
 				libcerror_error_set(
 				 error,
@@ -1350,9 +1756,35 @@ int libbfio_offset_list_insert_element(
 			}
 			else
 			{
-				offset_list_element->next_element->previous_element = element;
+				if( libcdata_list_element_set_previous_element(
+				     next_element,
+				     element,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+					 "%s: unable to set previous element of next element.",
+					 function );
+
+					return( -1 );
+				}
 			}
-			offset_list_element->next_element = element;
+			if( libcdata_list_element_set_next_element(
+			     offset_list_element,
+			     element,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set next element of offset list element.",
+				 function );
+
+				return( -1 );
+			}
 		}
 	}
 	offset_list->number_of_elements += 1;
@@ -1365,12 +1797,12 @@ int libbfio_offset_list_insert_element(
  */
 int libbfio_offset_list_insert_value(
      libbfio_offset_list_t *offset_list,
-     libbfio_list_element_t *offset_list_element,
+     libcdata_list_element_t *offset_list_element,
      libbfio_offset_list_value_t *offset_list_value,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *element = NULL;
-	static char *function           = "libbfio_offset_list_insert_value";
+	libcdata_list_element_t *list_element = NULL;
+	static char *function                 = "libbfio_offset_list_insert_value";
 
 	if( offset_list == NULL )
 	{
@@ -1383,56 +1815,57 @@ int libbfio_offset_list_insert_value(
 
 		return( -1 );
 	}
-	if( libbfio_list_element_initialize(
-	     &element,
+	if( libcdata_list_element_initialize(
+	     &list_element,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create element.",
+		 "%s: unable to create list element.",
 		 function );
 
 		goto on_error;
 	}
-	if( element == NULL )
+	if( libcdata_list_element_set_value(
+	     list_element,
+	     (intptr_t *) offset_list_value,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing element.",
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set value in list element.",
 		 function );
 
 		goto on_error;
 	}
-	element->value = (intptr_t *) offset_list_value;
-
 	if( libbfio_offset_list_insert_element(
 	     offset_list,
 	     offset_list_element,
-	     element,
+	     list_element,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to insert element in offset list.",
+		 "%s: unable to insert list element in offset list.",
 		 function );
 
 		goto on_error;
 	}
-	element = NULL;
+	list_element = NULL;
 
 	return( 1 );
 
 on_error:
-	if( element != NULL )
+	if( list_element != NULL )
 	{
-		libbfio_list_element_free(
-		 &element,
+		libcdata_list_element_free(
+		 &list_element,
 		 NULL,
 		 NULL );
 	}
@@ -1444,10 +1877,12 @@ on_error:
  */
 int libbfio_offset_list_remove_element(
      libbfio_offset_list_t *offset_list,
-     libbfio_list_element_t *element,
+     libcdata_list_element_t *element,
      libcerror_error_t **error )
 {
-	static char *function = "libbfio_offset_list_remove_element";
+	libcdata_list_element_t *next_element     = NULL;
+	libcdata_list_element_t *previous_element = NULL;
+	static char *function                     = "libbfio_offset_list_remove_element";
 
 	if( offset_list == NULL )
 	{
@@ -1460,36 +1895,78 @@ int libbfio_offset_list_remove_element(
 
 		return( -1 );
 	}
-	if( element == NULL )
+	if( libcdata_list_element_get_elements(
+	     element,
+	     &previous_element,
+	     &next_element,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid element.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve previous and next element from list element.",
 		 function );
 
 		return( -1 );
 	}
 	if( element == offset_list->first_element )
 	{
-		offset_list->first_element = element->next_element;
+		offset_list->first_element = next_element;
 	}
 	if( element == offset_list->last_element )
 	{
-		offset_list->last_element = element->previous_element;
+		offset_list->last_element = previous_element;
 	}
-	if( element->next_element != NULL )
+	if( next_element != NULL )
 	{
-		element->next_element->previous_element = element->previous_element;
-	}
-	if( element->previous_element != NULL )
-	{
-		element->previous_element->next_element = element->next_element;
-	}
-	element->next_element     = NULL;
-	element->previous_element = NULL;
+		if( libcdata_list_element_set_previous_element(
+		     next_element,
+		     previous_element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set previous element of next element.",
+			 function );
 
+			return( -1 );
+		}
+	}
+	if( previous_element != NULL )
+	{
+		if( libcdata_list_element_set_next_element(
+		     previous_element,
+		     next_element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set next element of previous element.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libcdata_list_element_set_elements(
+	     element,
+	     NULL,
+	     NULL,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set previous and next element of list element.",
+		 function );
+
+		return( -1 );
+	}
 	offset_list->number_of_elements -= 1;
 
 	return( 1 );
@@ -1504,7 +1981,7 @@ int libbfio_offset_list_remove_range(
      size64_t range_size,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *element                      = NULL;
+	libcdata_list_element_t *list_element                = NULL;
 	libbfio_offset_list_value_t *offset_list_value       = NULL;
 	libbfio_offset_list_value_t *split_offset_list_value = NULL;
 	static char *function                                = "libbfio_offset_list_remove_range";
@@ -1560,7 +2037,7 @@ int libbfio_offset_list_remove_range(
 	result = libbfio_offset_list_get_element_by_offset(
 	          offset_list,
 	          range_offset,
-	          &element,
+	          &list_element,
 	          error );
 
 	if( result == -1 )
@@ -1569,7 +2046,7 @@ int libbfio_offset_list_remove_range(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve element for offset: %" PRIi64 ".",
+		 "%s: unable to retrieve list element for offset: %" PRIi64 ".",
 		 function,
 		 range_offset );
 
@@ -1577,32 +2054,33 @@ int libbfio_offset_list_remove_range(
 	}
 	else if( result != 0 )
 	{
-		if( element == NULL )
+		if( libcdata_list_element_get_value(
+		     list_element,
+		     (intptr_t **) &offset_list_value,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing element for offset: %" PRIi64 ".",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from list element for offset: %" PRIi64 ".",
 			 function,
 			 range_offset );
 
 			goto on_error;
 		}
-		if( element->value == NULL )
+		if( offset_list_value == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid element - missing value for offset: %" PRIi64 ".",
+			 "%s: missing offset list value element for offset: %" PRIi64 ".",
 			 function,
 			 range_offset );
 
 			goto on_error;
 		}
-		offset_list_value = (libbfio_offset_list_value_t *) element->value;
-
 		if( range_last_offset > offset_list_value->last_offset )
 		{
 			libcerror_error_set(
@@ -1620,20 +2098,20 @@ int libbfio_offset_list_remove_range(
 			{
 				if( libbfio_offset_list_remove_element(
 				     offset_list,
-				     element,
+				     list_element,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
-					 "%s: unable to remove element.",
+					 "%s: unable to remove list element.",
 					 function );
 
 					goto on_error;
 				}
-				if( libbfio_list_element_free(
-				     &element,
+				if( libcdata_list_element_free(
+				     &list_element,
 				     (int (*)(intptr_t **, libcerror_error_t **)) &libbfio_offset_list_value_free,
 				     error ) != 1 )
 				{
@@ -1641,7 +2119,7 @@ int libbfio_offset_list_remove_range(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free element.",
+					 "%s: unable to free list element.",
 					 function );
 
 					goto on_error;
@@ -1693,7 +2171,7 @@ int libbfio_offset_list_remove_range(
 
 			if( libbfio_offset_list_insert_value(
 			     offset_list,
-			     element,
+			     list_element,
 			     split_offset_list_value,
 			     error ) != 1 )
 			{
@@ -1727,7 +2205,7 @@ on_error:
 int libbfio_offset_list_get_element_by_index(
      libbfio_offset_list_t *offset_list,
      int element_index,
-     libbfio_list_element_t **element,
+     libcdata_list_element_t **element,
      libcerror_error_t **error )
 {
 	static char *function = "libbfio_offset_list_get_element_by_index";
@@ -1775,20 +2253,21 @@ int libbfio_offset_list_get_element_by_index(
 			{
 				while( offset_list->current_element_index > element_index )
 				{
-					if( offset_list->current_element == NULL )
+					if( libcdata_list_element_get_previous_element(
+					     offset_list->current_element,
+					     &( offset_list->current_element ),
+					     error ) != 1 )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-						 "%s: invalid offset list - missing current element: %d.",
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve previous element from list element: %d.",
 						 function,
 						 offset_list->current_element_index );
 
 						return( -1 );
 					}
-					offset_list->current_element = offset_list->current_element->next_element;
-
 					offset_list->current_element_index--;
 				}
 			}
@@ -1799,20 +2278,21 @@ int libbfio_offset_list_get_element_by_index(
 			{
 				while( offset_list->current_element_index < element_index )
 				{
-					if( offset_list->current_element == NULL )
+					if( libcdata_list_element_get_next_element(
+					     offset_list->current_element,
+					     &( offset_list->current_element ),
+					     error ) != 1 )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-						 "%s: invalid offset list - missing current element: %d.",
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve next element from list element: %d.",
 						 function,
 						 offset_list->current_element_index );
 
 						return( -1 );
 					}
-					offset_list->current_element = offset_list->current_element->next_element;
-
 					offset_list->current_element_index++;
 				}
 			}
@@ -1829,19 +2309,21 @@ int libbfio_offset_list_get_element_by_index(
 			     offset_list->current_element_index < element_index;
 			     offset_list->current_element_index++ )
 			{
-				if( offset_list->current_element == NULL )
+				if( libcdata_list_element_get_next_element(
+				     offset_list->current_element,
+				     &( offset_list->current_element ),
+				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: invalid offset list - missing current element: %d.",
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve next element from list element: %d.",
 					 function,
 					 offset_list->current_element_index );
 
 					return( -1 );
 				}
-				offset_list->current_element = offset_list->current_element->next_element;
 			}
 		}
 		else
@@ -1852,19 +2334,21 @@ int libbfio_offset_list_get_element_by_index(
 			     offset_list->current_element_index > element_index;
 			     offset_list->current_element_index-- )
 			{
-				if( offset_list->current_element == NULL )
+				if( libcdata_list_element_get_previous_element(
+				     offset_list->current_element,
+				     &( offset_list->current_element ),
+				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: invalid offset list - missing current element: %d.",
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve previous element from list element: %d.",
 					 function,
 					 offset_list->current_element_index );
 
 					return( -1 );
 				}
-				offset_list->current_element = offset_list->current_element->previous_element;
 			}
 		}
 	}
@@ -1879,7 +2363,7 @@ int libbfio_offset_list_get_element_by_index(
 int libbfio_offset_list_get_element_by_offset(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
-     libbfio_list_element_t **element,
+     libcdata_list_element_t **element,
      libcerror_error_t **error )
 {
 	libbfio_offset_list_value_t *offset_list_value = NULL;
@@ -1926,38 +2410,53 @@ int libbfio_offset_list_get_element_by_offset(
 	     element_index < offset_list->number_of_elements;
 	     element_index++ )
 	{
-		if( *element == NULL )
+		if( libcdata_list_element_get_value(
+		     *element,
+		     (intptr_t **) &offset_list_value,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing element: %d.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from list element: %d.",
 			 function,
 			 element_index );
 
 			return( -1 );
 		}
-		if( ( *element )->value == NULL )
+		if( offset_list_value == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid element: %d - missing value.",
+			 "%s: missing offset list value element: %d.",
 			 function,
 			 element_index );
 
 			return( -1 );
 		}
-		offset_list_value = (libbfio_offset_list_value_t *) ( *element )->value;
-
 		if( ( offset >= offset_list_value->offset )
 		 && ( offset < offset_list_value->last_offset ) )
 		{
 			return( 1 );
 		}
-		*element = ( *element )->next_element;
+		if( libcdata_list_element_get_next_element(
+		     *element,
+		     element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve next element from list element: %d.",
+			 function,
+			 element_index );
+
+			return( -1 );
+		}
 	}
 	return( 0 );
 }
@@ -1971,8 +2470,8 @@ int libbfio_offset_list_get_value_by_index(
      libbfio_offset_list_value_t **offset_list_value,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *element = NULL;
-	static char *function           = "libbfio_offset_list_get_value_by_index";
+	libcdata_list_element_t *list_element = NULL;
+	static char *function                 = "libbfio_offset_list_get_value_by_index";
 
 	if( offset_list_value == NULL )
 	{
@@ -1988,33 +2487,46 @@ int libbfio_offset_list_get_value_by_index(
 	if( libbfio_offset_list_get_element_by_index(
 	     offset_list,
 	     element_index,
-	     &element,
+	     &list_element,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve element: %d.",
+		 "%s: unable to retrieve list element: %d.",
 		 function,
 		 element_index );
 
 		return( -1 );
 	}
-	if( element == NULL )
+	if( libcdata_list_element_get_value(
+	     list_element,
+	     (intptr_t **) offset_list_value,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve value from list element: %d.",
+		 function,
+		 element_index );
+
+		return( -1 );
+	}
+	if( offset_list_value == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing element: %d.",
+		 "%s: missing offset list value: %d .",
 		 function,
 		 element_index );
 
 		return( -1 );
 	}
-	*offset_list_value = (libbfio_offset_list_value_t *) element->value;
-
 	return( 1 );
 }
 
@@ -2027,9 +2539,9 @@ int libbfio_offset_list_get_value_by_offset(
      libbfio_offset_list_value_t **offset_list_value,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *element = NULL;
-	static char *function           = "libbfio_offset_list_get_value_by_offset";
-	int result                      = 0;
+	libcdata_list_element_t *list_element = NULL;
+	static char *function                 = "libbfio_offset_list_get_value_by_offset";
+	int result                            = 0;
 
 	if( offset_list_value == NULL )
 	{
@@ -2045,7 +2557,7 @@ int libbfio_offset_list_get_value_by_offset(
 	result = libbfio_offset_list_get_element_by_offset(
 	          offset_list,
 	          offset,
-	          &element,
+	          &list_element,
 	          error );
 
 	if( result == -1 )
@@ -2054,7 +2566,7 @@ int libbfio_offset_list_get_value_by_offset(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve element for offset: %" PRIi64 ".",
+		 "%s: unable to retrieve list element for offset: %" PRIi64 ".",
 		 function,
 		 offset );
 
@@ -2062,19 +2574,33 @@ int libbfio_offset_list_get_value_by_offset(
 	}
 	else if( result != 0 )
 	{
-		if( element == NULL )
+		if( libcdata_list_element_get_value(
+		     list_element,
+		     (intptr_t **) offset_list_value,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing element for offset: %" PRIi64 ".",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from list element for offset: %" PRIi64 ".",
 			 function,
 			 offset );
 
 			return( -1 );
 		}
-		*offset_list_value = (libbfio_offset_list_value_t *) element->value;
+		if( *offset_list_value == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing offset list value for offset: %" PRIi64 ".",
+			 function,
+			 offset );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }
@@ -2231,7 +2757,7 @@ int libbfio_offset_list_range_is_present(
      size64_t range_size,
      libcerror_error_t **error )
 {
-	libbfio_list_element_t *element                = NULL;
+	libcdata_list_element_t *list_element          = NULL;
 	libbfio_offset_list_value_t *offset_list_value = NULL;
 	static char *function                          = "libbfio_offset_list_range_is_present";
 	off64_t range_last_offset                      = 0;
@@ -2285,38 +2811,27 @@ int libbfio_offset_list_range_is_present(
 		return( -1 );
 	}
 /* TODO add optimization using current element */
-	element = offset_list->first_element;
+	list_element = offset_list->first_element;
 
 	for( element_index = 0;
 	     element_index < offset_list->number_of_elements;
 	     element_index++ )
 	{
-		if( element == NULL )
+		if( libcdata_list_element_get_value(
+		     list_element,
+		     (intptr_t **) &offset_list_value,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing element: %d.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from list element: %d.",
 			 function,
 			 element_index );
 
 			return( -1 );
 		}
-		if( element->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid element: %d - missing value.",
-			 function,
-			 element_index );
-
-			return( -1 );
-		}
-		offset_list_value = (libbfio_offset_list_value_t *) element->value;
-
 		if( ( range_offset >= offset_list_value->offset )
 		 && ( range_offset < offset_list_value->last_offset ) )
 		{
@@ -2328,7 +2843,21 @@ int libbfio_offset_list_range_is_present(
 		{
 			return( 1 );
 		}
-		element = element->next_element;
+		if( libcdata_list_element_get_next_element(
+		     list_element,
+		     &list_element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve next element from list element: %d.",
+			 function,
+			 element_index );
+
+			return( -1 );
+		}
 	}
 	return( 0 );
 }

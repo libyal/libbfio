@@ -26,8 +26,8 @@
 #include <types.h>
 
 #include "libbfio_extern.h"
+#include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 #include "libbfio_types.h"
 
@@ -78,7 +78,7 @@ struct libbfio_internal_handle
 
 	/* Reference to the pool last used list element
 	 */
-	libbfio_list_element_t *pool_last_used_list_element;
+	libcdata_list_element_t *pool_last_used_list_element;
 
 	/* Value to indicate to track offsets read
 	 */

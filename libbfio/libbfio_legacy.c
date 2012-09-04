@@ -27,7 +27,6 @@
 #include "libbfio_handle.h"
 #include "libbfio_legacy.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 #include "libbfio_pool.h"
 

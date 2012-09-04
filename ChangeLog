@@ -1,4 +1,6 @@
 TODO
+* update msvscpp files
+* update codegear files
 * update macosx package maker files
 
 Pool
@@ -22,6 +24,12 @@ Beta release
 
 Deployment:
 * check if libbfio.3 is up to date
+
+20120904
+* added libcdata support
+
+20120825
+* small fix in pc.in file
 
 20120820
 * project move

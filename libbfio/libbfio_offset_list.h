@@ -25,8 +25,8 @@
 #include <common.h>
 #include <types.h>
 
+#include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_list_type.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -59,15 +59,15 @@ struct libbfio_offset_list
 
 	/* The first element
 	 */
-	libbfio_list_element_t *first_element;
+	libcdata_list_element_t *first_element;
 
 	/* The last element
 	 */
-	libbfio_list_element_t *last_element;
+	libcdata_list_element_t *last_element;
 
 	/* The current list element
 	 */
-	libbfio_list_element_t *current_element;
+	libcdata_list_element_t *current_element;
 
 	/* The current list element index
 	 */
@@ -109,6 +109,26 @@ int libbfio_offset_list_get_number_of_elements(
      int *number_of_elements,
      libcerror_error_t **error );
 
+int libbfio_offset_list_set_first_element(
+     libbfio_offset_list_t *offset_list,
+     libcdata_list_element_t *element,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_set_last_element(
+     libbfio_offset_list_t *offset_list,
+     libcdata_list_element_t *element,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_append_element(
+     libbfio_offset_list_t *offset_list,
+     libcdata_list_element_t *element,
+     libcerror_error_t **error );
+
+int libbfio_offset_list_append_value(
+     libbfio_offset_list_t *offset_list,
+     libbfio_offset_list_value_t *value,
+     libcerror_error_t **error );
+
 int libbfio_offset_list_append_range(
      libbfio_offset_list_t *offset_list,
      off64_t range_offset,
@@ -122,19 +142,19 @@ int libbfio_offset_list_append_offset_list(
 
 int libbfio_offset_list_insert_element(
      libbfio_offset_list_t *offset_list,
-     libbfio_list_element_t *offset_list_element,
-     libbfio_list_element_t *element,
+     libcdata_list_element_t *offset_list_element,
+     libcdata_list_element_t *element,
      libcerror_error_t **error );
 
 int libbfio_offset_list_insert_value(
      libbfio_offset_list_t *offset_list,
-     libbfio_list_element_t *offset_list_element,
+     libcdata_list_element_t *offset_list_element,
      libbfio_offset_list_value_t *offset_list_value,
      libcerror_error_t **error );
 
 int libbfio_offset_list_remove_element(
      libbfio_offset_list_t *offset_list,
-     libbfio_list_element_t *element,
+     libcdata_list_element_t *element,
      libcerror_error_t **error );
 
 int libbfio_offset_list_remove_range(
@@ -146,13 +166,13 @@ int libbfio_offset_list_remove_range(
 int libbfio_offset_list_get_element_by_index(
      libbfio_offset_list_t *offset_list,
      int element_index,
-     libbfio_list_element_t **element,
+     libcdata_list_element_t **element,
      libcerror_error_t **error );
 
 int libbfio_offset_list_get_element_by_offset(
      libbfio_offset_list_t *offset_list,
      off64_t offset,
-     libbfio_list_element_t **element,
+     libcdata_list_element_t **element,
      libcerror_error_t **error );
 
 int libbfio_offset_list_get_value_by_index(

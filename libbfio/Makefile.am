@@ -4,6 +4,7 @@ AM_CPPFLAGS = \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBCDATA_CPPFLAGS@ \
 	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
@@ -23,13 +24,13 @@ libbfio_la_SOURCES = \
 	libbfio_file_range.c libbfio_file_range.h \
 	libbfio_handle.c libbfio_handle.h \
 	libbfio_legacy.c libbfio_legacy.h \
+	libbfio_libcdata.h \
 	libbfio_libcerror.h \
 	libbfio_libcfile.h \
 	libbfio_libclocale.h \
 	libbfio_libcpath.h \
 	libbfio_libcstring.h \
 	libbfio_libuna.h \
-	libbfio_list_type.c libbfio_list_type.h \
 	libbfio_memory_range.c libbfio_memory_range.h \
 	libbfio_offset_list.c libbfio_offset_list.h \
 	libbfio_pool.c libbfio_pool.h \
@@ -40,6 +41,7 @@ libbfio_la_SOURCES = \
 libbfio_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBUNA_LIBADD@ \

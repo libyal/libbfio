@@ -26,7 +26,6 @@
 #include "libbfio_definitions.h"
 #include "libbfio_handle.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_list_type.h"
 #include "libbfio_offset_list.h"
 
 /* Initializes the handle

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20120820],
+ [20120904],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -59,6 +59,9 @@ AX_LIBCSTRING_CHECK_ENABLE
 dnl Check for enabling libcerror for cross-platform C error functions
 AX_LIBCERROR_CHECK_ENABLE
 
+dnl Check for enabling libcdata for cross-platform C generic data functions
+AX_LIBCDATA_CHECK_ENABLE
+
 dnl Check for enabling libclocale for cross-platform C locale functions
 AX_LIBCLOCALE_CHECK_ENABLE
 
@@ -96,7 +99,7 @@ AM_CONDITIONAL(
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes],
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes],
  [AC_SUBST(
   [libbfio_spec_requires],
   [Requires:])
@@ -116,6 +119,7 @@ AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
+AC_CONFIG_FILES([libcdata/Makefile])
 AC_CONFIG_FILES([libclocale/Makefile])
 AC_CONFIG_FILES([libcsplit/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
@@ -154,6 +158,7 @@ AC_MSG_NOTICE([
 Building:
    libcstring support:          $ac_cv_libcstring
    libcerror support:           $ac_cv_libcerror
+   libcdata support:            $ac_cv_libcdata
    libclocale support:          $ac_cv_libclocale
    libcsplit support:           $ac_cv_libcsplit
    libuna support:              $ac_cv_libuna

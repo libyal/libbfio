@@ -26,8 +26,8 @@
 #include <types.h>
 
 #include "libbfio_extern.h"
+#include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_list_type.h"
 #include "libbfio_types.h"
 
 #if defined( __cplusplus )
@@ -62,7 +62,7 @@ struct libbfio_internal_pool
 	 * it starts with the last used at the beginning of the list
 	 * the value of the list element refers to the corresponding file IO handle
 	 */
-	libbfio_list_t *last_used_list;
+	libcdata_list_t *last_used_list;
 };
 
 LIBBFIO_EXTERN \
