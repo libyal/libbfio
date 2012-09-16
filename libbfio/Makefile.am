@@ -8,8 +8,7 @@ AM_CPPFLAGS = \
 	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
-	@LIBUNA_CPPFLAGS@ \
-	@MEMWATCH_CPPFLAGS@
+	@LIBUNA_CPPFLAGS@
 
 lib_LTLIBRARIES = libbfio.la
 
@@ -32,7 +31,6 @@ libbfio_la_SOURCES = \
 	libbfio_libcstring.h \
 	libbfio_libuna.h \
 	libbfio_memory_range.c libbfio_memory_range.h \
-	libbfio_offset_list.c libbfio_offset_list.h \
 	libbfio_pool.c libbfio_pool.h \
 	libbfio_support.c libbfio_support.h \
 	libbfio_types.h \

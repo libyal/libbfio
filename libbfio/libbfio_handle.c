@@ -25,8 +25,8 @@
 
 #include "libbfio_definitions.h"
 #include "libbfio_handle.h"
+#include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_offset_list.h"
 
 /* Initializes the handle
  * Returns 1 if successful or -1 on error
@@ -129,7 +129,7 @@ int libbfio_handle_initialize(
 
 		goto on_error;
 	}
-	if( libbfio_offset_list_initialize(
+	if( libcdata_range_list_initialize(
 	     &( internal_handle->offsets_read ),
 	     error ) != 1 )
 	{
@@ -253,7 +253,7 @@ int libbfio_handle_free(
 		}
 		if( internal_handle->offsets_read != NULL )
 		{
-			if( libbfio_offset_list_free(
+			if( libcdata_range_list_free(
 			     &( internal_handle->offsets_read ),
 			     error ) != 1 )
 			{
@@ -930,10 +930,10 @@ ssize_t libbfio_handle_read_buffer(
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
-		if( libbfio_offset_list_append_range(
+		if( libcdata_range_list_append_range(
 		     internal_handle->offsets_read,
-		     internal_handle->offset,
-		     read_count,
+		     (uint64_t) internal_handle->offset,
+		     (uint64_t) read_count,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1686,7 +1686,7 @@ int libbfio_handle_get_number_of_offsets_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_offset_list_get_number_of_elements(
+	if( libcdata_range_list_get_number_of_elements(
 	     internal_handle->offsets_read,
 	     number_of_read_offsets,
 	     error ) != 1 )
@@ -1729,11 +1729,11 @@ int libbfio_handle_get_offset_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libbfio_offset_list_get_range(
+	if( libcdata_range_list_get_range(
 	     internal_handle->offsets_read,
 	     index,
-	     offset,
-	     size,
+	     (uint64_t *) offset,
+	     (uint64_t *) size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

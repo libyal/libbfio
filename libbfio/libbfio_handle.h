@@ -28,7 +28,6 @@
 #include "libbfio_extern.h"
 #include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_offset_list.h"
 #include "libbfio_types.h"
 
 #if defined( _MSC_VER ) || defined( __BORLANDC__ ) || defined( __MINGW32_VERSION ) || defined( __MINGW64_VERSION_MAJOR )
@@ -86,7 +85,7 @@ struct libbfio_internal_handle
 
 	/* The offset ranges that were read
 	 */
-	libbfio_offset_list_t *offsets_read;
+	libcdata_range_list_t *offsets_read;
 
 	/* The narrow string codepage
 	 */

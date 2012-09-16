@@ -26,8 +26,8 @@
 #include "libbfio_definitions.h"
 #include "libbfio_handle.h"
 #include "libbfio_legacy.h"
+#include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_offset_list.h"
 #include "libbfio_pool.h"
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
@@ -195,10 +195,10 @@ ssize_t libbfio_handle_read(
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
-		if( libbfio_offset_list_append_range(
+		if( libcdata_range_list_append_range(
 		     internal_handle->offsets_read,
-		     internal_handle->offset,
-		     read_count,
+		     (uint64_t) internal_handle->offset,
+		     (uint64_t) read_count,
 		     error ) != 1 )
 		{
 			libcerror_error_set(

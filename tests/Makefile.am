@@ -2,8 +2,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
-	@LIBCERROR_CPPFLAGS@ \
-	@MEMWATCH_CPPFLAGS@
+	@LIBCERROR_CPPFLAGS@
 
 TESTS = \
 	test_seek.sh \
@@ -34,10 +33,9 @@ bfio_test_read_SOURCES = \
 	bfio_test_read.c
 
 bfio_test_read_LDADD = \
-	@LIBCSTRING_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
 	../libbfio/libbfio.la \
-        @MEMWATCH_LIBADD@
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
 
 bfio_test_seek_SOURCES = \
 	bfio_test_libcerror.h \
@@ -46,10 +44,9 @@ bfio_test_seek_SOURCES = \
 	bfio_test_seek.c
 
 bfio_test_seek_LDADD = \
-	@LIBCSTRING_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
 	../libbfio/libbfio.la \
-        @MEMWATCH_LIBADD@
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
 
 bfio_test_write_SOURCES = \
 	bfio_test_libcerror.h \
@@ -58,10 +55,9 @@ bfio_test_write_SOURCES = \
 	bfio_test_write.c
 
 bfio_test_write_LDADD = \
-	@LIBCSTRING_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
 	../libbfio/libbfio.la \
-        @MEMWATCH_LIBADD@
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

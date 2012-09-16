@@ -25,6 +25,9 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20120915
+* worked on libcdata range list changes
+
 20120904
 * added libcdata support
 
