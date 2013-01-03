@@ -25,6 +25,10 @@ Beta release
 Deployment:
 * check if libbfio.3 is up to date
 
+20130103
+* 2013 update
+* added .gitignore
+
 20120915
 * worked on libcdata range list changes
 

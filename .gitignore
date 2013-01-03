@@ -1,40 +1,29 @@
 # Files to ignore by git
 #
-# Version: 20150725
+# Version: 20130103
 
 # Generic auto-generated build files
 *~
 *.a
 *.la
 *.lai
-*.lib
-*.lineno
 *.lo
-*.log
 *.Plo
 *.Po
 *.o
-*.obj
 *.so
 *.so.[0-9][0-9]*
 *.so.[0-9][0-9]*.[0-9][0-9]*.[0-9][0-9]*
-*.swp
-*.trs
 *.Tpo
 .deps
 .libs
-INSTALL
 Makefile
-Makefile.bcc
 Makefile.in
-stamp-h[1-9]
 
 # Specific auto-generated build files
 /ABOUT-NLS
 /aclocal.m4
 /autom4te.cache/
-/build
-/compile
 /config.guess
 /config.log
 /config.rpath
@@ -42,13 +31,10 @@ stamp-h[1-9]
 /config.sub
 /configure
 /depcomp
-/dist
 /install-sh
 /libtool
 /ltmain.sh
 /missing
-/test-driver
-/ylwrap
 /m4/codeset.m4
 /m4/fcntl-o.m4
 /m4/gettext.m4
@@ -102,7 +88,7 @@ stamp-h[1-9]
 /libbfio.pc
 /libbfio.spec
 /common/config.h
-/common/config.h.in
+/common/stamp-h1
 /common/types.h
 /dpkg/changelog
 /dpkg/copyright
@@ -112,22 +98,16 @@ stamp-h[1-9]
 /include/libbfio/types.h
 /libbfio/libbfio.rc
 /libbfio/libbfio_definitions.h
-/tests/bfio_test_handle_read
-/tests/bfio_test_handle_seek
-/tests/bfio_test_handle_write
-/tests/bfio_test_pool_read
-/tests/bfio_test_pool_seek
-/tests/bfio_test_pool_write
-/tests/tmp*
+/tests/bfio_test_read
+/tests/bfio_test_seek
+/tests/bfio_test_write
 
 # Local library dependencies specific files
 /libcdata
 /libcerror
 /libcfile
 /libclocale
-/libcnotify
 /libcpath
 /libcsplit
-/libcstring
-/libcthreads
 /libuna
+

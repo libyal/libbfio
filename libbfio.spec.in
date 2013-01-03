@@ -55,18 +55,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man3/*
 
 %changelog
-* Sat Apr  7 2012 Joachim Metz <joachim.metz@gmail.com> 20120407-1
-- Changes due to dependency changes
-
-* Fri Apr  6 2012 Joachim Metz <joachim.metz@gmail.com> 20120406-1
-- Changes due to dependency changes
-
-* Sun Apr  1 2012 Joachim Metz <joachim.metz@gmail.com> 20120401-1
-- Changes for libsystem code clean up
-
-* Sat Oct 15 2011 Joachim Metz <joachim.metz@gmail.com> 20111015-1
-- Update for configure changes and README files
-
-* Sun Jun 27 2010 Joachim Metz <joachim.metz@gmail.com> 20100627-1
-- Clean up of previous version of spec file
+* @SPEC_DATE@ Joachim Metz <joachim.metz@gmail.com> @VERSION@-1
+- Auto-generated
 
