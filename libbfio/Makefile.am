@@ -4,6 +4,7 @@ AM_CPPFLAGS = \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBCNOTIFY_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
@@ -22,7 +23,6 @@ libbfio_la_SOURCES = \
 	libbfio_file_pool.c libbfio_file_pool.h \
 	libbfio_file_range.c libbfio_file_range.h \
 	libbfio_handle.c libbfio_handle.h \
-	libbfio_legacy.c libbfio_legacy.h \
 	libbfio_libcdata.h \
 	libbfio_libcerror.h \
 	libbfio_libcfile.h \
@@ -41,6 +41,7 @@ libbfio_la_LIBADD = \
 	@LIBCERROR_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
@@ -62,6 +63,6 @@ distclean: clean
 	/bin/rm -f Makefile
 
 splint:
-	@echo "Running splint on libbfio ..." 
-	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libbfio_la_SOURCES) 
+	@echo "Running splint on libbfio ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libbfio_la_SOURCES)
 

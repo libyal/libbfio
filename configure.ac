@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20130103],
+ [20130406],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -66,6 +66,9 @@ AX_LIBCDATA_CHECK_ENABLE
 dnl Check for enabling libclocale for cross-platform C locale functions
 AX_LIBCLOCALE_CHECK_ENABLE
 
+dnl Check for enabling libcnotify for cross-platform C notification functions
+AX_LIBCNOTIFY_CHECK_ENABLE
+
 dnl Check for enabling libcsplit for cross-platform C split string functions
 AX_LIBCSPLIT_CHECK_ENABLE
 
@@ -83,7 +86,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes],
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes],
  [AC_SUBST(
   [libbfio_spec_requires],
   [Requires:])
@@ -102,6 +105,11 @@ AC_SUBST(
  [SPEC_DATE],
  [`date +"%a %b %e %Y" 2> /dev/null`])
 
+dnl Set the current working directory for PackageMaker files
+AC_SUBST(
+ [PWD],
+ [`pwd`])
+
 dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
@@ -110,6 +118,7 @@ AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
 AC_CONFIG_FILES([libcdata/Makefile])
 AC_CONFIG_FILES([libclocale/Makefile])
+AC_CONFIG_FILES([libcnotify/Makefile])
 AC_CONFIG_FILES([libcsplit/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libcfile/Makefile])
@@ -121,7 +130,6 @@ AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([tests/Makefile])
 AC_CONFIG_FILES([examples/Makefile])
 AC_CONFIG_FILES([macosx/Makefile])
-AC_CONFIG_FILES([borlandc/Makefile])
 AC_CONFIG_FILES([msvscpp/Makefile])
 dnl Have configure make the include files
 AC_CONFIG_FILES([include/libbfio.h])
@@ -134,6 +142,10 @@ AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libbfio/libbfio.rc])
+AC_CONFIG_FILES([macosx/libbfio.pmdoc/01include.xml])
+AC_CONFIG_FILES([macosx/libbfio.pmdoc/02lib.xml])
+AC_CONFIG_FILES([macosx/libbfio.pmdoc/03share.xml])
+AC_CONFIG_FILES([macosx/libbfio.pmdoc/index.xml])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libbfio.pc])
 AC_CONFIG_FILES([libbfio.spec])
@@ -149,6 +161,7 @@ Building:
    libcerror support:           $ac_cv_libcerror
    libcdata support:            $ac_cv_libcdata
    libclocale support:          $ac_cv_libclocale
+   libcnotify support:          $ac_cv_libcnotify
    libcsplit support:           $ac_cv_libcsplit
    libuna support:              $ac_cv_libuna
    libcfile support:            $ac_cv_libcfile

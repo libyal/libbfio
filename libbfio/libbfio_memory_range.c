@@ -29,7 +29,8 @@
 #include "libbfio_memory_range.h"
 #include "libbfio_types.h"
 
-/* Initializes the memory range IO handle
+/* Creates a memory range IO handle
+ * Make sure the value memory_range_io_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_io_handle_initialize(
@@ -101,7 +102,8 @@ on_error:
 	return( -1 );
 }
 
-/* Initializes the memory range handle
+/* Creates a memory range handle
+ * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_initialize(
@@ -183,7 +185,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the memory range IO handle and its attributes
+/* Frees a memory range IO handle
  * Returns 1 if succesful or -1 on error
  */
 int libbfio_memory_range_io_handle_free(

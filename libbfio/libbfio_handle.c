@@ -28,7 +28,8 @@
 #include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
 
-/* Initializes the handle
+/* Creates a handle
+ * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libbfio_handle_initialize(
@@ -168,7 +169,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the handle
+/* Frees a handle
  * Returns 1 if successful or -1 on error
  */
 int libbfio_handle_free(
@@ -255,6 +256,7 @@ int libbfio_handle_free(
 		{
 			if( libcdata_range_list_free(
 			     &( internal_handle->offsets_read ),
+			     NULL,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -930,17 +932,20 @@ ssize_t libbfio_handle_read_buffer(
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
-		if( libcdata_range_list_append_range(
+		if( libcdata_range_list_insert_range(
 		     internal_handle->offsets_read,
 		     (uint64_t) internal_handle->offset,
 		     (uint64_t) read_count,
+		     NULL,
+		     NULL,
+		     NULL,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to append offset range to offsets read table.",
+			 "%s: unable to insert offset range to offsets read table.",
 			 function );
 
 			return( -1 );
@@ -1589,7 +1594,7 @@ int libbfio_handle_get_offset(
 	return( 1 );
 }
 
-/* Sets the value to have the library open and close 
+/* Sets the value to have the library open and close
  * the systems file descriptor or handle on demand
  * 0 disables open on demand any other value enables it
  * Returns 1 if successful or -1 on error
@@ -1715,6 +1720,7 @@ int libbfio_handle_get_offset_read(
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_offset_read";
+	intptr_t *value                            = NULL;
 
 	if( handle == NULL )
 	{
@@ -1734,6 +1740,7 @@ int libbfio_handle_get_offset_read(
 	     index,
 	     (uint64_t *) offset,
 	     (uint64_t *) size,
+	     &value,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

@@ -30,7 +30,8 @@
 #include "libbfio_pool.h"
 #include "libbfio_types.h"
 
-/* Initialize the pool
+/* Creates a pool
+ * Make sure the value pool is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libbfio_pool_initialize(
@@ -203,7 +204,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the pool including elements
+/* Frees a pool
  * Returns 1 if successful or -1 on error
  */
 int libbfio_pool_free(

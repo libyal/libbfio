@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCDATA"
-				SmallerTypeCheck="true"
+				SmallerTypeCheck="false"
 				RuntimeLibrary="2"
 				WarningLevel="4"
 				WarnAsError="false"
@@ -162,11 +162,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libcdata\libcdata_error.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libcdata\libcdata_list.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libcdata\libcdata_list_element.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libcdata\libcdata_range_list.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libcdata\libcdata_range_list_value.c"
 				>
 			</File>
 			<File
@@ -196,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libcdata\libcdata_error.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libcdata\libcdata_extern.h"
 				>
 			</File>
@@ -213,6 +229,14 @@
 			</File>
 			<File
 				RelativePath="..\..\libcdata\libcdata_list_element.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libcdata\libcdata_range_list.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libcdata\libcdata_range_list_value.h"
 				>
 			</File>
 			<File

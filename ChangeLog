@@ -1,7 +1,5 @@
 TODO
-* update msvscpp files
-* update codegear files
-* update macosx package maker files
+* remove open on demand ?
 
 Pool
 * allow re-set of pool entries?
@@ -19,11 +17,15 @@ Test
 Windows
 * add VC_EXTRALEAN to config_msc.h
 
-Beta release
-* remove deprecated functions in libbfio_legacy.[ch]
-
 Deployment:
 * check if libbfio.3 is up to date
+
+20130406
+* updated dependencies
+* removed codegear files
+* updated msvscpp files
+* remove libbfio_legacy.[ch]
+* updated macosx PackageMaker files
 
 20130103
 * 2013 update

@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -67,7 +67,7 @@ int libbfio_set_codepage(
  * Error functions
  * ------------------------------------------------------------------------- */
 
-/* Frees the error including elements
+/* Frees an error
  */
 LIBBFIO_EXTERN \
 void libbfio_error_free(
@@ -87,7 +87,7 @@ int libbfio_error_fprint(
 LIBBFIO_EXTERN \
 int libbfio_error_sprint(
      libbfio_error_t *error,
-     char *string, 
+     char *string,
      size_t size );
 
 /* Prints a backtrace of the error to the stream
@@ -111,7 +111,8 @@ int libbfio_error_backtrace_sprint(
  * Handle functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes the handle
+/* Creates a handle
+ * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -160,7 +161,7 @@ int libbfio_handle_initialize(
      uint8_t flags,
      libbfio_error_t **error );
 
-/* Frees the handle
+/* Frees a handle
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -286,7 +287,7 @@ int libbfio_handle_get_size(
      size64_t *size,
      libbfio_error_t **error );
 
-/* Sets the value to have the library open and close 
+/* Sets the value to have the library open and close
  * the systems file descriptor or handle on demand
  * 0 disables open on demand any other value enables it
  * Returns 1 if successful or -1 on error
@@ -370,7 +371,8 @@ ssize_t libbfio_handle_write(
  * File functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes the file handle
+/* Creates a file handle
+ * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -447,7 +449,8 @@ int libbfio_file_set_name_wide(
  * File range functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes the file range handle
+/* Creates a file range handle
+ * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -544,7 +547,8 @@ int libbfio_file_range_set(
  * Memory range functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes the memory range handle
+/* Creates a memory range handle
+ * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -576,7 +580,8 @@ int libbfio_memory_range_set(
  * Pool functions
  * ------------------------------------------------------------------------- */
 
-/* Initialize the pool
+/* Creates a pool
+ * Make sure the value pool is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -586,7 +591,7 @@ int libbfio_pool_initialize(
      int maximum_number_of_open_handles,
      libbfio_error_t **error );
 
-/* Frees the pool including elements
+/* Frees a pool
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \

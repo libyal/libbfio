@@ -7,6 +7,7 @@ SUBDIRS = \
 	libcerror \
 	libcdata \
 	libclocale \
+	libcnotify \
 	libcsplit \
 	libuna \
 	libcfile \
@@ -17,7 +18,6 @@ SUBDIRS = \
 	tests \
 	examples \
 	macosx \
-	borlandc \
 	msvscpp
 
 DPKG_FILES = \
@@ -43,10 +43,7 @@ SPEC_FILES = \
 	libbfio.spec.in
 
 EXTRA_DIST = \
-	README.dll \
 	README.macosx \
-	README.mingw \
-	README.static \
         $(DPKG_FILES) \
         $(GETTEXT_FILES) \
         $(PKGCONFIG_FILES) \
@@ -71,6 +68,7 @@ library:
 	(cd $(srcdir)/libcerror && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcdata && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libclocale && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcnotify && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcsplit && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcfile && $(MAKE) $(AM_MAKEFLAGS))
@@ -95,6 +93,7 @@ splint:
 	(cd $(srcdir)/libcerror && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcdata && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libclocale && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcnotify && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcsplit && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcfile && $(MAKE) splint $(AM_MAKEFLAGS))

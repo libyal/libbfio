@@ -101,13 +101,17 @@ Makefile.in
 /tests/bfio_test_read
 /tests/bfio_test_seek
 /tests/bfio_test_write
+/macosx/libbfio.pmdoc/01lib.xml
+/macosx/libbfio.pmdoc/02share.xml
+/macosx/libbfio.pmdoc/03include.xml
+/macosx/libbfio.pmdoc/index.xml
 
 # Local library dependencies specific files
 /libcdata
 /libcerror
 /libcfile
 /libclocale
+/libcnotify
 /libcpath
 /libcsplit
 /libuna
-
