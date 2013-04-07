@@ -20,6 +20,9 @@ Windows
 Deployment:
 * check if libbfio.3 is up to date
 
+20130407
+* updated dependencies
+
 20130406
 * updated dependencies
 * removed codegear files

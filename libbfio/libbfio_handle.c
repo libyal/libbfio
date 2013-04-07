@@ -1735,7 +1735,7 @@ int libbfio_handle_get_offset_read(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( libcdata_range_list_get_range(
+	if( libcdata_range_list_get_range_by_index(
 	     internal_handle->offsets_read,
 	     index,
 	     (uint64_t *) offset,
@@ -1747,8 +1747,9 @@ int libbfio_handle_get_offset_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve read offset range.",
-		 function );
+		 "%s: unable to retrieve read offset range: %d.",
+		 function,
+		 index );
 
 		return( -1 );
 	}
