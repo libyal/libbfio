@@ -16,7 +16,6 @@ SUBDIRS = \
 	po \
 	manuals \
 	tests \
-	examples \
 	macosx \
 	msvscpp
 
