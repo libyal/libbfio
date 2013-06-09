@@ -20,6 +20,10 @@ Windows
 Deployment:
 * check if libbfio.3 is up to date
 
+20130609
+* updated dependencies
+* fix for compiling with stand-alone version of libcdata
+
 20130509
 * small changes
 
