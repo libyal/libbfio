@@ -117,4 +117,5 @@ stamp-h1
 /libcnotify
 /libcpath
 /libcsplit
+/libcthreads
 /libuna

@@ -20,9 +20,13 @@ Windows
 Deployment:
 * check if libbfio.3 is up to date
 
+20130718
+* fixes for multi threading support
+
 20130609
 * updated dependencies
 * fix for compiling with stand-alone version of libcdata
+* fix in .pc.in file
 
 20130509
 * small changes

@@ -141,8 +141,26 @@ int libbfio_handle_initialize(
 		 "%s: unable to create read offsets list.",
 		 function );
 
+		memory_free(
+		 internal_handle );
+
+		return( -1 );
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_initialize(
+	     &( internal_handle->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to intialize read/write lock.",
+		 function );
+
 		goto on_error;
 	}
+#endif
 	internal_handle->io_handle       = io_handle;
 	internal_handle->flags           = flags;
 	internal_handle->free_io_handle  = free_io_handle;
@@ -228,6 +246,21 @@ int libbfio_handle_free(
 				result = -1;
 			}
 		}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+		if( libcthreads_read_write_lock_free(
+		     &( internal_handle->read_write_lock ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free read/write lock.",
+			 function );
+
+			result = -1;
+		}
+#endif
 		if( ( internal_handle->flags & LIBBFIO_FLAG_IO_HANDLE_MANAGED ) != 0 )
 		{
 			if( internal_handle->io_handle != NULL )
@@ -319,6 +352,21 @@ int libbfio_handle_clone(
 	}
 	internal_source_handle = (libbfio_internal_handle_t *) source_handle;
 
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_source_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	if( internal_source_handle->io_handle != NULL )
 	{
 		if( ( internal_source_handle->flags & LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_REFERENCE ) != 0 )
@@ -398,6 +446,21 @@ int libbfio_handle_clone(
 
 		goto on_error;
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_source_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	if( libbfio_handle_seek_offset(
 	     *destination_handle,
 	     internal_source_handle->offset,

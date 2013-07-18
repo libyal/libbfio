@@ -3,13 +3,15 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
-	@LIBUNA_CPPFLAGS@
+	@LIBUNA_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@
 
 lib_LTLIBRARIES = libbfio.la
 
@@ -29,6 +31,7 @@ libbfio_la_SOURCES = \
 	libbfio_libclocale.h \
 	libbfio_libcpath.h \
 	libbfio_libcstring.h \
+	libbfio_libcthreads.h \
 	libbfio_libuna.h \
 	libbfio_memory_range.c libbfio_memory_range.h \
 	libbfio_pool.c libbfio_pool.h \
@@ -39,13 +42,15 @@ libbfio_la_SOURCES = \
 libbfio_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
-	@LIBCPATH_LIBADD@
+	@LIBCPATH_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 libbfio_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
