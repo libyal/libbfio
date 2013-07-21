@@ -1,7 +1,7 @@
 /*
- *sic File IO (BFIO) library write testing program
+ * Basic File IO (BFIO) library handle write testing program
  *
- * Copyright (c) 2009-2012, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -34,14 +34,14 @@
 
 #define BFIO_TEST_BUFFER_SIZE	4096
 
-int bfio_test_write(
+int bfio_test_handle_write(
      const char *filename,
      size_t data_size,
      libcerror_error_t **error )
 {
 	libbfio_handle_t *handle = NULL;
 	uint8_t *buffer          = NULL;
-	static char *function    = "bfio_test_write";
+	static char *function    = "bfio_test_handle_write";
 	size_t filename_length   = 0;
 	size_t write_size        = 0;
 	ssize_t write_count      = 0;
@@ -301,7 +301,7 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
-	if( bfio_test_write(
+	if( bfio_test_handle_write(
 	     _LIBCSTRING_SYSTEM_STRING( "test1" ),
 	     0,
 	     &error ) != 1 )
@@ -312,7 +312,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( bfio_test_write(
+	if( bfio_test_handle_write(
 	     _LIBCSTRING_SYSTEM_STRING( "test2" ),
 	     100000,
 	     &error ) != 1 )

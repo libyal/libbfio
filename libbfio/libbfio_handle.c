@@ -579,7 +579,7 @@ int libbfio_handle_open(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -587,7 +587,7 @@ int libbfio_handle_open(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -719,7 +719,7 @@ int libbfio_handle_reopen(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -727,7 +727,7 @@ int libbfio_handle_reopen(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -866,7 +866,7 @@ int libbfio_handle_close(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -874,7 +874,7 @@ int libbfio_handle_close(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -1012,7 +1012,7 @@ ssize_t libbfio_handle_read_buffer(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1020,7 +1020,7 @@ ssize_t libbfio_handle_read_buffer(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -1263,7 +1263,7 @@ ssize_t libbfio_handle_write_buffer(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1271,7 +1271,7 @@ ssize_t libbfio_handle_write_buffer(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -1387,7 +1387,7 @@ off64_t libbfio_handle_seek_offset(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1395,7 +1395,7 @@ off64_t libbfio_handle_seek_offset(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -1494,7 +1494,7 @@ int libbfio_handle_exists(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_read(
+	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1502,7 +1502,7 @@ int libbfio_handle_exists(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for reading.",
+		 "%s: unable to grab read/write lock for reading.",
 		 function );
 
 		return( -1 );
@@ -1596,7 +1596,7 @@ int libbfio_handle_is_open(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_read(
+	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1604,7 +1604,7 @@ int libbfio_handle_is_open(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for reading.",
+		 "%s: unable to grab read/write lock for reading.",
 		 function );
 
 		return( -1 );
@@ -1687,7 +1687,7 @@ int libbfio_handle_get_io_handle(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_read(
+	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1695,7 +1695,7 @@ int libbfio_handle_get_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for reading.",
+		 "%s: unable to grab read/write lock for reading.",
 		 function );
 
 		return( -1 );
@@ -1757,7 +1757,7 @@ int libbfio_handle_get_access_flags(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_read(
+	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1765,7 +1765,7 @@ int libbfio_handle_get_access_flags(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for reading.",
+		 "%s: unable to grab read/write lock for reading.",
 		 function );
 
 		return( -1 );
@@ -1828,7 +1828,7 @@ int libbfio_handle_set_access_flags(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1836,7 +1836,7 @@ int libbfio_handle_set_access_flags(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -1909,7 +1909,7 @@ int libbfio_handle_get_size(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -1917,7 +1917,7 @@ int libbfio_handle_get_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -2016,7 +2016,7 @@ int libbfio_handle_get_offset(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_read(
+	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -2024,7 +2024,7 @@ int libbfio_handle_get_offset(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for reading.",
+		 "%s: unable to grab read/write lock for reading.",
 		 function );
 
 		return( -1 );
@@ -2089,7 +2089,7 @@ int libbfio_handle_set_open_on_demand(
 		return( -1 );
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -2097,7 +2097,7 @@ int libbfio_handle_set_open_on_demand(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -2149,7 +2149,7 @@ int libbfio_handle_set_track_offsets_read(
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
+	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -2157,7 +2157,7 @@ int libbfio_handle_set_track_offsets_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
+		 "%s: unable to grab read/write lock for writing.",
 		 function );
 
 		return( -1 );
@@ -2208,7 +2208,7 @@ int libbfio_handle_get_number_of_offsets_read(
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_read(
+	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -2216,7 +2216,7 @@ int libbfio_handle_get_number_of_offsets_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for reading.",
+		 "%s: unable to grab read/write lock for reading.",
 		 function );
 
 		return( -1 );
@@ -2290,7 +2290,7 @@ int libbfio_handle_get_offset_read(
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_read(
+	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_handle->read_write_lock,
 	     error ) != 1 )
 	{
@@ -2298,7 +2298,7 @@ int libbfio_handle_get_offset_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for reading.",
+		 "%s: unable to grab read/write lock for reading.",
 		 function );
 
 		return( -1 );

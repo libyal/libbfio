@@ -1,5 +1,5 @@
 /*
- * Basic File IO (BFIO) library handle read testing program
+ * Basic File IO (BFIO) library pool read testing program
  *
  * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -33,21 +33,23 @@
 
 #define BFIO_TEST_READ_BUFFER_SIZE	4096
 
-/* Tests libbfio_handle_get_offset
+/* Tests libbfio_pool_get_offset
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int bfio_test_handle_get_offset(
-     libbfio_handle_t *handle,
+int bfio_test_pool_get_offset(
+     libbfio_pool_t *pool,
+     int pool_entry,
      off64_t expected_offset,
      libcerror_error_t **error )
 {
-	static char *function = "bfio_test_handle_get_offset";
+	static char *function = "bfio_test_pool_get_offset";
 	off64_t result_offset = 0;
 
 	if( expected_offset != -1 )
 	{
-		if( libbfio_handle_get_offset(
-		     handle,
+		if( libbfio_pool_get_offset(
+		     pool,
+		     pool_entry,
 		     &result_offset,
 		     error ) != 1 )
 		{
@@ -74,11 +76,12 @@ int bfio_test_handle_get_offset(
 	return( 1 );
 }
 
-/* Tests libbfio_handle_seek_offset
+/* Tests libbfio_pool_seek_offset
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int bfio_test_handle_seek_offset(
-     libbfio_handle_t *handle,
+int bfio_test_pool_seek_offset(
+     libbfio_pool_t *pool,
+     int pool_entry,
      off64_t input_offset,
      int input_whence,
      off64_t expected_offset )
@@ -87,12 +90,13 @@ int bfio_test_handle_seek_offset(
 	off64_t result_offset    = 0;
 	int result               = 0;
 
-	if( handle == NULL )
+	if( pool == NULL )
 	{
 		return( -1 );
 	}
-	result_offset = libbfio_handle_seek_offset(
-	                 handle,
+	result_offset = libbfio_pool_seek_offset(
+	                 pool,
+	                 pool_entry,
 	                 input_offset,
 	                 input_whence,
 	                 &error );
@@ -129,11 +133,12 @@ int bfio_test_handle_seek_offset(
 	return( result );
 }
 
-/* Tests libbfio_handle_read_buffer
+/* Tests libbfio_pool_read_buffer
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int bfio_test_handle_read_buffer(
-     libbfio_handle_t *handle,
+int bfio_test_pool_read_buffer(
+     libbfio_pool_t *pool,
+     int pool_entry,
      size64_t input_size,
      size64_t expected_size )
 {
@@ -146,7 +151,7 @@ int bfio_test_handle_read_buffer(
 	ssize_t read_count       = 0;
 	int result               = 0;
 
-	if( handle == NULL )
+	if( pool == NULL )
 	{
 		return( -1 );
 	}
@@ -160,8 +165,9 @@ int bfio_test_handle_read_buffer(
 		{
 			read_size = (size_t) remaining_size;
 		}
-		read_count = libbfio_handle_read_buffer(
-			      handle,
+		read_count = libbfio_pool_read_buffer(
+			      pool,
+			      pool_entry,
 			      buffer,
 			      read_size,
 			      &error );
@@ -202,8 +208,9 @@ int bfio_test_handle_read_buffer(
 /* Tests reading data at a specific offset
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int bfio_test_handle_read(
-     libbfio_handle_t *handle,
+int bfio_test_pool_read(
+     libbfio_pool_t *pool,
+     int pool_entry,
      off64_t input_offset,
      int input_whence,
      size64_t input_size,
@@ -214,7 +221,7 @@ int bfio_test_handle_read(
 	const char *whence_string = NULL;
 	int result                = 0;
 
-	if( handle == NULL )
+	if( pool == NULL )
 	{
 		return( -1 );
 	}
@@ -241,8 +248,9 @@ int bfio_test_handle_read(
 	 whence_string,
 	 input_size );
 
-	result = bfio_test_handle_seek_offset(
-	          handle,
+	result = bfio_test_pool_seek_offset(
+	          pool,
+	          pool_entry,
 	          input_offset,
 	          input_whence,
 	          expected_offset );
@@ -251,8 +259,9 @@ int bfio_test_handle_read(
 	{
 		if( input_offset >= 0 )
 		{
-			result = bfio_test_handle_read_buffer(
-				  handle,
+			result = bfio_test_pool_read_buffer(
+				  pool,
+				  pool_entry,
 				  input_size,
 				  expected_size );
 		}
@@ -261,8 +270,9 @@ int bfio_test_handle_read(
 	{
 		if( input_offset >= 0 )
 		{
-			result = bfio_test_handle_get_offset(
-			          handle,
+			result = bfio_test_pool_get_offset(
+			          pool,
+				  pool_entry,
 			          input_offset + expected_size,
 			          &error );
 		}
@@ -305,8 +315,10 @@ int main( int argc, char * const argv[] )
 {
 	libcerror_error_t *error = NULL;
 	libbfio_handle_t *handle = NULL;
+	libbfio_pool_t *pool     = NULL;
 	size64_t data_size       = 0;
 	size_t filename_length   = 0;
+	int pool_entry           = 0;
 
 	if( argc != 2 )
 	{
@@ -351,19 +363,48 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libbfio_handle_open(
+	if( libbfio_pool_initialize(
+	     &pool,
+	     10,
+	     5,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to create pool.\n" );
+
+		goto on_error;
+	}
+	if( libbfio_pool_append_handle(
+	     pool,
+	     &pool_entry,
 	     handle,
 	     LIBBFIO_OPEN_READ,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open file handle.\n" );
+		 "Unable to append handle to pool.\n" );
 
 		goto on_error;
 	}
-	if( libbfio_handle_get_size(
-	     handle,
+	handle = NULL;
+
+	if( libbfio_pool_open(
+	     pool,
+	     pool_entry,
+	     LIBBFIO_OPEN_READ,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to open pool.\n" );
+
+		goto on_error;
+	}
+	if( libbfio_pool_get_size(
+	     pool,
+	     pool_entry,
 	     &data_size,
 	     &error ) != 1 )
 	{
@@ -392,8 +433,9 @@ int main( int argc, char * const argv[] )
 	/* Test: offset: 0 size: <data_size>
 	 * Expected result: offset: 0 size: <data_size>
 	 */
-	if( bfio_test_handle_read(
-	     handle,
+	if( bfio_test_pool_read(
+	     pool,
+	     pool_entry,
 	     0,
 	     SEEK_SET,
 	     data_size,
@@ -409,8 +451,9 @@ int main( int argc, char * const argv[] )
 	/* Test: offset: 0 size: <data_size>
 	 * Expected result: offset: 0 size: <data_size>
 	 */
-	if( bfio_test_handle_read(
-	     handle,
+	if( bfio_test_pool_read(
+	     pool,
+	     pool_entry,
 	     0,
 	     SEEK_SET,
 	     data_size,
@@ -430,8 +473,9 @@ int main( int argc, char * const argv[] )
 	/* Test: offset: <data_size / 7> size: <data_size / 2>
 	 * Expected result: offset: <data_size / 7> size: <data_size / 2>
 	 */
-	if( bfio_test_handle_read(
-	     handle,
+	if( bfio_test_pool_read(
+	     pool,
+	     pool_entry,
 	     (off64_t) ( data_size / 7 ),
 	     SEEK_SET,
 	     data_size / 2,
@@ -447,8 +491,9 @@ int main( int argc, char * const argv[] )
 	/* Test: offset: <data_size / 7> size: <data_size / 2>
 	 * Expected result: offset: <data_size / 7> size: <data_size / 2>
 	 */
-	if( bfio_test_handle_read(
-	     handle,
+	if( bfio_test_pool_read(
+	     pool,
+	     pool_entry,
 	     (off64_t) ( data_size / 7 ),
 	     SEEK_SET,
 	     data_size / 2,
@@ -470,8 +515,9 @@ int main( int argc, char * const argv[] )
 		/* Test: offset: <data_size - 1024> size: 4096
 		 * Expected result: offset: -1 size: <undetermined>
 		 */
-		if( bfio_test_handle_read(
-		     handle,
+		if( bfio_test_pool_read(
+		     pool,
+		     pool_entry,
 		     (off64_t) ( data_size - 1024 ),
 		     SEEK_SET,
 		     4096,
@@ -487,8 +533,9 @@ int main( int argc, char * const argv[] )
 		/* Test: offset: <data_size - 1024> size: 4096
 		 * Expected result: offset: -1 size: <undetermined>
 		 */
-		if( bfio_test_handle_read(
-		     handle,
+		if( bfio_test_pool_read(
+		     pool,
+		     pool_entry,
 		     (off64_t) ( data_size - 1024 ),
 		     SEEK_SET,
 		     4096,
@@ -507,8 +554,9 @@ int main( int argc, char * const argv[] )
 		/* Test: offset: <data_size - 1024> size: 4096
 		 * Expected result: offset: <data_size - 1024> size: 1024
 		 */
-		if( bfio_test_handle_read(
-		     handle,
+		if( bfio_test_pool_read(
+		     pool,
+		     pool_entry,
 		     (off64_t) ( data_size - 1024 ),
 		     SEEK_SET,
 		     4096,
@@ -524,8 +572,9 @@ int main( int argc, char * const argv[] )
 		/* Test: offset: <data_size - 1024> size: 4096
 		 * Expected result: offset: <data_size - 1024> size: 1024
 		 */
-		if( bfio_test_handle_read(
-		     handle,
+		if( bfio_test_pool_read(
+		     pool,
+		     pool_entry,
 		     (off64_t) ( data_size - 1024 ),
 		     SEEK_SET,
 		     4096,
@@ -541,23 +590,23 @@ int main( int argc, char * const argv[] )
 	}
 	/* Clean up
 	 */
-	if( libbfio_handle_close(
-	     handle,
+	if( libbfio_pool_close_all(
+	     pool,
 	     &error ) != 0 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to close file handle.\n" );
+		 "Unable to close pool.\n" );
 
 		goto on_error;
 	}
-	if( libbfio_handle_free(
-	     &handle,
+	if( libbfio_pool_free(
+	     &pool,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to free file handle.\n" );
+		 "Unable to free pool.\n" );
 
 		goto on_error;
 	}
@@ -579,6 +628,15 @@ on_error:
 		 NULL );
 		libbfio_handle_free(
 		 &handle,
+		 NULL );
+	}
+	if( pool != NULL )
+	{
+		libbfio_pool_close_all(
+		 pool,
+		 NULL );
+		libbfio_pool_free(
+		 &pool,
 		 NULL );
 	}
 	return( EXIT_FAILURE );
