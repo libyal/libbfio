@@ -384,7 +384,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to append handle to pool.\n" );
+		 "Unable to append file handle to pool.\n" );
 
 		goto on_error;
 	}

@@ -1,6 +1,5 @@
 TODO
 * complete multi threading support (todo pool)
-* add tests for multi threading support
 * remove open on demand ?
 
 Pool
@@ -16,6 +15,8 @@ Test
 * wide to narrow (ASCII with codepage) conversion
 * add autoconf/make test suite
 * add open on demand tests
+* add multi threading tests
+* improve pool tests, e.g. maximum number of open handles
 
 Multi-threading support:
 * do not add locks to the BFIO back-end IO handles ?
