@@ -5,14 +5,14 @@ AM_CPPFLAGS = \
 	@LIBCERROR_CPPFLAGS@
 
 TESTS = \
-	test_seek.sh \
-	test_read.sh \
-	test_write.sh
+	test_handle_seek.sh \
+	test_handle_read.sh \
+	test_handle_write.sh
 
 check_SCRIPTS = \
-	test_seek.sh \
-	test_read.sh \
-	test_write.sh
+	test_handle_seek.sh \
+	test_handle_read.sh \
+	test_handle_write.sh
 
 input_FILES = \
 	input/test.raw
@@ -22,39 +22,39 @@ EXTRA_DIST = \
 	$(input_FILES)
 
 check_PROGRAMS = \
-	bfio_test_read \
-	bfio_test_seek \
-	bfio_test_write
+	bfio_test_handle_read \
+	bfio_test_handle_seek \
+	bfio_test_handle_write
 
-bfio_test_read_SOURCES = \
+bfio_test_handle_read_SOURCES = \
 	bfio_test_libcerror.h \
 	bfio_test_libbfio.h \
 	bfio_test_libcstring.h \
-	bfio_test_read.c
+	bfio_test_handle_read.c
 
-bfio_test_read_LDADD = \
+bfio_test_handle_read_LDADD = \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
-bfio_test_seek_SOURCES = \
+bfio_test_handle_seek_SOURCES = \
 	bfio_test_libcerror.h \
 	bfio_test_libbfio.h \
 	bfio_test_libcstring.h \
-	bfio_test_seek.c
+	bfio_test_handle_seek.c
 
-bfio_test_seek_LDADD = \
+bfio_test_handle_seek_LDADD = \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
-bfio_test_write_SOURCES = \
+bfio_test_handle_write_SOURCES = \
 	bfio_test_libcerror.h \
 	bfio_test_libbfio.h \
 	bfio_test_libcstring.h \
-	bfio_test_write.c
+	bfio_test_handle_write.c
 
-bfio_test_write_LDADD = \
+bfio_test_handle_write_LDADD = \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@

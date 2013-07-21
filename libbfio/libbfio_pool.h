@@ -39,10 +39,6 @@ typedef struct libbfio_internal_pool libbfio_internal_pool_t;
 
 struct libbfio_internal_pool
 {
-	/* The number of handles in the pool
-	 */
-	int number_of_handles;
-
 	/* The number of used handles in the pool
 	 */
 	int number_of_used_handles;
@@ -55,9 +51,9 @@ struct libbfio_internal_pool
 	 */
 	int maximum_number_of_open_handles;
 
-	/* A dynamic array containing the handles
+	/* The handles array
 	 */
-	libbfio_handle_t **handles;
+	libcdata_array_t *handles_array;
 
 	/* A list containing the file IO handles in order of the last use
 	 * it starts with the last used at the beginning of the list

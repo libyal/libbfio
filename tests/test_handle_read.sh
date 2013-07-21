@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Cross-platform C file functions library read offset testing script
+# Cross-platform C file functions library handle read offset testing script
 #
-# Copyright (c) 2008-2012, Joachim Metz <joachim.metz@gmail.com>
+# Copyright (c) 2008-2013, Joachim Metz <joachim.metz@gmail.com>
 #
 # Refer to AUTHORS for acknowledgements.
 #
@@ -27,11 +27,11 @@ EXIT_IGNORE=77;
 INPUT="input";
 TMP="tmp";
 
-test_read()
+test_handle_read()
 { 
 	echo "Testing read offset of input:" $*;
 
-	./${BFIO_TEST_READ} $*;
+	./${BFIO_TEST_HANDLE_READ} $*;
 
 	RESULT=$?;
 
@@ -40,16 +40,16 @@ test_read()
 	return ${RESULT};
 }
 
-BFIO_TEST_READ="bfio_test_read";
+BFIO_TEST_HANDLE_READ="bfio_test_handle_read";
 
-if ! test -x ${BFIO_TEST_READ};
+if ! test -x ${BFIO_TEST_HANDLE_READ};
 then
-	BFIO_TEST_READ="bfio_test_read.exe";
+	BFIO_TEST_HANDLE_READ="bfio_test_handle_read.exe";
 fi
 
-if ! test -x ${BFIO_TEST_READ};
+if ! test -x ${BFIO_TEST_HANDLE_READ};
 then
-	echo "Missing executable: ${BFIO_TEST_READ}";
+	echo "Missing executable: ${BFIO_TEST_HANDLE_READ}";
 
 	exit ${EXIT_FAILURE};
 fi
@@ -63,7 +63,7 @@ fi
 
 for FILENAME in ${INPUT}/*;
 do
-	if ! test_read ${FILENAME};
+	if ! test_handle_read ${FILENAME};
 	then
 		exit ${EXIT_FAILURE};
 	fi

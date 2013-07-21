@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Cross-platform C file functions library seek offset testing script
+# Cross-platform C file functions library handle seek offset testing script
 #
-# Copyright (c) 2008-2012, Joachim Metz <joachim.metz@gmail.com>
+# Copyright (c) 2008-2013, Joachim Metz <joachim.metz@gmail.com>
 #
 # Refer to AUTHORS for acknowledgements.
 #
@@ -27,11 +27,11 @@ EXIT_IGNORE=77;
 INPUT="input";
 TMP="tmp";
 
-test_seek()
+test_handle_seek()
 { 
 	echo "Testing seek offset of input:" $*;
 
-	./${BFIO_TEST_SEEK} $*;
+	./${BFIO_TEST_HANDLE_SEEK} $*;
 
 	RESULT=$?;
 
@@ -40,16 +40,16 @@ test_seek()
 	return ${RESULT};
 }
 
-BFIO_TEST_SEEK="bfio_test_seek";
+BFIO_TEST_HANDLE_SEEK="bfio_test_handle_seek";
 
-if ! test -x ${BFIO_TEST_SEEK};
+if ! test -x ${BFIO_TEST_HANDLE_SEEK};
 then
-	BFIO_TEST_SEEK="bfio_test_seek.exe";
+	BFIO_TEST_HANDLE_SEEK="bfio_test_handle_seek.exe";
 fi
 
-if ! test -x ${BFIO_TEST_SEEK};
+if ! test -x ${BFIO_TEST_HANDLE_SEEK};
 then
-	echo "Missing executable: ${BFIO_TEST_SEEK}";
+	echo "Missing executable: ${BFIO_TEST_HANDLE_SEEK}";
 
 	exit ${EXIT_FAILURE};
 fi
@@ -63,7 +63,7 @@ fi
 
 for FILENAME in ${INPUT}/*;
 do
-	if ! test_seek ${FILENAME};
+	if ! test_handle_seek ${FILENAME};
 	then
 		exit ${EXIT_FAILURE};
 	fi

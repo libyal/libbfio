@@ -446,21 +446,6 @@ int libbfio_handle_clone(
 
 		goto on_error;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
-	     internal_source_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	if( libbfio_handle_seek_offset(
 	     *destination_handle,
 	     internal_source_handle->offset,
@@ -476,6 +461,21 @@ int libbfio_handle_clone(
 
 		goto on_error;
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_source_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		goto on_error;
+	}
+#endif
 	return( 1 );
 
 on_error:
@@ -499,6 +499,11 @@ on_error:
 		 destination_handle,
 		 NULL );
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	libcthreads_read_write_lock_release_for_read(
+	 internal_source_handle->read_write_lock,
+	 NULL );
+#endif
 	return( -1 );
 }
 

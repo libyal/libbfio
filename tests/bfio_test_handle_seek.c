@@ -34,7 +34,7 @@
 /* Tests libbfio_handle_seek_offset
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int bfio_test_seek_offset(
+int bfio_handle_test_seek_offset(
      libbfio_handle_t *handle,
      off64_t input_offset,
      int input_whence,
@@ -198,7 +198,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_SET offset: 0
 	 * Expected result: 0
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     0,
 	     SEEK_SET,
@@ -213,7 +213,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_SET offset: <data_size>
 	 * Expected result: <data_size>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     (off64_t) data_size,
 	     SEEK_SET,
@@ -228,7 +228,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_SET offset: <data_size / 5>
 	 * Expected result: <data_size / 5>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     (off64_t) ( data_size / 5 ),
 	     SEEK_SET,
@@ -243,7 +243,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_SET offset: <data_size + 987>
 	 * Expected result: <data_size + 987>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     (off64_t) ( data_size + 987 ),
 	     SEEK_SET,
@@ -258,7 +258,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_SET offset: -987
 	 * Expected result: -1
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     -987,
 	     SEEK_SET,
@@ -273,7 +273,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_CUR offset: 0
 	 * Expected result: <data_size + 987>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     0,
 	     SEEK_CUR,
@@ -288,7 +288,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_CUR offset: <-1 * (data_size + 987)>
 	 * Expected result: 0
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     -1 * (off64_t) ( data_size + 987 ),
 	     SEEK_CUR,
@@ -303,7 +303,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_CUR offset: <data_size / 3>
 	 * Expected result: <data_size / 3>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     (off64_t) ( data_size / 3 ),
 	     SEEK_CUR,
@@ -320,7 +320,7 @@ int main( int argc, char * const argv[] )
 		/* Test: SEEK_CUR offset: <-2 * (data_size / 3)>
 		 * Expected result: 0
 		 */
-		if( bfio_test_seek_offset(
+		if( bfio_handle_test_seek_offset(
 		     handle,
 		     -2 * (off64_t) ( data_size / 3 ),
 		     SEEK_CUR,
@@ -338,7 +338,7 @@ int main( int argc, char * const argv[] )
 		/* Test: SEEK_CUR offset: <-2 * (data_size / 3)>
 		 * Expected result: -1
 		 */
-		if( bfio_test_seek_offset(
+		if( bfio_handle_test_seek_offset(
 		     handle,
 		     -2 * (off64_t) ( data_size / 3 ),
 		     SEEK_CUR,
@@ -354,7 +354,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_END offset: 0
 	 * Expected result: <data_size>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     0,
 	     SEEK_END,
@@ -369,7 +369,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_END offset: <-1 * data_size>
 	 * Expected result: 0
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     -1 * (off64_t) data_size,
 	     SEEK_END,
@@ -384,7 +384,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_END offset: <-1 * (data_size / 4)>
 	 * Expected result: <data_size - (data_size / 4)>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     -1 * (off64_t) ( data_size / 4 ),
 	     SEEK_END,
@@ -399,7 +399,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_END offset: 542
 	 * Expected result: <data_size + 542>
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     542,
 	     SEEK_END,
@@ -414,7 +414,7 @@ int main( int argc, char * const argv[] )
 	/* Test: SEEK_END offset: <-1 * (data_size + 542)>
 	 * Expected result: -1
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     -1 * (off64_t) ( data_size + 542 ),
 	     SEEK_END,
@@ -429,7 +429,7 @@ int main( int argc, char * const argv[] )
 	/* Test: UNKNOWN (88) offset: 0
 	 * Expected result: -1
 	 */
-	if( bfio_test_seek_offset(
+	if( bfio_handle_test_seek_offset(
 	     handle,
 	     0,
 	     88,

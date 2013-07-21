@@ -100,9 +100,12 @@ stamp-h1
 /include/libbfio/types.h
 /libbfio/libbfio.rc
 /libbfio/libbfio_definitions.h
-/tests/bfio_test_read
-/tests/bfio_test_seek
-/tests/bfio_test_write
+/tests/bfio_test_handle_read
+/tests/bfio_test_handle_seek
+/tests/bfio_test_handle_write
+/tests/bfio_test_pool_read
+/tests/bfio_test_pool_seek
+/tests/bfio_test_pool_write
 /macosx/Introduction.rtf
 /macosx/libbfio.pmdoc/01include.xml
 /macosx/libbfio.pmdoc/02lib.xml

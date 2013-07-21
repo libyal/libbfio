@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Cross-platform C file functions library write offset testing script
+# Cross-platform C file functions library handle write offset testing script
 #
-# Copyright (c) 2008-2012, Joachim Metz <joachim.metz@gmail.com>
+# Copyright (c) 2008-2013, Joachim Metz <joachim.metz@gmail.com>
 #
 # Refer to AUTHORS for acknowledgements.
 #
@@ -26,14 +26,14 @@ EXIT_IGNORE=77;
 
 TMP="tmp";
 
-test_write()
+test_handle_write()
 { 
 	mkdir ${TMP};
 	cd ${TMP};
 
 	echo "Testing write";
 
-	../${BFIO_TEST_WRITE};
+	../${BFIO_TEST_HANDLE_WRITE};
 
 	RESULT=$?;
 
@@ -45,21 +45,21 @@ test_write()
 	return ${RESULT};
 }
 
-BFIO_TEST_WRITE="bfio_test_write";
+BFIO_TEST_HANDLE_WRITE="bfio_test_handle_write";
 
-if ! test -x ${BFIO_TEST_WRITE};
+if ! test -x ${BFIO_TEST_HANDLE_WRITE};
 then
-	BFIO_TEST_WRITE="bfio_test_write.exe";
+	BFIO_TEST_HANDLE_WRITE="bfio_test_handle_write.exe";
 fi
 
-if ! test -x ${BFIO_TEST_WRITE};
+if ! test -x ${BFIO_TEST_HANDLE_WRITE};
 then
-	echo "Missing executable: ${BFIO_TEST_WRITE}";
+	echo "Missing executable: ${BFIO_TEST_HANDLE_WRITE}";
 
 	exit ${EXIT_FAILURE};
 fi
 
-if ! test_write
+if ! test_handle_write
 then
 	exit ${EXIT_FAILURE};
 fi
