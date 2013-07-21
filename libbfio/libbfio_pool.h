@@ -28,6 +28,7 @@
 #include "libbfio_extern.h"
 #include "libbfio_libcdata.h"
 #include "libbfio_libcerror.h"
+#include "libbfio_libcthreads.h"
 #include "libbfio_types.h"
 
 #if defined( __cplusplus )
@@ -63,6 +64,12 @@ struct libbfio_internal_pool
 	 * the value of the list element refers to the corresponding file IO handle
 	 */
 	libcdata_list_t *last_used_list;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	/* The read/write lock
+	 */
+	libcthreads_read_write_lock_t *read_write_lock;
+#endif
 };
 
 LIBBFIO_EXTERN \
