@@ -32,6 +32,7 @@ Deployment:
 * removed open on demand code from seek offset
 * refactored pool to use a cdata array
 * worked on tests
+* update msvscpp files
 
 20130718
 * fixes for multi threading support

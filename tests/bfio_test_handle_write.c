@@ -35,7 +35,7 @@
 #define BFIO_TEST_BUFFER_SIZE	4096
 
 int bfio_test_handle_write(
-     const char *filename,
+     const libcstring_system_character_t *filename,
      size_t data_size,
      libcerror_error_t **error )
 {
