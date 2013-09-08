@@ -308,6 +308,7 @@ int main( int argc, char * const argv[] )
 	if( libcpath_path_join_wide(
 	     &filename,
 	     &filename_size,
+	     argv[ 1 ],
 	     libcstring_system_string_length(
 	      argv[ 1 ] ),
 	     _LIBCSTRING_SYSTEM_STRING( "test1" ),
@@ -351,6 +352,7 @@ int main( int argc, char * const argv[] )
 	if( libcpath_path_join_wide(
 	     &filename,
 	     &filename_size,
+	     argv[ 1 ],
 	     libcstring_system_string_length(
 	      argv[ 1 ] ),
 	     _LIBCSTRING_SYSTEM_STRING( "test2" ),
