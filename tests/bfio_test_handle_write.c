@@ -28,8 +28,9 @@
 
 #include <stdio.h>
 
-#include "bfio_test_libcerror.h"
 #include "bfio_test_libbfio.h"
+#include "bfio_test_libcerror.h"
+#include "bfio_test_libcpath.h"
 #include "bfio_test_libcstring.h"
 
 #define BFIO_TEST_BUFFER_SIZE	4096
@@ -291,18 +292,47 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error = NULL;
+	libcstring_system_character_t *filename = NULL;
+	libcerror_error_t *error                = NULL;
+	size_t filename_size                    = 0;
 
-	if( argc != 1 )
+	if( argc < 2 )
 	{
 		fprintf(
 		 stderr,
-		 "Unsupported number of arguments.\n" );
+		 "Missing test path.\n" );
 
 		return( EXIT_FAILURE );
 	}
-	if( bfio_test_handle_write(
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcpath_path_join_wide(
+	     &filename,
+	     &filename_size,
+	     libcstring_system_string_length(
+	      argv[ 1 ] ),
 	     _LIBCSTRING_SYSTEM_STRING( "test1" ),
+	     5,
+	     &error ) != 1 )
+#else
+	if( libcpath_path_join(
+	     &filename,
+	     &filename_size,
+	     argv[ 1 ],
+	     libcstring_system_string_length(
+	      argv[ 1 ] ),
+	     _LIBCSTRING_SYSTEM_STRING( "test1" ),
+	     5,
+	     &error ) != 1 )
+#endif
+	{
+		fprintf(
+		 stderr,
+		 "Unable to create filename.\n" );
+
+		goto on_error;
+	}
+	if( bfio_test_handle_write(
+	     filename,
 	     0,
 	     &error ) != 1 )
 	{
@@ -312,8 +342,40 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( bfio_test_handle_write(
+	memory_free(
+	 filename );
+
+	filename = NULL;
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcpath_path_join_wide(
+	     &filename,
+	     &filename_size,
+	     libcstring_system_string_length(
+	      argv[ 1 ] ),
 	     _LIBCSTRING_SYSTEM_STRING( "test2" ),
+	     5,
+	     &error ) != 1 )
+#else
+	if( libcpath_path_join(
+	     &filename,
+	     &filename_size,
+	     argv[ 1 ],
+	     libcstring_system_string_length(
+	      argv[ 1 ] ),
+	     _LIBCSTRING_SYSTEM_STRING( "test2" ),
+	     5,
+	     &error ) != 1 )
+#endif
+	{
+		fprintf(
+		 stderr,
+		 "Unable to create filename.\n" );
+
+		goto on_error;
+	}
+	if( bfio_test_handle_write(
+	     filename,
 	     100000,
 	     &error ) != 1 )
 	{
@@ -323,6 +385,11 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
+	memory_free(
+	 filename );
+
+	filename = NULL;
+
 	return( EXIT_SUCCESS );
 
 on_error:
@@ -333,6 +400,11 @@ on_error:
 		 stderr );
 		libbfio_error_free(
 		 &error );
+	}
+	if( filename != NULL )
+	{
+		memory_free(
+		 filename );
 	}
 	return( EXIT_FAILURE );
 }

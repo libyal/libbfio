@@ -24,16 +24,18 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-INPUT="input";
-TMP="tmp";
-
 test_handle_read()
 { 
+	rm -rf tmp;
+	mkdir tmp;
+
 	echo "Testing read offset of input:" $*;
 
-	./${BFIO_TEST_HANDLE_READ} $*;
+	${TEST_RUNNER} ./${BFIO_TEST_HANDLE_READ} $*;
 
 	RESULT=$?;
+
+	rm -rf tmp;
 
 	echo "";
 
@@ -54,14 +56,28 @@ then
 	exit ${EXIT_FAILURE};
 fi
 
-if ! test -d ${INPUT};
+TEST_RUNNER="tests/test_runner.sh";
+
+if ! test -x ${TEST_RUNNER};
+then
+        TEST_RUNNER="./test_runner.sh";
+fi
+
+if ! test -x ${TEST_RUNNER};
+then
+        echo "Missing test runner: ${TEST_RUNNER}";
+
+        exit ${EXIT_FAILURE};
+fi
+
+if ! test -d input;
 then
 	echo "No input directory found, to test read create input directory and place test files in directory.";
 
 	exit ${EXIT_IGNORE};
 fi
 
-for FILENAME in ${INPUT}/*;
+for FILENAME in input/*;
 do
 	if ! test_handle_read ${FILENAME};
 	then

@@ -27,6 +27,10 @@ Windows
 Deployment:
 * check if libbfio.3 is up to date
 
+20130809
+* updated dependencies
+* worked on tests
+
 20130721
 * worked on multi threading support
 * removed open on demand code from seek offset
