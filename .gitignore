@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20130831
+# Version: 20130922
 
 # Generic auto-generated build files
 *~
@@ -107,6 +107,7 @@ stamp-h1
 /tests/bfio_test_pool_read
 /tests/bfio_test_pool_seek
 /tests/bfio_test_pool_write
+/tests/tmp
 /macosx/Introduction.rtf
 /macosx/libbfio.pmdoc/01include.xml
 /macosx/libbfio.pmdoc/02lib.xml
