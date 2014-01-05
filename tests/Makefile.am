@@ -75,6 +75,7 @@ bfio_test_handle_write_SOURCES = \
 
 bfio_test_handle_write_LDADD = \
 	@LIBCPATH_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
@@ -110,6 +111,7 @@ bfio_test_pool_write_SOURCES = \
 
 bfio_test_pool_write_LDADD = \
 	@LIBCPATH_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
