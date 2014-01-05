@@ -27,6 +27,10 @@ Windows
 Deployment:
 * check if libbfio.3 is up to date
 
+20140105
+* 2014 update
+* updated dependencies
+
 20131003
 * updated dependencies
 
