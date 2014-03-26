@@ -102,4 +102,5 @@ splint:
 	(cd $(srcdir)/libcpath && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/tests && $(MAKE) splint $(AM_MAKEFLAGS))
 
