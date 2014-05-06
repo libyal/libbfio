@@ -27,6 +27,10 @@ Windows
 Deployment:
 * check if libbfio.3 is up to date
 
+20140506
+* fixes to build static library with mingw and cygwin
+* fixes for missing unistd.h includes
+
 20140105
 * 2014 update
 * updated dependencies

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20140105],
+ [20140506],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -83,6 +83,22 @@ AX_LIBCFILE_CHECK_ENABLE
 
 dnl Check for enabling libcpath for cross-platform C path functions
 AX_LIBCPATH_CHECK_ENABLE
+
+dnl Check if DLL support is needed
+AS_IF(
+ [test "x$enable_shared" = xyes],
+ [AS_CASE(
+  [$host],
+  [*cygwin* | *mingw*],
+  [AC_DEFINE(
+   [HAVE_DLLMAIN],
+   [1],
+   [Define to 1 to enable the DllMain function.])
+  AC_SUBST(
+   [HAVE_DLLMAIN],
+   [1])
+  ])
+ ])
 
 dnl Set additional compiler flags
 CFLAGS="$CFLAGS -Wall";

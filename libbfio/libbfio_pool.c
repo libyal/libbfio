@@ -23,6 +23,10 @@
 #include <memory.h>
 #include <types.h>
 
+#if defined( HAVE_UNISTD_H )
+#include <unistd.h>
+#endif
+
 #include "libbfio_definitions.h"
 #include "libbfio_handle.h"
 #include "libbfio_libcdata.h"
