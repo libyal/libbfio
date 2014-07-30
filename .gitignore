@@ -108,11 +108,6 @@ stamp-h1
 /tests/bfio_test_pool_seek
 /tests/bfio_test_pool_write
 /tests/tmp
-/macosx/Introduction.rtf
-/macosx/libbfio.pmdoc/01include.xml
-/macosx/libbfio.pmdoc/02lib.xml
-/macosx/libbfio.pmdoc/03share.xml
-/macosx/libbfio.pmdoc/index.xml
 
 # Local library dependencies specific files
 /libcdata
