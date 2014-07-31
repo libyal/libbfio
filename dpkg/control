@@ -10,8 +10,16 @@ Package: libbfio
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libbfio-dbg
 Description: Library to support (abstracted) basic file IO
  libbfio is a library to support (abstracted) basic file IO.
+
+Package: libbfio-dbg
+Architecture: any
+Section: debug
+Depends: libbfio (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libbfio
+ Debugging symbols for libbfio.
 
 Package: libbfio-dev
 Section: libdevel
