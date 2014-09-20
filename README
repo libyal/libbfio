@@ -1,4 +1,6 @@
-See:
-* http://code.google.com/p/libbfio/wiki/Building
-* README.macosx
+libbfio is a library to provide basic file input/output abstraction.
+
+For more information see:
+* Project documentation: https://github.com/libyal/libbfio/wiki/Home
+* How to build from source: https://github.com/libyal/libbfio/wiki/Building
 
