@@ -1,12 +1,13 @@
 # Files to ignore by git
 #
-# Version: 20130922
+# Version: 20141004
 
 # Generic auto-generated build files
 *~
 *.a
 *.la
 *.lai
+*.lineno
 *.lo
 *.Plo
 *.Po
@@ -117,5 +118,6 @@ stamp-h1
 /libcnotify
 /libcpath
 /libcsplit
+/libcstring
 /libcthreads
 /libuna

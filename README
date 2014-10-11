@@ -1,5 +1,9 @@
 libbfio is a library to provide basic file input/output abstraction.
 
+Project information:
+* Status: alpha
+* Licence: LGPLv3+
+
 For more information see:
 * Project documentation: https://github.com/libyal/libbfio/wiki/Home
 * How to build from source: https://github.com/libyal/libbfio/wiki/Building
