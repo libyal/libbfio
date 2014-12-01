@@ -593,7 +593,7 @@ int libbfio_pool_open_handle(
 
 	if( libbfio_handle_seek_offset(
 	     handle,
-	     internal_handle->offset,
+	     internal_handle->current_offset,
 	     SEEK_SET,
 	     error ) == -1 )
 	{

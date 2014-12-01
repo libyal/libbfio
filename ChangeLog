@@ -1,4 +1,5 @@
 TODO
+* handle clean offset and size on close ?
 * complete multi threading support (todo pool)
 * remove open on demand ?
 
@@ -26,6 +27,9 @@ Windows
 
 Deployment:
 * check if libbfio.3 is up to date
+
+20141201
+* code clean up
 
 20141015
 * changes for deployment

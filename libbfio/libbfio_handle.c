@@ -452,7 +452,7 @@ int libbfio_handle_clone(
 	}
 	if( libbfio_handle_seek_offset(
 	     *destination_handle,
-	     internal_source_handle->offset,
+	     internal_source_handle->current_offset,
 	     SEEK_SET,
 	     error ) == -1 )
 	{
@@ -781,7 +781,7 @@ int libbfio_handle_reopen(
 			{
 				if( internal_handle->seek_offset(
 				     internal_handle->io_handle,
-				     internal_handle->offset,
+				     internal_handle->current_offset,
 				     SEEK_CUR,
 				     error ) == -1 )
 				{
@@ -1098,7 +1098,7 @@ ssize_t libbfio_handle_read_buffer(
 			}
 			if( internal_handle->seek_offset(
 			     internal_handle->io_handle,
-			     internal_handle->offset,
+			     internal_handle->current_offset,
 			     SEEK_SET,
 			     error ) == -1 )
 			{
@@ -1108,7 +1108,7 @@ ssize_t libbfio_handle_read_buffer(
 				 LIBCERROR_IO_ERROR_SEEK_FAILED,
 				 "%s: unable to find current offset: %" PRIi64 " in handle.",
 				 function,
-				 internal_handle->offset );
+				 internal_handle->current_offset );
 
 				goto on_error;
 			}
@@ -1135,7 +1135,7 @@ ssize_t libbfio_handle_read_buffer(
 	{
 		if( libcdata_range_list_insert_range(
 		     internal_handle->offsets_read,
-		     (uint64_t) internal_handle->offset,
+		     (uint64_t) internal_handle->current_offset,
 		     (uint64_t) read_count,
 		     NULL,
 		     NULL,
@@ -1152,7 +1152,7 @@ ssize_t libbfio_handle_read_buffer(
 			goto on_error;
 		}
 	}
-	internal_handle->offset += (off64_t) read_count;
+	internal_handle->current_offset += (off64_t) read_count;
 
 	if( internal_handle->open_on_demand != 0 )
 	{
@@ -1298,11 +1298,11 @@ ssize_t libbfio_handle_write_buffer(
 
 		goto on_error;
 	}
-	internal_handle->offset += (off64_t) write_count;
+	internal_handle->current_offset += (off64_t) write_count;
 
-	if( (size64_t) internal_handle->offset > internal_handle->size )
+	if( (size64_t) internal_handle->current_offset > internal_handle->size )
 	{
-		internal_handle->size = (size64_t) internal_handle->offset;
+		internal_handle->size = (size64_t) internal_handle->current_offset;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -1423,7 +1423,7 @@ off64_t libbfio_handle_seek_offset(
 
 		goto on_error;
 	}
-	internal_handle->offset = offset;
+	internal_handle->current_offset = offset;
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -2034,7 +2034,7 @@ int libbfio_handle_get_offset(
 		return( -1 );
 	}
 #endif
-	*offset = internal_handle->offset;
+	*offset = internal_handle->current_offset;
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_read(

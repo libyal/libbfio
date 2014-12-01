@@ -53,7 +53,7 @@ struct libbfio_internal_handle
 
 	/* The current offset
 	 */
-	off64_t offset;
+	off64_t current_offset;
 
 	/* The size
 	 */
