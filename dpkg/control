@@ -1,13 +1,12 @@
 Source: libbfio
-Section: unknown
+Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libbfio/
 
 Package: libbfio
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libbfio-dbg
@@ -17,14 +16,14 @@ Description: Library to support (abstracted) basic file IO
 Package: libbfio-dbg
 Architecture: any
 Section: debug
-Depends: libbfio (= ${Source-Version}), ${misc:Depends}
+Depends: libbfio (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libbfio
  Debugging symbols for libbfio.
 
 Package: libbfio-dev
 Section: libdevel
 Architecture: any
-Depends: libbfio (= ${Source-Version})
+Depends: libbfio (= ${binary:Version}), ${misc:Depends}
 Description: Header files and libraries for developing applications for libbfio
  Header files and libraries for developing applications for libbfio.
 

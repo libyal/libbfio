@@ -22,13 +22,14 @@ SUBDIRS = \
 DPKG_FILES = \
 	dpkg/changelog \
 	dpkg/changelog.in \
-       	dpkg/compat \
-       	dpkg/control \
-       	dpkg/copyright \
-       	dpkg/copyright.in \
-       	dpkg/rules \
-       	dpkg/libbfio-dev.docs \
-       	dpkg/libbfio.docs
+	dpkg/compat \
+	dpkg/control \
+	dpkg/copyright \
+	dpkg/copyright.in \
+	dpkg/rules \
+	dpkg/libbfio-dev.docs \
+	dpkg/libbfio.docs \
+	dpkg/source/format
 
 GETTEXT_FILES = \
 	config.rpath \
@@ -42,10 +43,10 @@ SPEC_FILES = \
 	libbfio.spec.in
 
 EXTRA_DIST = \
-        $(DPKG_FILES) \
-        $(GETTEXT_FILES) \
-        $(PKGCONFIG_FILES) \
-        $(SPEC_FILES)
+	$(DPKG_FILES) \
+	$(GETTEXT_FILES) \
+	$(PKGCONFIG_FILES) \
+	$(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
