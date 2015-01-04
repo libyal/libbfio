@@ -25,8 +25,8 @@ Multi-threading support:
 Windows
 * add VC_EXTRALEAN to config_msc.h ?
 
-Deployment:
-* check if libbfio.3 is up to date
+20150104
+* update man page: libbfio.3
 
 20150102
 * 2015 update

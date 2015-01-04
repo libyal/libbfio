@@ -443,7 +443,8 @@ int libbfio_file_set_name_wide(
      const wchar_t *name,
      size_t name_length,
      libbfio_error_t **error );
-#endif
+
+#endif /* defined( LIBBFIO_HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* -------------------------------------------------------------------------
  * File range functions
@@ -521,7 +522,8 @@ int libbfio_file_range_set_name_wide(
      const wchar_t *name,
      size_t name_length,
      libbfio_error_t **error );
-#endif
+
+#endif /* defined( LIBBFIO_HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Retrieves the range of the file range handle
  * Returns 1 if succesful or -1 on error
@@ -827,7 +829,8 @@ int libbfio_file_pool_append_handle_for_names_wide(
      int number_of_names,
      int access_flags,
      libbfio_error_t **error );
-#endif
+
+#endif /* defined( LIBBFIO_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( __cplusplus )
 }
