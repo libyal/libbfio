@@ -25,6 +25,10 @@ Multi-threading support:
 Windows
 * add VC_EXTRALEAN to config_msc.h ?
 
+20150927
+* merged history from backups
+* updated m4 scripts and msvscpp files
+
 20150104
 * update man page: libbfio.3
 
