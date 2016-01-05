@@ -25,6 +25,9 @@ Multi-threading support:
 Windows
 * add VC_EXTRALEAN to config_msc.h ?
 
+20160105
+* 2016 update
+
 20150927
 * merged history from backups
 * updated m4 scripts and msvscpp files
