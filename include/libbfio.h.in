@@ -338,36 +338,6 @@ int libbfio_handle_get_offset_read(
      libbfio_error_t **error );
 
 /* -------------------------------------------------------------------------
- * Handle functions - deprecated
- * ------------------------------------------------------------------------- */
-
-/* Reads a buffer from the handle
- * Returns the number of bytes read if successful, or -1 on error
- *
- * This function is deprecated use libbfio_handle_read_buffer instead
- */
-LIBBFIO_DEPRECATED \
-LIBBFIO_EXTERN \
-ssize_t libbfio_handle_read(
-         libbfio_handle_t *handle,
-         uint8_t *buffer,
-         size_t size,
-         libbfio_error_t **error );
-
-/* Writes a buffer to the handle
- * Returns the number of bytes written if successful, or -1 on error
- *
- * This function is deprecated use libbfio_handle_write_buffer instead
- */
-LIBBFIO_DEPRECATED \
-LIBBFIO_EXTERN \
-ssize_t libbfio_handle_write(
-         libbfio_handle_t *handle,
-         const uint8_t *buffer,
-         size_t size,
-         libbfio_error_t **error );
-
-/* -------------------------------------------------------------------------
  * File functions
  * ------------------------------------------------------------------------- */
 
@@ -662,6 +632,34 @@ int libbfio_pool_set_handle(
      int access_flags,
      libbfio_error_t **error );
 
+/* Removes a certain handle from the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_pool_remove_handle(
+     libbfio_pool_t *pool,
+     int entry,
+     libbfio_handle_t **handle,
+     libbfio_error_t **error );
+
+/* Retrieves the maximum number of open handles in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_pool_get_maximum_number_of_open_handles(
+     libbfio_pool_t *pool,
+     int *maximum_number_of_open_handles,
+     libbfio_error_t **error );
+
+/* Sets the maximum number of open handles in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_pool_set_maximum_number_of_open_handles(
+     libbfio_pool_t *pool,
+     int maximum_number_of_open_handles,
+     libbfio_error_t **error );
+
 /* Opens a handle in the pool
  * Returns 1 if successful or -1 on error
  */
@@ -732,16 +730,6 @@ off64_t libbfio_pool_seek_offset(
          int whence,
          libbfio_error_t **error );
 
-/* Retrieves the size of a handle in the pool
- * Returns 1 if successful or -1 on error
- */
-LIBBFIO_EXTERN \
-int libbfio_pool_get_size(
-     libbfio_pool_t *pool,
-     int entry,
-     size64_t *size,
-     libbfio_error_t **error );
-
 /* Retrieves the current offset in a handle in the pool
  * Returns 1 if successful or -1 on error
  */
@@ -752,55 +740,15 @@ int libbfio_pool_get_offset(
      off64_t *offset,
      libbfio_error_t **error );
 
-/* Retrieves the maximum number of open handles in the pool
+/* Retrieves the size of a handle in the pool
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
-int libbfio_pool_get_maximum_number_of_open_handles(
+int libbfio_pool_get_size(
      libbfio_pool_t *pool,
-     int *maximum_number_of_open_handles,
+     int entry,
+     size64_t *size,
      libbfio_error_t **error );
-
-/* Sets the maximum number of open handles in the pool
- * Returns 1 if successful or -1 on error
- */
-LIBBFIO_EXTERN \
-int libbfio_pool_set_maximum_number_of_open_handles(
-     libbfio_pool_t *pool,
-     int maximum_number_of_open_handles,
-     libbfio_error_t **error );
-
-/* -------------------------------------------------------------------------
- * Pool functions - deprecated
- * ------------------------------------------------------------------------- */
-
-/* Reads a buffer from a handle in the pool
- * Returns the number of bytes read or -1 on error
- *
- * This function is deprecated use libbfio_pool_read_buffer instead
- */
-LIBBFIO_DEPRECATED \
-LIBBFIO_EXTERN \
-ssize_t libbfio_pool_read(
-         libbfio_pool_t *pool,
-         int entry,
-         uint8_t *buffer,
-         size_t size,
-         libbfio_error_t **error );
-
-/* Writes a buffer to a handle in the pool
- * Returns the number of bytes written or -1 on error
- *
- * This function is deprecated use libbfio_pool_write_buffer instead
- */
-LIBBFIO_DEPRECATED \
-LIBBFIO_EXTERN \
-ssize_t libbfio_pool_write(
-         libbfio_pool_t *pool,
-         int entry,
-         const uint8_t *buffer,
-         size_t size,
-         libbfio_error_t **error );
 
 /* -------------------------------------------------------------------------
  * File pool functions

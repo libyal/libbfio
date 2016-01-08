@@ -1133,6 +1133,7 @@ off64_t libbfio_file_range_seek_offset(
 {
 	static char *function = "libbfio_file_range_seek_offset";
 	off64_t file_offset   = 0;
+	off64_t seek_offset   = 0;
 
 	if( file_range_io_handle == NULL )
 	{
@@ -1206,37 +1207,39 @@ off64_t libbfio_file_range_seek_offset(
 			return( -1 );
 		}
 	}
-	offset = libbfio_file_seek_offset(
-	          file_range_io_handle->file_io_handle,
-	          offset,
-	          whence,
-	          error );
+	seek_offset = libbfio_file_seek_offset(
+	               file_range_io_handle->file_io_handle,
+	               offset,
+	               whence,
+	               error );
 
-	if( offset == -1 )
+	if( seek_offset == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset in file IO handle.",
-		 function );
+		 "%s: unable to seek offset: %" PRIi64 " in file IO handle.",
+		 function,
+		 offset );
 
 		return( -1 );
 	}
-	if( offset < file_range_io_handle->range_offset )
+	if( seek_offset < file_range_io_handle->range_offset )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid offset value out of bounds.",
-		 function );
+		 "%s: invalid offset: %" PRIi64 " value out of bounds.",
+		 function,
+		 seek_offset );
 
 		return( -1 );
 	}
-	offset -= file_range_io_handle->range_offset;
+	seek_offset -= file_range_io_handle->range_offset;
 
-	return( offset );
+	return( seek_offset );
 }
 
 /* Function to determine if a file range exists

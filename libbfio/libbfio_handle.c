@@ -1106,7 +1106,7 @@ ssize_t libbfio_handle_read_buffer(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_SEEK_FAILED,
-				 "%s: unable to find current offset: %" PRIi64 " in handle.",
+				 "%s: unable to seek current offset: %" PRIi64 " in handle.",
 				 function,
 				 internal_handle->current_offset );
 
@@ -1341,6 +1341,7 @@ off64_t libbfio_handle_seek_offset(
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_seek_offset";
+	off64_t seek_offset                        = 0;
 
 	if( handle == NULL )
 	{
@@ -1405,25 +1406,25 @@ off64_t libbfio_handle_seek_offset(
 		return( -1 );
 	}
 #endif
-	offset = internal_handle->seek_offset(
-		  internal_handle->io_handle,
-		  offset,
-		  whence,
-		  error );
+	seek_offset = internal_handle->seek_offset(
+	               internal_handle->io_handle,
+	               offset,
+	               whence,
+	               error );
 
-	if( offset == -1 )
+	if( seek_offset == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to find offset: %" PRIi64 " in handle.",
+		 "%s: unable to seek offset: %" PRIi64 " in handle.",
 		 function,
 		 offset );
 
 		goto on_error;
 	}
-	internal_handle->current_offset = offset;
+	internal_handle->current_offset = seek_offset;
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -1440,7 +1441,7 @@ off64_t libbfio_handle_seek_offset(
 		return( -1 );
 	}
 #endif
-	return( offset );
+	return( seek_offset );
 
 on_error:
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )

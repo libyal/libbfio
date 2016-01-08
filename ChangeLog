@@ -18,12 +18,17 @@ Test
 * add open on demand tests
 * add multi threading tests
 * improve pool tests, e.g. maximum number of open handles
+  - add a test for remove handle
 
 Multi-threading support:
 * do not add locks to the BFIO back-end IO handles ?
 
 Windows
 * add VC_EXTRALEAN to config_msc.h ?
+
+20160108
+* changes to seek
+* added function to remove handle from pool
 
 20160105
 * 2016 update

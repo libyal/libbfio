@@ -138,6 +138,25 @@ int libbfio_pool_set_handle(
      libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
+int libbfio_pool_remove_handle(
+     libbfio_pool_t *pool,
+     int entry,
+     libbfio_handle_t **handle,
+     libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
+int libbfio_pool_get_maximum_number_of_open_handles(
+     libbfio_pool_t *pool,
+     int *maximum_number_of_open_handles,
+     libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
+int libbfio_pool_set_maximum_number_of_open_handles(
+     libbfio_pool_t *pool,
+     int maximum_number_of_open_handles,
+     libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
 int libbfio_pool_open(
      libbfio_pool_t *pool,
      int entry,
@@ -187,13 +206,6 @@ off64_t libbfio_pool_seek_offset(
          libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
-int libbfio_pool_get_size(
-     libbfio_pool_t *pool,
-     int entry,
-     size64_t *size,
-     libcerror_error_t **error );
-
-LIBBFIO_EXTERN \
 int libbfio_pool_get_offset(
      libbfio_pool_t *pool,
      int entry,
@@ -201,15 +213,10 @@ int libbfio_pool_get_offset(
      libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
-int libbfio_pool_get_maximum_number_of_open_handles(
+int libbfio_pool_get_size(
      libbfio_pool_t *pool,
-     int *maximum_number_of_open_handles,
-     libcerror_error_t **error );
-
-LIBBFIO_EXTERN \
-int libbfio_pool_set_maximum_number_of_open_handles(
-     libbfio_pool_t *pool,
-     int maximum_number_of_open_handles,
+     int entry,
+     size64_t *size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

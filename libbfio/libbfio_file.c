@@ -2054,6 +2054,7 @@ off64_t libbfio_file_seek_offset(
          libcerror_error_t **error )
 {
 	static char *function = "libbfio_file_seek_offset";
+	off64_t seek_offset   = 0;
 
 	if( file_io_handle == NULL )
 	{
@@ -2077,25 +2078,26 @@ off64_t libbfio_file_seek_offset(
 
 		return( -1 );
 	}
-	offset = libcfile_file_seek_offset(
-	          file_io_handle->file,
-	          offset,
-	          whence,
-	          error );
+	seek_offset = libcfile_file_seek_offset(
+	               file_io_handle->file,
+	               offset,
+	               whence,
+	               error );
 
-	if( offset < 0 )
+	if( seek_offset == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to find offset in file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to seek offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
+		 offset,
 		 file_io_handle->name );
 
 		return( -1 );
 	}
-	return( offset );
+	return( seek_offset );
 }
 
 /* Function to determine if a file exists
