@@ -10,7 +10,7 @@ EXIT_IGNORE=77;
 TEST_PREFIX="bfio";
 TEST_EXECUTABLE="${TEST_PREFIX}_test_handle_write";
 
-test_file_write()
+test_write()
 { 
 	FILENAME=$1;
 	FILE_SIZE=$2;
@@ -59,14 +59,14 @@ fi
 
 echo "Testing write";
 
-if ! test_file_write "test1" 0;
+if ! test_write "test1" 0;
 then
 	echo "";
 
 	exit ${EXIT_FAILURE};
 fi
 
-if ! test_file_write "test2" 100000;
+if ! test_write "test2" 100000;
 then
 	echo "";
 
