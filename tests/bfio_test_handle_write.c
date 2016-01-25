@@ -294,47 +294,30 @@ int main( int argc, char * const argv[] )
 {
 	libcstring_system_character_t *filename = NULL;
 	libcerror_error_t *error                = NULL;
-	size_t filename_size                    = 0;
+	size64_t file_size                      = 0;
 
 	if( argc < 2 )
 	{
 		fprintf(
 		 stderr,
-		 "Missing test path.\n" );
+		 "Missing filename.\n" );
 
 		return( EXIT_FAILURE );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcpath_path_join_wide(
-	     &filename,
-	     &filename_size,
-	     argv[ 1 ],
-	     libcstring_system_string_length(
-	      argv[ 1 ] ),
-	     _LIBCSTRING_SYSTEM_STRING( "test1" ),
-	     5,
-	     &error ) != 1 )
-#else
-	if( libcpath_path_join(
-	     &filename,
-	     &filename_size,
-	     argv[ 1 ],
-	     libcstring_system_string_length(
-	      argv[ 1 ] ),
-	     _LIBCSTRING_SYSTEM_STRING( "test1" ),
-	     5,
-	     &error ) != 1 )
-#endif
+	if( argc < 3 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to create filename.\n" );
+		 "Missing file size.\n" );
 
-		goto on_error;
+		return( EXIT_FAILURE );
 	}
+	filename = argv[ 1 ];
+	file_size = (size64_t) atoi( argv[ 2 ] );
+
 	if( bfio_test_handle_write(
 	     filename,
-	     0,
+	     file_size,
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -343,70 +326,16 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	memory_free(
-	 filename );
-
-	filename = NULL;
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcpath_path_join_wide(
-	     &filename,
-	     &filename_size,
-	     argv[ 1 ],
-	     libcstring_system_string_length(
-	      argv[ 1 ] ),
-	     _LIBCSTRING_SYSTEM_STRING( "test2" ),
-	     5,
-	     &error ) != 1 )
-#else
-	if( libcpath_path_join(
-	     &filename,
-	     &filename_size,
-	     argv[ 1 ],
-	     libcstring_system_string_length(
-	      argv[ 1 ] ),
-	     _LIBCSTRING_SYSTEM_STRING( "test2" ),
-	     5,
-	     &error ) != 1 )
-#endif
-	{
-		fprintf(
-		 stderr,
-		 "Unable to create filename.\n" );
-
-		goto on_error;
-	}
-	if( bfio_test_handle_write(
-	     filename,
-	     100000,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test write.\n" );
-
-		goto on_error;
-	}
-	memory_free(
-	 filename );
-
-	filename = NULL;
-
 	return( EXIT_SUCCESS );
 
 on_error:
 	if( error != NULL )
 	{
-		libbfio_error_backtrace_fprint(
+		libcerror_error_backtrace_fprint(
 		 error,
 		 stderr );
-		libbfio_error_free(
+		libcerror_error_free(
 		 &error );
-	}
-	if( filename != NULL )
-	{
-		memory_free(
-		 filename );
 	}
 	return( EXIT_FAILURE );
 }

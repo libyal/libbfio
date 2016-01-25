@@ -26,6 +26,9 @@ Multi-threading support:
 Windows
 * add VC_EXTRALEAN to config_msc.h ?
 
+20160125
+* updated dependencies
+
 20160108
 * changes to seek
 * added function to remove handle from pool

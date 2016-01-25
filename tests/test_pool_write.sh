@@ -1,57 +1,44 @@
 #!/bin/bash
+# Library write testing script
 #
-# Cross-platform C file functions library pool write offset testing script
-#
-# Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
-#
-# Refer to AUTHORS for acknowledgements.
-#
-# This software is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public License
-# along with this software.  If not, see <http://www.gnu.org/licenses/>.
-#
+# Version: 20160125
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-test_pool_write()
+TEST_PREFIX="bfio";
+TEST_EXECUTABLE="${TEST_PREFIX}_test_pool_write";
+
+test_file_write()
 { 
-	rm -rf tmp;
-	mkdir tmp;
+	FILENAME=$1;
+	FILE_SIZE=$2;
 
-	echo "Testing write";
+	TMPDIR="tmp$$";
 
-	${TEST_RUNNER} ./${BFIO_TEST_POOL_WRITE} tmp;
+	rm -rf ${TMPDIR};
+	mkdir ${TMPDIR};
+
+	${TEST_RUNNER} ${TMPDIR} ./${TEST_WRITE} "${TMPDIR}/${FILENAME}" ${FILE_SIZE};
 
 	RESULT=$?;
 
-	echo "";
-
-	rm -rf tmp;
+	rm -rf ${TMPDIR};
 
 	return ${RESULT};
 }
 
-BFIO_TEST_POOL_WRITE="bfio_test_pool_write";
+TEST_WRITE="./${TEST_EXECUTABLE}";
 
-if ! test -x ${BFIO_TEST_POOL_WRITE};
+if ! test -x ${TEST_WRITE};
 then
-	BFIO_TEST_POOL_WRITE="bfio_test_pool_write.exe";
+	TEST_WRITE="${TEST_EXECUTABLE}.exe";
 fi
 
-if ! test -x ${BFIO_TEST_POOL_WRITE};
+if ! test -x ${TEST_WRITE};
 then
-	echo "Missing executable: ${BFIO_TEST_POOL_WRITE}";
+	echo "Missing executable: ${TEST_WRITE}";
 
 	exit ${EXIT_FAILURE};
 fi
@@ -70,10 +57,23 @@ then
         exit ${EXIT_FAILURE};
 fi
 
-if ! test_pool_write;
+echo "Testing write";
+
+if ! test_file_write "test1" 0;
 then
+	echo "";
+
 	exit ${EXIT_FAILURE};
 fi
+
+if ! test_file_write "test2" 100000;
+then
+	echo "";
+
+	exit ${EXIT_FAILURE};
+fi
+
+echo "";
 
 exit ${EXIT_SUCCESS};
 
