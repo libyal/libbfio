@@ -317,7 +317,7 @@ int libbfio_file_io_handle_clone(
 	if( source_file_io_handle->name_size > 0 )
 	{
 		if( ( source_file_io_handle->name_size > (size_t) SSIZE_MAX )
-		 || ( ( sizeof( libcstring_system_character_t ) * source_file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
+		 || ( ( sizeof( libcstring_system_character_t ) * source_file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
 		{
 			libcerror_error_set(
 			 error,
@@ -983,7 +983,7 @@ int libbfio_file_io_handle_set_name(
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
-	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
+	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1707,7 +1707,7 @@ int libbfio_file_io_handle_set_name_wide(
 #endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
-	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size )  > (size_t) SSIZE_MAX ) )
+	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
