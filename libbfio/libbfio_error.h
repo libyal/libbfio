@@ -23,9 +23,8 @@
 #define _LIBBFIO_INTERNAL_ERROR_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #if !defined( HAVE_LOCAL_LIBBFIO )
 #include <libbfio/error.h>
@@ -71,5 +70,5 @@ int libbfio_error_backtrace_sprint(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_INTERNAL_ERROR_H ) */
 
