@@ -14,21 +14,13 @@ AM_CPPFLAGS = \
 	@LIBBFIO_DLL_IMPORT@
 
 TESTS = \
-	test_handle_seek.sh \
-	test_handle_read.sh \
-	test_handle_write.sh \
-	test_pool_seek.sh \
-	test_pool_read.sh \
-	test_pool_write.sh
+	test_api_functions.sh \
+	test_write_functions.sh
 
 check_SCRIPTS = \
-	test_handle_seek.sh \
-	test_handle_read.sh \
-	test_handle_write.sh \
-	test_pool_read.sh \
-	test_pool_seek.sh \
-	test_pool_write.sh \
-	test_runner.sh
+	test_api_functions.sh \
+	test_runner.sh \
+	test_write_functions.sh
 
 input_FILES = \
 	input/test.raw
@@ -38,12 +30,23 @@ EXTRA_DIST = \
 	$(input_FILES)
 
 check_PROGRAMS = \
+	bfio_test_get_version \
 	bfio_test_handle_read \
 	bfio_test_handle_seek \
 	bfio_test_handle_write \
 	bfio_test_pool_seek \
 	bfio_test_pool_read \
 	bfio_test_pool_write
+
+bfio_test_get_version_SOURCES = \
+	bfio_test_get_version.c \
+	bfio_test_libcstring.h \
+	bfio_test_libbfio.h \
+	bfio_test_unused.h
+
+bfio_test_get_version_LDADD = \
+	../libbfio/libbfio.la \
+	@LIBCSTRING_LIBADD@
 
 bfio_test_handle_read_SOURCES = \
 	bfio_test_libbfio.h \

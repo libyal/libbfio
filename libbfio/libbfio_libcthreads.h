@@ -25,6 +25,10 @@
 #include <common.h>
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+#define HAVE_LIBBFIO_MULTI_THREAD_SUPPORT
+#endif
+
+#if defined( HAVE_LIBBFIO_MULTI_THREAD_SUPPORT )
 
 /* Define HAVE_LOCAL_LIBCTHREADS for local use of libcthreads
  */
@@ -52,9 +56,9 @@
 
 #include <libcthreads.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBCTHREADS ) */
 
-#endif /* defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO ) */
+#endif /* defined( HAVE_LIBBFIO_MULTI_THREAD_SUPPORT ) */
 
-#endif
+#endif /* !defined( _LIBBFIO_LIBCTHREADS_H ) */
 

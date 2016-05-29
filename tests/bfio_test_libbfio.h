@@ -24,14 +24,14 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
- * before including libbfio.h
+/* If Cygwin libtool DLL support is enabled and do not want to create static
+ * executables set LIBBFIO_DLL_IMPORT before including libbfio.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_EXPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBBFIO_DLL_IMPORT
 #endif
 
 #include <libbfio.h>
 
-#endif
+#endif /* !defined( _BFIO_TEST_LIBBFIO_H ) */
 

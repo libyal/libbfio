@@ -1,6 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bfio_test_get_version", "bfio_test_get_version\bfio_test_get_version.vcproj", "{130CCBF5-8FCF-4F9F-A1F1-474A4EC4FB12}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B7D30EF4-720D-4898-990D-B379699E854F} = {B7D30EF4-720D-4898-990D-B379699E854F}
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bfio_test_handle_read", "bfio_test_handle_read\bfio_test_handle_read.vcproj", "{F7A2D803-FC42-4C42-B1E6-E794F94228BF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B7D30EF4-720D-4898-990D-B379699E854F} = {B7D30EF4-720D-4898-990D-B379699E854F}
@@ -129,6 +135,10 @@ Global
 		VSDebug|Win32 = VSDebug|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{130CCBF5-8FCF-4F9F-A1F1-474A4EC4FB12}.Release|Win32.ActiveCfg = Release|Win32
+		{130CCBF5-8FCF-4F9F-A1F1-474A4EC4FB12}.Release|Win32.Build.0 = Release|Win32
+		{130CCBF5-8FCF-4F9F-A1F1-474A4EC4FB12}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{130CCBF5-8FCF-4F9F-A1F1-474A4EC4FB12}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{F7A2D803-FC42-4C42-B1E6-E794F94228BF}.Release|Win32.ActiveCfg = Release|Win32
 		{F7A2D803-FC42-4C42-B1E6-E794F94228BF}.Release|Win32.Build.0 = Release|Win32
 		{F7A2D803-FC42-4C42-B1E6-E794F94228BF}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
