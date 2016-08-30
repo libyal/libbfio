@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="bfio_test_get_version"
-	ProjectGUID="{130CCBF5-8FCF-4F9F-A1F1-474A4EC4FB12}"
-	RootNamespace="bfio_test_get_version"
+	Name="bfio_test_error"
+	ProjectGUID="{68ADE020-2F11-4347-957E-B42F692D7265}"
+	RootNamespace="bfio_test_error"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\bfio_test_get_version.c"
+				RelativePath="..\..\tests\bfio_test_error.c"
 				>
 			</File>
 		</Filter>

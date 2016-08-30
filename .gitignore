@@ -119,6 +119,7 @@ stamp-h[1-9]
 /include/libbfio/types.h
 /libbfio/libbfio.rc
 /libbfio/libbfio_definitions.h
+/tests/bfio_test_error
 /tests/bfio_test_get_version
 /tests/bfio_test_handle_read
 /tests/bfio_test_handle_seek

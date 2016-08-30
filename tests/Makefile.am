@@ -30,6 +30,7 @@ EXTRA_DIST = \
 	$(input_FILES)
 
 check_PROGRAMS = \
+	bfio_test_error \
 	bfio_test_get_version \
 	bfio_test_handle_read \
 	bfio_test_handle_seek \
@@ -38,10 +39,22 @@ check_PROGRAMS = \
 	bfio_test_pool_read \
 	bfio_test_pool_write
 
+bfio_test_error_SOURCES = \
+	bfio_test_error.c \
+	bfio_test_libcstring.h \
+	bfio_test_libbfio.h \
+	bfio_test_macros.h \
+	bfio_test_unused.h
+
+bfio_test_error_LDADD = \
+	../libbfio/libbfio.la \
+	@LIBCSTRING_LIBADD@
+
 bfio_test_get_version_SOURCES = \
 	bfio_test_get_version.c \
 	bfio_test_libcstring.h \
 	bfio_test_libbfio.h \
+	bfio_test_macros.h \
 	bfio_test_unused.h
 
 bfio_test_get_version_LDADD = \

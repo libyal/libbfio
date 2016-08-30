@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20160528],
+ [20160830],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -93,6 +93,9 @@ AS_IF(
   [Missing headers: stdarg.h and varargs.h],
   [1])
  ])
+
+dnl Check for test function support
+AX_TESTS_CHECK_LOCAL
 
 dnl Check if DLL support is needed
 AS_IF(
