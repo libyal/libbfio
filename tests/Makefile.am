@@ -15,6 +15,7 @@ AM_CPPFLAGS = \
 
 TESTS = \
 	test_api_functions.sh \
+	test_api_types.sh \
 	test_write_functions.sh
 
 check_SCRIPTS = \
