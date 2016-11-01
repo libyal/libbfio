@@ -120,13 +120,13 @@ stamp-h[1-9]
 /libbfio/libbfio.rc
 /libbfio/libbfio_definitions.h
 /tests/bfio_test_error
-/tests/bfio_test_get_version
 /tests/bfio_test_handle_read
 /tests/bfio_test_handle_seek
 /tests/bfio_test_handle_write
 /tests/bfio_test_pool_read
 /tests/bfio_test_pool_seek
 /tests/bfio_test_pool_write
+/tests/bfio_test_support
 /tests/tmp*
 
 # Local library dependencies specific files
