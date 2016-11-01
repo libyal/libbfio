@@ -118,5 +118,5 @@ enum LIBBFIO_CODEPAGES
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_CODEPAGE_H ) */
 

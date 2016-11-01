@@ -38,10 +38,9 @@
 #include <libbfio/extern.h>
 
 #else
-
 #define LIBBFIO_EXTERN	extern
 
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_INTERNAL_EXTERN_H ) */
 

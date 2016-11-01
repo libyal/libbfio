@@ -1,5 +1,5 @@
 /*
- * Features of libbfio
+ * The internal libclocale header
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,28 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBBFIO_FEATURES_H )
-#define _LIBBFIO_FEATURES_H
+#if !defined( _BFIO_TEST_LIBCLOCALE_H )
+#define _BFIO_TEST_LIBCLOCALE_H
 
-/* The libbfio type support features
+#include <common.h>
+
+/* Define HAVE_LOCAL_LIBCLOCALE for local use of libclocale
  */
-#if defined( HAVE_WIDE_CHARACTER_TYPE ) || @HAVE_WIDE_CHARACTER_TYPE@
-#define LIBBFIO_HAVE_WIDE_CHARACTER_TYPE	1
-#endif
+#if defined( HAVE_LOCAL_LIBCLOCALE )
 
-#if defined( WINAPI ) || @HAVE_MULTI_THREAD_SUPPORT@
-#define LIBBFIO_HAVE_MULTI_THREAD_SUPPORT	1
-#endif
+#include <libclocale_codepage.h>
+#include <libclocale_definitions.h>
+#include <libclocale_locale.h>
+#include <libclocale_support.h>
 
-#if !defined( LIBBFIO_DEPRECATED )
-#if defined( __GNUC__ ) && __GNUC__ >= 3
-#define LIBBFIO_DEPRECATED	__attribute__ ((__deprecated__))
-#elif defined( _MSC_VER )
-#define LIBBFIO_DEPRECATED	__declspec(deprecated)
 #else
-#define LIBBFIO_DEPRECATED
-#endif
+
+/* If libtool DLL support is enabled set LIBCLOCALE_DLL_IMPORT
+ * before including libclocale.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCLOCALE_DLL_IMPORT
 #endif
 
-#endif /* !defined( _LIBBFIO_FEATURES_H ) */
+#include <libclocale.h>
+
+#endif /* defined( HAVE_LOCAL_LIBCLOCALE ) */
+
+#endif /* !defined( _BFIO_TEST_LIBCLOCALE_H ) */
 

@@ -25,8 +25,8 @@
 #include <stdlib.h>
 #endif
 
-#include "bfio_test_libcerror.h"
 #include "bfio_test_libbfio.h"
+#include "bfio_test_libcerror.h"
 #include "bfio_test_macros.h"
 #include "bfio_test_unused.h"
 
@@ -123,23 +123,23 @@ int main(
 
 	BFIO_TEST_RUN(
 	 "libbfio_error_free",
-	 bfio_test_error_free() )
+	 bfio_test_error_free );
 
 	BFIO_TEST_RUN(
 	 "libbfio_error_fprint",
-	 bfio_test_error_fprint() )
+	 bfio_test_error_fprint );
 
 	BFIO_TEST_RUN(
 	 "libbfio_error_sprint",
-	 bfio_test_error_sprint() )
+	 bfio_test_error_sprint );
 
 	BFIO_TEST_RUN(
 	 "libbfio_error_backtrace_fprint",
-	 bfio_test_error_backtrace_fprint() )
+	 bfio_test_error_backtrace_fprint );
 
 	BFIO_TEST_RUN(
 	 "libbfio_error_backtrace_sprint",
-	 bfio_test_error_backtrace_sprint() )
+	 bfio_test_error_backtrace_sprint );
 
 	return( EXIT_SUCCESS );
 

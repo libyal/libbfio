@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20160507
+# Version: 20161030
 
 # Generic auto-generated build files
 *~
@@ -57,6 +57,7 @@ stamp-h[1-9]
 /test-driver
 /ylwrap
 /m4/codeset.m4
+/m4/extern-inline.m4
 /m4/fcntl-o.m4
 /m4/gettext.m4
 /m4/glibc2.m4
@@ -120,9 +121,11 @@ stamp-h[1-9]
 /libbfio/libbfio.rc
 /libbfio/libbfio_definitions.h
 /tests/bfio_test_error
+/tests/bfio_test_handle
 /tests/bfio_test_handle_read
 /tests/bfio_test_handle_seek
 /tests/bfio_test_handle_write
+/tests/bfio_test_pool
 /tests/bfio_test_pool_read
 /tests/bfio_test_pool_seek
 /tests/bfio_test_pool_write

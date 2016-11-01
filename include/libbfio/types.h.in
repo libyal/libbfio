@@ -208,5 +208,5 @@ typedef intptr_t libbfio_pool_t;
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_TYPES_H ) */
 

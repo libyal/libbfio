@@ -1,5 +1,5 @@
 /*
- * Library to support (abstracted) basic file IO
+ * Library to support (abstracted) basic file input/output (IO)
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -51,7 +51,7 @@ BOOL WINAPI DllMain(
 		case DLL_PROCESS_ATTACH:
 			DisableThreadLibraryCalls(
 			 hinstDLL );
-		break;
+			break;
 
 		case DLL_THREAD_ATTACH:
 			break;

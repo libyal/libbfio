@@ -19,6 +19,7 @@ TESTS = \
 
 check_SCRIPTS = \
 	test_api_functions.sh \
+	test_api_types.sh \
 	test_runner.sh \
 	test_write_functions.sh
 
@@ -31,6 +32,7 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	bfio_test_error \
+	bfio_test_handle \
 	bfio_test_handle_read \
 	bfio_test_handle_seek \
 	bfio_test_handle_write \
@@ -50,11 +52,27 @@ bfio_test_error_LDADD = \
 	../libbfio/libbfio.la \
 	@LIBCSTRING_LIBADD@
 
-bfio_test_handle_read_SOURCES = \
+bfio_test_handle_SOURCES = \
+	bfio_test_handle.c \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
+	bfio_test_libclocale.h \
 	bfio_test_libcstring.h \
-	bfio_test_handle_read.c
+	bfio_test_libuna.h \
+	bfio_test_macros.h \
+	bfio_test_memory.c bfio_test_memory.h \
+	bfio_test_unused.h
+
+bfio_test_handle_LDADD = \
+	../libbfio/libbfio.la \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
+
+bfio_test_handle_read_SOURCES = \
+	bfio_test_handle_read.c \
+	bfio_test_libbfio.h \
+	bfio_test_libcerror.h \
+	bfio_test_libcstring.h
 
 bfio_test_handle_read_LDADD = \
 	../libbfio/libbfio.la \
@@ -62,10 +80,10 @@ bfio_test_handle_read_LDADD = \
 	@LIBCSTRING_LIBADD@
 
 bfio_test_handle_seek_SOURCES = \
+	bfio_test_handle_seek.c \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
-	bfio_test_libcstring.h \
-	bfio_test_handle_seek.c
+	bfio_test_libcstring.h
 
 bfio_test_handle_seek_LDADD = \
 	../libbfio/libbfio.la \
@@ -73,11 +91,11 @@ bfio_test_handle_seek_LDADD = \
 	@LIBCSTRING_LIBADD@
 
 bfio_test_handle_write_SOURCES = \
+	bfio_test_handle_write.c \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
 	bfio_test_libcpath.h \
-	bfio_test_libcstring.h \
-	bfio_test_handle_write.c
+	bfio_test_libcstring.h
 
 bfio_test_handle_write_LDADD = \
 	@LIBCPATH_LIBADD@ \

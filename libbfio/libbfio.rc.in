@@ -21,7 +21,7 @@ BEGIN
   BEGIN
     BLOCK "040904E4"
     BEGIN
-      VALUE "FileDescription",		"Library to support (abstracted) basic file IO\0"
+      VALUE "FileDescription",		"Library to support (abstracted) basic file input/output (IO)\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libbfio.dll\0"
       VALUE "LegalCopyright",		"(C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>\0"

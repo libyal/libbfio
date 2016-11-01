@@ -784,5 +784,5 @@ int libbfio_file_pool_append_handle_for_names_wide(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_H ) */
 
