@@ -223,5 +223,5 @@ int libbfio_pool_get_size(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_POOL_H ) */
 

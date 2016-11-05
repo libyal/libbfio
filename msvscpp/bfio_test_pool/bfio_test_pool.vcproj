@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="bfio_test_support"
-	ProjectGUID="{CB1B7FB8-73D7-44FC-8413-1BD7C630386A}"
-	RootNamespace="bfio_test_support"
+	Name="bfio_test_pool"
+	ProjectGUID="{4A24F6F8-B8C3-4437-AE94-1463354174D5}"
+	RootNamespace="bfio_test_pool"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\bfio_test_support.c"
+				RelativePath="..\..\tests\bfio_test_memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\bfio_test_pool.c"
 				>
 			</File>
 		</Filter>
@@ -194,11 +198,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\bfio_test_libclocale.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\bfio_test_libcstring.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\bfio_test_libuna.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\bfio_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\bfio_test_memory.h"
 				>
 			</File>
 			<File

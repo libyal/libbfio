@@ -1,5 +1,5 @@
 /*
- * Library handle type testing program
+ * Library pool type testing program
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -42,13 +42,13 @@
 /* Retrieves source as a narrow string
  * Returns 1 if successful or -1 on error
  */
-int bfio_test_handle_get_narrow_source(
+int bfio_test_pool_get_narrow_source(
      const libcstring_system_character_t *source,
      char *narrow_string,
      size_t narrow_string_size,
      libcerror_error_t **error )
 {
-	static char *function     = "bfio_test_handle_get_narrow_source";
+	static char *function     = "bfio_test_pool_get_narrow_source";
 	size_t narrow_source_size = 0;
 	size_t source_length      = 0;
 
@@ -242,13 +242,13 @@ int bfio_test_handle_get_narrow_source(
 /* Retrieves source as a wide string
  * Returns 1 if successful or -1 on error
  */
-int bfio_test_handle_get_wide_source(
+int bfio_test_pool_get_wide_source(
      const libcstring_system_character_t *source,
      wchar_t *wide_string,
      size_t wide_string_size,
      libcerror_error_t **error )
 {
-	static char *function   = "bfio_test_handle_get_wide_source";
+	static char *function   = "bfio_test_pool_get_wide_source";
 	size_t wide_source_size = 0;
 	size_t source_length    = 0;
 
@@ -439,184 +439,22 @@ int bfio_test_handle_get_wide_source(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* Creates and opens a source handle
- * Returns 1 if successful or -1 on error
- */
-int bfio_test_handle_open_source(
-     libbfio_handle_t **handle,
-     const libcstring_system_character_t *source,
-     libcerror_error_t **error )
-{
-	static char *function = "bfio_test_handle_open_source";
-	int result            = 0;
-	size_t source_length  = 0;
-
-	if( handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( source == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid source.",
-		 function );
-
-		return( -1 );
-	}
-	if( libbfio_file_initialize(
-	     handle,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize handle.",
-		 function );
-
-		goto on_error;
-	}
-	source_length = libcstring_system_string_length(
-	                 source );
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libbfio_file_set_name_wide(
-	          *handle,
-	          source,
-	          source_length,
-	          error );
-#else
-	result = libbfio_file_set_name(
-	          *handle,
-	          source,
-	          source_length,
-	          error );
-#endif
-	if( result != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set name in handle.",
-		 function );
-
-		goto on_error;
-	}
-	result = libbfio_handle_open(
-	          *handle,
-	          LIBBFIO_OPEN_READ,
-	          error );
-
-	if( result != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open handle.",
-		 function );
-
-		goto on_error;
-	}
-	return( 1 );
-
-on_error:
-	if( *handle != NULL )
-	{
-		libbfio_handle_free(
-		 handle,
-		 NULL );
-	}
-	return( -1 );
-}
-
-/* Closes and frees a source handle
- * Returns 1 if successful or -1 on error
- */
-int bfio_test_handle_close_source(
-     libbfio_handle_t **handle,
-     libcerror_error_t **error )
-{
-	static char *function = "bfio_test_handle_close_source";
-	int result            = 0;
-
-	if( handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( libbfio_handle_close(
-	     *handle,
-	     error ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close handle.",
-		 function );
-
-		result = -1;
-	}
-	if( libbfio_handle_free(
-	     handle,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free handle.",
-		 function );
-
-		result = -1;
-	}
-	return( result );
-}
-
-/* Tests the libbfio_handle_initialize function
+/* Tests the libbfio_pool_initialize function
  * Returns 1 if successful or 0 if not
  */
-int bfio_test_handle_initialize(
+int bfio_test_pool_initialize(
      void )
 {
 	libcerror_error_t *error = NULL;
-	libbfio_handle_t *handle      = NULL;
+	libbfio_pool_t *pool     = NULL;
 	int result               = 0;
 
-	/* Test libbfio_handle_initialize
+	/* Test libbfio_pool_initialize
 	 */
-	result = libbfio_handle_initialize(
-	          &handle,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          0,
+	result = libbfio_pool_initialize(
+	          &pool,
+	          1,
+	          1,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -625,15 +463,15 @@ int bfio_test_handle_initialize(
 	 1 );
 
         BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "handle",
-         handle );
+         "pool",
+         pool );
 
         BFIO_TEST_ASSERT_IS_NULL(
          "error",
          error );
 
-	result = libbfio_handle_free(
-	          &handle,
+	result = libbfio_pool_free(
+	          &pool,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -642,8 +480,8 @@ int bfio_test_handle_initialize(
 	 1 );
 
         BFIO_TEST_ASSERT_IS_NULL(
-         "handle",
-         handle );
+         "pool",
+         pool );
 
         BFIO_TEST_ASSERT_IS_NULL(
          "error",
@@ -651,20 +489,10 @@ int bfio_test_handle_initialize(
 
 	/* Test error cases
 	 */
-	result = libbfio_handle_initialize(
+	result = libbfio_pool_initialize(
 	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          0,
+	          1,
+	          1,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -679,22 +507,12 @@ int bfio_test_handle_initialize(
 	libcerror_error_free(
 	 &error );
 
-	handle = (libbfio_handle_t *) 0x12345678UL;
+	pool = (libbfio_pool_t *) 0x12345678UL;
 
-	result = libbfio_handle_initialize(
-	          &handle,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          0,
+	result = libbfio_pool_initialize(
+	          &pool,
+	          1,
+	          1,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -709,38 +527,28 @@ int bfio_test_handle_initialize(
 	libcerror_error_free(
 	 &error );
 
-	handle = NULL;
+	pool = NULL;
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
 
-	/* Test libbfio_handle_initialize with malloc failing
+	/* Test libbfio_pool_initialize with malloc failing
 	 */
 	bfio_test_malloc_attempts_before_fail = 0;
 
-	result = libbfio_handle_initialize(
-	          &handle,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          0,
+	result = libbfio_pool_initialize(
+	          &pool,
+	          1,
+	          1,
 	          &error );
 
 	if( bfio_test_malloc_attempts_before_fail != -1 )
 	{
 		bfio_test_malloc_attempts_before_fail = -1;
 
-		if( handle != NULL )
+		if( pool != NULL )
 		{
-			libbfio_handle_free(
-			 &handle,
+			libbfio_pool_free(
+			 &pool,
 			 NULL );
 		}
 	}
@@ -752,8 +560,8 @@ int bfio_test_handle_initialize(
 		 -1 );
 
 		BFIO_TEST_ASSERT_IS_NULL(
-		 "handle",
-		 handle );
+		 "pool",
+		 pool );
 
 		BFIO_TEST_ASSERT_IS_NOT_NULL(
 		 "error",
@@ -762,34 +570,24 @@ int bfio_test_handle_initialize(
 		libcerror_error_free(
 		 &error );
 	}
-	/* Test libbfio_handle_initialize with memset failing
+	/* Test libbfio_pool_initialize with memset failing
 	 */
 	bfio_test_memset_attempts_before_fail = 0;
 
-	result = libbfio_handle_initialize(
-	          &handle,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          0,
+	result = libbfio_pool_initialize(
+	          &pool,
+	          1,
+	          1,
 	          &error );
 
 	if( bfio_test_memset_attempts_before_fail != -1 )
 	{
 		bfio_test_memset_attempts_before_fail = -1;
 
-		if( handle != NULL )
+		if( pool != NULL )
 		{
-			libbfio_handle_free(
-			 &handle,
+			libbfio_pool_free(
+			 &pool,
 			 NULL );
 		}
 	}
@@ -801,8 +599,8 @@ int bfio_test_handle_initialize(
 		 -1 );
 
 		BFIO_TEST_ASSERT_IS_NULL(
-		 "handle",
-		 handle );
+		 "pool",
+		 pool );
 
 		BFIO_TEST_ASSERT_IS_NOT_NULL(
 		 "error",
@@ -821,19 +619,19 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( handle != NULL )
+	if( pool != NULL )
 	{
-		libbfio_handle_free(
-		 &handle,
+		libbfio_pool_free(
+		 &pool,
 		 NULL );
 	}
 	return( 0 );
 }
 
-/* Tests the libbfio_handle_free function
+/* Tests the libbfio_pool_free function
  * Returns 1 if successful or 0 if not
  */
-int bfio_test_handle_free(
+int bfio_test_pool_free(
      void )
 {
 	libcerror_error_t *error = NULL;
@@ -841,7 +639,7 @@ int bfio_test_handle_free(
 
 	/* Test error cases
 	 */
-	result = libbfio_handle_free(
+	result = libbfio_pool_free(
 	          NULL,
 	          &error );
 
@@ -868,283 +666,19 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libbfio_file_set_name and libbfio_handle_open functions
+/* Tests the libbfio_pool_get_number_of_handles functions
  * Returns 1 if successful or 0 if not
  */
-int bfio_test_handle_open(
-     const libcstring_system_character_t *source )
+int bfio_test_pool_get_number_of_handles(
+     libbfio_pool_t *pool )
 {
-	char narrow_source[ 256 ];
-
 	libcerror_error_t *error = NULL;
-	libbfio_handle_t *handle = NULL;
-	size_t source_length     = 0;
+	int number_of_handles    = 0;
 	int result               = 0;
 
-	/* Initialize test
-	 */
-	result = bfio_test_handle_get_narrow_source(
-	          source,
-	          narrow_source,
-	          256,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	result = libbfio_file_initialize(
-	          &handle,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "handle",
-         handle );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	source_length = libcstring_narrow_string_length(
-	                 narrow_source );
-
-	result = libbfio_file_set_name(
-	          handle,
-	          narrow_source,
-	          source_length,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test open
-	 */
-	result = libbfio_handle_open(
-	          handle,
-	          LIBBFIO_OPEN_READ,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Clean up
-	 */
-	result = libbfio_handle_close(
-	          handle,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 0 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	result = libbfio_handle_free(
-	          &handle,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "handle",
-         handle );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	if( handle != NULL )
-	{
-		libbfio_handle_free(
-		 &handle,
-		 NULL );
-	}
-	return( 0 );
-}
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-/* Tests the libbfio_file_set_name_wide and libbfio_handle_open functions
- * Returns 1 if successful or 0 if not
- */
-int bfio_test_handle_open_wide(
-     const libcstring_system_character_t *source )
-{
-	wchar_t wide_source[ 256 ];
-
-	libcerror_error_t *error = NULL;
-	libbfio_handle_t *handle = NULL;
-	size_t source_length     = 0;
-	int result               = 0;
-
-	/* Initialize test
-	 */
-	result = bfio_test_handle_get_wide_source(
-	          source,
-	          wide_source,
-	          256,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	result = libbfio_file_initialize(
-	          &handle,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "handle",
-         handle );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	source_length = libcstring_wide_string_length(
-	                 wide_source );
-
-	result = libbfio_file_set_name_wide(
-	          handle,
-	          wide_source,
-	          source_length,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test open
-	 */
-	result = libbfio_handle_open(
-	          handle,
-	          LIBBFIO_OPEN_READ,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Clean up
-	 */
-	result = libbfio_handle_close(
-	          handle,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 0 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	result = libbfio_handle_free(
-	          &handle,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "handle",
-         handle );
-
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	if( handle != NULL )
-	{
-		libbfio_handle_free(
-		 &handle,
-		 NULL );
-	}
-	return( 0 );
-}
-
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
-
-/* Tests the libbfio_handle_get_number_of_offsets_read functions
- * Returns 1 if successful or 0 if not
- */
-int bfio_test_handle_get_number_of_offsets_read(
-     libbfio_handle_t *handle )
-{
-	libcerror_error_t *error   = NULL;
-	int number_of_offsets_read = 0;
-	int result                 = 0;
-
-	result = libbfio_handle_get_number_of_offsets_read(
-	          handle,
-	          &number_of_offsets_read,
+	result = libbfio_pool_get_number_of_handles(
+	          pool,
+	          &number_of_handles,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1158,9 +692,9 @@ int bfio_test_handle_get_number_of_offsets_read(
 
 	/* Test error cases
 	 */
-	result = libbfio_handle_get_number_of_offsets_read(
+	result = libbfio_pool_get_number_of_handles(
 	          NULL,
-	          &number_of_offsets_read,
+	          &number_of_handles,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1175,8 +709,8 @@ int bfio_test_handle_get_number_of_offsets_read(
 	libcerror_error_free(
 	 &error );
 
-	result = libbfio_handle_get_number_of_offsets_read(
-	          handle,
+	result = libbfio_pool_get_number_of_handles(
+	          pool,
 	          NULL,
 	          &error );
 
@@ -1217,86 +751,24 @@ int main(
 {
 	libcerror_error_t *error              = NULL;
 	libcstring_system_character_t *source = NULL;
-	libbfio_handle_t *handle              = NULL;
-	int result                            = 0;
 
 	if( argc >= 2 )
 	{
 		source = argv[ 1 ];
 	}
 	BFIO_TEST_RUN(
-	 "libbfio_handle_initialize",
-	 bfio_test_handle_initialize );
+	 "libbfio_pool_initialize",
+	 bfio_test_pool_initialize );
 
 	BFIO_TEST_RUN(
-	 "libbfio_handle_free",
-	 bfio_test_handle_free );
+	 "libbfio_pool_free",
+	 bfio_test_pool_free );
 
-#if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
-	if( source != NULL )
-	{
-/* TODO change to set name test */
-		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_handle_open",
-		 bfio_test_handle_open,
-		 source );
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_handle_open_wide",
-		 bfio_test_handle_open_wide,
-		 source );
-
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
-
-		/* TODO add test for libbfio_handle_close */
-
-		/* Initialize test
-		 */
-		result = bfio_test_handle_open_source(
-		          &handle,
-		          source,
-		          &error );
-
-		BFIO_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 1 );
-
-	        BFIO_TEST_ASSERT_IS_NOT_NULL(
-	         "handle",
-	         handle );
-
-	        BFIO_TEST_ASSERT_IS_NULL(
-	         "error",
-	         error );
-
-		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_handle_get_number_of_offsets_read",
-		 bfio_test_handle_get_number_of_offsets_read,
-		 handle );
-
-		/* Clean up
-		 */
-		result = bfio_test_handle_close_source(
-		          &handle,
-		          &error );
-
-		BFIO_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 0 );
-
-		BFIO_TEST_ASSERT_IS_NULL(
-	         "handle",
-	         handle );
-
-	        BFIO_TEST_ASSERT_IS_NULL(
-	         "error",
-	         error );
-	}
-#endif /* !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 ) */
+/* TODO
+	BFIO_TEST_RUN(
+	 "libbfio_pool_get_number_of_handles",
+	 bfio_test_pool_get_number_of_handles );
+*/
 
 	return( EXIT_SUCCESS );
 
@@ -1305,12 +777,6 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
-	}
-	if( handle != NULL )
-	{
-		bfio_test_handle_close_source(
-		 &handle,
-		 NULL );
 	}
 	return( EXIT_FAILURE );
 }
