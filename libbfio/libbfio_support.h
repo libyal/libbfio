@@ -54,5 +54,5 @@ int libbfio_set_codepage(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_SUPPORT_H ) */
 

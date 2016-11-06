@@ -20,16 +20,18 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <narrow_string.h>
+#include <system_string.h>
+#include <types.h>
+#include <wide_string.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include <stdio.h>
-
-#include "bfio_test_libcerror.h"
 #include "bfio_test_libbfio.h"
-#include "bfio_test_libcstring.h"
+#include "bfio_test_libcerror.h"
 
 /* Tests libbfio_handle_seek_offset
  * Returns 1 if successful, 0 if not or -1 on error
@@ -111,7 +113,7 @@ int bfio_handle_test_seek_offset(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
@@ -130,7 +132,7 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   argv[ 1 ] );
 
 	/* Initialization
@@ -145,7 +147,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_file_set_name_wide(
 	     handle,
 	     argv[ 1 ],

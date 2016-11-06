@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libbfio_definitions.h"
 #include "libbfio_file.h"
@@ -29,7 +32,6 @@
 #include "libbfio_libcerror.h"
 #include "libbfio_libcfile.h"
 #include "libbfio_libcpath.h"
-#include "libbfio_libcstring.h"
 #include "libbfio_system_string.h"
 #include "libbfio_types.h"
 
@@ -316,7 +318,7 @@ int libbfio_file_io_handle_clone(
 	if( source_file_io_handle->name_size > 0 )
 	{
 		if( ( source_file_io_handle->name_size > (size_t) SSIZE_MAX )
-		 || ( ( sizeof( libcstring_system_character_t ) * source_file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
+		 || ( ( sizeof( system_character_t ) * source_file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
 		{
 			libcerror_error_set(
 			 error,
@@ -327,7 +329,7 @@ int libbfio_file_io_handle_clone(
 
 			goto on_error;
 		}
-		( *destination_file_io_handle )->name = libcstring_system_string_allocate(
+		( *destination_file_io_handle )->name = system_string_allocate(
 		                                         source_file_io_handle->name_size );
 
 		if( ( *destination_file_io_handle )->name == NULL )
@@ -343,7 +345,7 @@ int libbfio_file_io_handle_clone(
 		}
 		if( source_file_io_handle->name_size > 1 )
 		{
-			if( libcstring_system_string_copy(
+			if( system_string_copy(
 			     ( *destination_file_io_handle )->name,
 			     source_file_io_handle->name,
 			     source_file_io_handle->name_size ) == NULL )
@@ -702,7 +704,7 @@ int libbfio_file_io_handle_set_name(
 		goto on_error;
 	}
 	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
-	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
+	 || ( ( sizeof( system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -713,7 +715,7 @@ int libbfio_file_io_handle_set_name(
 
 		goto on_error;
 	}
-	file_io_handle->name = libcstring_system_string_allocate(
+	file_io_handle->name = system_string_allocate(
 	                        file_io_handle->name_size );
 
 	if( file_io_handle->name == NULL )
@@ -1088,7 +1090,7 @@ int libbfio_file_io_handle_set_name_wide(
 		goto on_error;
 	}
 	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
-	 || ( ( sizeof( libcstring_system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
+	 || ( ( sizeof( system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1099,7 +1101,7 @@ int libbfio_file_io_handle_set_name_wide(
 
 		goto on_error;
 	}
-	file_io_handle->name = libcstring_system_string_allocate(
+	file_io_handle->name = system_string_allocate(
 	                        file_io_handle->name_size );
 
 	if( file_io_handle->name == NULL )
@@ -1179,7 +1181,7 @@ int libbfio_file_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcfile_file_open_wide(
 	          file_io_handle->file,
 	          file_io_handle->name,
@@ -1198,7 +1200,7 @@ int libbfio_file_open(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to open file: %" PRIs_SYSTEM ".",
 		 function,
 		 file_io_handle->name );
 
@@ -1248,7 +1250,7 @@ int libbfio_file_close(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to close file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to close file: %" PRIs_SYSTEM ".",
 		 function,
 		 file_io_handle->name );
 
@@ -1305,7 +1307,7 @@ ssize_t libbfio_file_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read from file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to read from file: %" PRIs_SYSTEM ".",
 		 function,
 		 file_io_handle->name );
 
@@ -1360,7 +1362,7 @@ ssize_t libbfio_file_write(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to write to file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to write to file: %" PRIs_SYSTEM ".",
 		 function,
 		 file_io_handle->name );
 
@@ -1415,7 +1417,7 @@ off64_t libbfio_file_seek_offset(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset: %" PRIi64 " in file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to seek offset: %" PRIi64 " in file: %" PRIs_SYSTEM ".",
 		 function,
 		 offset,
 		 file_io_handle->name );
@@ -1457,7 +1459,7 @@ int libbfio_file_exists(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcfile_file_exists_wide(
 	          file_io_handle->name,
 	          error );
@@ -1472,7 +1474,7 @@ int libbfio_file_exists(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if file: %" PRIs_LIBCSTRING_SYSTEM " exists.",
+		 "%s: unable to determine if file: %" PRIs_SYSTEM " exists.",
 		 function,
 		 file_io_handle->name );
 
@@ -1561,7 +1563,7 @@ int libbfio_file_get_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size of file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to retrieve size of file: %" PRIs_SYSTEM ".",
 		 function,
 		 file_io_handle->name );
 

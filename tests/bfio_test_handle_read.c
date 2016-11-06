@@ -20,16 +20,18 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <narrow_string.h>
+#include <system_string.h>
+#include <types.h>
+#include <wide_string.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include <stdio.h>
-
-#include "bfio_test_libcerror.h"
 #include "bfio_test_libbfio.h"
-#include "bfio_test_libcstring.h"
+#include "bfio_test_libcerror.h"
 
 #define BFIO_TEST_READ_BUFFER_SIZE	4096
 
@@ -297,7 +299,7 @@ int bfio_test_handle_read(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
@@ -316,7 +318,7 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   argv[ 1 ] );
 
 	/* Initialization
@@ -331,7 +333,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_file_set_name_wide(
 	     handle,
 	     argv[ 1 ],

@@ -28,7 +28,6 @@
 #include "libbfio_extern.h"
 #include "libbfio_libcerror.h"
 #include "libbfio_libcfile.h"
-#include "libbfio_libcstring.h"
 #include "libbfio_types.h"
 
 #if defined( __cplusplus )
@@ -41,7 +40,7 @@ struct libbfio_file_io_handle
 {
 	/* The name
 	 */
-	libcstring_system_character_t *name;
+	system_character_t *name;
 
 	/* The size of the name
 	 */

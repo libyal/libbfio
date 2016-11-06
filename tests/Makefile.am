@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -46,20 +45,17 @@ check_PROGRAMS = \
 bfio_test_error_SOURCES = \
 	bfio_test_error.c \
 	bfio_test_libbfio.h \
-	bfio_test_libcstring.h \
 	bfio_test_macros.h \
 	bfio_test_unused.h
 
 bfio_test_error_LDADD = \
-	../libbfio/libbfio.la \
-	@LIBCSTRING_LIBADD@
+	../libbfio/libbfio.la
 
 bfio_test_handle_SOURCES = \
 	bfio_test_handle.c \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
 	bfio_test_libclocale.h \
-	bfio_test_libcstring.h \
 	bfio_test_libuna.h \
 	bfio_test_macros.h \
 	bfio_test_memory.c bfio_test_memory.h \
@@ -67,50 +63,42 @@ bfio_test_handle_SOURCES = \
 
 bfio_test_handle_LDADD = \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_handle_read_SOURCES = \
 	bfio_test_handle_read.c \
 	bfio_test_libbfio.h \
-	bfio_test_libcerror.h \
-	bfio_test_libcstring.h
+	bfio_test_libcerror.h
 
 bfio_test_handle_read_LDADD = \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_handle_seek_SOURCES = \
 	bfio_test_handle_seek.c \
 	bfio_test_libbfio.h \
-	bfio_test_libcerror.h \
-	bfio_test_libcstring.h
+	bfio_test_libcerror.h
 
 bfio_test_handle_seek_LDADD = \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_handle_write_SOURCES = \
 	bfio_test_handle_write.c \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
-	bfio_test_libcpath.h \
-	bfio_test_libcstring.h
+	bfio_test_libcpath.h
 
 bfio_test_handle_write_LDADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_pool_SOURCES = \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
 	bfio_test_libclocale.h \
-	bfio_test_libcstring.h \
 	bfio_test_libuna.h \
 	bfio_test_macros.h \
 	bfio_test_memory.c bfio_test_memory.h \
@@ -119,35 +107,29 @@ bfio_test_pool_SOURCES = \
 
 bfio_test_pool_LDADD = \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_pool_read_SOURCES = \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
-	bfio_test_libcstring.h \
 	bfio_test_pool_read.c
 
 bfio_test_pool_read_LDADD = \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_pool_seek_SOURCES = \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
-	bfio_test_libcstring.h \
 	bfio_test_pool_seek.c
 
 bfio_test_pool_seek_LDADD = \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_pool_write_SOURCES = \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
-	bfio_test_libcstring.h \
 	bfio_test_libcpath.h \
 	bfio_test_pool_write.c
 
@@ -155,21 +137,18 @@ bfio_test_pool_write_LDADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 bfio_test_support_SOURCES = \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
-	bfio_test_libcstring.h \
 	bfio_test_macros.h \
 	bfio_test_support.c \
 	bfio_test_unused.h
 
 bfio_test_support_LDADD = \
 	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

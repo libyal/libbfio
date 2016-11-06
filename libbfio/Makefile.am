@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -30,7 +29,6 @@ libbfio_la_SOURCES = \
 	libbfio_libcfile.h \
 	libbfio_libclocale.h \
 	libbfio_libcpath.h \
-	libbfio_libcstring.h \
 	libbfio_libcthreads.h \
 	libbfio_libuna.h \
 	libbfio_memory_range.c libbfio_memory_range.h \
@@ -41,7 +39,6 @@ libbfio_la_SOURCES = \
 	libbfio_unused.h
 
 libbfio_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \

@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <file_stream.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -30,12 +33,11 @@
 #include "bfio_test_libbfio.h"
 #include "bfio_test_libcerror.h"
 #include "bfio_test_libclocale.h"
-#include "bfio_test_libcstring.h"
 #include "bfio_test_libuna.h"
 #include "bfio_test_macros.h"
 #include "bfio_test_memory.h"
 
-#if SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
 #error Unsupported size of wchar_t
 #endif
 
@@ -43,7 +45,7 @@
  * Returns 1 if successful or -1 on error
  */
 int bfio_test_handle_get_narrow_source(
-     const libcstring_system_character_t *source,
+     const system_character_t *source,
      char *narrow_string,
      size_t narrow_string_size,
      libcerror_error_t **error )
@@ -52,7 +54,7 @@ int bfio_test_handle_get_narrow_source(
 	size_t narrow_source_size = 0;
 	size_t source_length      = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	int result                = 0;
 #endif
 
@@ -89,7 +91,7 @@ int bfio_test_handle_get_narrow_source(
 
 		return( -1 );
 	}
-	source_length = libcstring_system_string_length(
+	source_length = system_string_length(
 	                 source );
 
 	if( source_length > (size_t) ( SSIZE_MAX - 1 ) )
@@ -103,7 +105,7 @@ int bfio_test_handle_get_narrow_source(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
@@ -152,7 +154,7 @@ int bfio_test_handle_get_narrow_source(
 #else
 	narrow_source_size = source_length + 1;
 
-#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	if( narrow_string_size < narrow_source_size )
 	{
@@ -165,7 +167,7 @@ int bfio_test_handle_get_narrow_source(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libclocale_codepage == 0 )
 	{
 #if SIZEOF_WCHAR_T == 4
@@ -216,7 +218,7 @@ int bfio_test_handle_get_narrow_source(
 		return( -1 );
 	}
 #else
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     narrow_string,
 	     source,
 	     source_length ) == NULL )
@@ -232,7 +234,7 @@ int bfio_test_handle_get_narrow_source(
 	}
 	narrow_string[ source_length ] = 0;
 
-#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	return( 1 );
 }
@@ -243,7 +245,7 @@ int bfio_test_handle_get_narrow_source(
  * Returns 1 if successful or -1 on error
  */
 int bfio_test_handle_get_wide_source(
-     const libcstring_system_character_t *source,
+     const system_character_t *source,
      wchar_t *wide_string,
      size_t wide_string_size,
      libcerror_error_t **error )
@@ -252,7 +254,7 @@ int bfio_test_handle_get_wide_source(
 	size_t wide_source_size = 0;
 	size_t source_length    = 0;
 
-#if !defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if !defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	int result              = 0;
 #endif
 
@@ -289,7 +291,7 @@ int bfio_test_handle_get_wide_source(
 
 		return( -1 );
 	}
-	source_length = libcstring_system_string_length(
+	source_length = system_string_length(
 	                 source );
 
 	if( source_length > (size_t) ( SSIZE_MAX - 1 ) )
@@ -303,7 +305,7 @@ int bfio_test_handle_get_wide_source(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	wide_source_size = source_length + 1;
 #else
 	if( libclocale_codepage == 0 )
@@ -352,7 +354,7 @@ int bfio_test_handle_get_wide_source(
 		return( -1 );
 	}
 
-#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	if( wide_string_size < wide_source_size )
 	{
@@ -365,8 +367,8 @@ int bfio_test_handle_get_wide_source(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcstring_system_string_copy(
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	if( system_string_copy(
 	     wide_string,
 	     source,
 	     source_length ) == NULL )
@@ -432,7 +434,7 @@ int bfio_test_handle_get_wide_source(
 		return( -1 );
 	}
 
-#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 	return( 1 );
 }
@@ -444,7 +446,7 @@ int bfio_test_handle_get_wide_source(
  */
 int bfio_test_handle_open_source(
      libbfio_handle_t **handle,
-     const libcstring_system_character_t *source,
+     const system_character_t *source,
      libcerror_error_t **error )
 {
 	static char *function = "bfio_test_handle_open_source";
@@ -486,10 +488,10 @@ int bfio_test_handle_open_source(
 
 		goto on_error;
 	}
-	source_length = libcstring_system_string_length(
+	source_length = system_string_length(
 	                 source );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libbfio_file_set_name_wide(
 	          *handle,
 	          source,
@@ -872,7 +874,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_handle_open(
-     const libcstring_system_character_t *source )
+     const system_character_t *source )
 {
 	char narrow_source[ 256 ];
 
@@ -915,7 +917,7 @@ int bfio_test_handle_open(
          "error",
          error );
 
-	source_length = libcstring_narrow_string_length(
+	source_length = narrow_string_length(
 	                 narrow_source );
 
 	result = libbfio_file_set_name(
@@ -1004,7 +1006,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_handle_open_wide(
-     const libcstring_system_character_t *source )
+     const system_character_t *source )
 {
 	wchar_t wide_source[ 256 ];
 
@@ -1047,7 +1049,7 @@ int bfio_test_handle_open_wide(
          "error",
          error );
 
-	source_length = libcstring_wide_string_length(
+	source_length = wide_string_length(
 	                 wide_source );
 
 	result = libbfio_file_set_name_wide(
@@ -1205,7 +1207,7 @@ on_error:
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc,
      wchar_t * const argv[] )
@@ -1215,10 +1217,10 @@ int main(
      char * const argv[] )
 #endif
 {
-	libcerror_error_t *error              = NULL;
-	libcstring_system_character_t *source = NULL;
-	libbfio_handle_t *handle              = NULL;
-	int result                            = 0;
+	libcerror_error_t *error   = NULL;
+	system_character_t *source = NULL;
+	libbfio_handle_t *handle   = NULL;
+	int result                 = 0;
 
 	if( argc >= 2 )
 	{
