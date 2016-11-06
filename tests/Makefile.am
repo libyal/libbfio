@@ -62,6 +62,8 @@ bfio_test_handle_SOURCES = \
 	bfio_test_unused.h
 
 bfio_test_handle_LDADD = \
+	@LIBUNA_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
 
@@ -106,6 +108,8 @@ bfio_test_pool_SOURCES = \
 	bfio_test_unused.h
 
 bfio_test_pool_LDADD = \
+	@LIBUNA_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
 
