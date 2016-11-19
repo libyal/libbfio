@@ -134,5 +134,5 @@ int libbfio_memory_range_get_size(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_MEMORY_RANGE_H ) */
 

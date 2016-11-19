@@ -57,5 +57,5 @@ int libbfio_file_pool_append_handles_for_names_wide(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_FILE_POOL_H ) */
 

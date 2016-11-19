@@ -52,10 +52,10 @@ enum LIBBFIO_FLAGS
 };
 
 /* The access flags definitions
- * bit 1	set to 1 for read access
- * bit 2	set to 1 for write access
- * bit 3	set to 1 to truncate an existing file on write
- * bit 4-8	not used
+ * bit 1						set to 1 for read access
+ * bit 2						set to 1 for write access
+ * bit 3						set to 1 to truncate an existing file on write
+ * bit 4-8						not used
  */
 enum LIBBFIO_ACCESS_FLAGS
 {

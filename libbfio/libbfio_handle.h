@@ -325,5 +325,5 @@ int libbfio_handle_get_offset_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_INTERNAL_HANDLE_H ) */
 

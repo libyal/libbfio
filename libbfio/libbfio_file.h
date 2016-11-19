@@ -194,5 +194,5 @@ int libbfio_file_get_size(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBBFIO_FILE_H ) */
 
