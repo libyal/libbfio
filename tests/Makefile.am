@@ -22,7 +22,7 @@ check_SCRIPTS = \
 	test_write_functions.sh
 
 input_FILES = \
-	input/test.raw
+	input/raw/test.raw
 
 EXTRA_DIST = \
 	$(check_SCRIPTS) \
