@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20170212],
+ [20170423],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -172,7 +172,6 @@ AC_CONFIG_FILES([libbfio/libbfio_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
-AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libbfio/libbfio.rc])
 AC_CONFIG_FILES([libbfio.pc])
 AC_CONFIG_FILES([libbfio.spec])

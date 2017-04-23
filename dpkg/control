@@ -1,17 +1,17 @@
 Source: libbfio
-Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
-Build-Depends: debhelper (>= 7), autotools-dev
+Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config
 Standards-Version: 3.9.5
-Homepage: https://github.com/libyal/libbfio/
+Section: libs
+Homepage: https://github.com/libyal/libbfio
 
 Package: libbfio
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libbfio-dbg
-Description: Library to support (abstracted) basic file IO
- libbfio is a library to support (abstracted) basic file IO.
+Description: Library to support (abstracted) basic file input/output (IO)
+ libbfio is a library to support (abstracted) basic file input/output (IO).
 
 Package: libbfio-dbg
 Architecture: any

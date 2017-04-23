@@ -24,10 +24,9 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libbfio-dev.docs \
-	dpkg/libbfio.docs \
+	dpkg/libbfio-dev.install \
+	dpkg/libbfio.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \
