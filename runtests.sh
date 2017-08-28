@@ -188,19 +188,21 @@ run_setup_py_tests()
 	return ${EXIT_SUCCESS};
 }
 
-./configure --help | grep -- '--enable-wide-character-type' > /dev/null;
+CONFIGURE_HELP=`./configure --help`;
+
+echo "${CONFIGURE_HELP}" | grep -- '--enable-wide-character-type' > /dev/null;
 
 HAVE_ENABLE_WIDE_CHARACTER_TYPE=$?;
 
-./configure --help | grep -- '--with-zlib' > /dev/null;
+echo "${CONFIGURE_HELP}" | grep -- '--with-zlib' > /dev/null;
 
 HAVE_WITH_ZLIB=$?;
 
-./configure --help | grep -- '--with-openssl' > /dev/null;
+echo "${CONFIGURE_HELP}" | grep -- '--with-openssl' > /dev/null;
 
 HAVE_WITH_OPENSSL=$?;
 
-./configure --help | grep -- '--enable-python' > /dev/null;
+echo "${CONFIGURE_HELP}" | grep -- '--enable-python' > /dev/null;
 
 HAVE_ENABLE_PYTHON=$?;
 

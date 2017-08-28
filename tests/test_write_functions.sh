@@ -29,7 +29,14 @@ test_api_write_function()
 	rm -rf ${TMPDIR};
 	mkdir ${TMPDIR};
 
-	run_test_with_arguments "${TEST_DESCRIPTION}" "${TEST_EXECUTABLE}" "${TMPDIR}/write" ${ARGUMENTS[*]};
+	if test "${OSTYPE}" = "msys";
+	then
+		OUTPUT_PATH="${TMPDIR}\\write";
+	else
+		OUTPUT_PATH="${TMPDIR}/write";
+	fi
+
+	run_test_with_arguments "${TEST_DESCRIPTION}" "${TEST_EXECUTABLE}" "${OUTPUT_PATH}" ${ARGUMENTS[*]};
 	local RESULT=$?;
 
 	rm -rf ${TMPDIR};
