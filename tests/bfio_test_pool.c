@@ -464,13 +464,13 @@ int bfio_test_pool_initialize(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "pool",
-         pool );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "pool",
+	 pool );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libbfio_pool_free(
 	          &pool,
@@ -481,13 +481,13 @@ int bfio_test_pool_initialize(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "pool",
-         pool );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "pool",
+	 pool );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -502,9 +502,9 @@ int bfio_test_pool_initialize(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -522,9 +522,9 @@ int bfio_test_pool_initialize(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -650,9 +650,9 @@ int bfio_test_pool_free(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -688,9 +688,9 @@ int bfio_test_pool_get_number_of_handles(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -704,9 +704,9 @@ int bfio_test_pool_get_number_of_handles(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -721,9 +721,9 @@ int bfio_test_pool_get_number_of_handles(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

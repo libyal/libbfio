@@ -626,13 +626,13 @@ int bfio_test_handle_initialize(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "handle",
-         handle );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libbfio_handle_free(
 	          &handle,
@@ -643,13 +643,13 @@ int bfio_test_handle_initialize(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "handle",
-         handle );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -674,9 +674,9 @@ int bfio_test_handle_initialize(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -704,9 +704,9 @@ int bfio_test_handle_initialize(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -852,9 +852,9 @@ int bfio_test_handle_free(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -896,9 +896,9 @@ int bfio_test_handle_open(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libbfio_file_initialize(
 	          &handle,
@@ -909,13 +909,13 @@ int bfio_test_handle_open(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "handle",
-         handle );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	source_length = narrow_string_length(
 	                 narrow_source );
@@ -931,9 +931,9 @@ int bfio_test_handle_open(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test open
 	 */
@@ -947,9 +947,9 @@ int bfio_test_handle_open(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Clean up
 	 */
@@ -962,9 +962,9 @@ int bfio_test_handle_open(
 	 result,
 	 0 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libbfio_handle_free(
 	          &handle,
@@ -975,13 +975,13 @@ int bfio_test_handle_open(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "handle",
-         handle );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1028,9 +1028,9 @@ int bfio_test_handle_open_wide(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libbfio_file_initialize(
 	          &handle,
@@ -1041,13 +1041,13 @@ int bfio_test_handle_open_wide(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "handle",
-         handle );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	source_length = wide_string_length(
 	                 wide_source );
@@ -1063,9 +1063,9 @@ int bfio_test_handle_open_wide(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test open
 	 */
@@ -1079,9 +1079,9 @@ int bfio_test_handle_open_wide(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Clean up
 	 */
@@ -1094,9 +1094,9 @@ int bfio_test_handle_open_wide(
 	 result,
 	 0 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libbfio_handle_free(
 	          &handle,
@@ -1107,13 +1107,13 @@ int bfio_test_handle_open_wide(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "handle",
-         handle );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1154,9 +1154,9 @@ int bfio_test_handle_get_number_of_offsets_read(
 	 result,
 	 1 );
 
-        BFIO_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -1170,9 +1170,9 @@ int bfio_test_handle_get_number_of_offsets_read(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1187,9 +1187,9 @@ int bfio_test_handle_get_number_of_offsets_read(
 	 result,
 	 -1 );
 
-        BFIO_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

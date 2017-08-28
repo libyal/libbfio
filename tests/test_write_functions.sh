@@ -1,20 +1,14 @@
 #!/bin/bash
 # Library API write functions testing script
 #
-# Version: 20161105
+# Version: 20170828
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-TEST_PREFIX=`dirname ${PWD}`;
-TEST_PREFIX=`basename ${TEST_PREFIX} | sed 's/^lib\([^-]*\)/\1/'`;
-
-TEST_PROFILE="lib${TEST_PREFIX}";
 TEST_FUNCTIONS="handle_write pool_write";
 OPTION_SETS="";
-
-TEST_TOOL_DIRECTORY=".";
 
 test_api_write_function()
 { 
@@ -22,8 +16,8 @@ test_api_write_function()
 	shift 1;
 	local ARGUMENTS=$@;
 
-	local TEST_DESCRIPTION="Testing API write function: lib${TEST_PREFIX}_${TEST_FUNCTION}";
-	local TEST_EXECUTABLE="${TEST_TOOL_DIRECTORY}/${TEST_PREFIX}_test_${TEST_FUNCTION}";
+	local TEST_DESCRIPTION="Testing API write function: libbfio_${TEST_FUNCTION}";
+	local TEST_EXECUTABLE="./bfio_test_${TEST_FUNCTION}";
 
 	if ! test -x "${TEST_EXECUTABLE}";
 	then
