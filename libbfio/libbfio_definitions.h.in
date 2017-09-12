@@ -85,5 +85,5 @@ enum LIBBFIO_ACCESS_FLAGS
 
 #endif /* HAVE_LOCAL_LIBBFIO */
 
-#endif
+#endif /* !defined( _LIBBFIO_INTERNAL_DEFINITIONS_H ) */
 
