@@ -37,8 +37,11 @@
 
 #include <libbfio/extern.h>
 
+#define LIBBFIO_EXTERN_VARIABLE	LIBBFIO_EXTERN
+
 #else
-#define LIBBFIO_EXTERN	/* extern */
+#define LIBBFIO_EXTERN		/* extern */
+#define LIBBFIO_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 
