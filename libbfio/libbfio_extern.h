@@ -28,13 +28,6 @@
  */
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
-/* If libtool DLL support is enabled set LIBBFIO_DLL_EXPORT
- * before including libbfio/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBBFIO_DLL_EXPORT
-#endif
-
 #include <libbfio/extern.h>
 
 #define LIBBFIO_EXTERN_VARIABLE	LIBBFIO_EXTERN
