@@ -9,6 +9,7 @@ MSVSCPP_FILES = \
 	bfio_test_pool_seek/bfio_test_pool_seek.vcproj \
 	bfio_test_pool_write/bfio_test_pool_write.vcproj \
 	bfio_test_support/bfio_test_support.vcproj \
+	bfio_test_system_string/bfio_test_system_string.vcproj \
 	libbfio/libbfio.vcproj \
 	libcdata/libcdata.vcproj \
 	libcerror/libcerror.vcproj \

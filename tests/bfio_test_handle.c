@@ -599,8 +599,8 @@ int bfio_test_handle_close_source(
 int bfio_test_handle_initialize(
      void )
 {
+	libbfio_handle_t *handle = NULL;
 	libcerror_error_t *error = NULL;
-	libbfio_handle_t *handle      = NULL;
 	int result               = 0;
 
 	/* Test libbfio_handle_initialize

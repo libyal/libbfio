@@ -38,7 +38,8 @@ check_PROGRAMS = \
 	bfio_test_pool_seek \
 	bfio_test_pool_read \
 	bfio_test_pool_write \
-	bfio_test_support
+	bfio_test_support \
+	bfio_test_system_string
 
 bfio_test_error_SOURCES = \
 	bfio_test_error.c \
@@ -151,6 +152,15 @@ bfio_test_support_SOURCES = \
 bfio_test_support_LDADD = \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
+
+bfio_test_system_string_SOURCES = \
+	bfio_test_libbfio.h \
+	bfio_test_macros.h \
+	bfio_test_system_string.c \
+	bfio_test_unused.h
+
+bfio_test_system_string_LDADD = \
+	../libbfio/libbfio.la
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

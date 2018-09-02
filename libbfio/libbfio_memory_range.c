@@ -642,7 +642,7 @@ ssize_t libbfio_memory_range_read(
 	if( memory_copy(
 	     buffer,
 	     &( memory_range_io_handle->range_start[ memory_range_io_handle->range_offset ] ),
-	     size ) == NULL )
+	     read_size ) == NULL )
 	{
 		libcerror_error_set(
 		 error,

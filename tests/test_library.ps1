@@ -1,12 +1,12 @@
 # Tests C library functions and types.
 #
-# Version: 20180721
+# Version: 20180805
 
 $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "error support"
+$LibraryTests = "error support system_string"
 $LibraryTestsWithInput = "handle pool"
 
 $InputGlob = "*"
@@ -45,12 +45,6 @@ Function GetTestToolDirectory
 	{
 		ForEach (${VSConfiguration} in "Release VSDebug" -split " ")
 		{
-			$TestToolDirectory = "..\${VSDirectory}\${VSConfiguration}"
-
-			If (Test-Path ${TestToolDirectory})
-			{
-				Return ${TestToolDirectory}
-			}
 			ForEach (${VSPlatform} in "Win32 x64" -split " ")
 			{
 				$TestToolDirectory = "..\${VSDirectory}\${VSConfiguration}\${VSPlatform}"
@@ -59,6 +53,12 @@ Function GetTestToolDirectory
 				{
 					Return ${TestToolDirectory}
 				}
+			}
+			$TestToolDirectory = "..\${VSDirectory}\${VSConfiguration}"
+
+			If (Test-Path ${TestToolDirectory})
+			{
+				Return ${TestToolDirectory}
 			}
 		}
 	}

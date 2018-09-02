@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-LIBRARY_TESTS="error support";
+LIBRARY_TESTS="error support system_string";
 LIBRARY_TESTS_WITH_INPUT="handle pool";
 OPTION_SETS="";
 

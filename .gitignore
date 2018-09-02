@@ -131,6 +131,7 @@ stamp-h[1-9]
 /tests/bfio_test_pool_seek
 /tests/bfio_test_pool_write
 /tests/bfio_test_support
+/tests/bfio_test_system_string
 /tests/input
 /tests/tmp*
 
