@@ -30,6 +30,7 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	bfio_test_error \
+	bfio_test_file \
 	bfio_test_handle \
 	bfio_test_handle_read \
 	bfio_test_handle_seek \
@@ -50,7 +51,25 @@ bfio_test_error_SOURCES = \
 bfio_test_error_LDADD = \
 	../libbfio/libbfio.la
 
+bfio_test_file_SOURCES = \
+	bfio_test_file.c \
+	bfio_test_functions.c bfio_test_functions.h \
+	bfio_test_libbfio.h \
+	bfio_test_libcerror.h \
+	bfio_test_libclocale.h \
+	bfio_test_libuna.h \
+	bfio_test_macros.h \
+	bfio_test_memory.c bfio_test_memory.h \
+	bfio_test_unused.h
+
+bfio_test_file_LDADD = \
+	@LIBUNA_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	../libbfio/libbfio.la \
+	@LIBCERROR_LIBADD@
+
 bfio_test_handle_SOURCES = \
+	bfio_test_functions.c bfio_test_functions.h \
 	bfio_test_handle.c \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \

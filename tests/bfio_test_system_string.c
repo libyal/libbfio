@@ -35,6 +35,8 @@
 
 #include "../libbfio/libbfio_system_string.h"
 
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+
 /* Tests the libbfio_system_string_size_to_narrow_string function
  * Returns 1 if successful or 0 if not
  */
@@ -276,6 +278,8 @@ int bfio_test_system_string_copy_to_narrow_string(
 
 	libcerror_error_free(
 	 &error );
+
+/* TODO test libbfio_system_string_copy_to_narrow_string with failing system_string_copy */
 
 	return( 1 );
 
@@ -529,6 +533,8 @@ int bfio_test_system_string_copy_from_narrow_string(
 
 	libcerror_error_free(
 	 &error );
+
+/* TODO test libbfio_system_string_copy_from_narrow_string with failing system_string_copy */
 
 	return( 1 );
 
@@ -1051,6 +1057,8 @@ on_error:
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1065,6 +1073,8 @@ int main(
 {
 	BFIO_TEST_UNREFERENCED_PARAMETER( argc )
 	BFIO_TEST_UNREFERENCED_PARAMETER( argv )
+
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
 
 	BFIO_TEST_RUN(
 	 "libbfio_system_string_size_to_narrow_string",
@@ -1101,6 +1111,8 @@ int main(
 	 bfio_test_system_string_copy_from_wide_string );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

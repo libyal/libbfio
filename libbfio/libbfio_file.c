@@ -121,89 +121,6 @@ on_error:
 	return( -1 );
 }
 
-/* Creates a file handle
- * Make sure the value handle is referencing, is set to NULL
- * Returns 1 if successful or -1 on error
- */
-int libbfio_file_initialize(
-     libbfio_handle_t **handle,
-     libcerror_error_t **error )
-{
-	libbfio_file_io_handle_t *file_io_handle = NULL;
-	static char *function                    = "libbfio_file_initialize";
-
-	if( handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( *handle != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid handle value already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( libbfio_file_io_handle_initialize(
-	     &file_io_handle,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file IO handle.",
-		 function );
-
-		goto on_error;
-	}
-	if( libbfio_handle_initialize(
-	     handle,
-	     (intptr_t *) file_io_handle,
-	     (int (*)(intptr_t **, libcerror_error_t **)) libbfio_file_io_handle_free,
-	     (int (*)(intptr_t **, intptr_t *, libcerror_error_t **)) libbfio_file_io_handle_clone,
-	     (int (*)(intptr_t *, int, libcerror_error_t **)) libbfio_file_open,
-	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_close,
-	     (ssize_t (*)(intptr_t *, uint8_t *, size_t, libcerror_error_t **)) libbfio_file_read,
-	     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, libcerror_error_t **)) libbfio_file_write,
-	     (off64_t (*)(intptr_t *, off64_t, int, libcerror_error_t **)) libbfio_file_seek_offset,
-	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_exists,
-	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_is_open,
-	     (int (*)(intptr_t *, size64_t *, libcerror_error_t **)) libbfio_file_get_size,
-	     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create handle.",
-		 function );
-
-		goto on_error;
-	}
-	return( 1 );
-
-on_error:
-	if( file_io_handle != NULL )
-	{
-		libbfio_file_io_handle_free(
-		 &file_io_handle,
-		 NULL );
-	}
-	return( -1 );
-}
-
 /* Frees a file IO handle
  * Returns 1 if succesful or -1 on error
  */
@@ -371,6 +288,89 @@ on_error:
 	{
 		libbfio_file_io_handle_free(
 		 destination_file_io_handle,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Creates a file handle
+ * Make sure the value handle is referencing, is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_file_initialize(
+     libbfio_handle_t **handle,
+     libcerror_error_t **error )
+{
+	libbfio_file_io_handle_t *file_io_handle = NULL;
+	static char *function                    = "libbfio_file_initialize";
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( *handle != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid handle value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_io_handle_initialize(
+	     &file_io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create file IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_handle_initialize(
+	     handle,
+	     (intptr_t *) file_io_handle,
+	     (int (*)(intptr_t **, libcerror_error_t **)) libbfio_file_io_handle_free,
+	     (int (*)(intptr_t **, intptr_t *, libcerror_error_t **)) libbfio_file_io_handle_clone,
+	     (int (*)(intptr_t *, int, libcerror_error_t **)) libbfio_file_open,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_close,
+	     (ssize_t (*)(intptr_t *, uint8_t *, size_t, libcerror_error_t **)) libbfio_file_read,
+	     (ssize_t (*)(intptr_t *, const uint8_t *, size_t, libcerror_error_t **)) libbfio_file_write,
+	     (off64_t (*)(intptr_t *, off64_t, int, libcerror_error_t **)) libbfio_file_seek_offset,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_exists,
+	     (int (*)(intptr_t *, libcerror_error_t **)) libbfio_file_is_open,
+	     (int (*)(intptr_t *, size64_t *, libcerror_error_t **)) libbfio_file_get_size,
+	     LIBBFIO_FLAG_IO_HANDLE_MANAGED | LIBBFIO_FLAG_IO_HANDLE_CLONE_BY_FUNCTION,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create handle.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_file_io_handle_free(
+		 &file_io_handle,
 		 NULL );
 	}
 	return( -1 );

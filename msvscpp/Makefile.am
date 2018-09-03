@@ -1,5 +1,6 @@
 MSVSCPP_FILES = \
 	bfio_test_error/bfio_test_error.vcproj \
+	bfio_test_file/bfio_test_file.vcproj \
 	bfio_test_handle/bfio_test_handle.vcproj \
 	bfio_test_handle_read/bfio_test_handle_read.vcproj \
 	bfio_test_handle_seek/bfio_test_handle_seek.vcproj \

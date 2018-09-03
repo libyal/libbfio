@@ -59,11 +59,6 @@ int libbfio_file_io_handle_initialize(
      libbfio_file_io_handle_t **file_io_handle,
      libcerror_error_t **error );
 
-LIBBFIO_EXTERN \
-int libbfio_file_initialize(
-     libbfio_handle_t **handle,
-     libcerror_error_t **error );
-
 int libbfio_file_io_handle_free(
      libbfio_file_io_handle_t **file_io_handle,
      libcerror_error_t **error );
@@ -71,6 +66,11 @@ int libbfio_file_io_handle_free(
 int libbfio_file_io_handle_clone(
      libbfio_file_io_handle_t **destination_file_io_handle,
      libbfio_file_io_handle_t *source_file_io_handle,
+     libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
+int libbfio_file_initialize(
+     libbfio_handle_t **handle,
      libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
@@ -111,6 +111,7 @@ int libbfio_file_io_handle_set_name(
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
+
 LIBBFIO_EXTERN \
 int libbfio_file_get_name_size_wide(
      libbfio_handle_t *handle,
