@@ -22,6 +22,7 @@ libbfio_la_SOURCES = \
 	libbfio_error.c libbfio_error.h \
 	libbfio_extern.h \
 	libbfio_file.c libbfio_file.h \
+	libbfio_file_io_handle.c libbfio_file_io_handle.h \
 	libbfio_file_pool.c libbfio_file_pool.h \
 	libbfio_file_range.c libbfio_file_range.h \
 	libbfio_handle.c libbfio_handle.h \

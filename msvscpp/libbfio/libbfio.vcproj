@@ -182,6 +182,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libbfio\libbfio_file_io_handle.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libbfio\libbfio_file_pool.c"
 				>
 			</File>
@@ -233,6 +237,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libbfio\libbfio_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_file_io_handle.h"
 				>
 			</File>
 			<File

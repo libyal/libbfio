@@ -1,5 +1,4 @@
 TODO
-* move file_io_handle into seperate file?
 * handle clean offset and size on close?
 * complete multi threading support (todo pool)
 * remove open on demand ?

@@ -29,6 +29,7 @@
 
 #include "libbfio_definitions.h"
 #include "libbfio_file.h"
+#include "libbfio_file_io_handle.h"
 #include "libbfio_file_range.h"
 #include "libbfio_handle.h"
 #include "libbfio_libcerror.h"
@@ -850,7 +851,7 @@ int libbfio_file_range_open(
 
 		return( -1 );
 	}
-	if( libbfio_file_open(
+	if( libbfio_file_io_handle_open(
 	     file_range_io_handle->file_io_handle,
 	     access_flags,
 	     error ) != 1 )
@@ -864,7 +865,7 @@ int libbfio_file_range_open(
 
 		return( -1 );
 	}
-	if( libbfio_file_get_size(
+	if( libbfio_file_io_handle_get_size(
 	     file_range_io_handle->file_io_handle,
 	     &file_size,
 	     error ) != 1 )
@@ -902,7 +903,7 @@ int libbfio_file_range_open(
 
 		return( -1 );
 	}
-	if( libbfio_file_seek_offset(
+	if( libbfio_file_io_handle_seek_offset(
 	     file_range_io_handle->file_io_handle,
 	     file_range_io_handle->range_offset,
 	     SEEK_SET,
@@ -940,7 +941,7 @@ int libbfio_file_range_close(
 
 		return( -1 );
 	}
-	if( libbfio_file_close(
+	if( libbfio_file_io_handle_close(
 	     file_range_io_handle->file_io_handle,
 	     error ) != 0 )
 	{
@@ -980,7 +981,7 @@ ssize_t libbfio_file_range_read(
 
 		return( -1 );
 	}
-	file_offset = libbfio_file_seek_offset(
+	file_offset = libbfio_file_io_handle_seek_offset(
 	               file_range_io_handle->file_io_handle,
 	               0,
 	               SEEK_CUR,
@@ -1019,7 +1020,7 @@ ssize_t libbfio_file_range_read(
 			size = (size_t) ( file_range_io_handle->range_offset - file_offset );
 		}
 	}
-	read_count = libbfio_file_read(
+	read_count = libbfio_file_io_handle_read(
 	              file_range_io_handle->file_io_handle,
 	              buffer,
 	              size,
@@ -1063,7 +1064,7 @@ ssize_t libbfio_file_range_write(
 
 		return( -1 );
 	}
-	file_offset = libbfio_file_seek_offset(
+	file_offset = libbfio_file_io_handle_seek_offset(
 	               file_range_io_handle->file_io_handle,
 	               0,
 	               SEEK_CUR,
@@ -1102,7 +1103,7 @@ ssize_t libbfio_file_range_write(
 			size = (size_t) ( file_range_io_handle->range_offset - file_offset );
 		}
 	}
-	write_count = libbfio_file_write(
+	write_count = libbfio_file_io_handle_write(
 	               file_range_io_handle->file_io_handle,
 	               buffer,
 	               size,
@@ -1161,7 +1162,7 @@ off64_t libbfio_file_range_seek_offset(
 	}
 	if( whence == SEEK_CUR )
 	{
-		file_offset = libbfio_file_seek_offset(
+		file_offset = libbfio_file_io_handle_seek_offset(
 			       file_range_io_handle->file_io_handle,
 			       0,
 			       SEEK_CUR,
@@ -1207,7 +1208,7 @@ off64_t libbfio_file_range_seek_offset(
 			return( -1 );
 		}
 	}
-	seek_offset = libbfio_file_seek_offset(
+	seek_offset = libbfio_file_io_handle_seek_offset(
 	               file_range_io_handle->file_io_handle,
 	               offset,
 	               whence,
@@ -1263,7 +1264,7 @@ int libbfio_file_range_exists(
 
 		return( -1 );
 	}
-	result = libbfio_file_exists(
+	result = libbfio_file_io_handle_exists(
 	          file_range_io_handle->file_io_handle,
 	          error );
 
@@ -1302,7 +1303,7 @@ int libbfio_file_range_is_open(
 
 		return( -1 );
 	}
-	result = libbfio_file_is_open(
+	result = libbfio_file_io_handle_is_open(
 	          file_range_io_handle->file_io_handle,
 	          error );
 
@@ -1354,7 +1355,7 @@ int libbfio_file_range_get_size(
 	}
 	if( file_range_io_handle->range_size == 0 )
 	{
-		if( libbfio_file_get_size(
+		if( libbfio_file_io_handle_get_size(
 		     file_range_io_handle->file_io_handle,
 		     size,
 		     error ) != 1 )

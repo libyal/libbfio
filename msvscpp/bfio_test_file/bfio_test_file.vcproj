@@ -184,6 +184,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\bfio_test_getopt.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\bfio_test_memory.c"
 				>
 			</File>
@@ -198,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\bfio_test_getopt.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\bfio_test_libbfio.h"
 				>
 			</File>
@@ -207,6 +215,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\bfio_test_libclocale.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\bfio_test_libcnotify.h"
 				>
 			</File>
 			<File

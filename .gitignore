@@ -123,6 +123,7 @@ stamp-h[1-9]
 /tests/*.exe
 /tests/bfio_test_error
 /tests/bfio_test_file
+/tests/bfio_test_file_io_handle
 /tests/bfio_test_handle
 /tests/bfio_test_handle_read
 /tests/bfio_test_handle_seek

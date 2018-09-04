@@ -7,7 +7,7 @@ $ExitFailure = 1
 $ExitIgnore = 77
 
 $LibraryTests = "error support system_string"
-$LibraryTestsWithInput = "handle pool"
+$LibraryTestsWithInput = "file file_io_handle handle pool"
 
 $InputGlob = "*"
 

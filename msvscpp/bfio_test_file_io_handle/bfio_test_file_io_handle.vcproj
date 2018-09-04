@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="bfio_test_handle"
-	ProjectGUID="{1E6224FA-11D9-492F-A4FC-DB0E18438325}"
-	RootNamespace="bfio_test_handle"
+	Name="bfio_test_file_io_handle"
+	ProjectGUID="{658CFEF0-4EDF-4622-876B-08351672D65C}"
+	RootNamespace="bfio_test_file_io_handle"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,15 +176,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\tests\bfio_test_file_io_handle.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\bfio_test_functions.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\bfio_test_getopt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\bfio_test_handle.c"
 				>
 			</File>
 			<File
