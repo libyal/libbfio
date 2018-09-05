@@ -27,7 +27,6 @@
 
 #include "libbfio_extern.h"
 #include "libbfio_libcerror.h"
-#include "libbfio_libcfile.h"
 #include "libbfio_types.h"
 
 #if defined( __cplusplus )

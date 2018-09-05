@@ -61,6 +61,18 @@ int bfio_test_get_temporary_filename_wide(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+int bfio_test_remove_temporary_file(
+     char *temporary_filename,
+     libcerror_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+int bfio_test_remove_temporary_file_wide(
+     wchar_t *temporary_filename,
+     libcerror_error_t **error );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
 #if defined( __cplusplus )
 }
 #endif

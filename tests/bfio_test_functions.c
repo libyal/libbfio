@@ -34,6 +34,8 @@
 #include <unistd.h>
 #endif
 
+#include <errno.h>
+
 #include "bfio_test_libcerror.h"
 #include "bfio_test_libclocale.h"
 #include "bfio_test_libuna.h"
@@ -757,6 +759,323 @@ on_error:
 
 #endif /* defined( HAVE_MKSTEMP ) && defined( HAVE_CLOSE ) */
 }
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+#if defined( WINAPI )
+
+/* Removes a temporary file
+ * This function uses the WINAPI function for Windows XP (0x0501) or later
+ * Returns 1 if successful or -1 on error
+ */
+int bfio_test_remove_temporary_file(
+     char *temporary_filename,
+     libcerror_error_t **error )
+{
+	static char *function = "bfio_test_remove_temporary_file";
+	DWORD error_code      = 0;
+	BOOL result           = FALSE;
+
+	if( temporary_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid temporary filename.",
+		 function );
+
+		return( -1 );
+	}
+	result = DeleteFileA(
+	          filename );
+
+	if( result == 0 )
+	{
+		error_code = GetLastError();
+
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_UNLINK_FAILED,
+		 error_code,
+		 "%s: unable to remove temporary file.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+#elif defined( HAVE_UNLINK )
+
+/* Removes a temporary file
+ * This function uses the POSIX unlink function or equivalent
+ * Returns 1 if successful or -1 on error
+ */
+int bfio_test_remove_temporary_file(
+     char *temporary_filename,
+     libcerror_error_t **error )
+{
+	static char *function = "bfio_test_remove_temporary_file";
+
+	if( temporary_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid temporary filename.",
+		 function );
+
+		return( -1 );
+	}
+	if( unlink(
+	     temporary_filename ) != 0 )
+	{
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_UNLINK_FAILED,
+		 errno,
+		 "%s: unable to unlink file.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+#else
+#error Missing file remove function
+#endif
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+#if defined( WINAPI )
+
+/* Removes a temporary file
+ * This function uses the WINAPI function for Windows XP (0x0501) or later
+ * Returns 1 if successful or -1 on error
+ */
+int bfio_test_remove_temporary_file_wide(
+     wchar_t *temporary_filename,
+     libcerror_error_t **error )
+{
+	static char *function = "bfio_test_remove_temporary_file_wide";
+	DWORD error_code      = 0;
+	BOOL result           = FALSE;
+
+	if( temporary_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid temporary filename.",
+		 function );
+
+		return( -1 );
+	}
+	result = DeleteFileW(
+	          filename );
+
+	if( result == 0 )
+	{
+		error_code = GetLastError();
+
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_UNLINK_FAILED,
+		 error_code,
+		 "%s: unable to remove file.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+#elif defined( HAVE_UNLINK )
+
+/* Removes a temporary file
+ * This function uses the POSIX unlink function or equivalent
+ * Returns 1 if successful or -1 on error
+ */
+int bfio_test_remove_temporary_file_wide(
+     wchar_t *temporary_filename,
+     libcerror_error_t **error )
+{
+	static char *function       = "bfio_test_remove_temporary_file_wide";
+	char *narrow_filename       = NULL;
+	size_t filename_size        = 0;
+	size_t narrow_filename_size = 0;
+	int result                  = 0;
+
+	if( temporary_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid temporary filename.",
+		 function );
+
+		return( -1 );
+	}
+	filename_size = 1 + wide_string_length(
+	                     temporary_filename );
+
+	/* Convert the filename to a narrow string
+	 * if the platform has no wide character open function
+	 */
+	if( libclocale_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_size_from_utf32(
+		          (libuna_utf32_character_t *) temporary_filename,
+		          filename_size,
+		          &narrow_filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_size_from_utf16(
+		          (libuna_utf16_character_t *) temporary_filename,
+		          filename_size,
+		          &narrow_filename_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_size_from_utf32(
+		          (libuna_utf32_character_t *) temporary_filename,
+		          filename_size,
+		          libclocale_codepage,
+		          &narrow_filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_size_from_utf16(
+		          (libuna_utf16_character_t *) temporary_filename,
+		          filename_size,
+		          libclocale_codepage,
+		          &narrow_filename_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to determine narrow character filename size.",
+		 function );
+
+		goto on_error;
+	}
+	narrow_filename = narrow_string_allocate(
+	                   narrow_filename_size );
+
+	if( narrow_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create narrow character filename.",
+		 function );
+
+		goto on_error;
+	}
+	if( libclocale_codepage == 0 )
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_utf8_string_copy_from_utf32(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf32_character_t *) temporary_filename,
+		          filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_utf8_string_copy_from_utf16(
+		          (libuna_utf8_character_t *) narrow_filename,
+		          narrow_filename_size,
+		          (libuna_utf16_character_t *) temporary_filename,
+		          filename_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	else
+	{
+#if SIZEOF_WCHAR_T == 4
+		result = libuna_byte_stream_copy_from_utf32(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libclocale_codepage,
+		          (libuna_utf32_character_t *) temporary_filename,
+		          filename_size,
+		          error );
+#elif SIZEOF_WCHAR_T == 2
+		result = libuna_byte_stream_copy_from_utf16(
+		          (uint8_t *) narrow_filename,
+		          narrow_filename_size,
+		          libclocale_codepage,
+		          (libuna_utf16_character_t *) temporary_filename,
+		          filename_size,
+		          error );
+#else
+#error Unsupported size of wchar_t
+#endif /* SIZEOF_WCHAR_T */
+	}
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBCERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to set narrow character filename.",
+		 function );
+
+		goto on_error;
+	}
+	if( unlink(
+	     narrow_filename ) != 0 )
+	{
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_UNLINK_FAILED,
+		 errno,
+		 "%s: unable to unlink file.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 narrow_filename );
+
+	return( 1 );
+
+on_error:
+	if( narrow_filename != NULL )
+	{
+		memory_free(
+		 narrow_filename );
+	}
+	return( -1 );
+}
+
+#else
+#error Missing file remove wide function
+#endif
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
