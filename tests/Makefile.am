@@ -61,6 +61,7 @@ bfio_test_file_SOURCES = \
 
 bfio_test_file_LDADD = \
 	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
@@ -80,6 +81,7 @@ bfio_test_file_io_handle_SOURCES = \
 
 bfio_test_file_io_handle_LDADD = \
 	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
@@ -99,6 +101,7 @@ bfio_test_file_range_SOURCES = \
 
 bfio_test_file_range_LDADD = \
 	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
@@ -118,6 +121,7 @@ bfio_test_file_range_io_handle_SOURCES = \
 
 bfio_test_file_range_io_handle_LDADD = \
 	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
@@ -137,6 +141,7 @@ bfio_test_handle_SOURCES = \
 
 bfio_test_handle_LDADD = \
 	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
@@ -155,6 +160,7 @@ bfio_test_pool_SOURCES = \
 
 bfio_test_pool_LDADD = \
 	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@

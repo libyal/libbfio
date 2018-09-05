@@ -57,14 +57,20 @@
 int bfio_test_file_range_io_handle_initialize(
      void )
 {
-	libbfio_file_range_io_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error                 = NULL;
-	int result                               = 0;
+	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
+	libcerror_error_t *error                             = NULL;
+	int result                                           = 0;
+
+#if defined( HAVE_BFIO_TEST_MEMORY )
+	int number_of_malloc_fail_tests                      = 2;
+	int number_of_memset_fail_tests                      = 1;
+	int test_number                                      = 0;
+#endif
 
 	/* Test regular cases
 	 */
 	result = libbfio_file_range_io_handle_initialize(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -73,15 +79,15 @@ int bfio_test_file_range_io_handle_initialize(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
 	result = libbfio_file_range_io_handle_free(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -90,8 +96,8 @@ int bfio_test_file_range_io_handle_initialize(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -115,13 +121,13 @@ int bfio_test_file_range_io_handle_initialize(
 	libcerror_error_free(
 	 &error );
 
-	file_io_handle = (libbfio_file_range_io_handle_t *) 0x12345678UL;
+	file_range_io_handle = (libbfio_file_range_io_handle_t *) 0x12345678UL;
 
 	result = libbfio_file_range_io_handle_initialize(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
-	file_io_handle = NULL;
+	file_range_io_handle = NULL;
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -137,79 +143,89 @@ int bfio_test_file_range_io_handle_initialize(
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
 
-	/* Test libbfio_file_range_io_handle_initialize with malloc failing
-	 */
-	bfio_test_malloc_attempts_before_fail = 0;
-
-	result = libbfio_file_range_io_handle_initialize(
-	          &file_io_handle,
-	          &error );
-
-	if( bfio_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		bfio_test_malloc_attempts_before_fail = -1;
+		/* Test libbfio_file_range_io_handle_initialize with malloc failing
+		 */
+		bfio_test_malloc_attempts_before_fail = test_number;
 
-		if( file_io_handle != NULL )
+		result = libbfio_file_range_io_handle_initialize(
+		          &file_range_io_handle,
+		          &error );
+
+		if( bfio_test_malloc_attempts_before_fail != -1 )
 		{
-			libbfio_file_range_io_handle_free(
-			 &file_io_handle,
-			 NULL );
+			bfio_test_malloc_attempts_before_fail = -1;
+
+			if( file_range_io_handle != NULL )
+			{
+				libbfio_file_range_io_handle_free(
+				 &file_range_io_handle,
+				 NULL );
+			}
+		}
+		else
+		{
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "file_range_io_handle",
+			 file_range_io_handle );
+
+			BFIO_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		BFIO_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libbfio_file_range_io_handle_initialize with memset failing
+		 */
+		bfio_test_memset_attempts_before_fail = test_number;
 
-		BFIO_TEST_ASSERT_IS_NULL(
-		 "file_io_handle",
-		 file_io_handle );
+		result = libbfio_file_range_io_handle_initialize(
+		          &file_range_io_handle,
+		          &error );
 
-		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libbfio_file_range_io_handle_initialize with memset failing
-	 */
-	bfio_test_memset_attempts_before_fail = 0;
-
-	result = libbfio_file_range_io_handle_initialize(
-	          &file_io_handle,
-	          &error );
-
-	if( bfio_test_memset_attempts_before_fail != -1 )
-	{
-		bfio_test_memset_attempts_before_fail = -1;
-
-		if( file_io_handle != NULL )
+		if( bfio_test_memset_attempts_before_fail != -1 )
 		{
-			libbfio_file_range_io_handle_free(
-			 &file_io_handle,
-			 NULL );
+			bfio_test_memset_attempts_before_fail = -1;
+
+			if( file_range_io_handle != NULL )
+			{
+				libbfio_file_range_io_handle_free(
+				 &file_range_io_handle,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		BFIO_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		BFIO_TEST_ASSERT_IS_NULL(
-		 "file_io_handle",
-		 file_io_handle );
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "file_range_io_handle",
+			 file_range_io_handle );
 
-		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			BFIO_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
@@ -221,10 +237,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( file_io_handle != NULL )
+	if( file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &file_io_handle,
+		 &file_range_io_handle,
 		 NULL );
 	}
 	return( 0 );
@@ -274,15 +290,15 @@ on_error:
 int bfio_test_file_range_io_handle_clone(
      void )
 {
-	libbfio_file_range_io_handle_t *destination_file_io_handle = NULL;
-	libbfio_file_range_io_handle_t *source_file_io_handle      = NULL;
-	libcerror_error_t *error                             = NULL;
-	int result                                           = 0;
+	libbfio_file_range_io_handle_t *destination_file_range_io_handle = NULL;
+	libbfio_file_range_io_handle_t *source_file_range_io_handle      = NULL;
+	libcerror_error_t *error                                         = NULL;
+	int result                                                       = 0;
 
 	/* Initialize test
 	 */
 	result = libbfio_file_range_io_handle_initialize(
-	          &source_file_io_handle,
+	          &source_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -291,18 +307,18 @@ int bfio_test_file_range_io_handle_clone(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "source_file_io_handle",
-	 source_file_io_handle );
+	 "source_file_range_io_handle",
+	 source_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	/* Test libbfio_file_range_io_handle_clone with intialized file IO handle
+	/* Test regular cases
 	 */
 	result = libbfio_file_range_io_handle_clone(
-	          &destination_file_io_handle,
-	          source_file_io_handle,
+	          &destination_file_range_io_handle,
+	          source_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -311,15 +327,15 @@ int bfio_test_file_range_io_handle_clone(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "destination_file_io_handle",
-	 destination_file_io_handle );
+	 "destination_file_range_io_handle",
+	 destination_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
 	result = libbfio_file_range_io_handle_free(
-	          &destination_file_io_handle,
+	          &destination_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -328,17 +344,15 @@ int bfio_test_file_range_io_handle_clone(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "destination_file_io_handle",
-	 destination_file_io_handle );
+	 "destination_file_range_io_handle",
+	 destination_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	/* Test libbfio_file_range_io_handle_clone with non-intialized file IO handle
-	 */
 	result = libbfio_file_range_io_handle_clone(
-	          &destination_file_io_handle,
+	          &destination_file_range_io_handle,
 	          NULL,
 	          &error );
 
@@ -348,8 +362,8 @@ int bfio_test_file_range_io_handle_clone(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "destination_file_io_handle",
-	 destination_file_io_handle );
+	 "destination_file_range_io_handle",
+	 destination_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -359,17 +373,13 @@ int bfio_test_file_range_io_handle_clone(
 	 */
 	result = libbfio_file_range_io_handle_clone(
 	          NULL,
-	          source_file_io_handle,
+	          source_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
 	 -1 );
-
-	BFIO_TEST_ASSERT_IS_NULL(
-	 "destination_file_io_handle",
-	 destination_file_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
 	 "error",
@@ -378,23 +388,19 @@ int bfio_test_file_range_io_handle_clone(
 	libcerror_error_free(
 	 &error );
 
-	destination_file_io_handle = (libbfio_file_range_io_handle_t *) 0x12345678UL;
+	destination_file_range_io_handle = (libbfio_file_range_io_handle_t *) 0x12345678UL;
 
 	result = libbfio_file_range_io_handle_clone(
-	          &destination_file_io_handle,
-	          source_file_io_handle,
+	          &destination_file_range_io_handle,
+	          source_file_range_io_handle,
 	          &error );
 
-	destination_file_io_handle = NULL;
+	destination_file_range_io_handle = NULL;
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
 	 -1 );
-
-	BFIO_TEST_ASSERT_IS_NULL(
-	 "destination_file_io_handle",
-	 destination_file_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
 	 "error",
@@ -402,11 +408,92 @@ int bfio_test_file_range_io_handle_clone(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_BFIO_TEST_MEMORY )
+
+	/* Test libbfio_file_range_io_handle_clone with malloc failing
+	 */
+	bfio_test_malloc_attempts_before_fail = 0;
+
+	result = libbfio_file_range_io_handle_clone(
+	          &destination_file_range_io_handle,
+	          source_file_range_io_handle,
+	          &error );
+
+	if( bfio_test_malloc_attempts_before_fail != -1 )
+	{
+		bfio_test_malloc_attempts_before_fail = -1;
+
+		if( destination_file_range_io_handle != NULL )
+		{
+			libbfio_file_range_io_handle_free(
+			 &destination_file_range_io_handle,
+			 NULL );
+		}
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "destination_file_range_io_handle",
+		 destination_file_range_io_handle );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+
+	/* Test libbfio_file_range_io_handle_clone with memcpy failing
+	 */
+	bfio_test_memcpy_attempts_before_fail = 0;
+
+	result = libbfio_file_range_io_handle_clone(
+	          &destination_file_range_io_handle,
+	          source_file_range_io_handle,
+	          &error );
+
+	if( bfio_test_memcpy_attempts_before_fail != -1 )
+	{
+		bfio_test_memcpy_attempts_before_fail = -1;
+
+		if( destination_file_range_io_handle != NULL )
+		{
+			libbfio_file_range_io_handle_free(
+			 &destination_file_range_io_handle,
+			 NULL );
+		}
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "destination_file_range_io_handle",
+		 destination_file_range_io_handle );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
 	/* Clean up
 	 */
 	result = libbfio_file_range_io_handle_free(
-	          &source_file_io_handle,
+	          &source_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -415,8 +502,8 @@ int bfio_test_file_range_io_handle_clone(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "source_file_io_handle",
-	 source_file_io_handle );
+	 "source_file_range_io_handle",
+	 source_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -430,10 +517,16 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( source_file_io_handle != NULL )
+	if( destination_file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &source_file_io_handle,
+		 &destination_file_range_io_handle,
+		 NULL );
+	}
+	if( source_file_range_io_handle != NULL )
+	{
+		libbfio_file_range_io_handle_free(
+		 &source_file_range_io_handle,
 		 NULL );
 	}
 	return( 0 );
@@ -447,10 +540,10 @@ int bfio_test_file_range_io_handle_open(
 {
 	char narrow_source[ 256 ];
 
-	libbfio_file_range_io_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error                 = NULL;
-	size_t source_length                     = 0;
-	int result                               = 0;
+	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
+	libcerror_error_t *error                             = NULL;
+	size_t source_length                                 = 0;
+	int result                                           = 0;
 
 	/* Initialize test
 	 */
@@ -470,7 +563,7 @@ int bfio_test_file_range_io_handle_open(
 	 error );
 
 	result = libbfio_file_range_io_handle_initialize(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -479,8 +572,8 @@ int bfio_test_file_range_io_handle_open(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -490,7 +583,7 @@ int bfio_test_file_range_io_handle_open(
 	                 narrow_source );
 
 	result = libbfio_file_range_io_handle_set_name(
-	          file_io_handle,
+	          file_range_io_handle,
 	          narrow_source,
 	          source_length,
 	          &error );
@@ -507,7 +600,7 @@ int bfio_test_file_range_io_handle_open(
 	/* Test open
 	 */
 	result = libbfio_file_range_io_handle_open(
-	          file_io_handle,
+	          file_range_io_handle,
 	          LIBBFIO_OPEN_READ,
 	          &error );
 
@@ -523,7 +616,7 @@ int bfio_test_file_range_io_handle_open(
 	/* Clean up
 	 */
 	result = libbfio_file_range_io_handle_close(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -536,7 +629,7 @@ int bfio_test_file_range_io_handle_open(
 	 error );
 
 	result = libbfio_file_range_io_handle_free(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -545,8 +638,8 @@ int bfio_test_file_range_io_handle_open(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -560,10 +653,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( file_io_handle != NULL )
+	if( file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &file_io_handle,
+		 &file_range_io_handle,
 		 NULL );
 	}
 	return( 0 );
@@ -615,10 +708,10 @@ int bfio_test_file_range_io_handle_open_close(
 {
 	char narrow_source[ 256 ];
 
-	libbfio_file_range_io_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error                 = NULL;
-	size_t source_length                     = 0;
-	int result                               = 0;
+	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
+	libcerror_error_t *error                             = NULL;
+	size_t source_length                                 = 0;
+	int result                                           = 0;
 
 	/* Initialize test
 	 */
@@ -638,7 +731,7 @@ int bfio_test_file_range_io_handle_open_close(
 	 error );
 
 	result = libbfio_file_range_io_handle_initialize(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -647,8 +740,8 @@ int bfio_test_file_range_io_handle_open_close(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -658,7 +751,7 @@ int bfio_test_file_range_io_handle_open_close(
 	                 narrow_source );
 
 	result = libbfio_file_range_io_handle_set_name(
-	          file_io_handle,
+	          file_range_io_handle,
 	          narrow_source,
 	          source_length,
 	          &error );
@@ -675,7 +768,7 @@ int bfio_test_file_range_io_handle_open_close(
 	/* Test open and close
 	 */
 	result = libbfio_file_range_io_handle_open(
-	          file_io_handle,
+	          file_range_io_handle,
 	          LIBBFIO_OPEN_READ,
 	          &error );
 
@@ -689,7 +782,7 @@ int bfio_test_file_range_io_handle_open_close(
 	 error );
 
 	result = libbfio_file_range_io_handle_close(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -704,7 +797,7 @@ int bfio_test_file_range_io_handle_open_close(
 	/* Test open and close a second time to validate clean up on close
 	 */
 	result = libbfio_file_range_io_handle_open(
-	          file_io_handle,
+	          file_range_io_handle,
 	          LIBBFIO_OPEN_READ,
 	          &error );
 
@@ -718,7 +811,7 @@ int bfio_test_file_range_io_handle_open_close(
 	 error );
 
 	result = libbfio_file_range_io_handle_close(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -733,7 +826,7 @@ int bfio_test_file_range_io_handle_open_close(
 	/* Clean up
 	 */
 	result = libbfio_file_range_io_handle_free(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -742,8 +835,8 @@ int bfio_test_file_range_io_handle_open_close(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -757,34 +850,184 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( file_io_handle != NULL )
+	if( file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &file_io_handle,
+		 &file_range_io_handle,
 		 NULL );
 	}
 	return( 0 );
 }
 
+/* Tests the libbfio_file_range_io_handle_get_name_size function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_io_handle_get_name_size(
+     libbfio_file_range_io_handle_t *file_range_io_handle )
+{
+	libcerror_error_t *error = NULL;
+	size_t name_size         = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_file_range_io_handle_get_name_size(
+	          file_range_io_handle,
+	          &name_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_io_handle_get_name_size(
+	          NULL,
+	          &name_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_io_handle_get_name_size(
+	          file_range_io_handle,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Tests the libbfio_file_range_io_handle_get_name_size_wide function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_io_handle_get_name_size_wide(
+     libbfio_file_range_io_handle_t *file_range_io_handle )
+{
+	libcerror_error_t *error = NULL;
+	size_t name_size_wide    = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_file_range_io_handle_get_name_size_wide(
+	          file_range_io_handle,
+	          &name_size_wide,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_io_handle_get_name_size_wide(
+	          NULL,
+	          &name_size_wide,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_io_handle_get_name_size_wide(
+	          file_range_io_handle,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
 /* Tests the libbfio_file_range_io_handle_read_buffer function
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_io_handle_read_buffer(
-     libbfio_file_range_io_handle_t *file_io_handle )
+     libbfio_file_range_io_handle_t *file_range_io_handle )
 {
 	uint8_t buffer[ 32 ];
 
-	libbfio_file_range_io_handle_t *closed_file_io_handle = NULL;
-	libcerror_error_t *error                        = NULL;
-	size64_t file_size                              = 0;
-	ssize_t read_count                              = 0;
-	off64_t offset                                  = 0;
-	int result                                      = 0;
+	libbfio_file_range_io_handle_t *closed_file_range_io_handle = NULL;
+	libcerror_error_t *error                                    = NULL;
+	size64_t file_size                                          = 0;
+	ssize_t read_count                                          = 0;
+	off64_t offset                                              = 0;
+	int result                                                  = 0;
 
 	/* Initialize test
 	 */
 	result = libbfio_file_range_io_handle_get_size(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &file_size,
 	          &error );
 
@@ -802,7 +1045,7 @@ int bfio_test_file_range_io_handle_read_buffer(
 		return( 1 );
 	}
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          0,
 	          SEEK_SET,
 	          &error );
@@ -819,7 +1062,7 @@ int bfio_test_file_range_io_handle_read_buffer(
 	/* Test regular cases
 	 */
 	read_count = libbfio_file_range_io_handle_read_buffer(
-	              file_io_handle,
+	              file_range_io_handle,
 	              buffer,
 	              32,
 	              &error );
@@ -854,7 +1097,7 @@ int bfio_test_file_range_io_handle_read_buffer(
 	 &error );
 
 	read_count = libbfio_file_range_io_handle_read_buffer(
-	              file_io_handle,
+	              file_range_io_handle,
 	              NULL,
 	              0,
 	              &error );
@@ -872,7 +1115,7 @@ int bfio_test_file_range_io_handle_read_buffer(
 	 &error );
 
 	read_count = libbfio_file_range_io_handle_read_buffer(
-	              file_io_handle,
+	              file_range_io_handle,
 	              buffer,
 	              (size_t) SSIZE_MAX + 1,
 	              &error );
@@ -892,7 +1135,7 @@ int bfio_test_file_range_io_handle_read_buffer(
 	/* Initialize test
 	 */
 	result = libbfio_file_range_io_handle_initialize(
-	          &closed_file_io_handle,
+	          &closed_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -901,8 +1144,8 @@ int bfio_test_file_range_io_handle_read_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "closed_file_io_handle",
-	 closed_file_io_handle );
+	 "closed_file_range_io_handle",
+	 closed_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -911,7 +1154,7 @@ int bfio_test_file_range_io_handle_read_buffer(
 	/* Test read buffer with error code on a closed file IO handle
 	 */
 	read_count = libbfio_file_range_io_handle_read_buffer(
-	              closed_file_io_handle,
+	              closed_file_range_io_handle,
 	              buffer,
 	              0,
 	              &error );
@@ -931,7 +1174,7 @@ int bfio_test_file_range_io_handle_read_buffer(
 	/* Clean up
 	 */
 	result = libbfio_file_range_io_handle_free(
-	          &closed_file_io_handle,
+	          &closed_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -940,8 +1183,8 @@ int bfio_test_file_range_io_handle_read_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "closed_file_io_handle",
-	 closed_file_io_handle );
+	 "closed_file_range_io_handle",
+	 closed_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -955,10 +1198,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( closed_file_io_handle != NULL )
+	if( closed_file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &closed_file_io_handle,
+		 &closed_file_range_io_handle,
 		 NULL );
 	}
 	return( 0 );
@@ -977,17 +1220,17 @@ int bfio_test_file_range_io_handle_write_buffer(
 		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
 		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5' };
 
-	libbfio_file_range_io_handle_t *closed_file_io_handle = NULL;
-	libbfio_file_range_io_handle_t *file_io_handle        = NULL;
-	libcerror_error_t *error                        = NULL;
-	ssize_t write_count                             = 0;
-	int result                                      = 0;
-	int with_temporary_file                         = 0;
+	libbfio_file_range_io_handle_t *closed_file_range_io_handle = NULL;
+	libbfio_file_range_io_handle_t *file_range_io_handle        = NULL;
+	libcerror_error_t *error                                    = NULL;
+	ssize_t write_count                                         = 0;
+	int result                                                  = 0;
+	int with_temporary_file                                     = 0;
 
 	/* Initialize test
 	 */
 	result = libbfio_file_range_io_handle_initialize(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -996,8 +1239,8 @@ int bfio_test_file_range_io_handle_write_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1022,7 +1265,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 	if( with_temporary_file != 0 )
 	{
 		result = libbfio_file_range_io_handle_set_name(
-		          file_io_handle,
+		          file_range_io_handle,
 		          narrow_temporary_filename,
 		          16,
 		          &error );
@@ -1037,7 +1280,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 		 error );
 
 		result = libbfio_file_range_io_handle_open(
-		          file_io_handle,
+		          file_range_io_handle,
 		          LIBBFIO_OPEN_WRITE,
 		          &error );
 
@@ -1053,7 +1296,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 		/* Test regular cases
 		 */
 		write_count = libbfio_file_range_io_handle_write_buffer(
-		               file_io_handle,
+		               file_range_io_handle,
 		               buffer,
 		               32,
 		               &error );
@@ -1088,7 +1331,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 	 &error );
 
 	write_count = libbfio_file_range_io_handle_write_buffer(
-	               file_io_handle,
+	               file_range_io_handle,
 	               NULL,
 	               0,
 	               &error );
@@ -1106,7 +1349,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 	 &error );
 
 	write_count = libbfio_file_range_io_handle_write_buffer(
-	               file_io_handle,
+	               file_range_io_handle,
 	               buffer,
 	               (size_t) SSIZE_MAX + 1,
 	               &error );
@@ -1126,7 +1369,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 	/* Initialize test
 	 */
 	result = libbfio_file_range_io_handle_initialize(
-	          &closed_file_io_handle,
+	          &closed_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1135,17 +1378,17 @@ int bfio_test_file_range_io_handle_write_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "closed_file_io_handle",
-	 closed_file_io_handle );
+	 "closed_file_range_io_handle",
+	 closed_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	/* Test write buffer with error code on a closed file IO hande
+	/* Test write buffer with error code on a closed file IO handle
 	 */
 	write_count = libbfio_file_range_io_handle_write_buffer(
-	               closed_file_io_handle,
+	               closed_file_range_io_handle,
 	               buffer,
 	               0,
 	               &error );
@@ -1165,7 +1408,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 	/* Clean up
 	 */
 	result = libbfio_file_range_io_handle_free(
-	          &closed_file_io_handle,
+	          &closed_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1174,8 +1417,8 @@ int bfio_test_file_range_io_handle_write_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "closed_file_io_handle",
-	 closed_file_io_handle );
+	 "closed_file_range_io_handle",
+	 closed_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1184,7 +1427,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 	if( with_temporary_file != 0 )
 	{
 		result = libbfio_file_range_io_handle_close(
-		          file_io_handle,
+		          file_range_io_handle,
 		          &error );
 
 		BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1212,7 +1455,7 @@ int bfio_test_file_range_io_handle_write_buffer(
 		with_temporary_file = 0;
 	}
 	result = libbfio_file_range_io_handle_free(
-	          &file_io_handle,
+	          &file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1221,8 +1464,8 @@ int bfio_test_file_range_io_handle_write_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "file_io_handle",
-	 file_io_handle );
+	 "file_range_io_handle",
+	 file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1236,10 +1479,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( closed_file_io_handle != NULL )
+	if( closed_file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &closed_file_io_handle,
+		 &closed_file_range_io_handle,
 		 NULL );
 	}
 	if( with_temporary_file != 0 )
@@ -1248,10 +1491,10 @@ on_error:
 		 narrow_temporary_filename,
 		 NULL );
 	}
-	if( file_io_handle != NULL )
+	if( file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &file_io_handle,
+		 &file_range_io_handle,
 		 NULL );
 	}
 	return( 0 );
@@ -1261,19 +1504,19 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_io_handle_seek_offset(
-     libbfio_file_range_io_handle_t *file_io_handle )
+     libbfio_file_range_io_handle_t *file_range_io_handle )
 {
-	libbfio_file_range_io_handle_t *closed_file_io_handle = NULL;
-	libcerror_error_t *error                        = NULL;
-	size64_t file_size                              = 0;
-	off64_t offset                                  = 0;
-	off64_t seek_offset                             = 0;
-	int result                                      = 0;
+	libbfio_file_range_io_handle_t *closed_file_range_io_handle = NULL;
+	libcerror_error_t *error                                    = NULL;
+	size64_t file_size                                          = 0;
+	off64_t offset                                              = 0;
+	off64_t seek_offset                                         = 0;
+	int result                                                  = 0;
 
 	/* Initialize test
 	 */
 	result = libbfio_file_range_io_handle_get_size(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &file_size,
 	          &error );
 
@@ -1291,7 +1534,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	seek_offset = 0;
 
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          seek_offset,
 	          SEEK_SET,
 	          &error );
@@ -1310,7 +1553,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	seek_offset = (off64_t) file_size;
 
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          seek_offset,
 	          SEEK_SET,
 	          &error );
@@ -1329,7 +1572,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	seek_offset = (off64_t) ( file_size / 5 );
 
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          seek_offset,
 	          SEEK_SET,
 	          &error );
@@ -1346,7 +1589,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: <file_size / 5> and whence: SEEK_CUR
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          seek_offset,
 	          SEEK_CUR,
 	          &error );
@@ -1363,7 +1606,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: <-1 * (file_size / 5)> and whence: SEEK_CUR
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          -1 * seek_offset,
 	          SEEK_CUR,
 	          &error );
@@ -1382,7 +1625,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	seek_offset = (off64_t) ( file_size + 987 );
 
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          seek_offset,
 	          SEEK_SET,
 	          &error );
@@ -1399,7 +1642,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: 0 and whence: SEEK_CUR
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          0,
 	          SEEK_CUR,
 	          &error );
@@ -1416,7 +1659,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: 0 and whence: SEEK_END
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          0,
 	          SEEK_END,
 	          &error );
@@ -1435,7 +1678,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	seek_offset = (off64_t) ( file_size / 4 );
 
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          -1 * seek_offset,
 	          SEEK_END,
 	          &error );
@@ -1452,7 +1695,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: 542 and whence: SEEK_END
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          542,
 	          SEEK_END,
 	          &error );
@@ -1469,7 +1712,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: <-1 * file_size> and whence: SEEK_END
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          -1 * file_size,
 	          SEEK_END,
 	          &error );
@@ -1506,7 +1749,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: -987 and whence: SEEK_SET
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          -987,
 	          SEEK_SET,
 	          &error );
@@ -1526,7 +1769,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: <1 * (file_size + 542)> and whence: SEEK_END
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          -1 * (file_size + 542),
 	          SEEK_END,
 	          &error );
@@ -1546,7 +1789,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset with offset: 0 and whence: UNKNOWN (88)
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          file_io_handle,
+	          file_range_io_handle,
 	          0,
 	          88,
 	          &error );
@@ -1566,7 +1809,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Initialize test
 	 */
 	result = libbfio_file_range_io_handle_initialize(
-	          &closed_file_io_handle,
+	          &closed_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1575,8 +1818,8 @@ int bfio_test_file_range_io_handle_seek_offset(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "closed_file_io_handle",
-	 closed_file_io_handle );
+	 "closed_file_range_io_handle",
+	 closed_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1585,7 +1828,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Test seek offset on a closed file IO handle
 	 */
 	offset = libbfio_file_range_io_handle_seek_offset(
-	          closed_file_io_handle,
+	          closed_file_range_io_handle,
 	          0,
 	          SEEK_SET,
 	          &error );
@@ -1605,7 +1848,7 @@ int bfio_test_file_range_io_handle_seek_offset(
 	/* Clean up
 	 */
 	result = libbfio_file_range_io_handle_free(
-	          &closed_file_io_handle,
+	          &closed_file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1614,8 +1857,8 @@ int bfio_test_file_range_io_handle_seek_offset(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "closed_file_io_handle",
-	 closed_file_io_handle );
+	 "closed_file_range_io_handle",
+	 closed_file_range_io_handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1629,10 +1872,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( closed_file_io_handle != NULL )
+	if( closed_file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &closed_file_io_handle,
+		 &closed_file_range_io_handle,
 		 NULL );
 	}
 	return( 0 );
@@ -1642,7 +1885,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_io_handle_exists(
-     libbfio_file_range_io_handle_t *file_io_handle )
+     libbfio_file_range_io_handle_t *file_range_io_handle )
 {
 	libcerror_error_t *error = NULL;
 	int result               = 0;
@@ -1650,7 +1893,7 @@ int bfio_test_file_range_io_handle_exists(
 	/* Test regular cases
 	 */
 	result = libbfio_file_range_io_handle_exists(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1695,7 +1938,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_io_handle_is_open(
-     libbfio_file_range_io_handle_t *file_io_handle )
+     libbfio_file_range_io_handle_t *file_range_io_handle )
 {
 	libcerror_error_t *error = NULL;
 	int result               = 0;
@@ -1703,7 +1946,7 @@ int bfio_test_file_range_io_handle_is_open(
 	/* Test regular cases
 	 */
 	result = libbfio_file_range_io_handle_is_open(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1748,7 +1991,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_io_handle_get_size(
-     libbfio_file_range_io_handle_t *file_io_handle )
+     libbfio_file_range_io_handle_t *file_range_io_handle )
 {
 	libcerror_error_t *error = NULL;
 	size64_t size            = 0;
@@ -1757,7 +2000,7 @@ int bfio_test_file_range_io_handle_get_size(
 	/* Test regular cases
 	 */
 	result = libbfio_file_range_io_handle_get_size(
-	          file_io_handle,
+	          file_range_io_handle,
 	          &size,
 	          &error );
 
@@ -1790,7 +2033,7 @@ int bfio_test_file_range_io_handle_get_size(
 	 &error );
 
 	result = libbfio_file_range_io_handle_get_size(
-	          file_io_handle,
+	          file_range_io_handle,
 	          NULL,
 	          &error );
 
@@ -1834,14 +2077,14 @@ int main(
 #if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
 	char narrow_source[ 256 ];
 
-	libbfio_file_range_io_handle_t *file_io_handle = NULL;
-	size_t source_length                     = 0;
+	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
+	size_t source_length                                 = 0;
 #endif
 
-	libcerror_error_t *error                 = NULL;
-	system_character_t *source               = NULL;
-	system_integer_t option                  = 0;
-	int result                               = 0;
+	libcerror_error_t *error                             = NULL;
+	system_character_t *source                           = NULL;
+	system_integer_t option                              = 0;
+	int result                                           = 0;
 
 	while( ( option = bfio_test_getopt(
 	                   argc,
@@ -1929,7 +2172,7 @@ int main(
 		 error );
 
 		result = libbfio_file_range_io_handle_initialize(
-		          &file_io_handle,
+		          &file_range_io_handle,
 		          &error );
 
 		BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1938,8 +2181,8 @@ int main(
 		 1 );
 
 		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "file_io_handle",
-		 file_io_handle );
+		 "file_range_io_handle",
+		 file_range_io_handle );
 
 		BFIO_TEST_ASSERT_IS_NULL(
 		 "error",
@@ -1949,7 +2192,7 @@ int main(
 		                 narrow_source );
 
 		result = libbfio_file_range_io_handle_set_name(
-		          file_io_handle,
+		          file_range_io_handle,
 		          narrow_source,
 		          source_length,
 		          &error );
@@ -1964,7 +2207,7 @@ int main(
 		 error );
 
 		result = libbfio_file_range_io_handle_open(
-		          file_io_handle,
+		          file_range_io_handle,
 		          LIBBFIO_OPEN_READ,
 		          &error );
 
@@ -1977,7 +2220,10 @@ int main(
 		 "error",
 		 error );
 
-/* TODO add test for libbfio_file_range_io_handle_get_name_size */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_io_handle_get_name_size",
+		 bfio_test_file_range_io_handle_get_name_size,
+		 file_range_io_handle );
 
 /* TODO add test for libbfio_file_range_io_handle_get_name */
 
@@ -1985,7 +2231,10 @@ int main(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* TODO add test for libbfio_file_range_io_handle_get_name_size_wide */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_io_handle_get_name_size_wide",
+		 bfio_test_file_range_io_handle_get_name_size_wide,
+		 file_range_io_handle );
 
 /* TODO add test for libbfio_file_range_io_handle_get_name_wide */
 
@@ -1996,32 +2245,32 @@ int main(
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_file_range_io_handle_seek_offset",
 		 bfio_test_file_range_io_handle_seek_offset,
-		 file_io_handle );
+		 file_range_io_handle );
 
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_file_range_io_handle_read_buffer",
 		 bfio_test_file_range_io_handle_read_buffer,
-		 file_io_handle );
+		 file_range_io_handle );
 
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_file_range_io_handle_exists",
 		 bfio_test_file_range_io_handle_exists,
-		 file_io_handle );
+		 file_range_io_handle );
 
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_file_range_io_handle_is_open",
 		 bfio_test_file_range_io_handle_is_open,
-		 file_io_handle );
+		 file_range_io_handle );
 
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_file_range_io_handle_get_size",
 		 bfio_test_file_range_io_handle_get_size,
-		 file_io_handle );
+		 file_range_io_handle );
 
 		/* Clean up
 		 */
 		result = libbfio_file_range_io_handle_close(
-		          file_io_handle,
+		          file_range_io_handle,
 		          &error );
 
 		BFIO_TEST_ASSERT_EQUAL_INT(
@@ -2034,7 +2283,7 @@ int main(
 		 error );
 
 		result = libbfio_file_range_io_handle_free(
-		          &file_io_handle,
+		          &file_range_io_handle,
 		          &error );
 
 		BFIO_TEST_ASSERT_EQUAL_INT(
@@ -2043,8 +2292,8 @@ int main(
 		 1 );
 
 		BFIO_TEST_ASSERT_IS_NULL(
-		 "file_io_handle",
-		 file_io_handle );
+		 "file_range_io_handle",
+		 file_range_io_handle );
 
 		BFIO_TEST_ASSERT_IS_NULL(
 		 "error",
@@ -2063,10 +2312,10 @@ on_error:
 		 &error );
 	}
 #if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
-	if( file_io_handle != NULL )
+	if( file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
-		 &file_io_handle,
+		 &file_range_io_handle,
 		 NULL );
 	}
 #endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */

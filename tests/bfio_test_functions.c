@@ -788,7 +788,7 @@ int bfio_test_remove_temporary_file(
 		return( -1 );
 	}
 	result = DeleteFileA(
-	          filename );
+	          temporary_filename );
 
 	if( result == 0 )
 	{
@@ -878,7 +878,7 @@ int bfio_test_remove_temporary_file_wide(
 		return( -1 );
 	}
 	result = DeleteFileW(
-	          filename );
+	          temporary_filename );
 
 	if( result == 0 )
 	{
