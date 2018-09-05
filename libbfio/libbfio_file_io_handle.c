@@ -854,13 +854,13 @@ int libbfio_file_io_handle_close(
 /* Reads a buffer from the file handle
  * Returns the number of bytes read if successful, or -1 on error
  */
-ssize_t libbfio_file_io_handle_read(
+ssize_t libbfio_file_io_handle_read_buffer(
          libbfio_file_io_handle_t *file_io_handle,
          uint8_t *buffer,
          size_t size,
          libcerror_error_t **error )
 {
-	static char *function = "libbfio_file_read";
+	static char *function = "libbfio_file_read_buffer";
 	ssize_t read_count    = 0;
 
 	if( file_io_handle == NULL )
@@ -909,13 +909,13 @@ ssize_t libbfio_file_io_handle_read(
 /* Writes a buffer to the file handle
  * Returns the number of bytes written if successful, or -1 on error
  */
-ssize_t libbfio_file_io_handle_write(
+ssize_t libbfio_file_io_handle_write_buffer(
          libbfio_file_io_handle_t *file_io_handle,
          const uint8_t *buffer,
          size_t size,
          libcerror_error_t **error )
 {
-	static char *function = "libbfio_file_write";
+	static char *function = "libbfio_file_write_buffer";
 	ssize_t write_count   = 0;
 
 	if( file_io_handle == NULL )

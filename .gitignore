@@ -125,13 +125,7 @@ stamp-h[1-9]
 /tests/bfio_test_file
 /tests/bfio_test_file_io_handle
 /tests/bfio_test_handle
-/tests/bfio_test_handle_read
-/tests/bfio_test_handle_seek
-/tests/bfio_test_handle_write
 /tests/bfio_test_pool
-/tests/bfio_test_pool_read
-/tests/bfio_test_pool_seek
-/tests/bfio_test_pool_write
 /tests/bfio_test_support
 /tests/bfio_test_system_string
 /tests/input

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libbfio],
- [20180904],
+ [20180905],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -126,9 +126,6 @@ AS_IF(
  [AC_SUBST(
   [libbfio_spec_requires],
   [Requires:])
- AC_SUBST(
-  [libbfio_spec_build_requires],
-  [BuildRequires:])
  ])
 
 dnl Set the date for the dpkg files

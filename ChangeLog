@@ -1,4 +1,6 @@
 TODO
+* file_io_handle remove temporary file, add test function?
+* move handle/pool _read, _seek, _write tests into main test file
 * handle clean offset and size on close?
 * complete multi threading support (todo pool)
 * remove open on demand ?

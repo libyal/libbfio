@@ -113,13 +113,13 @@ int libbfio_file_io_handle_close(
      libbfio_file_io_handle_t *file_io_handle,
      libcerror_error_t **error );
 
-ssize_t libbfio_file_io_handle_read(
+ssize_t libbfio_file_io_handle_read_buffer(
          libbfio_file_io_handle_t *file_io_handle,
          uint8_t *buffer,
          size_t size,
          libcerror_error_t **error );
 
-ssize_t libbfio_file_io_handle_write(
+ssize_t libbfio_file_io_handle_write_buffer(
          libbfio_file_io_handle_t *file_io_handle,
          const uint8_t *buffer,
          size_t size,

@@ -1020,7 +1020,7 @@ ssize_t libbfio_file_range_read(
 			size = (size_t) ( file_range_io_handle->range_offset - file_offset );
 		}
 	}
-	read_count = libbfio_file_io_handle_read(
+	read_count = libbfio_file_io_handle_read_buffer(
 	              file_range_io_handle->file_io_handle,
 	              buffer,
 	              size,
@@ -1103,7 +1103,7 @@ ssize_t libbfio_file_range_write(
 			size = (size_t) ( file_range_io_handle->range_offset - file_offset );
 		}
 	}
-	write_count = libbfio_file_io_handle_write(
+	write_count = libbfio_file_io_handle_write_buffer(
 	               file_range_io_handle->file_io_handle,
 	               buffer,
 	               size,

@@ -13,13 +13,11 @@ AM_CPPFLAGS = \
 	@LIBBFIO_DLL_IMPORT@
 
 TESTS = \
-	test_library.sh \
-	test_write_functions.sh
+	test_library.sh
 
 check_SCRIPTS = \
 	test_library.sh \
-	test_runner.sh \
-	test_write_functions.sh
+	test_runner.sh
 
 input_FILES = \
 	input/raw/test.raw
@@ -33,13 +31,7 @@ check_PROGRAMS = \
 	bfio_test_file \
 	bfio_test_file_io_handle \
 	bfio_test_handle \
-	bfio_test_handle_read \
-	bfio_test_handle_seek \
-	bfio_test_handle_write \
 	bfio_test_pool \
-	bfio_test_pool_seek \
-	bfio_test_pool_read \
-	bfio_test_pool_write \
 	bfio_test_support \
 	bfio_test_system_string
 
@@ -109,36 +101,6 @@ bfio_test_handle_LDADD = \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
 
-bfio_test_handle_read_SOURCES = \
-	bfio_test_handle_read.c \
-	bfio_test_libbfio.h \
-	bfio_test_libcerror.h
-
-bfio_test_handle_read_LDADD = \
-	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@
-
-bfio_test_handle_seek_SOURCES = \
-	bfio_test_handle_seek.c \
-	bfio_test_libbfio.h \
-	bfio_test_libcerror.h
-
-bfio_test_handle_seek_LDADD = \
-	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@
-
-bfio_test_handle_write_SOURCES = \
-	bfio_test_handle_write.c \
-	bfio_test_libbfio.h \
-	bfio_test_libcerror.h \
-	bfio_test_libcpath.h
-
-bfio_test_handle_write_LDADD = \
-	@LIBCPATH_LIBADD@ \
-	@LIBCSPLIT_LIBADD@ \
-	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@
-
 bfio_test_pool_SOURCES = \
 	bfio_test_getopt.c bfio_test_getopt.h \
 	bfio_test_libbfio.h \
@@ -154,36 +116,6 @@ bfio_test_pool_SOURCES = \
 bfio_test_pool_LDADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
-	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@
-
-bfio_test_pool_read_SOURCES = \
-	bfio_test_libbfio.h \
-	bfio_test_libcerror.h \
-	bfio_test_pool_read.c
-
-bfio_test_pool_read_LDADD = \
-	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@
-
-bfio_test_pool_seek_SOURCES = \
-	bfio_test_libbfio.h \
-	bfio_test_libcerror.h \
-	bfio_test_pool_seek.c
-
-bfio_test_pool_seek_LDADD = \
-	../libbfio/libbfio.la \
-	@LIBCERROR_LIBADD@
-
-bfio_test_pool_write_SOURCES = \
-	bfio_test_libbfio.h \
-	bfio_test_libcerror.h \
-	bfio_test_libcpath.h \
-	bfio_test_pool_write.c
-
-bfio_test_pool_write_LDADD = \
-	@LIBCPATH_LIBADD@ \
-	@LIBCSPLIT_LIBADD@ \
 	../libbfio/libbfio.la \
 	@LIBCERROR_LIBADD@
 
