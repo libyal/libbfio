@@ -35,6 +35,7 @@ libbfio_la_SOURCES = \
 	libbfio_libcthreads.h \
 	libbfio_libuna.h \
 	libbfio_memory_range.c libbfio_memory_range.h \
+	libbfio_memory_range_io_handle.c libbfio_memory_range_io_handle.h \
 	libbfio_pool.c libbfio_pool.h \
 	libbfio_support.c libbfio_support.h \
 	libbfio_system_string.c libbfio_system_string.h \

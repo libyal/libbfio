@@ -5,6 +5,8 @@ MSVSCPP_FILES = \
 	bfio_test_file_range/bfio_test_file_range.vcproj \
 	bfio_test_file_range_io_handle/bfio_test_file_range_io_handle.vcproj \
 	bfio_test_handle/bfio_test_handle.vcproj \
+	bfio_test_memory_range/bfio_test_memory_range.vcproj \
+	bfio_test_memory_range_io_handle/bfio_test_memory_range_io_handle.vcproj \
 	bfio_test_pool/bfio_test_pool.vcproj \
 	bfio_test_support/bfio_test_support.vcproj \
 	bfio_test_system_string/bfio_test_system_string.vcproj \

@@ -1,6 +1,5 @@
 TODO
-* add libbfio_file_range_io_handle_get and libbfio_file_range_io_handle_set
-  functions
+* add libbfio_file_range_io_handle_get and libbfio_file_range_io_handle_set functions
 * move handle/pool _read, _seek, _write tests into main test file
 * handle clean offset and size on close?
 * complete multi threading support (todo pool)
