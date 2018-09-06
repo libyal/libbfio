@@ -2242,6 +2242,10 @@ int main(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+/* TODO add test for libbfio_file_io_range_get */
+
+/* TODO add test for libbfio_file_io_range_set */
+
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_file_range_io_handle_seek_offset",
 		 bfio_test_file_range_io_handle_seek_offset,

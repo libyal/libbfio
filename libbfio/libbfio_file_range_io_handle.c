@@ -506,6 +506,107 @@ int libbfio_file_range_io_handle_set_name_wide(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+/* Retrieves the range of the file range IO handle
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_range_io_handle_get(
+     libbfio_file_range_io_handle_t *file_range_io_handle,
+     off64_t *range_offset,
+     size64_t *range_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libbfio_file_range_io_handle_get";
+
+	if( file_range_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file range IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( range_offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid range offset.",
+		 function );
+
+		return( -1 );
+	}
+	if( range_size == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid range size.",
+		 function );
+
+		return( -1 );
+	}
+	*range_offset = file_range_io_handle->range_offset;
+	*range_size   = file_range_io_handle->range_size;
+
+	return( 1 );
+}
+
+/* Sets the range of the file range IO handle
+ * A range size of 0 represents that the range continues until the end of the file
+ * Returns 1 if succesful or -1 on error
+ */
+int libbfio_file_range_io_handle_set(
+     libbfio_file_range_io_handle_t *file_range_io_handle,
+     off64_t range_offset,
+     size64_t range_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libbfio_file_range_io_handle_set";
+
+	if( file_range_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file range IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( range_offset < 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
+		 "%s: invalid range offset value less than zero.",
+		 function );
+
+		return( -1 );
+	}
+	if( range_size > (size64_t) INT64_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid range size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	file_range_io_handle->range_offset = range_offset;
+	file_range_io_handle->range_size   = range_size;
+
+	return( 1 );
+}
+
 /* Opens the file range IO handle
  * Returns 1 if successful or -1 on error
  */

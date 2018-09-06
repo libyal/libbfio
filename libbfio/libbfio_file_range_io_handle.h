@@ -100,6 +100,18 @@ int libbfio_file_range_io_handle_set_name_wide(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+int libbfio_file_range_io_handle_get(
+     libbfio_file_range_io_handle_t *file_range_io_handle,
+     off64_t *range_offset,
+     size64_t *range_size,
+     libcerror_error_t **error );
+
+int libbfio_file_range_io_handle_set(
+     libbfio_file_range_io_handle_t *file_range_io_handle,
+     off64_t range_offset,
+     size64_t range_size,
+     libcerror_error_t **error );
+
 int libbfio_file_range_io_handle_open(
      libbfio_file_range_io_handle_t *file_range_io_handle,
      int access_flags,

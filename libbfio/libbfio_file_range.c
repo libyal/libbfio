@@ -388,9 +388,8 @@ int libbfio_file_range_get(
      size64_t *range_size,
      libcerror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle           = NULL;
-	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
-	static char *function                                = "libbfio_file_range_get";
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_file_range_get";
 
 	if( handle == NULL )
 	{
@@ -405,44 +404,21 @@ int libbfio_file_range_get(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( internal_handle->io_handle == NULL )
+	if( libbfio_file_range_io_handle_get(
+	     (libbfio_file_range_io_handle_t *) internal_handle->io_handle,
+	     range_offset,
+	     range_size,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve range from file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_range_io_handle = (libbfio_file_range_io_handle_t *) internal_handle->io_handle;
-
-	if( range_offset == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid range offset.",
-		 function );
-
-		return( -1 );
-	}
-	if( range_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid range size.",
-		 function );
-
-		return( -1 );
-	}
-	*range_offset = file_range_io_handle->range_offset;
-	*range_size   = file_range_io_handle->range_size;
-
 	return( 1 );
 }
 
@@ -456,9 +432,8 @@ int libbfio_file_range_set(
      size64_t range_size,
      libcerror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle           = NULL;
-	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
-	static char *function                                = "libbfio_file_range_set";
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_file_range_set";
 
 	if( handle == NULL )
 	{
@@ -473,44 +448,21 @@ int libbfio_file_range_set(
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
-	if( internal_handle->io_handle == NULL )
+	if( libbfio_file_range_io_handle_set(
+	     (libbfio_file_range_io_handle_t *) internal_handle->io_handle,
+	     range_offset,
+	     range_size,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set range in file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	file_range_io_handle = (libbfio_file_range_io_handle_t *) internal_handle->io_handle;
-
-	if( range_offset < 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_LESS_THAN_ZERO,
-		 "%s: invalid range offset value less than zero.",
-		 function );
-
-		return( -1 );
-	}
-	if( range_size > (size64_t) INT64_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid range size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	file_range_io_handle->range_offset = range_offset;
-	file_range_io_handle->range_size   = range_size;
-
 	return( 1 );
 }
 
