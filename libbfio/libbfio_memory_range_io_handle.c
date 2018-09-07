@@ -287,7 +287,7 @@ int libbfio_memory_range_io_handle_set(
 
 		return( -1 );
 	}
-	if( range_size >= (size_t) SSIZE_MAX )
+	if( range_size > (size_t) SSIZE_MAX )
 	{
 		libcerror_error_set(
 		 error,
@@ -836,17 +836,6 @@ int libbfio_memory_range_io_handle_get_size(
 
 		return( -1 );
 	}
-	if( memory_range_io_handle->range_start == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid memory range IO handle - invalid range start.",
-		 function );
-
-		return( -1 );
-	}
 	if( size == NULL )
 	{
 		libcerror_error_set(
@@ -858,8 +847,14 @@ int libbfio_memory_range_io_handle_get_size(
 
 		return( -1 );
 	}
-	*size = (size64_t) memory_range_io_handle->range_size;
-
+	if( memory_range_io_handle->range_start == NULL )
+	{
+		*size = 0;
+	}
+	else
+	{
+		*size = (size64_t) memory_range_io_handle->range_size;
+	}
 	return( 1 );
 }
 

@@ -394,6 +394,180 @@ on_error:
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+/* Tests the libbfio_file_range_get function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_get(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	size64_t range_size      = 0;
+	off64_t range_offset     = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_file_range_get(
+	          handle,
+	          &range_offset,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_get(
+	          NULL,
+	          &range_offset,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_get(
+	          handle,
+	          NULL,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_get(
+	          handle,
+	          &range_offset,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_file_range_set function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_set(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_set(
+	          NULL,
+	          0,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_set(
+	          handle,
+	          -1,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_set(
+	          handle,
+	          0,
+	          (size64_t) INT64_MAX + 1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -525,9 +699,15 @@ int main(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* TODO add test for libbfio_file_range_get */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_get",
+		 bfio_test_file_range_get,
+		 handle );
 
-/* TODO add test for libbfio_file_range_set */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_set",
+		 bfio_test_file_range_set,
+		 handle );
 
 		/* Clean up
 		 */

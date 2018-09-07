@@ -533,6 +533,177 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libbfio_memory_range_io_handle_get function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_memory_range_io_handle_get(
+     libbfio_memory_range_io_handle_t *memory_range_io_handle )
+{
+	libcerror_error_t *error = NULL;
+	uint8_t *range_start     = NULL;
+	size64_t range_size      = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_memory_range_io_handle_get(
+	          memory_range_io_handle,
+	          &range_start,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_memory_range_io_handle_get(
+	          NULL,
+	          &range_start,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_io_handle_get(
+	          memory_range_io_handle,
+	          NULL,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_io_handle_get(
+	          memory_range_io_handle,
+	          &range_start,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_memory_range_io_handle_set function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_memory_range_io_handle_set(
+     libbfio_memory_range_io_handle_t *memory_range_io_handle )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libbfio_memory_range_io_handle_set(
+	          NULL,
+	          bfio_test_memory_range_io_handle_data,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_io_handle_set(
+	          memory_range_io_handle,
+	          NULL,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_io_handle_set(
+	          memory_range_io_handle,
+	          bfio_test_memory_range_io_handle_data,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libbfio_memory_range_io_handle_open function
  * Returns 1 if successful or 0 if not
  */
@@ -577,7 +748,7 @@ int bfio_test_memory_range_io_handle_open(
 	 "error",
 	 error );
 
-	/* Test open
+	/* Test regular cases
 	 */
 	result = libbfio_memory_range_io_handle_open(
 	          memory_range_io_handle,
@@ -593,8 +764,6 @@ int bfio_test_memory_range_io_handle_open(
 	 "error",
 	 error );
 
-	/* Clean up
-	 */
 	result = libbfio_memory_range_io_handle_close(
 	          memory_range_io_handle,
 	          &error );
@@ -608,6 +777,69 @@ int bfio_test_memory_range_io_handle_open(
 	 "error",
 	 error );
 
+	/* Test error cases
+	 */
+	result = libbfio_memory_range_io_handle_open(
+	          NULL,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->range_start = NULL;
+
+	result = libbfio_memory_range_io_handle_open(
+	          memory_range_io_handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	memory_range_io_handle->range_start = bfio_test_memory_range_io_handle_data;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->is_open = 1;
+
+	result = libbfio_memory_range_io_handle_open(
+	          memory_range_io_handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	memory_range_io_handle->is_open = 0;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libbfio_memory_range_io_handle_free(
 	          &memory_range_io_handle,
 	          &error );
@@ -648,8 +880,57 @@ on_error:
 int bfio_test_memory_range_io_handle_close(
      void )
 {
-	libcerror_error_t *error = NULL;
-	int result               = 0;
+	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
+	libcerror_error_t *error                                 = NULL;
+	int result                                               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_memory_range_io_handle_initialize(
+	          &memory_range_io_handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "memory_range_io_handle",
+	 memory_range_io_handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_memory_range_io_handle_set(
+	          memory_range_io_handle,
+	          bfio_test_memory_range_io_handle_data,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_memory_range_io_handle_open(
+	          memory_range_io_handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -669,6 +950,65 @@ int bfio_test_memory_range_io_handle_close(
 	libcerror_error_free(
 	 &error );
 
+	memory_range_io_handle->range_start = NULL;
+
+	result = libbfio_memory_range_io_handle_close(
+	          memory_range_io_handle,
+	          &error );
+
+	memory_range_io_handle->range_start = bfio_test_memory_range_io_handle_data;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->is_open = 0;
+
+	result = libbfio_memory_range_io_handle_close(
+	          memory_range_io_handle,
+	          &error );
+
+	memory_range_io_handle->is_open = 1;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libbfio_memory_range_io_handle_free(
+	          &memory_range_io_handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "memory_range_io_handle",
+	 memory_range_io_handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
@@ -676,6 +1016,12 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	if( memory_range_io_handle != NULL )
+	{
+		libbfio_memory_range_io_handle_free(
+		 &memory_range_io_handle,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -827,11 +1173,11 @@ int bfio_test_memory_range_io_handle_read_buffer(
 	uint8_t buffer[ 32 ];
 
 	libbfio_memory_range_io_handle_t *closed_memory_range_io_handle = NULL;
-	libcerror_error_t *error                                    = NULL;
-	size64_t file_size                                          = 0;
-	ssize_t read_count                                          = 0;
-	off64_t offset                                              = 0;
-	int result                                                  = 0;
+	libcerror_error_t *error                                        = NULL;
+	size64_t file_size                                              = 0;
+	ssize_t read_count                                              = 0;
+	off64_t offset                                                  = 0;
+	int result                                                      = 0;
 
 	/* Initialize test
 	 */
@@ -885,6 +1231,51 @@ int bfio_test_memory_range_io_handle_read_buffer(
 	 "error",
 	 error );
 
+	offset = libbfio_memory_range_io_handle_seek_offset(
+	          memory_range_io_handle,
+	          4096,
+	          SEEK_SET,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 4096 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	read_count = libbfio_memory_range_io_handle_read_buffer(
+	              memory_range_io_handle,
+	              buffer,
+	              32,
+	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset = libbfio_memory_range_io_handle_seek_offset(
+	          memory_range_io_handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test error cases
 	 */
 	read_count = libbfio_memory_range_io_handle_read_buffer(
@@ -892,6 +1283,50 @@ int bfio_test_memory_range_io_handle_read_buffer(
 	              buffer,
 	              0,
 	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->is_open = 0;
+
+	read_count = libbfio_memory_range_io_handle_read_buffer(
+	              memory_range_io_handle,
+	              buffer,
+	              0,
+	              &error );
+
+	memory_range_io_handle->is_open = 1;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->access_flags = 0;
+
+	read_count = libbfio_memory_range_io_handle_read_buffer(
+	              memory_range_io_handle,
+	              buffer,
+	              0,
+	              &error );
+
+	memory_range_io_handle->access_flags = LIBBFIO_ACCESS_FLAG_READ;
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
 	 "read_count",
@@ -940,6 +1375,60 @@ int bfio_test_memory_range_io_handle_read_buffer(
 
 	libcerror_error_free(
 	 &error );
+
+	memory_range_io_handle->range_offset = 4096 + 1;
+
+	read_count = libbfio_memory_range_io_handle_read_buffer(
+	              memory_range_io_handle,
+	              buffer,
+	              0,
+	              &error );
+
+	memory_range_io_handle->range_offset = 0;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
+
+	/* Test libbfio_memory_range_io_handle_read_buffer with memcpy failing
+	 */
+	bfio_test_memcpy_attempts_before_fail = 0;
+
+	read_count = libbfio_memory_range_io_handle_read_buffer(
+	              memory_range_io_handle,
+	              buffer,
+	              32,
+	              &error );
+
+	if( bfio_test_memcpy_attempts_before_fail != -1 )
+	{
+		bfio_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
 
 	/* Initialize test
 	 */
@@ -1071,8 +1560,74 @@ int bfio_test_memory_range_io_handle_write_buffer(
 	write_count = libbfio_memory_range_io_handle_write_buffer(
 	               NULL,
 	               buffer,
-	               0,
+	               32,
 	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->range_start = NULL;
+
+	write_count = libbfio_memory_range_io_handle_write_buffer(
+	               memory_range_io_handle,
+	               buffer,
+	               32,
+	               &error );
+
+	memory_range_io_handle->range_start = bfio_test_memory_range_io_handle_data;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->is_open = 0;
+
+	write_count = libbfio_memory_range_io_handle_write_buffer(
+	               memory_range_io_handle,
+	               buffer,
+	               32,
+	               &error );
+
+	memory_range_io_handle->is_open = 1;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	memory_range_io_handle->access_flags = 0;
+
+	write_count = libbfio_memory_range_io_handle_write_buffer(
+	               memory_range_io_handle,
+	               buffer,
+	               32,
+	               &error );
+
+	memory_range_io_handle->access_flags = LIBBFIO_ACCESS_FLAG_WRITE;
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
 	 "write_count",
@@ -1089,7 +1644,7 @@ int bfio_test_memory_range_io_handle_write_buffer(
 	write_count = libbfio_memory_range_io_handle_write_buffer(
 	               memory_range_io_handle,
 	               NULL,
-	               0,
+	               32,
 	               &error );
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
@@ -1121,6 +1676,60 @@ int bfio_test_memory_range_io_handle_write_buffer(
 
 	libcerror_error_free(
 	 &error );
+
+	memory_range_io_handle->range_offset = 4096 + 1;
+
+	write_count = libbfio_memory_range_io_handle_write_buffer(
+	               memory_range_io_handle,
+	               buffer,
+	               32,
+	               &error );
+
+	memory_range_io_handle->range_offset = 0;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
+
+	/* Test libbfio_memory_range_io_handle_write_buffer with memcpy failing
+	 */
+	bfio_test_memcpy_attempts_before_fail = 0;
+
+	write_count = libbfio_memory_range_io_handle_write_buffer(
+	               memory_range_io_handle,
+	               buffer,
+	               32,
+	               &error );
+
+	if( bfio_test_memcpy_attempts_before_fail != -1 )
+	{
+		bfio_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "write_count",
+		 write_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
 
 	/* Initialize test
 	 */
@@ -1242,11 +1851,11 @@ int bfio_test_memory_range_io_handle_seek_offset(
      libbfio_memory_range_io_handle_t *memory_range_io_handle )
 {
 	libbfio_memory_range_io_handle_t *closed_memory_range_io_handle = NULL;
-	libcerror_error_t *error                                    = NULL;
-	size64_t file_size                                          = 0;
-	off64_t offset                                              = 0;
-	off64_t seek_offset                                         = 0;
-	int result                                                  = 0;
+	libcerror_error_t *error                                        = NULL;
+	size64_t file_size                                              = 0;
+	off64_t offset                                                  = 0;
+	off64_t seek_offset                                             = 0;
+	int result                                                      = 0;
 
 	/* Initialize test
 	 */
@@ -1481,6 +2090,28 @@ int bfio_test_memory_range_io_handle_seek_offset(
 	libcerror_error_free(
 	 &error );
 
+	memory_range_io_handle->is_open = 0;
+
+	offset = libbfio_memory_range_io_handle_seek_offset(
+	          memory_range_io_handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	memory_range_io_handle->is_open = 1;
+
+	BFIO_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	/* Test seek offset with offset: -987 and whence: SEEK_SET
 	 */
 	offset = libbfio_memory_range_io_handle_seek_offset(
@@ -1640,6 +2271,23 @@ int bfio_test_memory_range_io_handle_exists(
 	 "error",
 	 error );
 
+	memory_range_io_handle->range_start = NULL;
+
+	result = libbfio_memory_range_io_handle_exists(
+	          memory_range_io_handle,
+	          &error );
+
+	memory_range_io_handle->range_start = bfio_test_memory_range_io_handle_data;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test error cases
 	 */
 	result = libbfio_memory_range_io_handle_exists(
@@ -1744,6 +2392,34 @@ int bfio_test_memory_range_io_handle_get_size(
 	 result,
 	 1 );
 
+	BFIO_TEST_ASSERT_EQUAL_UINT64(
+	 "size",
+	 size,
+	 (uint64_t) 4096 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	memory_range_io_handle->range_start = NULL;
+
+	result = libbfio_memory_range_io_handle_get_size(
+	          memory_range_io_handle,
+	          &size,
+	          &error );
+
+	memory_range_io_handle->range_start = bfio_test_memory_range_io_handle_data;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_EQUAL_UINT64(
+	 "size",
+	 size,
+	 (uint64_t) 0 );
+
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
@@ -1838,13 +2514,9 @@ int main(
 	 "libbfio_memory_range_io_handle_clone",
 	 bfio_test_memory_range_io_handle_clone );
 
-/* TODO fix test
-
 	BFIO_TEST_RUN(
 	 "libbfio_memory_range_io_handle_write_buffer",
 	 bfio_test_memory_range_io_handle_write_buffer );
-
-*/
 
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	BFIO_TEST_RUN(
@@ -1907,9 +2579,15 @@ int main(
 	 "error",
 	 error );
 
-/* TODO add test for libbfio_memory_range_io_handle_get */
+	BFIO_TEST_RUN_WITH_ARGS(
+	 "libbfio_memory_range_io_handle_get",
+	 bfio_test_memory_range_io_handle_get,
+	 memory_range_io_handle );
 
-/* TODO add test for libbfio_memory_range_io_handle_set */
+	BFIO_TEST_RUN_WITH_ARGS(
+	 "libbfio_memory_range_io_handle_set",
+	 bfio_test_memory_range_io_handle_set,
+	 memory_range_io_handle );
 
 	BFIO_TEST_RUN_WITH_ARGS(
 	 "libbfio_memory_range_io_handle_seek_offset",

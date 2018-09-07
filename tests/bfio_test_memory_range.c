@@ -48,6 +48,8 @@
 #define BFIO_TEST_FILE_VERBOSE
  */
 
+uint8_t bfio_test_memory_range_data[ 4096 ];
+
 /* Tests the libbfio_memory_range_initialize function
  * Returns 1 if successful or 0 if not
  */
@@ -243,6 +245,177 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libbfio_memory_range_get function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_memory_range_get(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	uint8_t *range_start     = NULL;
+	size64_t range_size      = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_memory_range_get(
+	          handle,
+	          &range_start,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_memory_range_get(
+	          NULL,
+	          &range_start,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_get(
+	          handle,
+	          NULL,
+	          &range_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_get(
+	          handle,
+	          &range_start,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_memory_range_set function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_memory_range_set(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libbfio_memory_range_set(
+	          NULL,
+	          bfio_test_memory_range_data,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_set(
+	          handle,
+	          NULL,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_memory_range_set(
+	          handle,
+	          bfio_test_memory_range_data,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -292,11 +465,30 @@ int main(
 	 "error",
 	 error );
 
-/* TODO set range */
+	result = libbfio_memory_range_set(
+	          handle,
+	          bfio_test_memory_range_data,
+	          4096,
+	          &error );
 
-/* TODO add test for libbfio_memory_range_get */
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
-/* TODO add test for libbfio_memory_range_set */
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	BFIO_TEST_RUN_WITH_ARGS(
+	 "libbfio_memory_range_get",
+	 bfio_test_memory_range_get,
+	 handle );
+
+	BFIO_TEST_RUN_WITH_ARGS(
+	 "libbfio_memory_range_set",
+	 bfio_test_memory_range_set,
+	 handle );
 
 	/* Clean up
 	 */
