@@ -60,7 +60,7 @@ int bfio_test_file_range_initialize(
 	int result                      = 0;
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
-	int number_of_malloc_fail_tests = 1;
+	int number_of_malloc_fail_tests = 2;
 	int number_of_memset_fail_tests = 1;
 	int test_number                 = 0;
 #endif
@@ -416,10 +416,47 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_set_name(
-     libbfio_handle_t *handle )
+     void )
 {
+	libbfio_handle_t *handle = NULL;
 	libcerror_error_t *error = NULL;
 	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_file_range_initialize(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libbfio_file_range_set_name(
+	          handle,
+	          "test",
+	          4,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -459,6 +496,25 @@ int bfio_test_file_range_set_name(
 	libcerror_error_free(
 	 &error );
 
+	/* Clean up
+	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
@@ -466,6 +522,12 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -644,10 +706,47 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_set_name_wide(
-     libbfio_handle_t *handle )
+     void )
 {
+	libbfio_handle_t *handle = NULL;
 	libcerror_error_t *error = NULL;
 	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_file_range_initialize(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libbfio_file_range_set_name_wide(
+	          handle,
+	          L"test",
+	          4,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -687,6 +786,25 @@ int bfio_test_file_range_set_name_wide(
 	libcerror_error_free(
 	 &error );
 
+	/* Clean up
+	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
@@ -694,6 +812,12 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -799,13 +923,47 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_file_range_set(
-     libbfio_handle_t *handle )
+     void )
 {
+	libbfio_handle_t *handle = NULL;
 	libcerror_error_t *error = NULL;
 	int result               = 0;
 
+	/* Initialize test
+	 */
+	result = libbfio_file_range_initialize(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test regular cases
 	 */
+	result = libbfio_file_range_set(
+	          handle,
+	          0,
+	          4096,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -863,6 +1021,25 @@ int bfio_test_file_range_set(
 	libcerror_error_free(
 	 &error );
 
+	/* Clean up
+	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
@@ -870,6 +1047,12 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -927,6 +1110,22 @@ int main(
 	BFIO_TEST_RUN(
 	 "libbfio_file_range_initialize",
 	 bfio_test_file_range_initialize );
+
+	BFIO_TEST_RUN(
+	 "libbfio_file_range_set_name",
+	 bfio_test_file_range_set_name );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+	BFIO_TEST_RUN(
+	 "libbfio_file_range_set_name_wide",
+	 bfio_test_file_range_set_name_wide );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+	BFIO_TEST_RUN(
+	 "libbfio_file_range_set",
+	 bfio_test_file_range_set );
 
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
@@ -993,11 +1192,6 @@ int main(
 		 bfio_test_file_range_get_name,
 		 handle );
 
-		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_file_range_set_name",
-		 bfio_test_file_range_set_name,
-		 handle );
-
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 		BFIO_TEST_RUN_WITH_ARGS(
@@ -1010,21 +1204,11 @@ int main(
 		 bfio_test_file_range_get_name_wide,
 		 handle );
 
-		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_file_range_set_name_wide",
-		 bfio_test_file_range_set_name_wide,
-		 handle );
-
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_file_range_get",
 		 bfio_test_file_range_get,
-		 handle );
-
-		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_file_range_set",
-		 bfio_test_file_range_set,
 		 handle );
 
 		/* Clean up

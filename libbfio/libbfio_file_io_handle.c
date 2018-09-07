@@ -231,8 +231,18 @@ int libbfio_file_io_handle_clone(
 	}
 	if( source_file_io_handle->name_size > 0 )
 	{
-		if( ( source_file_io_handle->name_size > (size_t) SSIZE_MAX )
-		 || ( ( sizeof( system_character_t ) * source_file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
+		if( source_file_io_handle->name == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid source file IO handle - missing name.",
+			 function );
+
+			goto on_error;
+		}
+		if( source_file_io_handle->name_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) )
 		{
 			libcerror_error_set(
 			 error,
@@ -466,8 +476,7 @@ int libbfio_file_io_handle_set_name(
 
 		goto on_error;
 	}
-	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
-	 || ( ( sizeof( system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
+	if( file_io_handle->name_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -690,8 +699,7 @@ int libbfio_file_io_handle_set_name_wide(
 
 		goto on_error;
 	}
-	if( ( file_io_handle->name_size > (size_t) SSIZE_MAX )
-	 || ( ( sizeof( system_character_t ) * file_io_handle->name_size ) > (size_t) SSIZE_MAX ) )
+	if( file_io_handle->name_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) )
 	{
 		libcerror_error_set(
 		 error,

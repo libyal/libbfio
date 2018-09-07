@@ -293,10 +293,11 @@ int bfio_test_file_io_handle_clone(
 	libbfio_file_io_handle_t *destination_file_io_handle = NULL;
 	libbfio_file_io_handle_t *source_file_io_handle      = NULL;
 	libcerror_error_t *error                             = NULL;
+	system_character_t *name                             = NULL;
 	int result                                           = 0;
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
-	int number_of_malloc_fail_tests                      = 2;
+	int number_of_malloc_fail_tests                      = 3;
 	int test_number                                      = 0;
 
 #if defined( OPTIMIZATION_DISABLED )
@@ -420,6 +421,50 @@ int bfio_test_file_io_handle_clone(
 	          &error );
 
 	destination_file_io_handle = NULL;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	name = source_file_io_handle->name;
+
+	source_file_io_handle->name = NULL;
+
+	result = libbfio_file_io_handle_clone(
+	          &destination_file_io_handle,
+	          source_file_io_handle,
+	          &error );
+
+	source_file_io_handle->name = name;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	source_file_io_handle->name_size = (size_t) SSIZE_MAX + 1;
+
+	result = libbfio_file_io_handle_clone(
+	          &destination_file_io_handle,
+	          source_file_io_handle,
+	          &error );
+
+	source_file_io_handle->name_size = 5;
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -691,6 +736,23 @@ int bfio_test_file_io_handle_open(
 	libcerror_error_free(
 	 &error );
 
+	result = libbfio_file_io_handle_open(
+	          file_io_handle,
+	          -1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	/* Clean up
 	 */
 	result = libbfio_file_io_handle_close(
@@ -792,9 +854,8 @@ int bfio_test_file_io_handle_close(
 
 	file_io_handle->name = NULL;
 
-	result = libbfio_file_io_handle_open(
+	result = libbfio_file_io_handle_close(
 	          file_io_handle,
-	          LIBBFIO_OPEN_READ,
 	          &error );
 
 	file_io_handle->name = name;
@@ -1291,6 +1352,8 @@ int bfio_test_file_io_handle_set_name(
 	libcerror_error_free(
 	 &error );
 
+/* TODO test with open file IO handle */
+
 #if defined( HAVE_BFIO_TEST_MEMORY )
 
 	/* Test libbfio_file_io_handle_set_name with malloc failing
@@ -1321,6 +1384,37 @@ int bfio_test_file_io_handle_set_name(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( OPTIMIZATION_DISABLED )
+
+	/* Test libbfio_file_io_handle_set_name with memcpy failing
+	 */
+	bfio_test_memcpy_attempts_before_fail = 0;
+
+	result = libbfio_file_io_handle_set_name(
+	          file_io_handle,
+	          "test",
+	          4,
+	          &error );
+
+	if( bfio_test_memcpy_attempts_before_fail != -1 )
+	{
+		bfio_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( OPTIMIZATION_DISABLED ) */
 #endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
 	/* Clean up
@@ -1646,6 +1740,8 @@ int bfio_test_file_io_handle_set_name_wide(
 	libcerror_error_free(
 	 &error );
 
+/* TODO test with open file IO handle */
+
 #if defined( HAVE_BFIO_TEST_MEMORY )
 
 	/* Test libbfio_file_io_handle_set_name_wide with malloc failing
@@ -1676,6 +1772,37 @@ int bfio_test_file_io_handle_set_name_wide(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( OPTIMIZATION_DISABLED )
+
+	/* Test libbfio_file_io_handle_set_name_wide with memcpy failing
+	 */
+	bfio_test_memcpy_attempts_before_fail = 0;
+
+	result = libbfio_file_io_handle_set_name_wide(
+	          file_io_handle,
+	          L"test",
+	          4,
+	          &error );
+
+	if( bfio_test_memcpy_attempts_before_fail != -1 )
+	{
+		bfio_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( OPTIMIZATION_DISABLED ) */
 #endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
 	/* Clean up
