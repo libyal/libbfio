@@ -2401,6 +2401,25 @@ int bfio_test_memory_range_io_handle_get_size(
 	 "error",
 	 error );
 
+	/* Test error cases
+	 */
+	result = libbfio_memory_range_io_handle_get_size(
+	          NULL,
+	          &size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	memory_range_io_handle->range_start = NULL;
 
 	result = libbfio_memory_range_io_handle_get_size(
@@ -2409,27 +2428,6 @@ int bfio_test_memory_range_io_handle_get_size(
 	          &error );
 
 	memory_range_io_handle->range_start = bfio_test_memory_range_io_handle_data;
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	BFIO_TEST_ASSERT_EQUAL_UINT64(
-	 "size",
-	 size,
-	 (uint64_t) 0 );
-
-	BFIO_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test error cases
-	 */
-	result = libbfio_memory_range_io_handle_get_size(
-	          NULL,
-	          &size,
-	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
