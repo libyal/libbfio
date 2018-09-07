@@ -317,6 +317,159 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libbfio_file_range_get_name function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_get_name(
+     libbfio_handle_t *handle )
+{
+	char name[ 256 ];
+
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_file_range_get_name(
+	          handle,
+	          name,
+	          256,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_get_name(
+	          NULL,
+	          name,
+	          256,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_get_name(
+	          handle,
+	          NULL,
+	          256,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_get_name(
+	          handle,
+	          name,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_file_range_set_name function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_set_name(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_set_name(
+	          NULL,
+	          "test",
+	          4,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_set_name(
+	          handle,
+	          NULL,
+	          4,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 /* Tests the libbfio_file_range_get_name_size_wide function
@@ -367,6 +520,159 @@ int bfio_test_file_range_get_name_size_wide(
 	result = libbfio_file_range_get_name_size_wide(
 	          handle,
 	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_file_range_get_name_wide function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_get_name_wide(
+     libbfio_handle_t *handle )
+{
+	wchar_t name[ 256 ];
+
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_file_range_get_name_wide(
+	          handle,
+	          name,
+	          256,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_get_name_wide(
+	          NULL,
+	          name,
+	          256,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_get_name_wide(
+	          handle,
+	          NULL,
+	          256,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_get_name_wide(
+	          handle,
+	          name,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_file_range_set_name_wide function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_file_range_set_name_wide(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libbfio_file_range_set_name_wide(
+	          NULL,
+	          L"test",
+	          4,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_file_range_set_name_wide(
+	          handle,
+	          NULL,
+	          4,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -682,9 +988,15 @@ int main(
 		 bfio_test_file_range_get_name_size,
 		 handle );
 
-/* TODO add test for libbfio_file_range_get_name */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_get_name",
+		 bfio_test_file_range_get_name,
+		 handle );
 
-/* TODO add test for libbfio_file_range_set_name */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_set_name",
+		 bfio_test_file_range_set_name,
+		 handle );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
@@ -693,9 +1005,15 @@ int main(
 		 bfio_test_file_range_get_name_size_wide,
 		 handle );
 
-/* TODO add test for libbfio_file_range_get_name_wide */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_get_name_wide",
+		 bfio_test_file_range_get_name_wide,
+		 handle );
 
-/* TODO add test for libbfio_file_range_set_name_wide */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_file_range_set_name_wide",
+		 bfio_test_file_range_set_name_wide,
+		 handle );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 

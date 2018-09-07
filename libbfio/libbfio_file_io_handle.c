@@ -395,6 +395,17 @@ int libbfio_file_io_handle_set_name(
 
 		return( -1 );
 	}
+	if( name == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid name.",
+		 function );
+
+		return( -1 );
+	}
 	if( name_length == 0 )
 	{
 		libcerror_error_set(
