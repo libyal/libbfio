@@ -736,23 +736,6 @@ int bfio_test_file_io_handle_open(
 	libcerror_error_free(
 	 &error );
 
-	result = libbfio_file_io_handle_open(
-	          file_io_handle,
-	          -1,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
 	/* Clean up
 	 */
 	result = libbfio_file_io_handle_close(

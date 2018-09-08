@@ -442,34 +442,38 @@ int libbfio_handle_clone(
 	}
 	destination_io_handle = NULL;
 
-	if( libbfio_handle_open(
-	     *destination_handle,
-	     internal_source_handle->access_flags,
-	     error ) == -1 )
+	if( ( internal_source_handle->access_flags != 0 )
+	 && ( internal_source_handle->current_offset > 0 ) )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open destination handle.",
-		 function );
+		if( libbfio_handle_open(
+		     *destination_handle,
+		     internal_source_handle->access_flags,
+		     error ) == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open destination handle.",
+			 function );
 
-		goto on_error;
-	}
-	if( libbfio_handle_seek_offset(
-	     *destination_handle,
-	     internal_source_handle->current_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset in destination handle.",
-		 function );
+			goto on_error;
+		}
+		if( libbfio_handle_seek_offset(
+		     *destination_handle,
+		     internal_source_handle->current_offset,
+		     SEEK_SET,
+		     error ) == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_SEEK_FAILED,
+			 "%s: unable to seek offset in destination handle.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_read(
@@ -1010,6 +1014,17 @@ ssize_t libbfio_handle_read_buffer(
 
 		return( -1 );
 	}
+	if( buffer == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid buffer.",
+		 function );
+
+		return( -1 );
+	}
 	if( size > (size_t) SSIZE_MAX )
 	{
 		libcerror_error_set(
@@ -1257,6 +1272,17 @@ ssize_t libbfio_handle_write_buffer(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing write function.",
+		 function );
+
+		return( -1 );
+	}
+	if( buffer == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid buffer.",
 		 function );
 
 		return( -1 );

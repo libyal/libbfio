@@ -38,6 +38,8 @@
 #include "bfio_test_macros.h"
 #include "bfio_test_memory.h"
 
+#include "../libbfio/libbfio_handle.h"
+
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
 #error Unsupported size of wchar_t
 #endif
@@ -205,7 +207,7 @@ int bfio_test_handle_initialize(
 	int result                      = 0;
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
-	int number_of_malloc_fail_tests = 1;
+	int number_of_malloc_fail_tests = 2;
 	int number_of_memset_fail_tests = 1;
 	int test_number                 = 0;
 #endif
@@ -500,20 +502,8 @@ int bfio_test_handle_clone(
 
 	/* Initialize test
 	 */
-	result = libbfio_handle_initialize(
+	result = libbfio_file_initialize(
 	          &source_handle,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          0,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -747,7 +737,7 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libbfio_file_set_name and libbfio_handle_open functions
+/* Tests the libbfio_handle_open function
  * Returns 1 if successful or 0 if not
  */
 int bfio_test_handle_open(
@@ -755,8 +745,10 @@ int bfio_test_handle_open(
 {
 	char narrow_source[ 256 ];
 
-	libcerror_error_t *error = NULL;
 	libbfio_handle_t *handle = NULL;
+	libcerror_error_t *error = NULL;
+	intptr_t *io_handle      = NULL;
+	intptr_t *open_function  = NULL;
 	size_t source_length     = 0;
 	int result               = 0;
 
@@ -812,7 +804,7 @@ int bfio_test_handle_open(
 	 "error",
 	 error );
 
-	/* Test open
+	/* Test regular cases
 	 */
 	result = libbfio_handle_open(
 	          handle,
@@ -827,6 +819,109 @@ int bfio_test_handle_open(
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_open(
+	          NULL,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	result = libbfio_handle_open(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	open_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->open;
+
+	( (libbfio_internal_handle_t *) handle )->open = NULL;
+
+	result = libbfio_handle_open(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->open = (int (*)(intptr_t *, int, libcerror_error_t **)) open_function;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_open(
+	          handle,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	( (libbfio_internal_handle_t *) handle )->open_on_demand = 1;
+
+	result = libbfio_handle_open(
+	          handle,
+	          LIBBFIO_OPEN_WRITE,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->open_on_demand = 0;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
 
 	/* Clean up
 	 */
@@ -877,26 +972,28 @@ on_error:
 	return( 0 );
 }
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-/* Tests the libbfio_file_set_name_wide and libbfio_handle_open functions
+/* Tests the libbfio_handle_reopen function
  * Returns 1 if successful or 0 if not
  */
-int bfio_test_handle_open_wide(
+int bfio_test_handle_reopen(
      const system_character_t *source )
 {
-	wchar_t wide_source[ 256 ];
+	char narrow_source[ 256 ];
 
-	libcerror_error_t *error = NULL;
-	libbfio_handle_t *handle = NULL;
-	size_t source_length     = 0;
-	int result               = 0;
+	libbfio_handle_t *handle       = NULL;
+	libcerror_error_t *error       = NULL;
+	intptr_t *close_function       = NULL;
+	intptr_t *io_handle            = NULL;
+	intptr_t *open_function        = NULL;
+	intptr_t *seek_offset_function = NULL;
+	size_t source_length           = 0;
+	int result                     = 0;
 
 	/* Initialize test
 	 */
-	result = bfio_test_get_wide_source(
+	result = bfio_test_get_narrow_source(
 	          source,
-	          wide_source,
+	          narrow_source,
 	          256,
 	          &error );
 
@@ -926,12 +1023,12 @@ int bfio_test_handle_open_wide(
 	 "error",
 	 error );
 
-	source_length = wide_string_length(
-	                 wide_source );
+	source_length = narrow_string_length(
+	                 narrow_source );
 
-	result = libbfio_file_set_name_wide(
+	result = libbfio_file_set_name(
 	          handle,
-	          wide_source,
+	          narrow_source,
 	          source_length,
 	          &error );
 
@@ -944,8 +1041,6 @@ int bfio_test_handle_open_wide(
 	 "error",
 	 error );
 
-	/* Test open
-	 */
 	result = libbfio_handle_open(
 	          handle,
 	          LIBBFIO_OPEN_READ,
@@ -959,6 +1054,150 @@ int bfio_test_handle_open_wide(
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
+
+	/* Test regular cases
+	 */
+	result = libbfio_handle_reopen(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_reopen(
+	          NULL,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	result = libbfio_handle_reopen(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	close_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->close;
+
+	( (libbfio_internal_handle_t *) handle )->close = NULL;
+
+	result = libbfio_handle_reopen(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->close = (int (*)(intptr_t *, libcerror_error_t **)) close_function;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	open_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->open;
+
+	( (libbfio_internal_handle_t *) handle )->open = NULL;
+
+	result = libbfio_handle_reopen(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->open = (int (*)(intptr_t *, int, libcerror_error_t **)) open_function;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	seek_offset_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->seek_offset;
+
+	( (libbfio_internal_handle_t *) handle )->seek_offset = NULL;
+
+	result = libbfio_handle_reopen(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->seek_offset = (off64_t (*)(intptr_t *, off64_t, int, libcerror_error_t **)) seek_offset_function;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_reopen(
+	          handle,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
 
 	/* Clean up
 	 */
@@ -1009,7 +1248,134 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+/* Tests the libbfio_handle_close function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_close(
+     void )
+{
+	libbfio_handle_t *handle = NULL;
+	libcerror_error_t *error = NULL;
+	intptr_t *close_function = NULL;
+	intptr_t *io_handle      = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_file_initialize(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_close(
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	result = libbfio_handle_close(
+	          handle,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	close_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->close;
+
+	( (libbfio_internal_handle_t *) handle )->close = NULL;
+
+	result = libbfio_handle_close(
+	          handle,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->close = (int (*)(intptr_t *, libcerror_error_t **)) close_function;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
+	}
+	return( 0 );
+}
 
 /* Tests the libbfio_handle_read_buffer function
  * Returns 1 if successful or 0 if not
@@ -1019,12 +1385,13 @@ int bfio_test_handle_read_buffer(
 {
 	uint8_t buffer[ 32 ];
 
-	libbfio_handle_t *closed_handle = NULL;
-	libcerror_error_t *error        = NULL;
-	size64_t file_size              = 0;
-	ssize_t read_count              = 0;
-	off64_t offset                  = 0;
-	int result                      = 0;
+	libcerror_error_t *error = NULL;
+	intptr_t *io_handle      = NULL;
+	intptr_t *read_function  = NULL;
+	size64_t file_size       = 0;
+	ssize_t read_count       = 0;
+	off64_t offset           = 0;
+	int result               = 0;
 
 	/* Initialize test
 	 */
@@ -1098,6 +1465,54 @@ int bfio_test_handle_read_buffer(
 	libcerror_error_free(
 	 &error );
 
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	read_count = libbfio_handle_read_buffer(
+	              handle,
+	              buffer,
+	              0,
+	              &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->read;
+
+	( (libbfio_internal_handle_t *) handle )->read = NULL;
+
+	read_count = libbfio_handle_read_buffer(
+	              handle,
+	              buffer,
+	              0,
+	              &error );
+
+	( (libbfio_internal_handle_t *) handle )->read = (ssize_t (*)(intptr_t *, uint8_t *, size_t, libcerror_error_t **)) read_function;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	read_count = libbfio_handle_read_buffer(
 	              handle,
 	              NULL,
@@ -1134,22 +1549,42 @@ int bfio_test_handle_read_buffer(
 	libcerror_error_free(
 	 &error );
 
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_handle_write_buffer function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_write_buffer(
+     void )
+{
+	char narrow_temporary_filename[ 17 ] = {
+		'b', 'f', 'i', 'o', '_', 't', 'e', 's', 't', '_', 'X', 'X', 'X', 'X', 'X', 'X', 0 };
+
+	uint8_t buffer[ 32 ] = {
+		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5' };
+
+	libbfio_handle_t *handle = NULL;
+	libcerror_error_t *error = NULL;
+	intptr_t *io_handle      = NULL;
+	intptr_t *write_function = NULL;
+	ssize_t write_count      = 0;
+	int result               = 0;
+	int with_temporary_file  = 0;
+
 	/* Initialize test
 	 */
-	result = libbfio_handle_initialize(
-	          &closed_handle,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          NULL,
-	          0,
+	result = libbfio_file_initialize(
+	          &handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1158,24 +1593,172 @@ int bfio_test_handle_read_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "closed_handle",
-	 closed_handle );
+	 "handle",
+	 handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	/* Test read buffer with error code on a closed file IO handle
+	result = bfio_test_get_temporary_filename(
+	          narrow_temporary_filename,
+	          17,
+	          &error );
+
+	BFIO_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	with_temporary_file = result;
+
+	if( with_temporary_file != 0 )
+	{
+		result = libbfio_file_set_name(
+		          handle,
+		          narrow_temporary_filename,
+		          16,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		result = libbfio_handle_open(
+		          handle,
+		          LIBBFIO_OPEN_WRITE,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		/* Test regular cases
+		 */
+		write_count = libbfio_handle_write_buffer(
+		               handle,
+		               buffer,
+		               32,
+		               &error );
+
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "write_count",
+		 write_count,
+		 (ssize_t) 32 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	/* Test error cases
 	 */
-	read_count = libbfio_handle_read_buffer(
-	              closed_handle,
-	              buffer,
-	              0,
-	              &error );
+	write_count = libbfio_handle_write_buffer(
+	               NULL,
+	               buffer,
+	               0,
+	               &error );
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
-	 "read_count",
-	 read_count,
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	write_count = libbfio_handle_write_buffer(
+	               handle,
+	               buffer,
+	               0,
+	               &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	write_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->write;
+
+	( (libbfio_internal_handle_t *) handle )->write = NULL;
+
+	write_count = libbfio_handle_write_buffer(
+	               handle,
+	               buffer,
+	               0,
+	               &error );
+
+	( (libbfio_internal_handle_t *) handle )->write = (ssize_t (*)(intptr_t *, const uint8_t *, size_t, libcerror_error_t **)) write_function;
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	write_count = libbfio_handle_write_buffer(
+	               handle,
+	               NULL,
+	               0,
+	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	write_count = libbfio_handle_write_buffer(
+	               handle,
+	               buffer,
+	               (size_t) SSIZE_MAX + 1,
+	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
 	 (ssize_t) -1 );
 
 	BFIO_TEST_ASSERT_IS_NOT_NULL(
@@ -1187,8 +1770,38 @@ int bfio_test_handle_read_buffer(
 
 	/* Clean up
 	 */
+	if( with_temporary_file != 0 )
+	{
+		result = libbfio_handle_close(
+		          handle,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 0 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		result = bfio_test_remove_temporary_file(
+		          narrow_temporary_filename,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		with_temporary_file = 0;
+	}
 	result = libbfio_handle_free(
-	          &closed_handle,
+	          &handle,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -1197,8 +1810,8 @@ int bfio_test_handle_read_buffer(
 	 1 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
-	 "closed_handle",
-	 closed_handle );
+	 "handle",
+	 handle );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1212,10 +1825,16 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( closed_handle != NULL )
+	if( with_temporary_file != 0 )
+	{
+		bfio_test_remove_temporary_file(
+		 narrow_temporary_filename,
+		 NULL );
+	}
+	if( handle != NULL )
 	{
 		libbfio_handle_free(
-		 &closed_handle,
+		 &handle,
 		 NULL );
 	}
 	return( 0 );
@@ -1229,6 +1848,8 @@ int bfio_test_handle_seek_offset(
 {
 	libbfio_handle_t *closed_handle = NULL;
 	libcerror_error_t *error        = NULL;
+	intptr_t *io_handle             = NULL;
+	intptr_t *seek_offset_function  = NULL;
 	size64_t file_size              = 0;
 	off64_t offset                  = 0;
 	off64_t seek_offset             = 0;
@@ -1467,6 +2088,54 @@ int bfio_test_handle_seek_offset(
 	libcerror_error_free(
 	 &error );
 
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	offset = libbfio_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	seek_offset_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->seek_offset;
+
+	( (libbfio_internal_handle_t *) handle )->seek_offset = NULL;
+
+	offset = libbfio_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->seek_offset = (off64_t (*)(intptr_t *, off64_t, int, libcerror_error_t **)) seek_offset_function;
+
+	BFIO_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	/* Test seek offset with offset: -987 and whence: SEEK_SET
 	 */
 	offset = libbfio_handle_seek_offset(
@@ -1620,8 +2289,10 @@ on_error:
 int bfio_test_handle_exists(
      libbfio_handle_t *handle )
 {
-	libcerror_error_t *error = NULL;
-	int result               = 0;
+	libcerror_error_t *error  = NULL;
+	intptr_t *exists_function = NULL;
+	intptr_t *io_handle       = NULL;
+	int result                = 0;
 
 	/* Test regular cases
 	 */
@@ -1643,6 +2314,50 @@ int bfio_test_handle_exists(
 	result = libbfio_handle_exists(
 	          NULL,
 	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	result = libbfio_handle_exists(
+	          handle,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	exists_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->exists;
+
+	( (libbfio_internal_handle_t *) handle )->exists = NULL;
+
+	result = libbfio_handle_exists(
+	          handle,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->exists = (int (*)(intptr_t *, libcerror_error_t **)) exists_function;
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -2039,36 +2754,30 @@ int main(
 	 "libbfio_handle_free",
 	 bfio_test_handle_free );
 
-/* TODO fix test
-
 	BFIO_TEST_RUN(
 	 "libbfio_handle_clone",
 	 bfio_test_handle_clone );
-*/
 
-/* TODO add test for libbfio_handle_write_buffer */
+	BFIO_TEST_RUN(
+	 "libbfio_handle_write_buffer",
+	 bfio_test_handle_write_buffer );
 
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
-/* TODO change to set name test */
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_handle_open",
 		 bfio_test_handle_open,
 		 source );
 
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
 		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_handle_open_wide",
-		 bfio_test_handle_open_wide,
+		 "libbfio_handle_reopen",
+		 bfio_test_handle_reopen,
 		 source );
 
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
-
-/* TODO add test for libbfio_handle_open */
-
-/* TODO add test for libbfio_handle_close */
+		BFIO_TEST_RUN(
+		 "libbfio_handle_close",
+		 bfio_test_handle_close );
 
 		/* Initialize test
 		 */
