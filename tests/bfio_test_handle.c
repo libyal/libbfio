@@ -37,6 +37,7 @@
 #include "bfio_test_libuna.h"
 #include "bfio_test_macros.h"
 #include "bfio_test_memory.h"
+#include "bfio_test_rwlock.h"
 
 #include "../libbfio/libbfio_handle.h"
 
@@ -207,7 +208,7 @@ int bfio_test_handle_initialize(
 	int result                      = 0;
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
-	int number_of_malloc_fail_tests = 2;
+	int number_of_malloc_fail_tests = 3;
 	int number_of_memset_fail_tests = 1;
 	int test_number                 = 0;
 #endif
@@ -460,6 +461,10 @@ int bfio_test_handle_free(
 	libcerror_error_t *error = NULL;
 	int result               = 0;
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+	libbfio_handle_t *handle = NULL;
+#endif
+
 	/* Test error cases
 	 */
 	result = libbfio_handle_free(
@@ -478,6 +483,90 @@ int bfio_test_handle_free(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Initialize test
+	 */
+	result = libbfio_handle_initialize(
+	          &handle,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test libbfio_handle_free with pthread_rwlock_destroy failing in libcthreads_read_write_lock_free
+	 */
+	bfio_test_pthread_rwlock_destroy_attempts_before_fail = 0;
+
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_destroy_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_destroy_attempts_before_fail = -1;
+
+		/* Clean up
+		 */
+		result = libbfio_handle_free(
+		          &handle,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "handle",
+		 handle );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "handle",
+		 handle );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	return( 1 );
 
 on_error:
@@ -486,6 +575,14 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
+	}
+#endif
 	return( 0 );
 }
 
@@ -694,6 +791,86 @@ int bfio_test_handle_clone(
 		 &error );
 	}
 #endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_clone with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_clone(
+	          &destination_handle,
+	          source_handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+
+		if( destination_handle != NULL )
+		{
+			libbfio_handle_free(
+			 &destination_handle,
+			 NULL );
+		}
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "destination_handle",
+		 destination_handle );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_clone with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_clone(
+	          &destination_handle,
+	          source_handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+
+		if( destination_handle != NULL )
+		{
+			libbfio_handle_free(
+			 &destination_handle,
+			 NULL );
+		}
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "destination_handle",
+		 destination_handle );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
 	 */
@@ -922,6 +1099,64 @@ int bfio_test_handle_open(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_open with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_open(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_open with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_open(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
 	 */
@@ -1199,6 +1434,64 @@ int bfio_test_handle_reopen(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_reopen with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_reopen(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_reopen with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_reopen(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	/* Clean up
 	 */
 	result = libbfio_handle_close(
@@ -1341,6 +1634,62 @@ int bfio_test_handle_close(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_close with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_close(
+	          handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_close with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_close(
+	          handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	/* Clean up
 	 */
 	result = libbfio_handle_free(
@@ -1450,7 +1799,7 @@ int bfio_test_handle_read_buffer(
 	read_count = libbfio_handle_read_buffer(
 	              NULL,
 	              buffer,
-	              0,
+	              32,
 	              &error );
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
@@ -1472,7 +1821,7 @@ int bfio_test_handle_read_buffer(
 	read_count = libbfio_handle_read_buffer(
 	              handle,
 	              buffer,
-	              0,
+	              32,
 	              &error );
 
 	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
@@ -1496,7 +1845,7 @@ int bfio_test_handle_read_buffer(
 	read_count = libbfio_handle_read_buffer(
 	              handle,
 	              buffer,
-	              0,
+	              32,
 	              &error );
 
 	( (libbfio_internal_handle_t *) handle )->read = (ssize_t (*)(intptr_t *, uint8_t *, size_t, libcerror_error_t **)) read_function;
@@ -1516,7 +1865,7 @@ int bfio_test_handle_read_buffer(
 	read_count = libbfio_handle_read_buffer(
 	              handle,
 	              NULL,
-	              0,
+	              32,
 	              &error );
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
@@ -1548,6 +1897,66 @@ int bfio_test_handle_read_buffer(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_read_buffer with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	read_count = libbfio_handle_read_buffer(
+	              handle,
+	              buffer,
+	              32,
+	              &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_read_buffer with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	read_count = libbfio_handle_read_buffer(
+	              handle,
+	              buffer,
+	              32,
+	              &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
 
@@ -1669,7 +2078,7 @@ int bfio_test_handle_write_buffer(
 	write_count = libbfio_handle_write_buffer(
 	               NULL,
 	               buffer,
-	               0,
+	               32,
 	               &error );
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
@@ -1691,7 +2100,7 @@ int bfio_test_handle_write_buffer(
 	write_count = libbfio_handle_write_buffer(
 	               handle,
 	               buffer,
-	               0,
+	               32,
 	               &error );
 
 	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
@@ -1715,7 +2124,7 @@ int bfio_test_handle_write_buffer(
 	write_count = libbfio_handle_write_buffer(
 	               handle,
 	               buffer,
-	               0,
+	               32,
 	               &error );
 
 	( (libbfio_internal_handle_t *) handle )->write = (ssize_t (*)(intptr_t *, const uint8_t *, size_t, libcerror_error_t **)) write_function;
@@ -1735,7 +2144,7 @@ int bfio_test_handle_write_buffer(
 	write_count = libbfio_handle_write_buffer(
 	               handle,
 	               NULL,
-	               0,
+	               32,
 	               &error );
 
 	BFIO_TEST_ASSERT_EQUAL_SSIZE(
@@ -1767,6 +2176,66 @@ int bfio_test_handle_write_buffer(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_write_buffer with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	write_count = libbfio_handle_write_buffer(
+	               handle,
+	               buffer,
+	               32,
+	               &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "write_count",
+		 write_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_write_buffer with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	write_count = libbfio_handle_write_buffer(
+	               handle,
+	               buffer,
+	               32,
+	               &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "write_count",
+		 write_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
 	 */
@@ -2196,6 +2665,66 @@ int bfio_test_handle_seek_offset(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_seek_offset with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	offset = libbfio_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT64(
+		 "offset",
+		 offset,
+		 (int64_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_seek_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	offset = libbfio_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT64(
+		 "offset",
+		 offset,
+		 (int64_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	/* Initialize test
 	 */
 	result = libbfio_handle_initialize(
@@ -2371,6 +2900,62 @@ int bfio_test_handle_exists(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_exists with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_exists(
+	          handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_exists with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_exists(
+	          handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	return( 1 );
 
 on_error:
@@ -2388,8 +2973,10 @@ on_error:
 int bfio_test_handle_is_open(
      libbfio_handle_t *handle )
 {
-	libcerror_error_t *error = NULL;
-	int result               = 0;
+	libcerror_error_t *error   = NULL;
+	intptr_t *io_handle        = NULL;
+	intptr_t *is_open_function = NULL;
+	int result                 = 0;
 
 	/* Test regular cases
 	 */
@@ -2423,6 +3010,237 @@ int bfio_test_handle_is_open(
 
 	libcerror_error_free(
 	 &error );
+
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	result = libbfio_handle_is_open(
+	          handle,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	is_open_function = (intptr_t *) ( (libbfio_internal_handle_t *) handle )->is_open;
+
+	( (libbfio_internal_handle_t *) handle )->is_open = NULL;
+
+	result = libbfio_handle_is_open(
+	          handle,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->is_open = (int (*)(intptr_t *, libcerror_error_t **)) is_open_function;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_is_open with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_is_open(
+	          handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_is_open with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_is_open(
+	          handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_handle_get_io_handle function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_get_io_handle(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	intptr_t *io_handle      = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_handle_get_io_handle(
+	          handle,
+	          &io_handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_get_io_handle(
+	          NULL,
+	          &io_handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_get_io_handle(
+	          handle,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_get_io_handle with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_io_handle(
+	          handle,
+	          &io_handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_get_io_handle with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_io_handle(
+	          handle,
+	          &io_handle,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
 
@@ -2497,6 +3315,64 @@ int bfio_test_handle_get_access_flags(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_get_access_flags with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_access_flags(
+	          handle,
+	          &access_flags,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_get_access_flags with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_access_flags(
+	          handle,
+	          &access_flags,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	return( 1 );
 
 on_error:
@@ -2508,6 +3384,193 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libbfio_handle_set_access_flags function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_set_access_flags(
+     void )
+{
+	libbfio_handle_t *handle = NULL;
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_handle_initialize(
+	          &handle,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libbfio_handle_set_access_flags(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_set_access_flags(
+	          NULL,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_set_access_flags(
+	          handle,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_set_access_flags with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_set_access_flags(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_set_access_flags with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_set_access_flags(
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	/* Clean up
+	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 /* Tests the libbfio_handle_get_size function
  * Returns 1 if successful or 0 if not
  */
@@ -2515,6 +3578,7 @@ int bfio_test_handle_get_size(
      libbfio_handle_t *handle )
 {
 	libcerror_error_t *error = NULL;
+	intptr_t *io_handle      = NULL;
 	size64_t size            = 0;
 	int result               = 0;
 
@@ -2553,6 +3617,29 @@ int bfio_test_handle_get_size(
 	libcerror_error_free(
 	 &error );
 
+	io_handle = ( (libbfio_internal_handle_t *) handle )->io_handle;
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = NULL;
+
+	result = libbfio_handle_get_size(
+	          handle,
+	          &size,
+	          &error );
+
+	( (libbfio_internal_handle_t *) handle )->io_handle = io_handle;
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	result = libbfio_handle_get_size(
 	          handle,
 	          NULL,
@@ -2569,6 +3656,64 @@ int bfio_test_handle_get_size(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_get_size with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_size(
+	          handle,
+	          &size,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_get_size with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_size(
+	          handle,
+	          &size,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
 
@@ -2643,6 +3788,64 @@ int bfio_test_handle_get_offset(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_get_offset with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_offset(
+	          handle,
+	          &offset,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_get_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_offset(
+	          handle,
+	          &offset,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	return( 1 );
 
 on_error:
@@ -2650,6 +3853,176 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_handle_set_open_on_demand function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_set_open_on_demand(
+     void )
+{
+	libbfio_handle_t *handle = NULL;
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_handle_initialize(
+	          &handle,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libbfio_handle_set_open_on_demand(
+	          handle,
+	          1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_set_open_on_demand(
+	          NULL,
+	          1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_set_open_on_demand with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_set_open_on_demand(
+	          handle,
+	          1,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_set_open_on_demand with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_set_open_on_demand(
+	          handle,
+	          1,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	/* Clean up
+	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -2664,6 +4037,8 @@ int bfio_test_handle_get_number_of_offsets_read(
 	int number_of_offsets_read = 0;
 	int result                 = 0;
 
+	/* Test regular cases
+	 */
 	result = libbfio_handle_get_number_of_offsets_read(
 	          handle,
 	          &number_of_offsets_read,
@@ -2673,6 +4048,11 @@ int bfio_test_handle_get_number_of_offsets_read(
 	 "result",
 	 result,
 	 1 );
+
+	BFIO_TEST_ASSERT_NOT_EQUAL_INT(
+	 "number_of_offsets_read",
+	 number_of_offsets_read,
+	 0 );
 
 	BFIO_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -2714,6 +4094,64 @@ int bfio_test_handle_get_number_of_offsets_read(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_get_number_of_offsets_read with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_number_of_offsets_read(
+	          handle,
+	          &number_of_offsets_read,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_get_number_of_offsets_read with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_number_of_offsets_read(
+	          handle,
+	          &number_of_offsets_read,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
 	return( 1 );
 
 on_error:
@@ -2721,6 +4159,356 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_handle_get_offset_read functions
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_get_offset_read(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	off64_t offset           = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_handle_get_offset_read(
+	          handle,
+	          0,
+	          &offset,
+	          &size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_get_offset_read(
+	          NULL,
+	          0,
+	          &offset,
+	          &size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_get_offset_read(
+	          handle,
+	          -1,
+	          &offset,
+	          &size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_get_offset_read(
+	          handle,
+	          0,
+	          NULL,
+	          &size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_get_offset_read(
+	          handle,
+	          0,
+	          &offset,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_get_offset_read with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_offset_read(
+	          handle,
+	          0,
+	          &offset,
+	          &size,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_get_offset_read with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_offset_read(
+	          handle,
+	          0,
+	          &offset,
+	          &size,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_handle_set_track_offsets_read function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_set_track_offsets_read(
+     void )
+{
+	libbfio_handle_t *handle = NULL;
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_handle_initialize(
+	          &handle,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libbfio_handle_set_track_offsets_read(
+	          handle,
+	          1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_set_track_offsets_read(
+	          NULL,
+	          1,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_set_track_offsets_read with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_set_track_offsets_read(
+	          handle,
+	          1,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_set_track_offsets_read with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_set_track_offsets_read(
+	          handle,
+	          1,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	/* Clean up
+	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -2762,6 +4550,18 @@ int main(
 	 "libbfio_handle_write_buffer",
 	 bfio_test_handle_write_buffer );
 
+	BFIO_TEST_RUN(
+	 "libbfio_handle_set_access_flags",
+	 bfio_test_handle_set_access_flags );
+
+	BFIO_TEST_RUN(
+	 "libbfio_handle_set_open_on_demand",
+	 bfio_test_handle_set_open_on_demand );
+
+	BFIO_TEST_RUN(
+	 "libbfio_handle_set_track_offsets_read",
+	 bfio_test_handle_set_track_offsets_read );
+
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
@@ -2799,6 +4599,20 @@ int main(
 	         "error",
 	         error );
 
+		result = libbfio_handle_set_track_offsets_read(
+		          handle,
+		          1,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        BFIO_TEST_ASSERT_IS_NULL(
+	         "error",
+	         error );
+
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_handle_seek_offset",
 		 bfio_test_handle_seek_offset,
@@ -2819,14 +4633,14 @@ int main(
 		 bfio_test_handle_is_open,
 		 handle );
 
-/* TODO add test for libbfio_handle_get_io_handle */
-
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_handle_get_io_handle",
+		 bfio_test_handle_get_io_handle,
+		 handle );
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_handle_get_access_flags",
 		 bfio_test_handle_get_access_flags,
 		 handle );
-
-/* TODO add test for libbfio_handle_set_access_flags */
 
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_handle_get_size",
@@ -2838,16 +4652,15 @@ int main(
 		 bfio_test_handle_get_offset,
 		 handle );
 
-/* TODO add test for libbfio_handle_set_open_on_demand */
-
-/* TODO add test for libbfio_handle_set_track_offsets_read */
-
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_handle_get_number_of_offsets_read",
 		 bfio_test_handle_get_number_of_offsets_read,
 		 handle );
 
-/* TODO add test for libbfio_handle_get_offset_read */
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_handle_get_offset_read",
+		 bfio_test_handle_get_offset_read,
+		 handle );
 
 		/* Clean up
 		 */

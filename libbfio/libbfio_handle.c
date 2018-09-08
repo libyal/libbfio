@@ -442,8 +442,7 @@ int libbfio_handle_clone(
 	}
 	destination_io_handle = NULL;
 
-	if( ( internal_source_handle->access_flags != 0 )
-	 && ( internal_source_handle->current_offset > 0 ) )
+	if( internal_source_handle->access_flags != 0 )
 	{
 		if( libbfio_handle_open(
 		     *destination_handle,

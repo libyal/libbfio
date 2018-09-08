@@ -10,6 +10,7 @@ AM_CPPFLAGS = \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@ \
 	@LIBBFIO_DLL_IMPORT@
 
 TESTS = \
@@ -139,6 +140,7 @@ bfio_test_handle_SOURCES = \
 	bfio_test_libuna.h \
 	bfio_test_macros.h \
 	bfio_test_memory.c bfio_test_memory.h \
+	bfio_test_rwlock.c bfio_test_rwlock.h \
 	bfio_test_unused.h
 
 bfio_test_handle_LDADD = \
