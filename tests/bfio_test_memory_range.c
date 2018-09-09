@@ -45,7 +45,7 @@
 #endif
 
 /* Define to make bfio_test_file generate verbose output
-#define BFIO_TEST_FILE_VERBOSE
+#define BFIO_TEST_MEMORY_RANGE_VERBOSE
  */
 
 uint8_t bfio_test_memory_range_data[ 4096 ];
@@ -432,7 +432,7 @@ int main(
 	libcerror_error_t *error = NULL;
 	int result               = 0;
 
-#if defined( HAVE_DEBUG_OUTPUT ) && defined( BFIO_TEST_FILE_VERBOSE )
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( BFIO_TEST_MEMORY_RANGE_VERBOSE )
 	libbfio_notify_set_verbose(
 	 1 );
 	libbfio_notify_set_stream(

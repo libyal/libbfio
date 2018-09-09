@@ -187,6 +187,7 @@ bfio_test_memory_range_io_handle_LDADD = \
 	@LIBCERROR_LIBADD@
 
 bfio_test_pool_SOURCES = \
+	bfio_test_functions.c bfio_test_functions.h \
 	bfio_test_getopt.c bfio_test_getopt.h \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
@@ -196,6 +197,7 @@ bfio_test_pool_SOURCES = \
 	bfio_test_macros.h \
 	bfio_test_memory.c bfio_test_memory.h \
 	bfio_test_pool.c \
+	bfio_test_rwlock.c bfio_test_rwlock.h \
 	bfio_test_unused.h
 
 bfio_test_pool_LDADD = \

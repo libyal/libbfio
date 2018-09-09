@@ -1,4 +1,4 @@
-.Dd January 23, 2017
+.Dd September  9, 2017
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -59,13 +59,13 @@ Handle functions
 .Ft int
 .Fn libbfio_handle_set_access_flags "libbfio_handle_t *handle, int access_flags, libbfio_error_t **error"
 .Ft int
+.Fn libbfio_handle_get_offset "libbfio_handle_t *handle, off64_t *offset, libbfio_error_t **error"
+.Ft int
 .Fn libbfio_handle_get_size "libbfio_handle_t *handle, size64_t *size, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_set_open_on_demand "libbfio_handle_t *handle, uint8_t open_on_demand, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_set_track_offsets_read "libbfio_handle_t *handle, uint8_t track_offsets_read, libbfio_error_t **error"
-.Ft int
-.Fn libbfio_handle_get_offset "libbfio_handle_t *handle, off64_t *offset, libbfio_error_t **error"
 .Ft int
 .Fn libbfio_handle_get_number_of_offsets_read "libbfio_handle_t *handle, int *number_of_read_offsets, libbfio_error_t **error"
 .Ft int

@@ -46,7 +46,7 @@
 #endif
 
 /* Define to make bfio_test_file generate verbose output
-#define BFIO_TEST_FILE_VERBOSE
+#define BFIO_TEST_FILE_RANGE_IO_HANDLE_VERBOSE
  */
 
 uint8_t bfio_test_file_range_io_handle_data[ 4096 ];
@@ -2923,7 +2923,7 @@ int main(
 	{
 		source = argv[ optind ];
 	}
-#if defined( HAVE_DEBUG_OUTPUT ) && defined( BFIO_TEST_FILE_VERBOSE )
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( BFIO_TEST_FILE_RANGE_IO_HANDLE_VERBOSE )
 	libbfio_notify_set_verbose(
 	 1 );
 	libbfio_notify_set_stream(

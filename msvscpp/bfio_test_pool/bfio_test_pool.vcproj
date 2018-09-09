@@ -176,6 +176,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\tests\bfio_test_functions.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\bfio_test_getopt.c"
 				>
 			</File>
@@ -187,12 +191,20 @@
 				RelativePath="..\..\tests\bfio_test_pool.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\tests\bfio_test_rwlock.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\tests\bfio_test_functions.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\tests\bfio_test_getopt.h"
 				>
@@ -223,6 +235,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\bfio_test_memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\bfio_test_rwlock.h"
 				>
 			</File>
 			<File

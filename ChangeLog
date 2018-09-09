@@ -5,6 +5,7 @@ TODO
 
 Pool
 * allow re-set of pool entries?
+* cache size
 
 Memory range
 * add callback function to resize memory range if needed?

@@ -31,6 +31,7 @@
 #endif
 
 #include "bfio_test_functions.h"
+#include "bfio_test_getopt.h"
 #include "bfio_test_libbfio.h"
 #include "bfio_test_libcerror.h"
 #include "bfio_test_libclocale.h"
@@ -751,6 +752,7 @@ int bfio_test_handle_clone(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( OPTIMIZATION_DISABLED )
 
 	/* Test libbfio_handle_clone with memcpy failing
 	 */
@@ -790,6 +792,7 @@ int bfio_test_handle_clone(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( OPTIMIZATION_DISABLED ) */
 #endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
 #if defined( HAVE_BFIO_TEST_RWLOCK )
@@ -3571,6 +3574,137 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libbfio_handle_get_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_handle_get_offset(
+     libbfio_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	off64_t offset           = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libbfio_handle_get_offset(
+	          handle,
+	          &offset,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_handle_get_offset(
+	          NULL,
+	          &offset,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_handle_get_offset(
+	          handle,
+	          NULL,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_handle_get_offset with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
+	 */
+	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_offset(
+	          handle,
+	          &offset,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libbfio_handle_get_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
+
+	result = libbfio_handle_get_offset(
+	          handle,
+	          &offset,
+	          &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libbfio_handle_get_size function
  * Returns 1 if successful or 0 if not
  */
@@ -3693,137 +3827,6 @@ int bfio_test_handle_get_size(
 	result = libbfio_handle_get_size(
 	          handle,
 	          &size,
-	          &error );
-
-	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
-	{
-		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
-	}
-	else
-	{
-		BFIO_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
-/* Tests the libbfio_handle_get_offset function
- * Returns 1 if successful or 0 if not
- */
-int bfio_test_handle_get_offset(
-     libbfio_handle_t *handle )
-{
-	libcerror_error_t *error = NULL;
-	off64_t offset           = 0;
-	int result               = 0;
-
-	/* Test regular cases
-	 */
-	result = libbfio_handle_get_offset(
-	          handle,
-	          &offset,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	BFIO_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test error cases
-	 */
-	result = libbfio_handle_get_offset(
-	          NULL,
-	          &offset,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libbfio_handle_get_offset(
-	          handle,
-	          NULL,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-#if defined( HAVE_BFIO_TEST_RWLOCK )
-
-	/* Test libbfio_handle_get_offset with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
-	 */
-	bfio_test_pthread_rwlock_rdlock_attempts_before_fail = 0;
-
-	result = libbfio_handle_get_offset(
-	          handle,
-	          &offset,
-	          &error );
-
-	if( bfio_test_pthread_rwlock_rdlock_attempts_before_fail != -1 )
-	{
-		bfio_test_pthread_rwlock_rdlock_attempts_before_fail = -1;
-	}
-	else
-	{
-		BFIO_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libbfio_handle_get_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
-	 */
-	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
-
-	result = libbfio_handle_get_offset(
-	          handle,
-	          &offset,
 	          &error );
 
 	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
@@ -4525,14 +4528,32 @@ int main(
      char * const argv[] )
 #endif
 {
+	libbfio_handle_t *handle   = NULL;
 	libcerror_error_t *error   = NULL;
 	system_character_t *source = NULL;
-	libbfio_handle_t *handle   = NULL;
+	system_integer_t option    = 0;
 	int result                 = 0;
 
-	if( argc >= 2 )
+	while( ( option = bfio_test_getopt(
+	                   argc,
+	                   argv,
+	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )
 	{
-		source = argv[ 1 ];
+		switch( option )
+		{
+			case (system_integer_t) '?':
+			default:
+				fprintf(
+				 stderr,
+				 "Invalid argument: %" PRIs_SYSTEM ".\n",
+				 argv[ optind - 1 ] );
+
+				return( EXIT_FAILURE );
+		}
+	}
+	if( optind < argc )
+	{
+		source = argv[ optind ];
 	}
 	BFIO_TEST_RUN(
 	 "libbfio_handle_initialize",
@@ -4643,13 +4664,13 @@ int main(
 		 handle );
 
 		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_handle_get_size",
-		 bfio_test_handle_get_size,
+		 "libbfio_handle_get_offset",
+		 bfio_test_handle_get_offset,
 		 handle );
 
 		BFIO_TEST_RUN_WITH_ARGS(
-		 "libbfio_handle_get_offset",
-		 bfio_test_handle_get_offset,
+		 "libbfio_handle_get_size",
+		 bfio_test_handle_get_size,
 		 handle );
 
 		BFIO_TEST_RUN_WITH_ARGS(
