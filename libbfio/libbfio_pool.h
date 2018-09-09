@@ -92,18 +92,18 @@ int libbfio_pool_resize(
      int number_of_handles,
      libcerror_error_t **error );
 
-int libbfio_pool_open_handle(
+int libbfio_internal_pool_open_handle(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      int access_flags,
      libcerror_error_t **error );
 
-int libbfio_pool_append_handle_to_last_used_list(
+int libbfio_internal_pool_append_handle_to_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      libcerror_error_t **error );
 
-int libbfio_pool_move_handle_to_front_of_last_used_list(
+int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      libcerror_error_t **error );

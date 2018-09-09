@@ -471,6 +471,7 @@ int libbfio_pool_resize(
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_resize";
+	int result                             = 1;
 
 	if( pool == NULL )
 	{
@@ -485,6 +486,21 @@ int libbfio_pool_resize(
 	}
 	internal_pool = (libbfio_internal_pool_t *) pool;
 
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_pool->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	if( libcdata_array_resize(
 	     internal_pool->handles_array,
 	     number_of_handles,
@@ -498,22 +514,37 @@ int libbfio_pool_resize(
 		 "%s: unable to resize handles array.",
 		 function );
 
+		result = -1;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_pool->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
 		return( -1 );
 	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Opens the handle
  * Returns 1 if successful or -1 on error
  */
-int libbfio_pool_open_handle(
+int libbfio_internal_pool_open_handle(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      int access_flags,
      libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_pool_open_handle";
+	static char *function                      = "libbfio_internal_pool_open_handle";
 	int is_open                                = 0;
 
 	if( internal_pool == NULL )
@@ -570,7 +601,7 @@ int libbfio_pool_open_handle(
 	}
 	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	{
-		if( libbfio_pool_append_handle_to_last_used_list(
+		if( libbfio_internal_pool_append_handle_to_last_used_list(
 		     internal_pool,
 		     handle,
 		     error ) != 1 )
@@ -623,14 +654,14 @@ int libbfio_pool_open_handle(
  * Closes the less frequently used handle if necessary
  * Returns 1 if successful or -1 on error
  */
-int libbfio_pool_append_handle_to_last_used_list(
+int libbfio_internal_pool_append_handle_to_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle      = NULL;
 	libcdata_list_element_t *last_used_list_element = NULL;
-	static char *function                           = "libbfio_pool_append_handle_to_last_used_list";
+	static char *function                           = "libbfio_internal_pool_append_handle_to_last_used_list";
 
 	if( internal_pool == NULL )
 	{
@@ -801,7 +832,7 @@ int libbfio_pool_append_handle_to_last_used_list(
 /* Moves the handle to the front of the last used list
  * Returns 1 if successful or -1 on error
  */
-int libbfio_pool_move_handle_to_front_of_last_used_list(
+int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
      libcerror_error_t **error )
@@ -809,7 +840,7 @@ int libbfio_pool_move_handle_to_front_of_last_used_list(
 	libbfio_internal_handle_t *internal_handle      = NULL;
 	libcdata_list_element_t *first_list_element     = NULL;
 	libcdata_list_element_t *last_used_list_element = NULL;
-	static char *function                           = "libbfio_pool_move_handle_to_front_of_last_used_list";
+	static char *function                           = "libbfio_internal_pool_move_handle_to_front_of_last_used_list";
 
 	if( internal_pool == NULL )
 	{
@@ -997,6 +1028,7 @@ int libbfio_pool_get_handle(
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_handle";
+	int result                             = 1;
 
 	if( pool == NULL )
 	{
@@ -1040,7 +1072,7 @@ int libbfio_pool_get_handle(
 		 function,
 		 entry );
 
-		goto on_error;
+		result = -1;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_read(
@@ -1057,15 +1089,7 @@ int libbfio_pool_get_handle(
 		return( -1 );
 	}
 #endif
-	return( 1 );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_read(
-	 internal_pool->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
+	return( result );
 }
 
 /* Appends a handle to the pool
@@ -1240,7 +1264,7 @@ int libbfio_pool_append_handle(
 	{
 		if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 		{
-			if( libbfio_pool_append_handle_to_last_used_list(
+			if( libbfio_internal_pool_append_handle_to_last_used_list(
 			     internal_pool,
 			     handle,
 			     error ) != 1 )
@@ -1421,7 +1445,7 @@ int libbfio_pool_set_handle(
 	{
 		if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 		{
-			if( libbfio_pool_append_handle_to_last_used_list(
+			if( libbfio_internal_pool_append_handle_to_last_used_list(
 			     internal_pool,
 			     handle,
 			     error ) != 1 )
@@ -1634,7 +1658,6 @@ int libbfio_pool_get_maximum_number_of_open_handles(
 {
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_maximum_number_of_open_handles";
-	int result                             = 1;
 
 	if( pool == NULL )
 	{
@@ -1692,7 +1715,7 @@ int libbfio_pool_get_maximum_number_of_open_handles(
 		return( -1 );
 	}
 #endif
-	return( result );
+	return( 1 );
 }
 
 /* Sets the maximum number of open handles in the pool
@@ -1951,7 +1974,7 @@ int libbfio_pool_open(
 
 		goto on_error;
 	}
-	if( libbfio_pool_open_handle(
+	if( libbfio_internal_pool_open_handle(
 	     internal_pool,
 	     handle,
 	     access_flags,
@@ -2545,7 +2568,7 @@ ssize_t libbfio_pool_read_buffer(
 
 			goto on_error;
 		}
-		if( libbfio_pool_open_handle(
+		if( libbfio_internal_pool_open_handle(
 		     internal_pool,
 		     handle,
 		     access_flags,
@@ -2564,7 +2587,7 @@ ssize_t libbfio_pool_read_buffer(
 	}
 	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	{
-		if( libbfio_pool_move_handle_to_front_of_last_used_list(
+		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 		     internal_pool,
 		     handle,
 		     error ) != 1 )
@@ -2718,7 +2741,7 @@ ssize_t libbfio_pool_write_buffer(
 
 			goto on_error;
 		}
-		if( libbfio_pool_open_handle(
+		if( libbfio_internal_pool_open_handle(
 		     internal_pool,
 		     handle,
 		     access_flags,
@@ -2737,7 +2760,7 @@ ssize_t libbfio_pool_write_buffer(
 	}
 	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	{
-		if( libbfio_pool_move_handle_to_front_of_last_used_list(
+		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 		     internal_pool,
 		     handle,
 		     error ) != 1 )
@@ -2891,7 +2914,7 @@ off64_t libbfio_pool_seek_offset(
 
 			goto on_error;
 		}
-		if( libbfio_pool_open_handle(
+		if( libbfio_internal_pool_open_handle(
 		     internal_pool,
 		     handle,
 		     access_flags,
@@ -2910,7 +2933,7 @@ off64_t libbfio_pool_seek_offset(
 	}
 	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
 	{
-		if( libbfio_pool_move_handle_to_front_of_last_used_list(
+		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 		     internal_pool,
 		     handle,
 		     error ) != 1 )
@@ -3063,7 +3086,7 @@ int libbfio_pool_get_offset(
 
 			goto on_error;
 		}
-		if( libbfio_pool_open_handle(
+		if( libbfio_internal_pool_open_handle(
 		     internal_pool,
 		     handle,
 		     access_flags,
@@ -3120,7 +3143,7 @@ on_error:
 	return( -1 );
 }
 
-/* Retrieves the size of  a handle in the pool
+/* Retrieves the size of a handle in the pool
  * Returns 1 if successful or -1 on error
  */
 int libbfio_pool_get_size(
@@ -3213,7 +3236,7 @@ int libbfio_pool_get_size(
 
 			goto on_error;
 		}
-		if( libbfio_pool_open_handle(
+		if( libbfio_internal_pool_open_handle(
 		     internal_pool,
 		     handle,
 		     access_flags,
