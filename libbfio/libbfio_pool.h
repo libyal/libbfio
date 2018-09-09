@@ -170,6 +170,11 @@ int libbfio_pool_reopen(
      int access_flags,
      libcerror_error_t **error );
 
+int libbfio_internal_pool_close(
+     libbfio_internal_pool_t *internal_pool,
+     int entry,
+     libcerror_error_t **error );
+
 LIBBFIO_EXTERN \
 int libbfio_pool_close(
      libbfio_pool_t *pool,

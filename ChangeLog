@@ -1,4 +1,5 @@
 TODO
+* create libbfio_handle_get_pool_last_used_list_element and address TODO in libbfio_internal_pool_close
 * handle clean offset and size on close?
 * complete multi threading support (todo pool)
 * remove open on demand ?
