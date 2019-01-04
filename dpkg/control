@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libbfio
 Package: libbfio
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libbfio1
+Replaces: libbfio1
 Suggests: libbfio-dbg
 Description: Library to support (abstracted) basic file input/output (IO)
  libbfio is a library to support (abstracted) basic file input/output (IO).

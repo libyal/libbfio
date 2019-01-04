@@ -1,7 +1,7 @@
 /*
  * Library pool type test program
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -2990,6 +2990,24 @@ int bfio_test_pool_set_handle(
 	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
 	{
 		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+
+		if( result == 1 )
+		{
+			result = libbfio_pool_remove_handle(
+			          pool,
+			          0,
+			          &test_handle,
+			          &error );
+
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 1 );
+
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "error",
+			 error );
+		}
 	}
 	else
 	{
@@ -3019,6 +3037,24 @@ int bfio_test_pool_set_handle(
 	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
 	{
 		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+
+		if( result == 1 )
+		{
+			result = libbfio_pool_remove_handle(
+			          pool,
+			          0,
+			          &test_handle,
+			          &error );
+
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 1 );
+
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "error",
+			 error );
+		}
 	}
 	else
 	{
@@ -3092,7 +3128,6 @@ int bfio_test_pool_remove_handle(
 	libcdata_list_t *last_used_list = NULL;
 	libcerror_error_t *error        = NULL;
 	size_t source_length            = 0;
-	int entry_index                 = 0;
 	int result                      = 0;
 
 	/* Initialize test
@@ -3114,7 +3149,7 @@ int bfio_test_pool_remove_handle(
 
 	result = libbfio_pool_initialize(
 	          &pool,
-	          0,
+	          1,
 	          LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES,
 	          &error );
 
@@ -3166,9 +3201,9 @@ int bfio_test_pool_remove_handle(
 	 "error",
 	 error );
 
-	result = libbfio_pool_append_handle(
+	result = libbfio_pool_set_handle(
 	          pool,
-	          &entry_index,
+	          0,
 	          handle,
 	          LIBBFIO_OPEN_READ,
 	          &error );
@@ -3201,14 +3236,12 @@ int bfio_test_pool_remove_handle(
 	 "error",
 	 error );
 
-	handle = test_handle;
-
 	/* Initialize test
 	 */
-	result = libbfio_pool_append_handle(
+	result = libbfio_pool_set_handle(
 	          pool,
-	          &entry_index,
-	          handle,
+	          0,
+	          test_handle,
 	          LIBBFIO_OPEN_READ,
 	          &error );
 
@@ -3221,10 +3254,10 @@ int bfio_test_pool_remove_handle(
 	 "error",
 	 error );
 
-	handle = NULL;
-
 	/* Test error cases
 	 */
+	test_handle = NULL;
+
 	result = libbfio_pool_remove_handle(
 	          NULL,
 	          0,
@@ -3315,9 +3348,30 @@ int bfio_test_pool_remove_handle(
 	          &test_handle,
 	          &error );
 
+/* TODO check bfio_test_pthread_rwlock_wrlock_attempts_before_fail */
+
 	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
 	{
 		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+
+		if( result == 1 )
+		{
+			result = libbfio_pool_set_handle(
+			          pool,
+			          0,
+			          test_handle,
+			          LIBBFIO_OPEN_READ,
+			          &error );
+
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 1 );
+
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "error",
+			 error );
+		}
 	}
 	else
 	{
@@ -3343,9 +3397,30 @@ int bfio_test_pool_remove_handle(
 	          &test_handle,
 	          &error );
 
+/* TODO check bfio_test_pthread_rwlock_unlock_attempts_before_fail */
+
 	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
 	{
 		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+
+		if( result == 1 )
+		{
+			result = libbfio_pool_set_handle(
+			          pool,
+			          0,
+			          test_handle,
+			          LIBBFIO_OPEN_READ,
+			          &error );
+
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 1 );
+
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "error",
+			 error );
+		}
 	}
 	else
 	{
@@ -6222,6 +6297,8 @@ int main(
 		 "libbfio_internal_pool_move_handle_to_front_of_last_used_list",
 		 bfio_test_internal_pool_move_handle_to_front_of_last_used_list,
 		 source );
+
+		/* TODO add tests for libbfio_internal_pool_remove_handle_from_last_used_list */
 
 #endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
 

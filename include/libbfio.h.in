@@ -1,7 +1,7 @@
 /*
  * Library to support (abstracted) basic file input/output (IO)
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -225,7 +225,7 @@ ssize_t libbfio_handle_write_buffer(
          size_t size,
          libbfio_error_t **error );
 
-/* Seeks a certain offset within the handle
+/* Seeks a specific offset within the handle
  * Returns the offset if the seek is successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -599,7 +599,7 @@ int libbfio_pool_get_number_of_handles(
      int *number_of_handles,
      libbfio_error_t **error );
 
-/* Retrieves a certain handle from the pool
+/* Retrieves a specific handle from the pool
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -621,7 +621,7 @@ int libbfio_pool_append_handle(
      int access_flags,
      libbfio_error_t **error );
 
-/* Sets a certain handle in the pool
+/* Sets a specific handle in the pool
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -632,7 +632,7 @@ int libbfio_pool_set_handle(
      int access_flags,
      libbfio_error_t **error );
 
-/* Removes a certain handle from the pool
+/* Removes a specific handle from the pool
  * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \

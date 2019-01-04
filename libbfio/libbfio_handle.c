@@ -1,7 +1,7 @@
 /*
  * The handle functions
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -132,7 +132,10 @@ int libbfio_handle_initialize(
 		 "%s: unable to clear handle.",
 		 function );
 
-		goto on_error;
+		memory_free(
+		 internal_handle );
+
+		return( -1 );
 	}
 	if( libcdata_range_list_initialize(
 	     &( internal_handle->offsets_read ),
@@ -145,10 +148,7 @@ int libbfio_handle_initialize(
 		 "%s: unable to create read offsets list.",
 		 function );
 
-		memory_free(
-		 internal_handle );
-
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_initialize(
@@ -185,6 +185,13 @@ int libbfio_handle_initialize(
 on_error:
 	if( internal_handle != NULL )
 	{
+		if( internal_handle->offsets_read != NULL )
+		{
+			libcdata_range_list_free(
+			 &( internal_handle->offsets_read ),
+			 NULL,
+			 NULL );
+		}
 		memory_free(
 		 internal_handle );
 	}

@@ -10,15 +10,15 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 @libbfio_spec_requires@ @ax_libcdata_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcfile_spec_requires@ @ax_libclocale_spec_requires@ @ax_libcnotify_spec_requires@ @ax_libcpath_spec_requires@ @ax_libcsplit_spec_requires@ @ax_libcthreads_spec_requires@ @ax_libuna_spec_requires@
 BuildRequires: gcc @ax_libcdata_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcfile_spec_build_requires@ @ax_libclocale_spec_build_requires@ @ax_libcnotify_spec_build_requires@ @ax_libcpath_spec_build_requires@ @ax_libcsplit_spec_build_requires@ @ax_libcthreads_spec_build_requires@ @ax_libuna_spec_build_requires@
 
-%description
+%description -n libbfio
 Library to support (abstracted) basic file input/output (IO)
 
-%package devel
+%package -n libbfio-devel
 Summary: Header files and libraries for developing applications for libbfio
 Group: Development/Libraries
 Requires: libbfio = %{version}-%{release}
 
-%description devel
+%description -n libbfio-devel
 Header files and libraries for developing applications for libbfio.
 
 %prep
@@ -39,16 +39,16 @@ rm -rf %{buildroot}
 
 %postun -p /sbin/ldconfig
 
-%files
+%files -n libbfio
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.so.*
 
-%files devel
+%files -n libbfio-devel
 %defattr(644,root,root,755)
 %license COPYING
-%doc AUTHORS README ChangeLog
+%doc AUTHORS README
 %{_libdir}/*.a
 %{_libdir}/*.la
 %{_libdir}/*.so

@@ -1,7 +1,7 @@
 /*
  * The internal pool functions
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -100,12 +100,17 @@ int libbfio_internal_pool_open_handle(
 
 int libbfio_internal_pool_append_handle_to_last_used_list(
      libbfio_internal_pool_t *internal_pool,
-     libbfio_handle_t *handle,
+     const libbfio_handle_t *handle,
      libcerror_error_t **error );
 
 int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
      libbfio_internal_pool_t *internal_pool,
      libbfio_handle_t *handle,
+     libcerror_error_t **error );
+
+int libbfio_internal_pool_remove_handle_from_last_used_list(
+     libbfio_internal_pool_t *internal_pool,
+     const libbfio_handle_t *handle,
      libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
