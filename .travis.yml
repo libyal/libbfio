@@ -45,23 +45,23 @@ matrix:
     dist: xenial
     sudo: required
     group: edge
-  - name: "Linux with gcc and wide character type (wchar_t) support"
-    env:
-    - CONFIGURE_OPTIONS="--enable-wide-character-type"
-    - CFLAGS="--coverage"
-    - LDFLAGS="--coverage"
-    - TARGET="linux-gcc-wide-character-type"
-    compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
-    group: edge
   - name: "Linux with gcc without multi-threading support"
     env:
     - CONFIGURE_OPTIONS="--with-pthread=no"
     - CFLAGS="--coverage"
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-no-pthread"
+    compiler: gcc
+    os: linux
+    dist: xenial
+    sudo: required
+    group: edge
+  - name: "Linux with gcc and wide character type (wchar_t) support"
+    env:
+    - CONFIGURE_OPTIONS="--enable-wide-character-type"
+    - CFLAGS="--coverage"
+    - LDFLAGS="--coverage"
+    - TARGET="linux-gcc-wide-character-type"
     compiler: gcc
     os: linux
     dist: xenial
@@ -101,21 +101,21 @@ matrix:
     dist: xenial
     sudo: required
     group: edge
-  - name: "MacOS with clang"
+  - name: "Mac OS with clang"
     env:
     - CONFIGURE_OPTIONS=""
     - TARGET="macos-clang"
     compiler: clang
     os: osx
     osx_image: xcode8.3
-  - name: "MacOS with gcc"
+  - name: "Mac OS with gcc"
     env:
     - CONFIGURE_OPTIONS=""
     - TARGET="macos-gcc"
     compiler: gcc
     os: osx
     osx_image: xcode8.3
-  - name: "MacOS gcc and pkgbuild"
+  - name: "Mac OS gcc and pkgbuild"
     env:
     - CONFIGURE_OPTIONS="--disable-dependency-tracking --prefix=/usr/local"
     - TARGET="macos-gcc-pkgbuild"
@@ -161,5 +161,5 @@ script:
     fi
 after_success:
   - if test ${TARGET} = "linux-gcc-no-optimization"; then
-      curl -o codecov.sh -s https://codecov.io/bash && /bin/bash ./codecov.sh -n ${TARGET} -y .codecov.yml;
+      curl -o codecov.sh -s https://codecov.io/bash && sed 's/ -execdir / -exec /' -i ./codecov.sh && /bin/bash ./codecov.sh -n ${TARGET} -y .codecov.yml;
     fi

@@ -1587,6 +1587,7 @@ int libbfio_pool_set_handle(
 #endif
 	return( result );
 
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 on_error:
 	if( result == 1 )
 	{
@@ -1597,6 +1598,7 @@ on_error:
 		 NULL );
 	}
 	return( -1 );
+#endif
 }
 
 /* Removes a specific handle from the pool
@@ -1748,6 +1750,7 @@ int libbfio_pool_remove_handle(
 	}
 	return( result );
 
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 on_error:
 	if( result == 1 )
 	{
@@ -1765,6 +1768,7 @@ on_error:
 		internal_pool->number_of_used_handles += 1;
 	}
 	return( -1 );
+#endif
 }
 
 /* Retrieves the maximum number of open handles in the pool

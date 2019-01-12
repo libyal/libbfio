@@ -984,6 +984,7 @@ ssize_t libbfio_handle_read_buffer(
 	static char *function                      = "libbfio_handle_read_buffer";
 	ssize_t read_count                         = 0;
 	int is_open                                = 0;
+	int result                                 = 0;
 
 	if( handle == NULL )
 	{
@@ -1160,14 +1161,16 @@ ssize_t libbfio_handle_read_buffer(
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
-		if( libcdata_range_list_insert_range(
-		     internal_handle->offsets_read,
-		     (uint64_t) internal_handle->current_offset,
-		     (uint64_t) read_count,
-		     NULL,
-		     NULL,
-		     NULL,
-		     error ) != 1 )
+		result = libcdata_range_list_insert_range(
+		          internal_handle->offsets_read,
+		          (uint64_t) internal_handle->current_offset,
+		          (uint64_t) read_count,
+		          NULL,
+		          NULL,
+		          NULL,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,

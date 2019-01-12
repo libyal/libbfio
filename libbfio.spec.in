@@ -13,6 +13,14 @@ BuildRequires: gcc @ax_libcdata_spec_build_requires@ @ax_libcerror_spec_build_re
 %description -n libbfio
 Library to support (abstracted) basic file input/output (IO)
 
+%package -n libbfio-static
+Summary: Library to support (abstracted) basic file input/output (IO)
+Group: Development/Libraries
+Requires: libbfio = %{version}-%{release}
+
+%description -n libbfio-static
+Static library version of libbfio.
+
 %package -n libbfio-devel
 Summary: Header files and libraries for developing applications for libbfio
 Group: Development/Libraries
@@ -45,11 +53,16 @@ rm -rf %{buildroot}
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.so.*
 
+%files -n libbfio-static
+%defattr(644,root,root,755)
+%license COPYING
+%doc AUTHORS README
+%attr(755,root,root) %{_libdir}/*.a
+
 %files -n libbfio-devel
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
-%{_libdir}/*.a
 %{_libdir}/*.la
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libbfio.pc
