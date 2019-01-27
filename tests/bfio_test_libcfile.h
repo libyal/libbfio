@@ -1,5 +1,5 @@
 /*
- * The internal libcfile header
+ * The libcfile header wrapper
  *
  * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,19 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _CFILE_TEST_LIBCFILE_H )
-#define _CFILE_TEST_LIBCFILE_H
+#if !defined( _BFIO_TEST_LIBCFILE_H )
+#define _BFIO_TEST_LIBCFILE_H
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBCFILE_DLL_IMPORT
+/* Define HAVE_LOCAL_LIBCFILE for local use of libcfile
+ */
+#if defined( HAVE_LOCAL_LIBCFILE )
+
+#include <libcfile_definitions.h>
+#include <libcfile_file.h>
+#include <libcfile_support.h>
+#include <libcfile_types.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCFILE_DLL_IMPORT
  * before including libcfile.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
 #define LIBCFILE_DLL_IMPORT
 #endif
 
 #include <libcfile.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBCFILE ) */
+
+#endif /* !defined( _BFIO_TEST_LIBCFILE_H ) */
 

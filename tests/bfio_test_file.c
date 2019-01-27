@@ -60,7 +60,7 @@ int bfio_test_file_initialize(
 	int result                      = 0;
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
-	int number_of_malloc_fail_tests = 2;
+	int number_of_malloc_fail_tests = 3;
 	int number_of_memset_fail_tests = 1;
 	int test_number                 = 0;
 #endif
@@ -141,12 +141,15 @@ int bfio_test_file_initialize(
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
 
+	/* Test libbfio_file_initialize with malloc failing
+	 * 1. malloc failing in libbfio_file_io_handle_initialize
+	 * 2. malloc failing in libcfile_file_initialize in libbfio_file_io_handle_initialize
+	 * 3. malloc failing in libbfio_handle_initialize
+	 */
 	for( test_number = 0;
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
 	{
-		/* Test libbfio_file_initialize with malloc failing
-		 */
 		bfio_test_malloc_attempts_before_fail = test_number;
 
 		result = libbfio_file_initialize(
@@ -496,6 +499,38 @@ int bfio_test_file_set_name(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_BFIO_TEST_MEMORY )
+
+	/* Test libbfio_file_set_name with malloc failing in libbfio_file_io_handle_set_name
+	 */
+	bfio_test_malloc_attempts_before_fail = 0;
+
+	result = libbfio_file_set_name(
+	          handle,
+	          "test",
+	          4,
+	          &error );
+
+	if( bfio_test_malloc_attempts_before_fail != -1 )
+	{
+		bfio_test_malloc_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
+
 	/* Clean up
 	 */
 	result = libbfio_handle_free(
@@ -785,6 +820,38 @@ int bfio_test_file_set_name_wide(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_BFIO_TEST_MEMORY )
+
+	/* Test libbfio_file_set_name_wide with malloc failing in libbfio_file_io_handle_set_name
+	 */
+	bfio_test_malloc_attempts_before_fail = 0;
+
+	result = libbfio_file_set_name_wide(
+	          handle,
+	          L"test",
+	          4,
+	          &error );
+
+	if( bfio_test_malloc_attempts_before_fail != -1 )
+	{
+		bfio_test_malloc_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
 	/* Clean up
 	 */

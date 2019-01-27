@@ -34,6 +34,7 @@
 #include "bfio_test_getopt.h"
 #include "bfio_test_libbfio.h"
 #include "bfio_test_libcerror.h"
+#include "bfio_test_libcfile.h"
 #include "bfio_test_libclocale.h"
 #include "bfio_test_libuna.h"
 #include "bfio_test_macros.h"
@@ -303,7 +304,7 @@ int bfio_test_file_io_handle_clone(
 #if defined( OPTIMIZATION_DISABLED )
 	int number_of_memcpy_fail_tests                      = 1;
 #endif
-#endif
+#endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
 	/* Initialize test
 	 */
@@ -1224,6 +1225,7 @@ on_error:
 int bfio_test_file_io_handle_set_name(
      void )
 {
+	libcfile_file_t *file                    = NULL;
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	libcerror_error_t *error                 = NULL;
 	int result                               = 0;
@@ -1322,6 +1324,30 @@ int bfio_test_file_io_handle_set_name(
 	          "test",
 	          0,
 	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	file = file_io_handle->file;
+
+	file_io_handle->file = NULL;
+
+	result = libbfio_file_io_handle_set_name(
+	          file_io_handle,
+	          "test",
+	          4,
+	          &error );
+
+	file_io_handle->file = file;
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -1612,6 +1638,7 @@ on_error:
 int bfio_test_file_io_handle_set_name_wide(
      void )
 {
+	libcfile_file_t *file                    = NULL;
 	libbfio_file_io_handle_t *file_io_handle = NULL;
 	libcerror_error_t *error                 = NULL;
 	int result                               = 0;
@@ -1710,6 +1737,30 @@ int bfio_test_file_io_handle_set_name_wide(
 	          L"test",
 	          0,
 	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	file = file_io_handle->file;
+
+	file_io_handle->file = NULL;
+
+	result = libbfio_file_io_handle_set_name_wide(
+	          file_io_handle,
+	          L"test",
+	          4,
+	          &error );
+
+	file_io_handle->file = file;
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
