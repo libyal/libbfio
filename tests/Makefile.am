@@ -18,6 +18,7 @@ TESTS = \
 
 check_SCRIPTS = \
 	test_library.sh \
+	test_manpage.sh \
 	test_runner.sh
 
 input_FILES = \
