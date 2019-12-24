@@ -493,13 +493,18 @@ int libbfio_handle_clone(
 		 "%s: unable to release read/write lock for reading.",
 		 function );
 
-		goto on_error;
+		libbfio_handle_free(
+		 destination_handle,
+		 NULL );
+
+		return( -1 );
 	}
 #endif
 	return( 1 );
 
 on_error:
-	if( destination_io_handle != NULL )
+	if( ( destination_io_handle != NULL )
+	 && ( ( destination_flags & LIBBFIO_FLAG_IO_HANDLE_MANAGED ) != 0 ) )
 	{
 		if( internal_source_handle->free_io_handle == NULL )
 		{

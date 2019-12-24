@@ -875,6 +875,8 @@ int bfio_test_pool_clone(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_clone with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
@@ -913,6 +915,7 @@ int bfio_test_pool_clone(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -1073,6 +1076,8 @@ int bfio_test_pool_resize(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_resize with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
@@ -1100,6 +1105,7 @@ int bfio_test_pool_resize(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -1994,6 +2000,8 @@ int bfio_test_pool_get_number_of_handles(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_get_number_of_handles with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
@@ -2021,6 +2029,7 @@ int bfio_test_pool_get_number_of_handles(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
@@ -2145,6 +2154,8 @@ int bfio_test_pool_get_handle(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_get_handle with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_read
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
@@ -2173,6 +2184,7 @@ int bfio_test_pool_get_handle(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
@@ -2403,6 +2415,8 @@ int bfio_test_pool_set_maximum_number_of_open_handles(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_set_maximum_number_of_open_handles with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
@@ -2430,6 +2444,7 @@ int bfio_test_pool_set_maximum_number_of_open_handles(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
@@ -2535,6 +2550,20 @@ int bfio_test_pool_append_handle(
 
 	/* Test regular cases
 	 */
+	result = libbfio_handle_open(
+	          handle,
+	          LIBBFIO_OPEN_WRITE,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libbfio_pool_append_handle(
 	          pool,
 	          &entry_index,
@@ -2551,7 +2580,37 @@ int bfio_test_pool_append_handle(
 	 "error",
 	 error );
 
-	handle = NULL;
+	result = libbfio_handle_close(
+	          handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libbfio_pool_remove_handle(
+	          pool,
+	          0,
+	          &test_handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	test_handle = handle;
 
 	/* Test error cases
 	 */
@@ -2672,6 +2731,28 @@ int bfio_test_pool_append_handle(
 	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
 	{
 		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+
+		if( result == 1 )
+		{
+			/* Clean up
+			 */
+			result = libbfio_pool_remove_handle(
+			          pool,
+			          0,
+			          &test_handle,
+			          &error );
+
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 1 );
+
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "error",
+			 error );
+
+			test_handle = handle;
+		}
 	}
 	else
 	{
@@ -2687,7 +2768,8 @@ int bfio_test_pool_append_handle(
 		libcerror_error_free(
 		 &error );
 	}
-#ifdef TODO
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_append_handle with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
@@ -2702,6 +2784,28 @@ int bfio_test_pool_append_handle(
 	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
 	{
 		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+
+		if( result == 1 )
+		{
+			/* Clean up
+			 */
+			result = libbfio_pool_remove_handle(
+			          pool,
+			          0,
+			          &test_handle,
+			          &error );
+
+			BFIO_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 1 );
+
+			BFIO_TEST_ASSERT_IS_NULL(
+			 "error",
+			 error );
+
+			test_handle = handle;
+		}
 	}
 	else
 	{
@@ -2717,11 +2821,28 @@ int bfio_test_pool_append_handle(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* TODO */
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
 	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libbfio_pool_free(
 	          &pool,
 	          &error );
@@ -2853,6 +2974,20 @@ int bfio_test_pool_set_handle(
 
 	/* Test regular cases
 	 */
+	result = libbfio_handle_open(
+	          handle,
+	          LIBBFIO_OPEN_WRITE,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libbfio_pool_set_handle(
 	          pool,
 	          0,
@@ -2869,7 +3004,37 @@ int bfio_test_pool_set_handle(
 	 "error",
 	 error );
 
-	handle = NULL;
+	result = libbfio_handle_close(
+	          handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libbfio_pool_remove_handle(
+	          pool,
+	          0,
+	          &test_handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	test_handle = handle;
 
 	/* Test error cases
 	 */
@@ -2993,6 +3158,8 @@ int bfio_test_pool_set_handle(
 
 		if( result == 1 )
 		{
+			/* Clean up
+			 */
 			result = libbfio_pool_remove_handle(
 			          pool,
 			          0,
@@ -3007,6 +3174,8 @@ int bfio_test_pool_set_handle(
 			BFIO_TEST_ASSERT_IS_NULL(
 			 "error",
 			 error );
+
+			test_handle = handle;
 		}
 	}
 	else
@@ -3023,6 +3192,8 @@ int bfio_test_pool_set_handle(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_set_handle with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
@@ -3040,6 +3211,8 @@ int bfio_test_pool_set_handle(
 
 		if( result == 1 )
 		{
+			/* Clean up
+			 */
 			result = libbfio_pool_remove_handle(
 			          pool,
 			          0,
@@ -3054,6 +3227,8 @@ int bfio_test_pool_set_handle(
 			BFIO_TEST_ASSERT_IS_NULL(
 			 "error",
 			 error );
+
+			test_handle = handle;
 		}
 	}
 	else
@@ -3070,10 +3245,28 @@ int bfio_test_pool_set_handle(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
 	 */
+	result = libbfio_handle_free(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libbfio_pool_free(
 	          &pool,
 	          &error );
@@ -3348,8 +3541,6 @@ int bfio_test_pool_remove_handle(
 	          &test_handle,
 	          &error );
 
-/* TODO check bfio_test_pthread_rwlock_wrlock_attempts_before_fail */
-
 	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
 	{
 		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
@@ -3387,6 +3578,8 @@ int bfio_test_pool_remove_handle(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_remove_handle with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 0;
@@ -3396,8 +3589,6 @@ int bfio_test_pool_remove_handle(
 	          0,
 	          &test_handle,
 	          &error );
-
-/* TODO check bfio_test_pthread_rwlock_unlock_attempts_before_fail */
 
 	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
 	{
@@ -3436,6 +3627,7 @@ int bfio_test_pool_remove_handle(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -3723,6 +3915,8 @@ int bfio_test_pool_open(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_open with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 4;
@@ -3751,6 +3945,7 @@ int bfio_test_pool_open(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -4030,6 +4225,8 @@ int bfio_test_pool_reopen(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_reopen with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 1;
@@ -4058,6 +4255,7 @@ int bfio_test_pool_reopen(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -4569,6 +4767,8 @@ int bfio_test_pool_close(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_close with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 1;
@@ -4596,6 +4796,7 @@ int bfio_test_pool_close(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -4833,6 +5034,8 @@ int bfio_test_pool_close_all(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_close_all with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 1;
@@ -4859,6 +5062,7 @@ int bfio_test_pool_close_all(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -5094,6 +5298,8 @@ int bfio_test_pool_read_buffer(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_read_buffer with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
@@ -5123,6 +5329,7 @@ int bfio_test_pool_read_buffer(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
@@ -5387,6 +5594,8 @@ int bfio_test_pool_write_buffer(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_write_buffer with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
@@ -5416,6 +5625,7 @@ int bfio_test_pool_write_buffer(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	/* Clean up
@@ -5861,6 +6071,8 @@ int bfio_test_pool_seek_offset(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_seek_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
@@ -5890,6 +6102,7 @@ int bfio_test_pool_seek_offset(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
@@ -6016,6 +6229,8 @@ int bfio_test_pool_get_offset(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_get_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
@@ -6044,6 +6259,7 @@ int bfio_test_pool_get_offset(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );
@@ -6170,6 +6386,8 @@ int bfio_test_pool_get_size(
 		libcerror_error_free(
 		 &error );
 	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
 	/* Test libbfio_pool_get_size with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
 	 */
 	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
@@ -6198,6 +6416,7 @@ int bfio_test_pool_get_size(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 #endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
 
 	return( 1 );

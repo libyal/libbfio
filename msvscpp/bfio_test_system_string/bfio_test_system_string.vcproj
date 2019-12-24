@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\bfio_test_libcerror.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\bfio_test_macros.h"
 				>
 			</File>

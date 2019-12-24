@@ -1214,6 +1214,8 @@ int libbfio_pool_append_handle(
 	static char *function                  = "libbfio_pool_append_handle";
 	int is_open                            = 0;
 	int number_of_handles                  = 0;
+	int result                             = 1;
+	int safe_entry                         = -1;
 
 	if( pool == NULL )
 	{
@@ -1250,32 +1252,6 @@ int libbfio_pool_append_handle(
 
 		return( -1 );
 	}
-	if( handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_grab_for_write(
-	     internal_pool->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to grab read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	/* Check if the handle is open
 	 */
 	is_open = libbfio_handle_is_open(
@@ -1291,7 +1267,7 @@ int libbfio_pool_append_handle(
 		 "%s: unable to determine if handle is open.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	else if( is_open == 0 )
 	{
@@ -1309,9 +1285,24 @@ int libbfio_pool_append_handle(
 			 "%s: unable to set access flags.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_pool->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	if( libcdata_array_get_number_of_entries(
 	     internal_pool->handles_array,
 	     &number_of_handles,
@@ -1324,13 +1315,13 @@ int libbfio_pool_append_handle(
 		 "%s: unable to retrieve number of handles.",
 		 function );
 
-		goto on_error;
+		result = -1;
 	}
-	if( ( internal_pool->number_of_used_handles + 1 ) >= number_of_handles )
+	else if( ( internal_pool->number_of_used_handles + 1 ) >= number_of_handles )
 	{
 		if( libcdata_array_append_entry(
 		     internal_pool->handles_array,
-		     entry,
+		     &safe_entry,
 		     (intptr_t *) handle,
 		     error ) != 1 )
 		{
@@ -1341,16 +1332,16 @@ int libbfio_pool_append_handle(
 			 "%s: unable to append handle.",
 			 function );
 
-			goto on_error;
+			result = -1;
 		}
 	}
 	else
 	{
-		*entry = internal_pool->number_of_used_handles;
+		safe_entry = internal_pool->number_of_used_handles;
 
 		if( libcdata_array_set_entry_by_index(
 		     internal_pool->handles_array,
-		     *entry,
+		     safe_entry,
 		     (intptr_t *) handle,
 		     error ) != 1 )
 		{
@@ -1360,30 +1351,33 @@ int libbfio_pool_append_handle(
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to set handle: %d.",
 			 function,
-			 *entry );
+			 safe_entry );
 
-			goto on_error;
+			result = -1;
 		}
 	}
-	internal_pool->number_of_used_handles += 1;
-
-	if( is_open != 0 )
+	if( result == 1 )
 	{
-		if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
-		{
-			if( libbfio_internal_pool_append_handle_to_last_used_list(
-			     internal_pool,
-			     handle,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append handle to last used list.",
-				 function );
+		internal_pool->number_of_used_handles += 1;
 
-				goto on_error;
+		if( is_open != 0 )
+		{
+			if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
+			{
+				if( libbfio_internal_pool_append_handle_to_last_used_list(
+				     internal_pool,
+				     handle,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append handle to last used list.",
+					 function );
+
+					result = -1;
+				}
 			}
 		}
 	}
@@ -1399,17 +1393,28 @@ int libbfio_pool_append_handle(
 		 "%s: unable to release read/write lock for writing.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #endif
+	if( result != 1 )
+	{
+		goto on_error;
+	}
+	*entry = safe_entry;
+
 	return( 1 );
 
 on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_pool->read_write_lock,
-	 NULL );
-#endif
+	if( safe_entry >= 0 )
+	{
+		libcdata_array_set_entry_by_index(
+		 internal_pool->handles_array,
+		 safe_entry,
+		 NULL,
+		 NULL );
+
+		internal_pool->number_of_used_handles -= 1;
+	}
 	return( -1 );
 }
 
@@ -1442,6 +1447,17 @@ int libbfio_pool_set_handle(
 	}
 	internal_pool = (libbfio_internal_pool_t *) pool;
 
+	if( internal_pool->last_used_list == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid pool - missing last used list.",
+		 function );
+
+		return( -1 );
+	}
 	/* Check if the handle is open
 	 */
 	is_open = libbfio_handle_is_open(
@@ -1522,24 +1538,21 @@ int libbfio_pool_set_handle(
 
 		result = -1;
 	}
-	if( result == 1 )
+	else if( libcdata_array_set_entry_by_index(
+	          internal_pool->handles_array,
+	          entry,
+	          (intptr_t *) handle,
+	          error ) != 1 )
 	{
-		if( libcdata_array_set_entry_by_index(
-		     internal_pool->handles_array,
-		     entry,
-		     (intptr_t *) handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set handle: %d.",
-			 function,
-			 entry );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set handle: %d.",
+		 function,
+		 entry );
 
-			result = -1;
-		}
+		result = -1;
 	}
 	if( result == 1 )
 	{
@@ -1558,12 +1571,6 @@ int libbfio_pool_set_handle(
 					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 					 "%s: unable to append handle to last used list.",
 					 function );
-
-					libcdata_array_set_entry_by_index(
-					 internal_pool->handles_array,
-					 entry,
-					 (intptr_t *) backup_handle,
-					 NULL );
 
 					result = -1;
 				}
@@ -1585,20 +1592,20 @@ int libbfio_pool_set_handle(
 		goto on_error;
 	}
 #endif
+	if( result != 1 )
+	{
+		goto on_error;
+	}
 	return( result );
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 on_error:
-	if( result == 1 )
-	{
-		libcdata_array_set_entry_by_index(
-		 internal_pool->handles_array,
-		 entry,
-		 (intptr_t *) backup_handle,
-		 NULL );
-	}
+	libcdata_array_set_entry_by_index(
+	 internal_pool->handles_array,
+	 entry,
+	 NULL,
+	 NULL );
+
 	return( -1 );
-#endif
 }
 
 /* Removes a specific handle from the pool

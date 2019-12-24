@@ -222,12 +222,14 @@ bfio_test_support_LDADD = \
 
 bfio_test_system_string_SOURCES = \
 	bfio_test_libbfio.h \
+	bfio_test_libcerror.h \
 	bfio_test_macros.h \
 	bfio_test_system_string.c \
 	bfio_test_unused.h
 
 bfio_test_system_string_LDADD = \
-	../libbfio/libbfio.la
+	../libbfio/libbfio.la \
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
