@@ -719,6 +719,28 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 
 			return( -1 );
 		}
+	}
+	if( last_used_list_element == NULL )
+	{
+		if( libcdata_list_element_initialize(
+		     &last_used_list_element,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create last used list element.",
+			 function );
+
+			return( -1 );
+		}
+		internal_pool->number_of_open_handles++;
+	}
+	else
+	{
+		/* The last used list element is reused to contain the new last used entry
+		 */
 		if( libcdata_list_element_get_value(
 		     last_used_list_element,
 		     (intptr_t **) &internal_handle,
@@ -773,25 +795,6 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 			 */
 			internal_handle->access_flags &= ~( LIBBFIO_ACCESS_FLAG_TRUNCATE );
 		}
-		/* The last used list element is reused to contain the new last used entry
-		 */
-	}
-	else
-	{
-		if( libcdata_list_element_initialize(
-		     &last_used_list_element,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create last used list element.",
-			 function );
-
-			return( -1 );
-		}
-		internal_pool->number_of_open_handles++;
 	}
 	internal_handle = (libbfio_internal_handle_t *) handle;
 
