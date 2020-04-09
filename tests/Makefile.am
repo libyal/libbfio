@@ -76,6 +76,7 @@ bfio_test_file_io_handle_SOURCES = \
 	bfio_test_getopt.c bfio_test_getopt.h \
 	bfio_test_libbfio.h \
 	bfio_test_libcerror.h \
+	bfio_test_libcfile.h \
 	bfio_test_libclocale.h \
 	bfio_test_libcnotify.h \
 	bfio_test_libuna.h \

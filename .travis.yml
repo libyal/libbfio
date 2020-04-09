@@ -1,18 +1,18 @@
+version: ~> 1.0
 language: c
+os: linux
+dist: bionic
 env:
   global:
    # Encrypted COVERITY_SCAN_TOKEN
    - secure: "dLuoSCbs55r0Gy7BqL9xPVXX7jEYVjNFQKqFcFflH16rYg4FXHb2FzJjgSN38Xns5hTaSI5LI3c8EEZ5EgWTcEPpe85c4UlkO59d98I8XmW2tFuBWzn/zaRF7Il/vagb3PZnUBSZFaPKuT8E9vxxUAZfk37VDZSqhRovOvWHLzQ="
-matrix:
+jobs:
   include:
   - name: "Coverity"
     env:
     - CONFIGURE_OPTIONS=""
     - TARGET="coverity"
     compiler: clang
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
     addons:
       coverity_scan:
@@ -30,9 +30,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-clang"
     compiler: clang
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
   - name: "Linux with gcc"
     env:
@@ -41,9 +38,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc"
     compiler: gcc
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
   - name: "Linux with gcc on s390x (Docker)"
     env:
@@ -54,9 +48,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="docker"
     compiler: gcc
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
     services:
     - docker
@@ -67,9 +58,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-no-pthread"
     compiler: gcc
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
   - name: "Linux with gcc and wide character type (wchar_t) support"
     env:
@@ -78,9 +66,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-wide-character-type"
     compiler: gcc
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
   - name: "Linux with gcc without optimization"
     env:
@@ -90,9 +75,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-no-optimization"
     compiler: gcc
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
   - name: "Linux with gcc and shared libraries"
     env:
@@ -101,9 +83,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-shared"
     compiler: gcc
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
   - name: "Linux with gcc, shared libraries and wide character type (wchar_t) support"
     env:
@@ -112,9 +91,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-shared-wide-character-type"
     compiler: gcc
-    os: linux
-    dist: bionic
-    sudo: required
     group: edge
   - name: "Mac OS with clang"
     env:
