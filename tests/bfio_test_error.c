@@ -28,7 +28,6 @@
 #endif
 
 #include "bfio_test_libbfio.h"
-#include "bfio_test_libcerror.h"
 #include "bfio_test_macros.h"
 #include "bfio_test_unused.h"
 
