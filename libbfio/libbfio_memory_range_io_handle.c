@@ -499,14 +499,14 @@ ssize_t libbfio_memory_range_io_handle_read_buffer(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: range offset exceeds range size.",
+		 "%s: invalid range offset value out of bounds.",
 		 function );
 
 		return( -1 );
 	}
 	/* Check if the end of the data was reached
 	 */
-	if( memory_range_io_handle->range_offset == memory_range_io_handle->range_size )
+	if( memory_range_io_handle->range_offset >= memory_range_io_handle->range_size )
 	{
 		return( 0 );
 	}
@@ -617,16 +617,22 @@ ssize_t libbfio_memory_range_io_handle_write_buffer(
 
 		return( -1 );
 	}
-	if( memory_range_io_handle->range_offset >= memory_range_io_handle->range_size )
+	if( memory_range_io_handle->range_offset > memory_range_io_handle->range_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: range offset exceeds range size.",
+		 "%s: invalid range offset value out of bounds.",
 		 function );
 
 		return( -1 );
+	}
+	/* Check if the end of the data was reached
+	 */
+	if( memory_range_io_handle->range_offset >= memory_range_io_handle->range_size )
+	{
+		return( 0 );
 	}
 	/* Check the amount of data available
 	 */
@@ -641,7 +647,7 @@ ssize_t libbfio_memory_range_io_handle_write_buffer(
 	if( memory_copy(
 	     &( memory_range_io_handle->range_start[ memory_range_io_handle->range_offset ] ),
 	     buffer,
-	     size ) == NULL )
+	     write_size ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
