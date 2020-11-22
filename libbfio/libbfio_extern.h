@@ -30,7 +30,11 @@
 
 #include <libbfio/extern.h>
 
+#if defined( __CYGWIN__ )
+#define LIBBFIO_EXTERN_VARIABLE	extern
+#else
 #define LIBBFIO_EXTERN_VARIABLE	LIBBFIO_EXTERN
+#endif
 
 #else
 #define LIBBFIO_EXTERN		/* extern */
