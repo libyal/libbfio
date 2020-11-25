@@ -5120,6 +5120,12 @@ on_error:
 	return( 0 );
 }
 
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+
+	/* TODO add tests for libbfio_internal_pool_get_open_handle */
+
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
+
 /* Tests the libbfio_pool_read_buffer function
  * Returns 1 if successful or 0 if not
  */
@@ -5309,6 +5315,256 @@ int bfio_test_pool_read_buffer(
 	              0,
 	              buffer,
 	              32,
+	              &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_pool_read_buffer_at_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_pool_read_buffer_at_offset(
+     libbfio_pool_t *pool )
+{
+	uint8_t buffer[ 32 ];
+
+	libcerror_error_t *error = NULL;
+	size64_t file_size       = 0;
+	ssize_t read_count       = 0;
+	off64_t offset           = 0;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_pool_get_size(
+	          pool,
+	          0,
+	          &file_size,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	if( file_size < 32 )
+	{
+		return( 1 );
+	}
+	offset = libbfio_pool_seek_offset(
+	          pool,
+	          0,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              pool,
+	              0,
+	              buffer,
+	              32,
+	              0,
+	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) 32 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              NULL,
+	              0,
+	              buffer,
+	              32,
+	              0,
+	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              pool,
+	              -1,
+	              buffer,
+	              32,
+	              0,
+	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              pool,
+	              0,
+	              NULL,
+	              32,
+	              0,
+	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              pool,
+	              0,
+	              buffer,
+	              (size_t) SSIZE_MAX + 1,
+	              0,
+	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              pool,
+	              0,
+	              buffer,
+	              32,
+	              -1,
+	              &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_pool_read_buffer_at_offset with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              pool,
+	              0,
+	              buffer,
+	              32,
+	              0,
+	              &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
+	/* Test libbfio_pool_read_buffer_at_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
+
+	read_count = libbfio_pool_read_buffer_at_offset(
+	              pool,
+	              0,
+	              buffer,
+	              32,
+	              0,
 	              &error );
 
 	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
@@ -5605,6 +5861,390 @@ int bfio_test_pool_write_buffer(
 	               0,
 	               buffer,
 	               32,
+	               &error );
+
+	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_unlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "write_count",
+		 write_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+
+	/* Clean up
+	 */
+	if( with_temporary_file != 0 )
+	{
+		result = libbfio_pool_close_all(
+		          pool,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 0 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		result = bfio_test_remove_temporary_file(
+		          narrow_temporary_filename,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		with_temporary_file = 0;
+	}
+	result = libbfio_pool_free(
+	          &pool,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "pool",
+	 pool );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( with_temporary_file != 0 )
+	{
+		bfio_test_remove_temporary_file(
+		 narrow_temporary_filename,
+		 NULL );
+	}
+	if( pool != NULL )
+	{
+		libbfio_pool_free(
+		 &pool,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libbfio_pool_write_buffer_at_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_pool_write_buffer_at_offset(
+     void )
+{
+	char narrow_temporary_filename[ 17 ] = {
+		'b', 'f', 'i', 'o', '_', 't', 'e', 's', 't', '_', 'X', 'X', 'X', 'X', 'X', 'X', 0 };
+
+	uint8_t buffer[ 32 ] = {
+		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5' };
+
+	libbfio_handle_t *handle = NULL;
+	libbfio_pool_t *pool     = NULL;
+	libcerror_error_t *error = NULL;
+	ssize_t write_count      = 0;
+	int entry_index          = 0;
+	int result               = 0;
+	int with_temporary_file  = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_pool_initialize(
+	          &pool,
+	          0,
+	          LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "pool",
+	 pool );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = bfio_test_get_temporary_filename(
+	          narrow_temporary_filename,
+	          17,
+	          &error );
+
+	BFIO_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	with_temporary_file = result;
+
+	if( with_temporary_file != 0 )
+	{
+		result = libbfio_file_initialize(
+		          &handle,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "handle",
+		 handle );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		result = libbfio_file_set_name(
+		          handle,
+		          narrow_temporary_filename,
+		          16,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		result = libbfio_handle_open(
+		          handle,
+		          LIBBFIO_OPEN_WRITE,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		result = libbfio_pool_append_handle(
+		          pool,
+		          &entry_index,
+		          handle,
+		          LIBBFIO_OPEN_READ,
+		          &error );
+
+		BFIO_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		handle = NULL;
+
+		/* Test regular cases
+		 */
+		write_count = libbfio_pool_write_buffer_at_offset(
+		               pool,
+		               0,
+		               buffer,
+		               32,
+		               0,
+		               &error );
+
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "write_count",
+		 write_count,
+		 (ssize_t) 32 );
+
+		BFIO_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	/* Test error cases
+	 */
+	write_count = libbfio_pool_write_buffer_at_offset(
+	               NULL,
+	               0,
+	               buffer,
+	               32,
+	               0,
+	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	write_count = libbfio_pool_write_buffer_at_offset(
+	               pool,
+	               -1,
+	               buffer,
+	               32,
+	               0,
+	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	write_count = libbfio_pool_write_buffer_at_offset(
+	               pool,
+	               0,
+	               NULL,
+	               32,
+	               0,
+	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	write_count = libbfio_pool_write_buffer_at_offset(
+	               pool,
+	               0,
+	               buffer,
+	               (size_t) SSIZE_MAX + 1,
+	               0,
+	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	write_count = libbfio_pool_write_buffer_at_offset(
+	               pool,
+	               0,
+	               buffer,
+	               32,
+	               -1,
+	               &error );
+
+	BFIO_TEST_ASSERT_EQUAL_SSIZE(
+	 "write_count",
+	 write_count,
+	 (ssize_t) -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_BFIO_TEST_RWLOCK )
+
+	/* Test libbfio_pool_write_buffer_at_offset with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
+	 */
+	bfio_test_pthread_rwlock_wrlock_attempts_before_fail = 0;
+
+	write_count = libbfio_pool_write_buffer_at_offset(
+	               pool,
+	               0,
+	               buffer,
+	               32,
+	               0,
+	               &error );
+
+	if( bfio_test_pthread_rwlock_wrlock_attempts_before_fail != -1 )
+	{
+		bfio_test_pthread_rwlock_wrlock_attempts_before_fail = -1;
+	}
+	else
+	{
+		BFIO_TEST_ASSERT_EQUAL_SSIZE(
+		 "write_count",
+		 write_count,
+		 (ssize_t) -1 );
+
+		BFIO_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#if defined( HAVE_LOCAL_LIBCDATA )
+
+	/* Test libbfio_pool_write_buffer_at_offset with pthread_rwlock_unlock failing in libcthreads_read_write_lock_release_for_write
+	 */
+	bfio_test_pthread_rwlock_unlock_attempts_before_fail = 2;
+
+	write_count = libbfio_pool_write_buffer_at_offset(
+	               pool,
+	               0,
+	               buffer,
+	               32,
+	               0,
 	               &error );
 
 	if( bfio_test_pthread_rwlock_unlock_attempts_before_fail != -1 )
@@ -6497,6 +7137,10 @@ int main(
 	 "libbfio_pool_write_buffer",
 	 bfio_test_pool_write_buffer );
 
+	BFIO_TEST_RUN(
+	 "libbfio_pool_write_buffer_at_offset",
+	 bfio_test_pool_write_buffer_at_offset );
+
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
@@ -6605,9 +7249,20 @@ int main(
 		 bfio_test_pool_set_maximum_number_of_open_handles,
 		 pool );
 
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+
+		/* TODO add tests for libbfio_internal_pool_get_open_handle */
+
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
+
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_pool_read_buffer",
 		 bfio_test_pool_read_buffer,
+		 pool );
+
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_pool_read_buffer_at_offset",
+		 bfio_test_pool_read_buffer_at_offset,
 		 pool );
 
 		BFIO_TEST_RUN_WITH_ARGS(

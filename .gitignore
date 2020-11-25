@@ -127,6 +127,7 @@ stamp-h[1-9]
 /tests/bfio_test_error
 /tests/bfio_test_file
 /tests/bfio_test_file_io_handle
+/tests/bfio_test_file_pool
 /tests/bfio_test_file_range
 /tests/bfio_test_file_range_io_handle
 /tests/bfio_test_handle

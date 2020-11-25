@@ -1605,7 +1605,7 @@ on_error:
 	libcdata_array_set_entry_by_index(
 	 internal_pool->handles_array,
 	 entry,
-	 NULL,
+	 (intptr_t *) backup_handle,
 	 NULL );
 
 	return( -1 );
@@ -2617,7 +2617,132 @@ on_error:
 	return( -1 );
 }
 
-/* Reads a buffer from a handle in the pool
+/* Retrieves a specific handle from the pool and opens it if needed
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_internal_pool_get_open_handle(
+     libbfio_internal_pool_t *internal_pool,
+     int entry,
+     libbfio_handle_t **handle,
+     libcerror_error_t **error )
+{
+	libbfio_handle_t *safe_handle = NULL;
+	static char *function         = "libbfio_internal_pool_get_open_handle";
+	int access_flags              = 0;
+	int is_open                   = 0;
+
+	if( internal_pool == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_pool->handles_array,
+	     entry,
+	     (intptr_t **) &safe_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve handle: %d.",
+		 function,
+		 entry );
+
+		return( -1 );
+	}
+	/* Make sure the handle is open
+	 */
+	is_open = libbfio_handle_is_open(
+	           safe_handle,
+	           error );
+
+	if( is_open == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if entry: %d is open.",
+		 function,
+	         entry );
+
+		return( -1 );
+	}
+	else if( is_open == 0 )
+	{
+		if( libbfio_handle_get_access_flags(
+		     safe_handle,
+		     &access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve access flags.",
+			 function );
+
+			return( -1 );
+		}
+		if( libbfio_internal_pool_open_handle(
+		     internal_pool,
+		     safe_handle,
+		     access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open entry: %d.",
+			 function,
+			 entry );
+
+			return( -1 );
+		}
+	}
+	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
+	{
+		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
+		     internal_pool,
+		     safe_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to move handle to front of last used list.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	*handle = safe_handle;
+
+	return( 1 );
+}
+
+/* Reads data at the current offset into the buffer
  * Returns the number of bytes read or -1 on error
  */
 ssize_t libbfio_pool_read_buffer(
@@ -2631,8 +2756,6 @@ ssize_t libbfio_pool_read_buffer(
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_read_buffer";
 	ssize_t read_count                     = 0;
-	int access_flags                       = 0;
-	int is_open                            = 0;
 
 	if( pool == NULL )
 	{
@@ -2662,10 +2785,10 @@ ssize_t libbfio_pool_read_buffer(
 		return( -1 );
 	}
 #endif
-	if( libcdata_array_get_entry_by_index(
-	     internal_pool->handles_array,
+	if( libbfio_internal_pool_get_open_handle(
+	     internal_pool,
 	     entry,
-	     (intptr_t **) &handle,
+	     &handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -2676,93 +2799,28 @@ ssize_t libbfio_pool_read_buffer(
 		 function,
 		 entry );
 
-		goto on_error;
+		read_count = -1;
 	}
-	/* Make sure the handle is open
-	 */
-	is_open = libbfio_handle_is_open(
-	           handle,
-	           error );
-
-	if( is_open == -1 )
+	else
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if entry: %d is open.",
-		 function,
-	         entry );
+		read_count = libbfio_handle_read_buffer(
+		              handle,
+		              buffer,
+		              size,
+		              error );
 
-		goto on_error;
-	}
-	else if( is_open == 0 )
-	{
-		if( libbfio_handle_get_access_flags(
-		     handle,
-		     &access_flags,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve access flags.",
-			 function );
-
-			goto on_error;
-		}
-		if( libbfio_internal_pool_open_handle(
-		     internal_pool,
-		     handle,
-		     access_flags,
-		     error ) != 1 )
+		if( read_count < 0 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open entry: %d.",
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read from entry: %d.",
 			 function,
 			 entry );
 
-			goto on_error;
+			read_count = -1;
 		}
-	}
-	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
-	{
-		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
-		     internal_pool,
-		     handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to move handle to front of last used list.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	read_count = libbfio_handle_read_buffer(
-	              handle,
-	              buffer,
-	              size,
-	              error );
-
-	if( read_count < 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read from entry: %d.",
-		 function,
-		 entry );
-
-		goto on_error;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -2780,32 +2838,23 @@ ssize_t libbfio_pool_read_buffer(
 	}
 #endif
 	return( read_count );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_pool->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
 }
 
-/* Writes a buffer to a handle in the pool
- * Returns the number of bytes written or -1 on error
+/* Reads data at a specific offset into the buffer
+ * Returns the number of bytes read or -1 on error
  */
-ssize_t libbfio_pool_write_buffer(
+ssize_t libbfio_pool_read_buffer_at_offset(
          libbfio_pool_t *pool,
          int entry,
-         const uint8_t *buffer,
+         uint8_t *buffer,
          size_t size,
+         off64_t offset,
          libcerror_error_t **error )
 {
 	libbfio_handle_t *handle               = NULL;
 	libbfio_internal_pool_t *internal_pool = NULL;
-	static char *function                  = "libbfio_pool_write_buffer";
-	ssize_t write_count                    = 0;
-	int access_flags                       = 0;
-	int is_open                            = 0;
+	static char *function                  = "libbfio_pool_read_buffer_at_offset";
+	ssize_t read_count                     = 0;
 
 	if( pool == NULL )
 	{
@@ -2835,10 +2884,10 @@ ssize_t libbfio_pool_write_buffer(
 		return( -1 );
 	}
 #endif
-	if( libcdata_array_get_entry_by_index(
-	     internal_pool->handles_array,
+	if( libbfio_internal_pool_get_open_handle(
+	     internal_pool,
 	     entry,
-	     (intptr_t **) &handle,
+	     &handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -2849,93 +2898,129 @@ ssize_t libbfio_pool_write_buffer(
 		 function,
 		 entry );
 
-		goto on_error;
+		read_count = -1;
 	}
-	/* Make sure the handle is open
-	 */
-	is_open = libbfio_handle_is_open(
-	           handle,
-	           error );
+	else
+	{
+		read_count = libbfio_handle_read_buffer_at_offset(
+		              handle,
+		              buffer,
+		              size,
+		              offset,
+		              error );
 
-	if( is_open == -1 )
+		if( read_count < 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read from entry: %d at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 entry,
+			 offset,
+			 offset );
+
+			read_count = -1;
+		}
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_pool->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( read_count );
+}
+
+/* Writes data at the current offset from the buffer
+ * Returns the number of bytes written or -1 on error
+ */
+ssize_t libbfio_pool_write_buffer(
+         libbfio_pool_t *pool,
+         int entry,
+         const uint8_t *buffer,
+         size_t size,
+         libcerror_error_t **error )
+{
+	libbfio_handle_t *handle               = NULL;
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_write_buffer";
+	ssize_t write_count                    = 0;
+
+	if( pool == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_pool->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( libbfio_internal_pool_get_open_handle(
+	     internal_pool,
+	     entry,
+	     &handle,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if entry: %d is open.",
+		 "%s: unable to retrieve handle: %d.",
 		 function,
-	         entry );
+		 entry );
 
-		goto on_error;
+		write_count = -1;
 	}
-	else if( is_open == 0 )
+	else
 	{
-		if( libbfio_handle_get_access_flags(
-		     handle,
-		     &access_flags,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve access flags.",
-			 function );
+		write_count = libbfio_handle_write_buffer(
+		               handle,
+		               buffer,
+		               size,
+		               error );
 
-			goto on_error;
-		}
-		if( libbfio_internal_pool_open_handle(
-		     internal_pool,
-		     handle,
-		     access_flags,
-		     error ) != 1 )
+		if( write_count < 0 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open entry: %d.",
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write to entry: %d.",
 			 function,
 			 entry );
 
-			goto on_error;
+			write_count = -1;
 		}
-	}
-	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
-	{
-		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
-		     internal_pool,
-		     handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to move handle to front of last used list.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	write_count = libbfio_handle_write_buffer(
-	               handle,
-	               buffer,
-	               size,
-	               error );
-
-	if( write_count < 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to write to entry: %d.",
-		 function,
-		 entry );
-
-		goto on_error;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -2953,32 +3038,23 @@ ssize_t libbfio_pool_write_buffer(
 	}
 #endif
 	return( write_count );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_pool->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
 }
 
-/* Seeks an offset in a handle in the pool
- * Returns the offset if successful or -1 on error
+/* Writes data at a specific offset from the buffer
+ * Returns the number of bytes written or -1 on error
  */
-off64_t libbfio_pool_seek_offset(
+ssize_t libbfio_pool_write_buffer_at_offset(
          libbfio_pool_t *pool,
          int entry,
+         const uint8_t *buffer,
+         size_t size,
          off64_t offset,
-         int whence,
          libcerror_error_t **error )
 {
 	libbfio_handle_t *handle               = NULL;
 	libbfio_internal_pool_t *internal_pool = NULL;
-	static char *function                  = "libbfio_pool_seek_offset";
-	off64_t seek_offset                    = 0;
-	int access_flags                       = 0;
-	int is_open                            = 0;
+	static char *function                  = "libbfio_pool_write_buffer_at_offset";
+	ssize_t write_count                    = 0;
 
 	if( pool == NULL )
 	{
@@ -3008,10 +3084,10 @@ off64_t libbfio_pool_seek_offset(
 		return( -1 );
 	}
 #endif
-	if( libcdata_array_get_entry_by_index(
-	     internal_pool->handles_array,
+	if( libbfio_internal_pool_get_open_handle(
+	     internal_pool,
 	     entry,
-	     (intptr_t **) &handle,
+	     &handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -3022,94 +3098,31 @@ off64_t libbfio_pool_seek_offset(
 		 function,
 		 entry );
 
-		goto on_error;
+		write_count = -1;
 	}
-	/* Make sure the handle is open
-	 */
-	is_open = libbfio_handle_is_open(
-	           handle,
-	           error );
-
-	if( is_open == -1 )
+	else
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if entry: %d is open.",
-		 function,
-	         entry );
+		write_count = libbfio_handle_write_buffer_at_offset(
+		               handle,
+		               buffer,
+		               size,
+		               offset,
+		               error );
 
-		goto on_error;
-	}
-	else if( is_open == 0 )
-	{
-		if( libbfio_handle_get_access_flags(
-		     handle,
-		     &access_flags,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve access flags.",
-			 function );
-
-			goto on_error;
-		}
-		if( libbfio_internal_pool_open_handle(
-		     internal_pool,
-		     handle,
-		     access_flags,
-		     error ) != 1 )
+		if( write_count < 0 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open entry: %d.",
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write to entry: %d at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 			 function,
-			 entry );
+			 entry,
+			 offset,
+			 offset );
 
-			goto on_error;
+			write_count = -1;
 		}
-	}
-	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
-	{
-		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
-		     internal_pool,
-		     handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to move handle to front of last used list.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	seek_offset = libbfio_handle_seek_offset(
-	               handle,
-	               offset,
-	               whence,
-	               error );
-
-	if( seek_offset == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset: %" PRIi64 " in entry: %d.",
-		 function,
-		 offset,
-		 entry );
-
-		goto on_error;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -3126,15 +3139,104 @@ off64_t libbfio_pool_seek_offset(
 		return( -1 );
 	}
 #endif
-	return( seek_offset );
+	return( write_count );
+}
 
-on_error:
+/* Seeks an offset in a handle in the pool
+ * Returns the offset if successful or -1 on error
+ */
+off64_t libbfio_pool_seek_offset(
+         libbfio_pool_t *pool,
+         int entry,
+         off64_t offset,
+         int whence,
+         libcerror_error_t **error )
+{
+	libbfio_handle_t *handle               = NULL;
+	libbfio_internal_pool_t *internal_pool = NULL;
+	static char *function                  = "libbfio_pool_seek_offset";
+
+	if( pool == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	internal_pool = (libbfio_internal_pool_t *) pool;
+
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_pool->read_write_lock,
-	 NULL );
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_pool->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
 #endif
-	return( -1 );
+	if( libbfio_internal_pool_get_open_handle(
+	     internal_pool,
+	     entry,
+	     &handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve handle: %d.",
+		 function,
+		 entry );
+
+		offset = -1;
+	}
+	else
+	{
+		offset = libbfio_handle_seek_offset(
+		          handle,
+		          offset,
+		          whence,
+		          error );
+
+		if( offset == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_SEEK_FAILED,
+			 "%s: unable to seek offset in entry: %d.",
+			 function,
+			 entry );
+
+			offset = -1;
+		}
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_pool->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( offset );
 }
 
 /* Retrieves the current offset in a handle in the pool

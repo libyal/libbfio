@@ -191,6 +191,12 @@ int libbfio_pool_close_all(
      libbfio_pool_t *pool,
      libcerror_error_t **error );
 
+int libbfio_internal_pool_get_open_handle(
+     libbfio_internal_pool_t *internal_pool,
+     int entry,
+     libbfio_handle_t **handle,
+     libcerror_error_t **error );
+
 LIBBFIO_EXTERN \
 ssize_t libbfio_pool_read_buffer(
          libbfio_pool_t *pool,
@@ -200,11 +206,29 @@ ssize_t libbfio_pool_read_buffer(
          libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
+ssize_t libbfio_pool_read_buffer_at_offset(
+         libbfio_pool_t *pool,
+         int entry,
+         uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
 ssize_t libbfio_pool_write_buffer(
          libbfio_pool_t *pool,
          int entry,
          const uint8_t *buffer,
          size_t size,
+         libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
+ssize_t libbfio_pool_write_buffer_at_offset(
+         libbfio_pool_t *pool,
+         int entry,
+         const uint8_t *buffer,
+         size_t size,
+         off64_t offset,
          libcerror_error_t **error );
 
 LIBBFIO_EXTERN \

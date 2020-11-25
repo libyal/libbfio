@@ -32,6 +32,7 @@ check_PROGRAMS = \
 	bfio_test_error \
 	bfio_test_file \
 	bfio_test_file_io_handle \
+	bfio_test_file_pool \
 	bfio_test_file_range \
 	bfio_test_file_range_io_handle \
 	bfio_test_handle \
@@ -85,6 +86,26 @@ bfio_test_file_io_handle_SOURCES = \
 	bfio_test_unused.h
 
 bfio_test_file_io_handle_LDADD = \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	../libbfio/libbfio.la \
+	@LIBCERROR_LIBADD@
+
+bfio_test_file_pool_SOURCES = \
+	bfio_test_file_pool.c \
+	bfio_test_functions.c bfio_test_functions.h \
+	bfio_test_getopt.c bfio_test_getopt.h \
+	bfio_test_libbfio.h \
+	bfio_test_libcdata.h \
+	bfio_test_libcerror.h \
+	bfio_test_libclocale.h \
+	bfio_test_libcnotify.h \
+	bfio_test_libuna.h \
+	bfio_test_macros.h \
+	bfio_test_unused.h
+
+bfio_test_file_pool_LDADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \

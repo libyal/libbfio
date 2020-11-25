@@ -976,41 +976,28 @@ on_error:
 	return( -1 );
 }
 
-/* Reads a buffer from the handle
+/* Reads data at the current offset into the buffer
+ * This function is not multi-thread safe acquire write lock before call
  * Returns the number of bytes read if successful, or -1 on error
  */
-ssize_t libbfio_handle_read_buffer(
-         libbfio_handle_t *handle,
+ssize_t libbfio_internal_handle_read_buffer(
+         libbfio_internal_handle_t *internal_handle,
          uint8_t *buffer,
          size_t size,
          libcerror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_read_buffer";
-	ssize_t read_count                         = 0;
-	int is_open                                = 0;
-	int result                                 = 0;
+	static char *function = "libbfio_internal_handle_read_buffer";
+	ssize_t read_count    = 0;
+	int is_open           = 0;
+	int result            = 0;
 
-	if( handle == NULL )
+	if( internal_handle == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	internal_handle = (libbfio_internal_handle_t *) handle;
-
-	if( internal_handle->io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -1048,21 +1035,6 @@ ssize_t libbfio_handle_read_buffer(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_grab_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to grab read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	if( internal_handle->open_on_demand != 0 )
 	{
 		if( internal_handle->is_open == NULL )
@@ -1074,7 +1046,7 @@ ssize_t libbfio_handle_read_buffer(
 			 "%s: invalid handle - missing is open function.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 		if( internal_handle->open == NULL )
 		{
@@ -1085,7 +1057,7 @@ ssize_t libbfio_handle_read_buffer(
 			 "%s: invalid handle - missing open function.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 		if( internal_handle->seek_offset == NULL )
 		{
@@ -1096,7 +1068,7 @@ ssize_t libbfio_handle_read_buffer(
 			 "%s: invalid handle - missing seek offset function.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 		is_open = internal_handle->is_open(
 			   internal_handle->io_handle,
@@ -1111,7 +1083,7 @@ ssize_t libbfio_handle_read_buffer(
 			 "%s: unable to determine if handle is open.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 		else if( is_open == 0 )
 		{
@@ -1127,7 +1099,7 @@ ssize_t libbfio_handle_read_buffer(
 				 "%s: unable to open handle on demand.",
 				 function );
 
-				goto on_error;
+				return( -1 );
 			}
 			if( internal_handle->seek_offset(
 			     internal_handle->io_handle,
@@ -1143,7 +1115,7 @@ ssize_t libbfio_handle_read_buffer(
 				 function,
 				 internal_handle->current_offset );
 
-				goto on_error;
+				return( -1 );
 			}
 		}
 	}
@@ -1162,7 +1134,7 @@ ssize_t libbfio_handle_read_buffer(
 		 "%s: unable to read from handle.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	if( internal_handle->track_offsets_read != 0 )
 	{
@@ -1184,7 +1156,7 @@ ssize_t libbfio_handle_read_buffer(
 			 "%s: unable to insert offset range to offsets read table.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 	}
 	internal_handle->current_offset += (off64_t) read_count;
@@ -1200,7 +1172,7 @@ ssize_t libbfio_handle_read_buffer(
 			 "%s: invalid handle - missing close function.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 		if( internal_handle->close(
 		     internal_handle->io_handle,
@@ -1213,47 +1185,24 @@ ssize_t libbfio_handle_read_buffer(
 			 "%s: unable to close handle on demand.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	return( read_count );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_handle->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
 }
 
-/* Writes a buffer to the handle
- * Returns the number of bytes written if successful, or -1 on error
+/* Reads data at the current offset into the buffer
+ * Returns the number of bytes read if successful, or -1 on error
  */
-ssize_t libbfio_handle_write_buffer(
+ssize_t libbfio_handle_read_buffer(
          libbfio_handle_t *handle,
-         const uint8_t *buffer,
+         uint8_t *buffer,
          size_t size,
          libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_write_buffer";
-	ssize_t write_count                        = 0;
+	static char *function                      = "libbfio_handle_read_buffer";
+	ssize_t read_count                         = 0;
 
 	if( handle == NULL )
 	{
@@ -1275,6 +1224,188 @@ ssize_t libbfio_handle_write_buffer(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	read_count = libbfio_internal_handle_read_buffer(
+	              internal_handle,
+	              buffer,
+	              size,
+	              error );
+
+	if( read_count < 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read buffer.",
+		 function );
+
+		read_count = -1;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( read_count );
+}
+
+/* Reads data at a specific offset into the buffer
+ * Returns the number of bytes read if successful, or -1 on error
+ */
+ssize_t libbfio_handle_read_buffer_at_offset(
+         libbfio_handle_t *handle,
+         uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libcerror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_read_buffer_at_offset";
+	ssize_t read_count                         = 0;
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( libbfio_internal_handle_seek_offset(
+	     internal_handle,
+	     offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek offset: %" PRIi64 " (0x%08" PRIx64 ") in handle.",
+		 function,
+		 offset,
+		 offset );
+
+		read_count = -1;
+	}
+	else
+	{
+		read_count = libbfio_internal_handle_read_buffer(
+		              internal_handle,
+		              buffer,
+		              size,
+		              error );
+
+		if( read_count < 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read buffer.",
+			 function );
+
+			read_count = -1;
+		}
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( read_count );
+}
+
+/* Writes data at the current offset from the buffer
+ * This function is not multi-thread safe acquire write lock before call
+ * Returns the number of bytes written if successful, or -1 on error
+ */
+ssize_t libbfio_internal_handle_write_buffer(
+         libbfio_internal_handle_t *internal_handle,
+         const uint8_t *buffer,
+         size_t size,
+         libcerror_error_t **error )
+{
+	static char *function = "libbfio_internal_handle_write_buffer";
+	ssize_t write_count   = 0;
+
+	if( internal_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
 		 function );
 
 		return( -1 );
@@ -1312,21 +1443,6 @@ ssize_t libbfio_handle_write_buffer(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_grab_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to grab read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	write_count = internal_handle->write(
 	               internal_handle->io_handle,
 	               buffer,
@@ -1342,7 +1458,7 @@ ssize_t libbfio_handle_write_buffer(
 		 "%s: unable to write to handle.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	internal_handle->current_offset += (off64_t) write_count;
 
@@ -1350,44 +1466,21 @@ ssize_t libbfio_handle_write_buffer(
 	{
 		internal_handle->size = (size64_t) internal_handle->current_offset;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	if( libcthreads_read_write_lock_release_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	return( write_count );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_handle->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
 }
 
-/* Seeks a certain offset within the handle
- * Returns the offset if the seek is successful or -1 on error
+/* Writes data at the current offset from the buffer
+ * Returns the number of bytes written if successful, or -1 on error
  */
-off64_t libbfio_handle_seek_offset(
+ssize_t libbfio_handle_write_buffer(
          libbfio_handle_t *handle,
-         off64_t offset,
-         int whence,
+         const uint8_t *buffer,
+         size_t size,
          libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_seek_offset";
-	off64_t seek_offset                        = 0;
+	static char *function                      = "libbfio_handle_write_buffer";
+	ssize_t write_count                        = 0;
 
 	if( handle == NULL )
 	{
@@ -1409,6 +1502,187 @@ off64_t libbfio_handle_seek_offset(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	write_count = libbfio_internal_handle_write_buffer(
+	               internal_handle,
+	               buffer,
+	               size,
+	               error );
+
+	if( write_count < 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write to handle.",
+		 function );
+
+		write_count = -1;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( write_count );
+}
+
+/* Writes data at a specific offset from the buffer
+ * Returns the number of bytes written if successful, or -1 on error
+ */
+ssize_t libbfio_handle_write_buffer_at_offset(
+         libbfio_handle_t *handle,
+         const uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libcerror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_write_buffer_at_offset";
+	ssize_t write_count                        = 0;
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( libbfio_internal_handle_seek_offset(
+	     internal_handle,
+	     offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek offset: %" PRIi64 " (0x%08" PRIx64 ") in handle.",
+		 function,
+		 offset,
+		 offset );
+
+		write_count = -1;
+	}
+	else
+	{
+		write_count = libbfio_internal_handle_write_buffer(
+		               internal_handle,
+		               buffer,
+		               size,
+		               error );
+
+		if( write_count < 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write to handle.",
+			 function );
+
+			write_count = -1;
+		}
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( write_count );
+}
+
+/* Seeks a certain offset within the handle
+ * This function is not multi-thread safe acquire write lock before call
+ * Returns the offset if the seek is successful or -1 on error
+ */
+off64_t libbfio_internal_handle_seek_offset(
+         libbfio_internal_handle_t *internal_handle,
+         off64_t offset,
+         int whence,
+         libcerror_error_t **error )
+{
+	static char *function = "libbfio_internal_handle_seek_offset";
+
+	if( internal_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
 		 function );
 
 		return( -1 );
@@ -1437,6 +1711,64 @@ off64_t libbfio_handle_seek_offset(
 
 		return( -1 );
 	}
+	offset = internal_handle->seek_offset(
+	          internal_handle->io_handle,
+	          offset,
+	          whence,
+	          error );
+
+	if( offset == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek offset in handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle->current_offset = offset;
+
+	return( offset );
+}
+
+/* Seeks a certain offset within the handle
+ * Returns the offset if the seek is successful or -1 on error
+ */
+off64_t libbfio_handle_seek_offset(
+         libbfio_handle_t *handle,
+         off64_t offset,
+         int whence,
+         libcerror_error_t **error )
+{
+	libbfio_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libbfio_handle_seek_offset";
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libbfio_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
@@ -1452,26 +1784,23 @@ off64_t libbfio_handle_seek_offset(
 		return( -1 );
 	}
 #endif
-	seek_offset = internal_handle->seek_offset(
-	               internal_handle->io_handle,
-	               offset,
-	               whence,
-	               error );
+	offset = libbfio_internal_handle_seek_offset(
+	          internal_handle,
+	          offset,
+	          whence,
+	          error );
 
-	if( seek_offset == -1 )
+	if( offset == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset: %" PRIi64 " in handle.",
-		 function,
-		 offset );
+		 "%s: unable to seek offset in handle.",
+		 function );
 
-		goto on_error;
+		offset = -1;
 	}
-	internal_handle->current_offset = seek_offset;
-
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_handle->read_write_lock,
@@ -1487,15 +1816,7 @@ off64_t libbfio_handle_seek_offset(
 		return( -1 );
 	}
 #endif
-	return( seek_offset );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_handle->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
+	return( offset );
 }
 
 /* Function to determine if a file object exists

@@ -234,6 +234,12 @@ int libbfio_handle_close(
      libbfio_handle_t *handle,
      libcerror_error_t **error );
 
+ssize_t libbfio_internal_handle_read_buffer(
+         libbfio_internal_handle_t *internal_handle,
+         uint8_t *buffer,
+         size_t size,
+         libcerror_error_t **error );
+
 LIBBFIO_EXTERN \
 ssize_t libbfio_handle_read_buffer(
          libbfio_handle_t *handle,
@@ -242,10 +248,38 @@ ssize_t libbfio_handle_read_buffer(
          libcerror_error_t **error );
 
 LIBBFIO_EXTERN \
+ssize_t libbfio_handle_read_buffer_at_offset(
+         libbfio_handle_t *handle,
+         uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libcerror_error_t **error );
+
+ssize_t libbfio_internal_handle_write_buffer(
+         libbfio_internal_handle_t *internal_handle,
+         const uint8_t *buffer,
+         size_t size,
+         libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
 ssize_t libbfio_handle_write_buffer(
          libbfio_handle_t *handle,
          const uint8_t *buffer,
          size_t size,
+         libcerror_error_t **error );
+
+LIBBFIO_EXTERN \
+ssize_t libbfio_handle_write_buffer_at_offset(
+         libbfio_handle_t *handle,
+         const uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libcerror_error_t **error );
+
+off64_t libbfio_internal_handle_seek_offset(
+         libbfio_internal_handle_t *internal_handle,
+         off64_t offset,
+         int whence,
          libcerror_error_t **error );
 
 LIBBFIO_EXTERN \

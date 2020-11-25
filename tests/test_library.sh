@@ -8,7 +8,7 @@ EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
 LIBRARY_TESTS="error support system_string";
-LIBRARY_TESTS_WITH_INPUT="file file_io_handle file_range file_range_io_handle handle memory_range memory_range_io_handle pool";
+LIBRARY_TESTS_WITH_INPUT="file file_io_handle file_pool file_range file_range_io_handle handle memory_range memory_range_io_handle pool";
 OPTION_SETS="";
 
 INPUT_GLOB="*";

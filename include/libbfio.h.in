@@ -205,7 +205,7 @@ int libbfio_handle_close(
      libbfio_handle_t *handle,
      libbfio_error_t **error );
 
-/* Reads a buffer from the handle
+/* Reads data at the current offset into the buffer
  * Returns the number of bytes read if successful, or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -215,7 +215,18 @@ ssize_t libbfio_handle_read_buffer(
          size_t size,
          libbfio_error_t **error );
 
-/* Writes a buffer to the handle
+/* Reads data at a specific offset into the buffer
+ * Returns the number of bytes read if successful, or -1 on error
+ */
+LIBBFIO_EXTERN \
+ssize_t libbfio_handle_read_buffer_at_offset(
+         libbfio_handle_t *handle,
+         uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libbfio_error_t **error );
+
+/* Writes data at the current offset from the buffer
  * Returns the number of bytes written if successful, or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -223,6 +234,17 @@ ssize_t libbfio_handle_write_buffer(
          libbfio_handle_t *handle,
          const uint8_t *buffer,
          size_t size,
+         libbfio_error_t **error );
+
+/* Writes data at a specific offset from the buffer
+ * Returns the number of bytes written if successful, or -1 on error
+ */
+LIBBFIO_EXTERN \
+ssize_t libbfio_handle_write_buffer_at_offset(
+         libbfio_handle_t *handle,
+         const uint8_t *buffer,
+         size_t size,
+         off64_t offset,
          libbfio_error_t **error );
 
 /* Seeks a specific offset within the handle
@@ -697,7 +719,7 @@ int libbfio_pool_close_all(
      libbfio_pool_t *pool,
      libbfio_error_t **error );
 
-/* Reads a buffer from a handle in the pool
+/* Reads data at the current offset into the buffer
  * Returns the number of bytes read or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -708,7 +730,19 @@ ssize_t libbfio_pool_read_buffer(
          size_t size,
          libbfio_error_t **error );
 
-/* Writes a buffer to a handle in the pool
+/* Reads data at a specific offset into the buffer
+ * Returns the number of bytes read or -1 on error
+ */
+LIBBFIO_EXTERN \
+ssize_t libbfio_pool_read_buffer_at_offset(
+         libbfio_pool_t *pool,
+         int entry,
+         uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libbfio_error_t **error );
+
+/* Writes data at the current offset from the buffer
  * Returns the number of bytes written or -1 on error
  */
 LIBBFIO_EXTERN \
@@ -717,6 +751,18 @@ ssize_t libbfio_pool_write_buffer(
          int entry,
          const uint8_t *buffer,
          size_t size,
+         libbfio_error_t **error );
+
+/* Writes data at a specific offset from the buffer
+ * Returns the number of bytes written or -1 on error
+ */
+LIBBFIO_EXTERN \
+ssize_t libbfio_pool_write_buffer_at_offset(
+         libbfio_pool_t *pool,
+         int entry,
+         const uint8_t *buffer,
+         size_t size,
+         off64_t offset,
          libbfio_error_t **error );
 
 /* Seeks an offset in a handle in the pool
@@ -753,6 +799,32 @@ int libbfio_pool_get_size(
 /* -------------------------------------------------------------------------
  * File pool functions
  * ------------------------------------------------------------------------- */
+
+/* Opens a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_pool_open(
+     libbfio_pool_t *pool,
+     int entry,
+     const char *name,
+     int access_flags,
+     libbfio_error_t **error );
+
+#if defined( LIBBFIO_HAVE_WIDE_CHARACTER_TYPE )
+
+/* Opens a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+LIBBFIO_EXTERN \
+int libbfio_file_pool_open_wide(
+     libbfio_pool_t *pool,
+     int entry,
+     const wchar_t *name,
+     int access_flags,
+     libbfio_error_t **error );
+
+#endif /* defined( LIBBFIO_HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Appends file handles to the pool for the corresponding filenames
  * Returns 1 if successful or -1 on error

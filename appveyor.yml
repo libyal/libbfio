@@ -44,6 +44,7 @@ environment:
     BUILD_ENVIRONMENT: xcode
     APPVEYOR_BUILD_WORKER_IMAGE: macos
     HOMEBREW_NO_INSTALL_CLEANUP: 1
+    CC: clang
     CONFIGURE_OPTIONS: ""
   - TARGET: macos-x64-gcc
     BUILD_ENVIRONMENT: xcode
@@ -54,7 +55,7 @@ environment:
     BUILD_ENVIRONMENT: xcode
     APPVEYOR_BUILD_WORKER_IMAGE: macos
     HOMEBREW_NO_INSTALL_CLEANUP: 1
-    CONFIGURE_OPTIONS: ""
+    CONFIGURE_OPTIONS: "--disable-dependency-tracking --prefix=/usr/local --with-pyprefix"
   - TARGET: cygwin-gcc
     BUILD_ENVIRONMENT: cygwin
     CONFIGURE_OPTIONS: ""

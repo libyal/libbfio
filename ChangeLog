@@ -1,4 +1,7 @@
 TODO
+* add libbfio_pool_read_buffer_at_offset
+* add libbfio_pool_write_buffer_at_offset
+
 * fix bfio_test_pool_append_handle leaving pool in unstable state
 * create libbfio_handle_get_pool_last_used_list_element and address TODO in libbfio_internal_pool_close
 * handle clean offset and size on close?

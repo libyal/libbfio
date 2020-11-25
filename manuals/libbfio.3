@@ -1,4 +1,4 @@
-.Dd May  2, 2019
+.Dd November 25, 2020
 .Dt libbfio 3
 .Os libbfio
 .Sh NAME
@@ -43,7 +43,11 @@ Handle functions
 .Ft ssize_t
 .Fn libbfio_handle_read_buffer "libbfio_handle_t *handle" "uint8_t *buffer" "size_t size" "libbfio_error_t **error"
 .Ft ssize_t
+.Fn libbfio_handle_read_buffer_at_offset "libbfio_handle_t *handle" "uint8_t *buffer" "size_t size" "off64_t offset" "libbfio_error_t **error"
+.Ft ssize_t
 .Fn libbfio_handle_write_buffer "libbfio_handle_t *handle" "const uint8_t *buffer" "size_t size" "libbfio_error_t **error"
+.Ft ssize_t
+.Fn libbfio_handle_write_buffer_at_offset "libbfio_handle_t *handle" "const uint8_t *buffer" "size_t size" "off64_t offset" "libbfio_error_t **error"
 .Ft off64_t
 .Fn libbfio_handle_seek_offset "libbfio_handle_t *handle" "off64_t offset" "int whence" "libbfio_error_t **error"
 .Ft int
@@ -151,7 +155,11 @@ Pool functions
 .Ft ssize_t
 .Fn libbfio_pool_read_buffer "libbfio_pool_t *pool" "int entry" "uint8_t *buffer" "size_t size" "libbfio_error_t **error"
 .Ft ssize_t
+.Fn libbfio_pool_read_buffer_at_offset "libbfio_pool_t *pool" "int entry" "uint8_t *buffer" "size_t size" "off64_t offset" "libbfio_error_t **error"
+.Ft ssize_t
 .Fn libbfio_pool_write_buffer "libbfio_pool_t *pool" "int entry" "const uint8_t *buffer" "size_t size" "libbfio_error_t **error"
+.Ft ssize_t
+.Fn libbfio_pool_write_buffer_at_offset "libbfio_pool_t *pool" "int entry" "const uint8_t *buffer" "size_t size" "off64_t offset" "libbfio_error_t **error"
 .Ft off64_t
 .Fn libbfio_pool_seek_offset "libbfio_pool_t *pool" "int entry" "off64_t offset" "int whence" "libbfio_error_t **error"
 .Ft int
@@ -161,9 +169,13 @@ Pool functions
 .Pp
 File pool functions
 .Ft int
+.Fn libbfio_file_pool_open "libbfio_pool_t *pool" "int entry" "const char *name" "int access_flags" "libbfio_error_t **error"
+.Ft int
 .Fn libbfio_file_pool_append_handles_for_names "libbfio_pool_t *pool" "char * const names[]" "int number_of_names" "int access_flags" "libbfio_error_t **error"
 .Pp
 Available when compiled with wide character string support:
+.Ft int
+.Fn libbfio_file_pool_open_wide "libbfio_pool_t *pool" "int entry" "const wchar_t *name" "int access_flags" "libbfio_error_t **error"
 .Ft int
 .Fn libbfio_file_pool_append_handle_for_names_wide "libbfio_pool_t *pool" "wchar_t * const names[]" "int number_of_names" "int access_flags" "libbfio_error_t **error"
 .Sh DESCRIPTION

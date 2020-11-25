@@ -32,6 +32,230 @@
 #include "libbfio_pool.h"
 #include "libbfio_types.h"
 
+/* Opens a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_file_pool_open(
+     libbfio_pool_t *pool,
+     int entry,
+     const char *name,
+     int access_flags,
+     libcerror_error_t **error )
+{
+	libbfio_handle_t *file_io_handle = NULL;
+	static char *function            = "libbfio_file_pool_open";
+	size_t name_length               = 0;
+
+	if( pool == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	if( name == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid name.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_initialize(
+	     &file_io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create file IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	name_length = narrow_string_length(
+	               name );
+
+	if( libbfio_file_set_name(
+	     file_io_handle,
+	     name,
+	     name_length + 1,
+	     error ) != 1 )
+	{
+                libcerror_error_set(
+                 error,
+                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+                 "%s: unable to set name in file IO handle.",
+                 function );
+
+                goto on_error;
+	}
+	if( libbfio_handle_open(
+	     file_io_handle,
+	     access_flags,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open file IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_pool_set_handle(
+	     pool,
+	     entry,
+	     file_io_handle,
+	     access_flags,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set file IO handle: %d in pool.",
+		 function,
+		 entry );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
+}
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Opens a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
+int libbfio_file_pool_open_wide(
+     libbfio_pool_t *pool,
+     int entry,
+     const wchar_t *name,
+     int access_flags,
+     libcerror_error_t **error )
+{
+	libbfio_handle_t *file_io_handle = NULL;
+	static char *function            = "libbfio_file_pool_open_wide";
+	size_t name_length               = 0;
+
+	if( pool == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	if( name == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid name.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_initialize(
+	     &file_io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create file IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	name_length = wide_string_length(
+	               name );
+
+	if( libbfio_file_set_name_wide(
+	     file_io_handle,
+	     name,
+	     name_length + 1,
+	     error ) != 1 )
+	{
+                libcerror_error_set(
+                 error,
+                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+                 "%s: unable to set name in file IO handle.",
+                 function );
+
+                goto on_error;
+	}
+	if( libbfio_handle_open(
+	     file_io_handle,
+	     access_flags,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open file IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_pool_set_handle(
+	     pool,
+	     entry,
+	     file_io_handle,
+	     access_flags,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set file IO handle: %d in pool.",
+		 function,
+		 entry );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
+}
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
 /* Appends file handles to the pool for the corresponding filenames
  * Returns 1 if successful or -1 on error
  */
