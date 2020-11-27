@@ -3672,6 +3672,278 @@ on_error:
 	return( 0 );
 }
 
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+
+/* Tests the libbfio_internal_pool_open function
+ * Returns 1 if successful or 0 if not
+ */
+int bfio_test_internal_pool_open(
+     const system_character_t *source )
+{
+	char narrow_source[ 256 ];
+
+	libbfio_handle_t *handle = NULL;
+	libbfio_pool_t *pool     = NULL;
+	libcerror_error_t *error = NULL;
+	size_t source_length     = 0;
+	int entry_index          = 0;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = bfio_test_get_narrow_source(
+	          source,
+	          narrow_source,
+	          256,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_pool_initialize(
+	          &pool,
+	          0,
+	          LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "pool",
+	 pool );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_file_initialize(
+	          &handle,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "handle",
+	 handle );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	source_length = narrow_string_length(
+	                 narrow_source );
+
+	result = libbfio_file_set_name(
+	          handle,
+	          narrow_source,
+	          source_length,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_pool_append_handle(
+	          pool,
+	          &entry_index,
+	          handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	handle = NULL;
+
+	/* Test regular cases
+	 */
+	result = libbfio_internal_pool_open(
+	          (libbfio_internal_pool_t *) pool,
+	          0,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_internal_pool_open(
+	          (libbfio_internal_pool_t *) pool,
+	          0,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libbfio_pool_close(
+	          pool,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libbfio_internal_pool_open(
+	          NULL,
+	          0,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_internal_pool_open(
+	          (libbfio_internal_pool_t *) pool,
+	          -1,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libbfio_internal_pool_open(
+	          (libbfio_internal_pool_t *) pool,
+	          0,
+	          0,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	BFIO_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libbfio_pool_close_all(
+	          pool,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_pool_free(
+	          &pool,
+	          &error );
+
+	BFIO_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "pool",
+	 pool );
+
+	BFIO_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( handle != NULL )
+	{
+		libbfio_handle_free(
+		 &handle,
+		 NULL );
+	}
+	if( pool != NULL )
+	{
+		libbfio_pool_free(
+		 &pool,
+		 NULL );
+	}
+	return( 0 );
+}
+
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
+
 /* Tests the libbfio_pool_open function
  * Returns 1 if successful or 0 if not
  */
@@ -3793,26 +4065,6 @@ int bfio_test_pool_open(
 	 "error",
 	 error );
 
-	/* Test error cases
-	 */
-	result = libbfio_pool_open(
-	          pool,
-	          0,
-	          LIBBFIO_OPEN_READ,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
 	/* Clean up
 	 */
 	result = libbfio_pool_close(
@@ -3850,27 +4102,9 @@ int bfio_test_pool_open(
 	 &error );
 
 	result = libbfio_pool_open(
-	          NULL,
+	          pool,
 	          -1,
 	          LIBBFIO_OPEN_READ,
-	          &error );
-
-	BFIO_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	BFIO_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libbfio_pool_open(
-	          pool,
-	          0,
-	          0,
 	          &error );
 
 	BFIO_TEST_ASSERT_EQUAL_INT(
@@ -7179,6 +7413,15 @@ int main(
 		 "libbfio_pool_remove_handle",
 		 bfio_test_pool_remove_handle,
 		 source );
+
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+
+		BFIO_TEST_RUN_WITH_ARGS(
+		 "libbfio_internal_pool_open",
+		 bfio_test_internal_pool_open,
+		 source );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
 
 		BFIO_TEST_RUN_WITH_ARGS(
 		 "libbfio_pool_open",

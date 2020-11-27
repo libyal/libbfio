@@ -55,6 +55,14 @@ struct libbfio_internal_pool
 	 */
 	libcdata_array_t *handles_array;
 
+	/* The current entry
+	 */
+	int current_entry;
+
+	/* The current file IO handle
+	 */
+	libbfio_handle_t *current_handle;
+
 	/* A list containing the file IO handles in order of the last use
 	 * it starts with the last used at the beginning of the list
 	 * the value of the list element refers to the corresponding file IO handle
@@ -159,6 +167,12 @@ LIBBFIO_EXTERN \
 int libbfio_pool_set_maximum_number_of_open_handles(
      libbfio_pool_t *pool,
      int maximum_number_of_open_handles,
+     libcerror_error_t **error );
+
+int libbfio_internal_pool_open(
+     libbfio_internal_pool_t *internal_pool,
+     int entry,
+     int access_flags,
      libcerror_error_t **error );
 
 LIBBFIO_EXTERN \

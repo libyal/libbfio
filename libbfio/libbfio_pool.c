@@ -165,6 +165,7 @@ int libbfio_pool_initialize(
 	}
 #endif
 	internal_pool->maximum_number_of_open_handles = maximum_number_of_open_handles;
+	internal_pool->current_entry                  = -1;
 
 	*pool = (libbfio_pool_t *) internal_pool;
 
@@ -360,6 +361,9 @@ int libbfio_pool_clone(
 
 		goto on_error;
 	}
+	internal_destination_pool->current_entry  = -1;
+	internal_destination_pool->current_handle = NULL;
+
 	if( libcdata_array_clone(
 	     &( internal_destination_pool->handles_array ),
 	     internal_source_pool->handles_array,
@@ -1579,6 +1583,11 @@ int libbfio_pool_set_handle(
 				}
 			}
 		}
+		if( entry == internal_pool->current_entry )
+		{
+			internal_pool->current_entry  = -1;
+			internal_pool->current_handle = NULL;
+		}
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -1713,6 +1722,11 @@ int libbfio_pool_remove_handle(
 	}
 	if( result == 1 )
 	{
+		if( entry == internal_pool->current_entry )
+		{
+			internal_pool->current_entry  = -1;
+			internal_pool->current_handle = NULL;
+		}
 		if( libcdata_array_set_entry_by_index(
 		     internal_pool->handles_array,
 		     entry,
@@ -2033,16 +2047,107 @@ on_error:
 /* Opens a handle in the pool
  * Returns 1 if successful or -1 on error
  */
+int libbfio_internal_pool_open(
+     libbfio_internal_pool_t *internal_pool,
+     int entry,
+     int access_flags,
+     libcerror_error_t **error )
+{
+	libbfio_handle_t *handle = NULL;
+	static char *function    = "libbfio_internal_pool_open";
+	int is_open              = 0;
+
+	if( internal_pool == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid pool.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_pool->handles_array,
+	     entry,
+	     (intptr_t **) &handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve handle: %d.",
+		 function,
+		 entry );
+
+		return( -1 );
+	}
+	/* Make sure the handle is not already open
+	 */
+	is_open = libbfio_handle_is_open(
+	           handle,
+	           error );
+
+	if( is_open == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if entry: %d is open.",
+		 function,
+	         entry );
+
+		return( -1 );
+	}
+	else if( is_open == 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: entry: %d is already open.",
+		 function,
+	         entry );
+
+		return( -1 );
+	}
+	if( libbfio_internal_pool_open_handle(
+	     internal_pool,
+	     handle,
+	     access_flags,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open entry: %d.",
+		 function,
+		 entry );
+
+		return( -1 );
+	}
+	internal_pool->current_entry  = entry;
+	internal_pool->current_handle = handle;
+
+	return( 1 );
+}
+
+/* Opens a handle in the pool
+ * Returns 1 if successful or -1 on error
+ */
 int libbfio_pool_open(
      libbfio_pool_t *pool,
      int entry,
      int access_flags,
      libcerror_error_t **error )
 {
-	libbfio_handle_t *handle               = NULL;
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_open";
-	int is_open                            = 0;
+	int result                             = 1;
 
 	if( pool == NULL )
 	{
@@ -2072,55 +2177,9 @@ int libbfio_pool_open(
 		return( -1 );
 	}
 #endif
-	if( libcdata_array_get_entry_by_index(
-	     internal_pool->handles_array,
-	     entry,
-	     (intptr_t **) &handle,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve handle: %d.",
-		 function,
-		 entry );
-
-		goto on_error;
-	}
-	/* Make sure the handle is not open
-	 */
-	is_open = libbfio_handle_is_open(
-	           handle,
-	           error );
-
-	if( is_open == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if entry: %d is open.",
-		 function,
-	         entry );
-
-		goto on_error;
-	}
-	else if( is_open == 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: entry: %d is already open.",
-		 function,
-	         entry );
-
-		goto on_error;
-	}
-	if( libbfio_internal_pool_open_handle(
+	if( libbfio_internal_pool_open(
 	     internal_pool,
-	     handle,
+	     entry,
 	     access_flags,
 	     error ) != 1 )
 	{
@@ -2132,7 +2191,7 @@ int libbfio_pool_open(
 		 function,
 		 entry );
 
-		goto on_error;
+		result = -1;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -2149,15 +2208,7 @@ int libbfio_pool_open(
 		return( -1 );
 	}
 #endif
-	return( 1 );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_pool->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
+	return( result );
 }
 
 /* Reopens a handle in the pool
@@ -2232,6 +2283,9 @@ int libbfio_pool_reopen(
 
 		goto on_error;
 	}
+	internal_pool->current_entry  = entry;
+	internal_pool->current_handle = handle;
+
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_pool->read_write_lock,
@@ -2386,6 +2440,11 @@ int libbfio_internal_pool_close(
 		 entry );
 
 		goto on_error;
+	}
+	if( entry == internal_pool->current_entry )
+	{
+		internal_pool->current_entry  = -1;
+		internal_pool->current_handle = NULL;
 	}
 	return( 0 );
 
@@ -2653,91 +2712,96 @@ int libbfio_internal_pool_get_open_handle(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_pool->handles_array,
-	     entry,
-	     (intptr_t **) &safe_handle,
-	     error ) != 1 )
+	if( entry != internal_pool->current_entry )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve handle: %d.",
-		 function,
-		 entry );
-
-		return( -1 );
-	}
-	/* Make sure the handle is open
-	 */
-	is_open = libbfio_handle_is_open(
-	           safe_handle,
-	           error );
-
-	if( is_open == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if entry: %d is open.",
-		 function,
-	         entry );
-
-		return( -1 );
-	}
-	else if( is_open == 0 )
-	{
-		if( libbfio_handle_get_access_flags(
-		     safe_handle,
-		     &access_flags,
+		if( libcdata_array_get_entry_by_index(
+		     internal_pool->handles_array,
+		     entry,
+		     (intptr_t **) &safe_handle,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve access flags.",
-			 function );
-
-			return( -1 );
-		}
-		if( libbfio_internal_pool_open_handle(
-		     internal_pool,
-		     safe_handle,
-		     access_flags,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open entry: %d.",
+			 "%s: unable to retrieve handle: %d.",
 			 function,
 			 entry );
 
 			return( -1 );
 		}
-	}
-	if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
-	{
-		if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
-		     internal_pool,
-		     safe_handle,
-		     error ) != 1 )
+		/* Make sure the handle is open
+		 */
+		is_open = libbfio_handle_is_open(
+		           safe_handle,
+		           error );
+
+		if( is_open == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to move handle to front of last used list.",
-			 function );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to determine if entry: %d is open.",
+			 function,
+			 entry );
 
 			return( -1 );
 		}
+		else if( is_open == 0 )
+		{
+			if( libbfio_handle_get_access_flags(
+			     safe_handle,
+			     &access_flags,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve access flags.",
+				 function );
+
+				return( -1 );
+			}
+			if( libbfio_internal_pool_open_handle(
+			     internal_pool,
+			     safe_handle,
+			     access_flags,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 "%s: unable to open entry: %d.",
+				 function,
+				 entry );
+
+				return( -1 );
+			}
+		}
+		if( internal_pool->maximum_number_of_open_handles != LIBBFIO_POOL_UNLIMITED_NUMBER_OF_OPEN_HANDLES )
+		{
+			if( libbfio_internal_pool_move_handle_to_front_of_last_used_list(
+			     internal_pool,
+			     safe_handle,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to move handle to front of last used list.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		internal_pool->current_entry  = entry;
+		internal_pool->current_handle = safe_handle;
 	}
-	*handle = safe_handle;
+	*handle = internal_pool->current_handle;
 
 	return( 1 );
 }
@@ -3251,8 +3315,7 @@ int libbfio_pool_get_offset(
 	libbfio_handle_t *handle               = NULL;
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_offset";
-	int access_flags                       = 0;
-	int is_open                            = 0;
+	int result                             = 1;
 
 	if( pool == NULL )
 	{
@@ -3282,10 +3345,10 @@ int libbfio_pool_get_offset(
 		return( -1 );
 	}
 #endif
-	if( libcdata_array_get_entry_by_index(
-	     internal_pool->handles_array,
+	if( libbfio_internal_pool_get_open_handle(
+	     internal_pool,
 	     entry,
-	     (intptr_t **) &handle,
+	     &handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -3296,72 +3359,24 @@ int libbfio_pool_get_offset(
 		 function,
 		 entry );
 
-		goto on_error;
+		result = -1;
 	}
-	/* Make sure the handle is open
-	 */
-	is_open = libbfio_handle_is_open(
-	           handle,
-	           error );
-
-	if( is_open == -1 )
+	else
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if entry: %d is open.",
-		 function,
-	         entry );
-
-		goto on_error;
-	}
-	else if( is_open == 0 )
-	{
-		if( libbfio_handle_get_access_flags(
+		if( libbfio_handle_get_offset(
 		     handle,
-		     &access_flags,
+		     offset,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve access flags.",
+			 "%s: unable to retrieve offset.",
 			 function );
 
-			goto on_error;
+			result = -1;
 		}
-		if( libbfio_internal_pool_open_handle(
-		     internal_pool,
-		     handle,
-		     access_flags,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open entry: %d.",
-			 function,
-			 entry );
-
-			goto on_error;
-		}
-	}
-	if( libbfio_handle_get_offset(
-	     handle,
-	     offset,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve offset.",
-		 function );
-
-		goto on_error;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -3378,15 +3393,7 @@ int libbfio_pool_get_offset(
 		return( -1 );
 	}
 #endif
-	return( 1 );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_pool->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
+	return( result );
 }
 
 /* Retrieves the size of a handle in the pool
@@ -3401,8 +3408,7 @@ int libbfio_pool_get_size(
 	libbfio_handle_t *handle               = NULL;
 	libbfio_internal_pool_t *internal_pool = NULL;
 	static char *function                  = "libbfio_pool_get_size";
-	int access_flags                       = 0;
-	int is_open                            = 0;
+	int result                             = 1;
 
 	if( pool == NULL )
 	{
@@ -3432,10 +3438,10 @@ int libbfio_pool_get_size(
 		return( -1 );
 	}
 #endif
-	if( libcdata_array_get_entry_by_index(
-	     internal_pool->handles_array,
+	if( libbfio_internal_pool_get_open_handle(
+	     internal_pool,
 	     entry,
-	     (intptr_t **) &handle,
+	     &handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -3446,73 +3452,25 @@ int libbfio_pool_get_size(
 		 function,
 		 entry );
 
-		goto on_error;
+		result = -1;
 	}
-	/* Make sure the handle is open
-	 */
-	is_open = libbfio_handle_is_open(
-	           handle,
-	           error );
-
-	if( is_open == -1 )
+	else
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if entry: %d is open.",
-		 function,
-	         entry );
-
-		goto on_error;
-	}
-	else if( is_open == 0 )
-	{
-		if( libbfio_handle_get_access_flags(
+		if( libbfio_handle_get_size(
 		     handle,
-		     &access_flags,
+		     size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve access flags.",
-			 function );
-
-			goto on_error;
-		}
-		if( libbfio_internal_pool_open_handle(
-		     internal_pool,
-		     handle,
-		     access_flags,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open entry: %d.",
+			 "%s: unable to retrieve size of entry: %d.",
 			 function,
 			 entry );
 
-			goto on_error;
+			result = -1;
 		}
-	}
-	if( libbfio_handle_get_size(
-	     handle,
-	     size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size of entry: %d.",
-		 function,
-		 entry );
-
-		goto on_error;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -3529,14 +3487,6 @@ int libbfio_pool_get_size(
 		return( -1 );
 	}
 #endif
-	return( 1 );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_pool->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
+	return( result );
 }
 
