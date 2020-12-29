@@ -890,7 +890,7 @@ ssize_t libbfio_file_io_handle_read_buffer(
          size_t size,
          libcerror_error_t **error )
 {
-	static char *function = "libbfio_file_read_buffer";
+	static char *function = "libbfio_file_io_handle_read_buffer";
 	ssize_t read_count    = 0;
 
 	if( file_io_handle == NULL )
