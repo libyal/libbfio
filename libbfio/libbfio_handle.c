@@ -2565,6 +2565,7 @@ int libbfio_handle_get_number_of_offsets_read(
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libbfio_handle_get_number_of_offsets_read";
+	int result                                 = 1;
 
 	if( handle == NULL )
 	{
@@ -2606,7 +2607,7 @@ int libbfio_handle_get_number_of_offsets_read(
 		 "%s: unable to retrieve number of read offsets.",
 		 function );
 
-		goto on_error;
+		result = -1;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_read(
@@ -2623,15 +2624,7 @@ int libbfio_handle_get_number_of_offsets_read(
 		return( -1 );
 	}
 #endif
-	return( 1 );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_read(
-	 internal_handle->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
+	return( result );
 }
 
 /* Retrieves the information of an offset read
@@ -2645,8 +2638,9 @@ int libbfio_handle_get_offset_read(
      libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libbfio_handle_get_offset_read";
 	intptr_t *value                            = NULL;
+	static char *function                      = "libbfio_handle_get_offset_read";
+	int result                                 = 1;
 
 	if( handle == NULL )
 	{
@@ -2692,7 +2686,7 @@ int libbfio_handle_get_offset_read(
 		 function,
 		 index );
 
-		goto on_error;
+		result = -1;
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
 	if( libcthreads_read_write_lock_release_for_read(
@@ -2709,14 +2703,6 @@ int libbfio_handle_get_offset_read(
 		return( -1 );
 	}
 #endif
-	return( 1 );
-
-on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBBFIO )
-	libcthreads_read_write_lock_release_for_read(
-	 internal_handle->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
+	return( result );
 }
 
