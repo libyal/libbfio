@@ -36,10 +36,6 @@ extern "C" {
 
 extern int bfio_test_malloc_attempts_before_fail;
 
-extern int bfio_test_memcpy_attempts_before_fail;
-
-extern int bfio_test_memset_attempts_before_fail;
-
 extern int bfio_test_realloc_attempts_before_fail;
 
 #endif /* defined( HAVE_BFIO_TEST_MEMORY ) */

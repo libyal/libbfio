@@ -64,7 +64,6 @@ int bfio_test_memory_range_io_handle_initialize(
 
 #if defined( HAVE_BFIO_TEST_MEMORY )
 	int number_of_malloc_fail_tests                      = 2;
-	int number_of_memset_fail_tests                      = 1;
 	int test_number                                      = 0;
 #endif
 
@@ -159,48 +158,6 @@ int bfio_test_memory_range_io_handle_initialize(
 		if( bfio_test_malloc_attempts_before_fail != -1 )
 		{
 			bfio_test_malloc_attempts_before_fail = -1;
-
-			if( memory_range_io_handle != NULL )
-			{
-				libbfio_memory_range_io_handle_free(
-				 &memory_range_io_handle,
-				 NULL );
-			}
-		}
-		else
-		{
-			BFIO_TEST_ASSERT_EQUAL_INT(
-			 "result",
-			 result,
-			 -1 );
-
-			BFIO_TEST_ASSERT_IS_NULL(
-			 "memory_range_io_handle",
-			 memory_range_io_handle );
-
-			BFIO_TEST_ASSERT_IS_NOT_NULL(
-			 "error",
-			 error );
-
-			libcerror_error_free(
-			 &error );
-		}
-	}
-	for( test_number = 0;
-	     test_number < number_of_memset_fail_tests;
-	     test_number++ )
-	{
-		/* Test libbfio_memory_range_io_handle_initialize with memset failing
-		 */
-		bfio_test_memset_attempts_before_fail = test_number;
-
-		result = libbfio_memory_range_io_handle_initialize(
-		          &memory_range_io_handle,
-		          &error );
-
-		if( bfio_test_memset_attempts_before_fail != -1 )
-		{
-			bfio_test_memset_attempts_before_fail = -1;
 
 			if( memory_range_io_handle != NULL )
 			{
@@ -424,45 +381,6 @@ int bfio_test_memory_range_io_handle_clone(
 	if( bfio_test_malloc_attempts_before_fail != -1 )
 	{
 		bfio_test_malloc_attempts_before_fail = -1;
-
-		if( destination_memory_range_io_handle != NULL )
-		{
-			libbfio_memory_range_io_handle_free(
-			 &destination_memory_range_io_handle,
-			 NULL );
-		}
-	}
-	else
-	{
-		BFIO_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		BFIO_TEST_ASSERT_IS_NULL(
-		 "destination_memory_range_io_handle",
-		 destination_memory_range_io_handle );
-
-		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-
-	/* Test libbfio_memory_range_io_handle_clone with memcpy failing
-	 */
-	bfio_test_memcpy_attempts_before_fail = 0;
-
-	result = libbfio_memory_range_io_handle_clone(
-	          &destination_memory_range_io_handle,
-	          source_memory_range_io_handle,
-	          &error );
-
-	if( bfio_test_memcpy_attempts_before_fail != -1 )
-	{
-		bfio_test_memcpy_attempts_before_fail = -1;
 
 		if( destination_memory_range_io_handle != NULL )
 		{
@@ -1398,38 +1316,6 @@ int bfio_test_memory_range_io_handle_read_buffer(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
-
-	/* Test libbfio_memory_range_io_handle_read_buffer with memcpy failing
-	 */
-	bfio_test_memcpy_attempts_before_fail = 0;
-
-	read_count = libbfio_memory_range_io_handle_read_buffer(
-	              memory_range_io_handle,
-	              buffer,
-	              32,
-	              &error );
-
-	if( bfio_test_memcpy_attempts_before_fail != -1 )
-	{
-		bfio_test_memcpy_attempts_before_fail = -1;
-	}
-	else
-	{
-		BFIO_TEST_ASSERT_EQUAL_SSIZE(
-		 "read_count",
-		 read_count,
-		 (ssize_t) -1 );
-
-		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
-
 	/* Initialize test
 	 */
 	result = libbfio_memory_range_io_handle_initialize(
@@ -1698,38 +1584,6 @@ int bfio_test_memory_range_io_handle_write_buffer(
 
 	libcerror_error_free(
 	 &error );
-
-#if defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
-
-	/* Test libbfio_memory_range_io_handle_write_buffer with memcpy failing
-	 */
-	bfio_test_memcpy_attempts_before_fail = 0;
-
-	write_count = libbfio_memory_range_io_handle_write_buffer(
-	               memory_range_io_handle,
-	               buffer,
-	               32,
-	               &error );
-
-	if( bfio_test_memcpy_attempts_before_fail != -1 )
-	{
-		bfio_test_memcpy_attempts_before_fail = -1;
-	}
-	else
-	{
-		BFIO_TEST_ASSERT_EQUAL_SSIZE(
-		 "write_count",
-		 write_count,
-		 (ssize_t) -1 );
-
-		BFIO_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_BFIO_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
 
 	/* Initialize test
 	 */
