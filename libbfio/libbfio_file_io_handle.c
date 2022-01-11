@@ -1,7 +1,7 @@
 /*
  * File IO handle functions
  *
- * Copyright (C) 2009-2021, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2022, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -416,13 +416,14 @@ int libbfio_file_io_handle_set_name(
 
 		return( -1 );
 	}
-	if( name_length == 0 )
+	if( ( name_length == 0 )
+	 || ( name_length > ( (size_t) SSIZE_MAX - 1 ) ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid name length is zero.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid name length value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -458,8 +459,8 @@ int libbfio_file_io_handle_set_name(
 		memory_free(
 		  file_io_handle->name );
 
-		 file_io_handle->name      = NULL;
-		 file_io_handle->name_size = 0;
+		file_io_handle->name      = NULL;
+		file_io_handle->name_size = 0;
 	}
 	if( libbfio_system_string_size_from_narrow_string(
 	     name,
@@ -476,13 +477,14 @@ int libbfio_file_io_handle_set_name(
 
 		goto on_error;
 	}
-	if( file_io_handle->name_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) )
+	if( ( file_io_handle->name_size == 0 )
+	 || ( file_io_handle->name_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid file IO handle - name size value exceeds maximum.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid file IO handle - name size value out of bounds.",
 		 function );
 
 		goto on_error;
@@ -650,13 +652,14 @@ int libbfio_file_io_handle_set_name_wide(
 
 		return( -1 );
 	}
-	if( name_length == 0 )
+	if( ( name_length == 0 )
+	 || ( name_length > ( (size_t) SSIZE_MAX - 1 ) ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid name length is zero.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid name length value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -692,8 +695,8 @@ int libbfio_file_io_handle_set_name_wide(
 		memory_free(
 		  file_io_handle->name );
 
-		 file_io_handle->name      = NULL;
-		 file_io_handle->name_size = 0;
+		file_io_handle->name      = NULL;
+		file_io_handle->name_size = 0;
 	}
 	if( libbfio_system_string_size_from_wide_string(
 	     name,
@@ -710,13 +713,14 @@ int libbfio_file_io_handle_set_name_wide(
 
 		goto on_error;
 	}
-	if( file_io_handle->name_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) )
+	if( ( file_io_handle->name_size == 0 )
+	 || ( file_io_handle->name_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid file IO handle - name size value exceeds maximum.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid file IO handle - name size value out of bounds.",
 		 function );
 
 		goto on_error;
