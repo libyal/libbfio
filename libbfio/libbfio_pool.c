@@ -667,9 +667,10 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
      const libbfio_handle_t *handle,
      libcerror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle      = NULL;
-	libcdata_list_element_t *last_used_list_element = NULL;
-	static char *function                           = "libbfio_internal_pool_append_handle_to_last_used_list";
+	libbfio_internal_handle_t *internal_handle           = NULL;
+	libcdata_list_element_t *last_used_list_element      = NULL;
+	libcdata_list_element_t *safe_last_used_list_element = NULL;
+	static char *function                                = "libbfio_internal_pool_append_handle_to_last_used_list";
 
 	if( internal_pool == NULL )
 	{
@@ -721,13 +722,13 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 			 "%s: unable to retrieve last list element from last used list.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 	if( last_used_list_element == NULL )
 	{
 		if( libcdata_list_element_initialize(
-		     &last_used_list_element,
+		     &safe_last_used_list_element,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -737,9 +738,11 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 			 "%s: unable to create last used list element.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		internal_pool->number_of_open_handles++;
+
+		last_used_list_element = safe_last_used_list_element;
 	}
 	else
 	{
@@ -757,7 +760,7 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 			 "%s: unable to retrieve value from last used list element.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( libcdata_list_remove_element(
 		     internal_pool->last_used_list,
@@ -771,8 +774,12 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 			 "%s: unable to remove last list element from last used list.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
+		safe_last_used_list_element = last_used_list_element;
+
+		internal_handle->pool_last_used_list_element = NULL;
+
 		if( internal_handle != NULL )
 		{
 			if( libbfio_handle_close(
@@ -786,15 +793,8 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 				 "%s: unable to close handle.",
 				 function );
 
-				libcdata_list_element_free(
-				 &last_used_list_element,
-				 NULL,
-				 NULL );
-
-				return( -1 );
+				goto on_error;
 			}
-			internal_handle->pool_last_used_list_element = NULL;
-
 			/* Make sure the truncate flag is removed from the handle
 			 */
 			internal_handle->access_flags &= ~( LIBBFIO_ACCESS_FLAG_TRUNCATE );
@@ -811,13 +811,11 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set value int last used list element.",
+		 "%s: unable to set value in last used list element.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	internal_handle->pool_last_used_list_element = last_used_list_element;
-
 	if( libcdata_list_prepend_element(
 	     internal_pool->last_used_list,
 	     last_used_list_element,
@@ -830,14 +828,21 @@ int libbfio_internal_pool_append_handle_to_last_used_list(
 		 "%s: unable to prepend last used list element to list.",
 		 function );
 
+		goto on_error;
+	}
+	internal_handle->pool_last_used_list_element = last_used_list_element;
+
+	return( 1 );
+
+on_error:
+	if( safe_last_used_list_element != NULL )
+	{
 		libcdata_list_element_free(
-		 &last_used_list_element,
+		 &safe_last_used_list_element,
 		 NULL,
 		 NULL );
-
-		return( -1 );
 	}
-	return( 1 );
+	return( -1 );
 }
 
 /* Moves the handle to the front of the last used list
@@ -900,11 +905,9 @@ int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 		 "%s: unable to retrieve first list element from last used list.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	last_used_list_element = internal_handle->pool_last_used_list_element;
-
-	if( last_used_list_element == NULL )
+	if( internal_handle->pool_last_used_list_element == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -913,9 +916,9 @@ int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 		 "%s: missing last used list element.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	if( last_used_list_element != first_list_element )
+	if( internal_handle->pool_last_used_list_element != first_list_element )
 	{
 		if( libcdata_list_remove_element(
 		     internal_pool->last_used_list,
@@ -929,8 +932,10 @@ int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 			 "%s: unable to remove last used list element from list.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
+		internal_handle->pool_last_used_list_element = NULL;
+
 		if( libcdata_list_prepend_element(
 		     internal_pool->last_used_list,
 		     last_used_list_element,
@@ -943,17 +948,21 @@ int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 			 "%s: unable to prepend last used list element to list.",
 			 function );
 
-			internal_handle->pool_last_used_list_element = NULL;
-
-			libcdata_list_element_free(
-			 &last_used_list_element,
-			 NULL,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
+		internal_handle->pool_last_used_list_element = last_used_list_element;
 	}
 	return( 1 );
+
+on_error:
+	if( last_used_list_element != NULL )
+	{
+		libcdata_list_element_free(
+		 &last_used_list_element,
+		 NULL,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Removes a handle from the last used list
@@ -1051,6 +1060,20 @@ int libbfio_internal_pool_remove_handle_from_last_used_list(
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
 			 "%s: unable to remove last list element from last used list.",
+			 function );
+
+			return( -1 );
+		}
+		if( libcdata_list_element_free(
+		     &last_used_list_element,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free last used list element.",
 			 function );
 
 			return( -1 );
@@ -1873,10 +1896,11 @@ int libbfio_pool_set_maximum_number_of_open_handles(
      int maximum_number_of_open_handles,
      libcerror_error_t **error )
 {
-	libbfio_internal_handle_t *internal_handle      = NULL;
-	libbfio_internal_pool_t *internal_pool          = NULL;
-	libcdata_list_element_t *last_used_list_element = NULL;
-	static char *function                           = "libbfio_pool_set_maximum_number_of_open_handles";
+	libbfio_internal_handle_t *internal_handle           = NULL;
+	libbfio_internal_pool_t *internal_pool               = NULL;
+	libcdata_list_element_t *last_used_list_element      = NULL;
+	libcdata_list_element_t *safe_last_used_list_element = NULL;
+	static char *function                                = "libbfio_pool_set_maximum_number_of_open_handles";
 
 	if( pool == NULL )
 	{
@@ -1975,6 +1999,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 
 			goto on_error;
 		}
+		safe_last_used_list_element = last_used_list_element;
+
+		internal_handle->pool_last_used_list_element = NULL;
+
 		if( libbfio_handle_close(
 		     (libbfio_handle_t *) internal_handle,
 		     error ) != 0 )
@@ -1990,14 +2018,12 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 		}
 		internal_pool->number_of_open_handles--;
 
-		internal_handle->pool_last_used_list_element = NULL;
-
 		/* Make sure the truncate flag is removed from the handle
 		 */
 		internal_handle->access_flags &= ~( LIBBFIO_ACCESS_FLAG_TRUNCATE );
 
 		if( libcdata_list_element_free(
-		     &last_used_list_element,
+		     &safe_last_used_list_element,
 		     NULL,
 		     error ) != 1 )
 		{
@@ -2029,10 +2055,10 @@ int libbfio_pool_set_maximum_number_of_open_handles(
 	return( 1 );
 
 on_error:
-	if( last_used_list_element != NULL )
+	if( safe_last_used_list_element != NULL )
 	{
 		libcdata_list_element_free(
-		 &last_used_list_element,
+		 &safe_last_used_list_element,
 		 NULL,
 		 NULL );
 	}
@@ -2320,10 +2346,11 @@ int libbfio_internal_pool_close(
      int entry,
      libcerror_error_t **error )
 {
-	libbfio_handle_t *handle                        = NULL;
-	libbfio_internal_handle_t *internal_handle      = NULL;
-	libcdata_list_element_t *last_used_list_element = NULL;
-	static char *function                           = "libbfio_internal_pool_close";
+	libbfio_handle_t *handle                             = NULL;
+	libbfio_internal_handle_t *internal_handle           = NULL;
+	libcdata_list_element_t *last_used_list_element      = NULL;
+	libcdata_list_element_t *safe_last_used_list_element = NULL;
+	static char *function                                = "libbfio_internal_pool_close";
 
 	if( internal_pool == NULL )
 	{
@@ -2410,10 +2437,12 @@ int libbfio_internal_pool_close(
 
 			goto on_error;
 		}
+		safe_last_used_list_element = last_used_list_element;
+
 		internal_handle->pool_last_used_list_element = NULL;
 
 		if( libcdata_list_element_free(
-		     &last_used_list_element,
+		     &safe_last_used_list_element,
 		     NULL,
 		     error ) != 1 )
 		{
@@ -2449,10 +2478,10 @@ int libbfio_internal_pool_close(
 	return( 0 );
 
 on_error:
-	if( last_used_list_element != NULL )
+	if( safe_last_used_list_element != NULL )
 	{
 		libcdata_list_element_free(
-		 &last_used_list_element,
+		 &safe_last_used_list_element,
 		 NULL,
 		 NULL );
 	}
