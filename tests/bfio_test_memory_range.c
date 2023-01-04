@@ -253,7 +253,7 @@ int bfio_test_memory_range_get(
 {
 	libcerror_error_t *error = NULL;
 	uint8_t *range_start     = NULL;
-	size64_t range_size      = 0;
+	size_t range_size        = 0;
 	int result               = 0;
 
 	/* Test regular cases
