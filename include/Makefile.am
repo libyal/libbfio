@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libbfio.h
-	/bin/rm -f libbfio/definitions.h
-	/bin/rm -f libbfio/features.h
-	/bin/rm -f libbfio/types.h
-	/bin/rm -f Makefile
+	-rm -f libbfio.h
+	-rm -f libbfio/definitions.h
+	-rm -f libbfio/features.h
+	-rm -f libbfio/types.h
+	-rm -f Makefile
 

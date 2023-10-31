@@ -65,11 +65,11 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libbfio_definitions.h
-	/bin/rm -f libbfio.rc
-	/bin/rm -f Makefile
+	-rm -f libbfio_definitions.h
+	-rm -f libbfio.rc
+	-rm -f Makefile
 
-splint:
+splint-local:
 	@echo "Running splint on libbfio ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libbfio_la_SOURCES)
 
