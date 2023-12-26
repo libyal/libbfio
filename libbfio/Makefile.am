@@ -69,6 +69,8 @@ distclean: clean
 	-rm -f libbfio.rc
 	-rm -f Makefile
 
+sources-local: $(BUILT_SOURCES)
+
 splint-local:
 	@echo "Running splint on libbfio ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libbfio_la_SOURCES)
