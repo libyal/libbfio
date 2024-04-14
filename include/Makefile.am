@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libbfio/features.h.in \
 	libbfio/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libbfio.h \
+	libbfio/definitions.h \
+	libbfio/features.h \
+	libbfio/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libbfio.h
-	-rm -f libbfio/definitions.h
-	-rm -f libbfio/features.h
-	-rm -f libbfio/types.h
-	-rm -f Makefile
 

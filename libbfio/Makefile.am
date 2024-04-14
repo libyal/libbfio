@@ -1,6 +1,6 @@
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/common \
+	-I../include -I$(top_srcdir)/include \
+	-I../common -I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -61,13 +61,11 @@ EXTRA_DIST = \
 	libbfio.rc \
 	libbfio.rc.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libbfio_definitions.h \
+	libbfio.rc \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libbfio_definitions.h
-	-rm -f libbfio.rc
-	-rm -f Makefile
 
 sources-local: $(BUILT_SOURCES)
 
