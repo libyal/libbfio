@@ -24,21 +24,28 @@
 
 #include <common.h>
 
+#if !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute )
+#if __has_attribute( visibility )
+#define LIBBFIO_INTERNAL	__attribute__((visibility("hidden"))) extern
+
+#else
+#define LIBBFIO_INTERNAL	extern
+
+#endif /* __has_attribute( visibility ) */
+#else
+#define LIBBFIO_INTERNAL	extern
+
+#endif /* !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute ) */
+
 /* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
  */
 #if !defined( HAVE_LOCAL_LIBBFIO )
 
 #include <libbfio/extern.h>
 
-#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
-#define LIBBFIO_EXTERN_VARIABLE	extern
-#else
-#define LIBBFIO_EXTERN_VARIABLE	LIBBFIO_EXTERN
-#endif
-
 #else
 #define LIBBFIO_EXTERN		/* extern */
-#define LIBBFIO_EXTERN_VARIABLE	extern
+#define LIBBFIO_EXTERN_VARIABLE	LIBBFIO_INTERNAL
 
 #endif /* !defined( HAVE_LOCAL_LIBBFIO ) */
 

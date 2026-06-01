@@ -31,14 +31,17 @@
  */
 #if defined( LIBBFIO_DLL_EXPORT )
 #define LIBBFIO_EXTERN __declspec(dllexport)
+#define LIBBFIO_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBBFIO_DLL_IMPORT )
-#define LIBBFIO_EXTERN extern __declspec(dllimport)
+#define LIBBFIO_EXTERN __declspec(dllimport)
+#define LIBBFIO_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBBFIO_EXTERN extern
+#define LIBBFIO_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBBFIO_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBBFIO_EXTERN_H ) */
 

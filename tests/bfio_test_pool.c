@@ -4759,10 +4759,6 @@ int bfio_test_internal_pool_close(
 	          &pool,
 	          &error );
 
-	result = libbfio_pool_free(
-	          &pool,
-	          &error );
-
 	BFIO_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,

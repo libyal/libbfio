@@ -2990,14 +2990,17 @@ int main(
 #endif
 {
 #if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+#if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	char narrow_source[ 256 ];
 
 	libbfio_file_io_handle_t *file_io_handle = NULL;
+	system_character_t *source               = NULL;
 	size_t source_length                     = 0;
-#endif
+
+#endif /* !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
 
 	libcerror_error_t *error                 = NULL;
-	system_character_t *source               = NULL;
 	system_integer_t option                  = 0;
 	int result                               = 0;
 
@@ -3018,10 +3021,15 @@ int main(
 				return( EXIT_FAILURE );
 		}
 	}
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+#if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( optind < argc )
 	{
 		source = argv[ optind ];
 	}
+#endif /* !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
+
 #if defined( HAVE_DEBUG_OUTPUT ) && defined( BFIO_TEST_FILE_IO_HANDLE_VERBOSE )
 	libbfio_notify_set_verbose(
 	 1 );
