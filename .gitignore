@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -127,7 +127,12 @@ stamp-h[1-9]
 /libbfio.spec
 /libbfio/libbfio.rc
 /libbfio/libbfio_definitions.h
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
+/tests/atconfig
+/tests/atlocal
 /tests/bfio_test_error
 /tests/bfio_test_file
 /tests/bfio_test_file_io_handle
@@ -141,6 +146,11 @@ stamp-h[1-9]
 /tests/bfio_test_support
 /tests/bfio_test_system_string
 /tests/input
+/tests/notify_stream.log
+/tests/package.m4
+/tests/test_inputs_*.at
+/tests/test_library
+/tests/test_manpages
 /tests/tmp*
 
 # Local library dependencies specific files

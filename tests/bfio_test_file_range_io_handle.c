@@ -2894,13 +2894,13 @@ int main(
 	char narrow_source[ 256 ];
 
 	libbfio_file_range_io_handle_t *file_range_io_handle = NULL;
-	size_t source_length                                 = 0;
-#endif
-
 	libcerror_error_t *error                             = NULL;
 	system_character_t *source                           = NULL;
-	system_integer_t option                              = 0;
+	size_t source_length                                 = 0;
 	int result                                           = 0;
+#endif
+
+	system_integer_t option                              = 0;
 
 	while( ( option = bfio_test_getopt(
 	                   argc,
@@ -2919,6 +2919,7 @@ int main(
 				return( EXIT_FAILURE );
 		}
 	}
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
 	if( optind < argc )
 	{
 		source = argv[ optind ];
@@ -2930,8 +2931,6 @@ int main(
 	 stderr,
 	 NULL );
 #endif
-
-#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
 
 	BFIO_TEST_RUN(
 	 "libbfio_file_range_io_handle_initialize",
@@ -3140,21 +3139,22 @@ int main(
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+
 on_error:
 	if( error != NULL )
 	{
 		libcerror_error_free(
 		 &error );
 	}
-#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
 	if( file_range_io_handle != NULL )
 	{
 		libbfio_file_range_io_handle_free(
 		 &file_range_io_handle,
 		 NULL );
 	}
-#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
-
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
 }
 

@@ -2485,10 +2485,9 @@ int main(
 {
 #if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
 	libbfio_memory_range_io_handle_t *memory_range_io_handle = NULL;
-#endif
-
 	libcerror_error_t *error                                 = NULL;
 	int result                                               = 0;
+#endif
 
 #if defined( HAVE_DEBUG_OUTPUT ) && defined( BFIO_TEST_MEMORY_RANGE_IO_HANDLE_VERBOSE )
 	libbfio_notify_set_verbose(
@@ -2650,21 +2649,22 @@ int main(
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
+
 on_error:
 	if( error != NULL )
 	{
 		libcerror_error_free(
 		 &error );
 	}
-#if defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT )
 	if( memory_range_io_handle != NULL )
 	{
 		libbfio_memory_range_io_handle_free(
 		 &memory_range_io_handle,
 		 NULL );
 	}
-#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
-
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBBFIO_DLL_IMPORT ) */
 }
 

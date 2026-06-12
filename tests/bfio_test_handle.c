@@ -462,7 +462,7 @@ int bfio_test_handle_free(
 	libcerror_error_t *error = NULL;
 	int result               = 0;
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 	libbfio_handle_t *handle = NULL;
 #endif
 
@@ -484,7 +484,7 @@ int bfio_test_handle_free(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Initialize test
 	 */
@@ -566,7 +566,7 @@ int bfio_test_handle_free(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -576,7 +576,7 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 	if( handle != NULL )
 	{
 		libbfio_handle_free(
@@ -795,7 +795,7 @@ int bfio_test_handle_clone(
 #endif /* defined( OPTIMIZATION_DISABLED ) */
 #endif /* defined( HAVE_BFIO_TEST_MEMORY ) */
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_clone with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -873,7 +873,7 @@ int bfio_test_handle_clone(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -1103,7 +1103,7 @@ int bfio_test_handle_open(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_open with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -1159,7 +1159,7 @@ int bfio_test_handle_open(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -1437,7 +1437,7 @@ int bfio_test_handle_reopen(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_reopen with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -1493,7 +1493,7 @@ int bfio_test_handle_reopen(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -1637,7 +1637,7 @@ int bfio_test_handle_close(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_close with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -1691,7 +1691,7 @@ int bfio_test_handle_close(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -2038,7 +2038,7 @@ int bfio_test_handle_read_buffer(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_read_buffer with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -2096,7 +2096,7 @@ int bfio_test_handle_read_buffer(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -2264,7 +2264,7 @@ int bfio_test_handle_read_buffer_at_offset(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_read_buffer_at_offset with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -2324,7 +2324,7 @@ int bfio_test_handle_read_buffer_at_offset(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -2779,7 +2779,7 @@ int bfio_test_handle_write_buffer(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_write_buffer with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -2837,7 +2837,7 @@ int bfio_test_handle_write_buffer(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -3118,7 +3118,7 @@ int bfio_test_handle_write_buffer_at_offset(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_write_buffer_at_offset with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -3178,7 +3178,7 @@ int bfio_test_handle_write_buffer_at_offset(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -4055,7 +4055,7 @@ int bfio_test_handle_seek_offset(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_seek_offset with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -4113,7 +4113,7 @@ int bfio_test_handle_seek_offset(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Initialize test
 	 */
@@ -4290,7 +4290,7 @@ int bfio_test_handle_exists(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_exists with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -4344,7 +4344,7 @@ int bfio_test_handle_exists(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -4445,7 +4445,7 @@ int bfio_test_handle_is_open(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_is_open with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -4499,7 +4499,7 @@ int bfio_test_handle_is_open(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -4574,7 +4574,7 @@ int bfio_test_handle_get_io_handle(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_get_io_handle with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -4630,7 +4630,7 @@ int bfio_test_handle_get_io_handle(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -4705,7 +4705,7 @@ int bfio_test_handle_get_access_flags(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_get_access_flags with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -4761,7 +4761,7 @@ int bfio_test_handle_get_access_flags(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -4867,7 +4867,7 @@ int bfio_test_handle_set_access_flags(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_set_access_flags with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -4923,7 +4923,7 @@ int bfio_test_handle_set_access_flags(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -5023,7 +5023,7 @@ int bfio_test_handle_get_offset(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_get_offset with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -5079,7 +5079,7 @@ int bfio_test_handle_get_offset(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -5178,7 +5178,7 @@ int bfio_test_handle_get_size(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_get_size with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -5234,7 +5234,7 @@ int bfio_test_handle_get_size(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -5323,7 +5323,7 @@ int bfio_test_handle_set_open_on_demand(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_set_open_on_demand with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -5379,7 +5379,7 @@ int bfio_test_handle_set_open_on_demand(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */
@@ -5484,7 +5484,7 @@ int bfio_test_handle_get_number_of_offsets_read(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_get_number_of_offsets_read with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -5540,7 +5540,7 @@ int bfio_test_handle_get_number_of_offsets_read(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -5660,7 +5660,7 @@ int bfio_test_handle_get_offset_read(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_get_offset_read with pthread_rwlock_rdlock failing in libcthreads_read_write_lock_grab_for_read
 	 */
@@ -5720,7 +5720,7 @@ int bfio_test_handle_get_offset_read(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	return( 1 );
 
@@ -5809,7 +5809,7 @@ int bfio_test_handle_set_track_offsets_read(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_BFIO_TEST_RWLOCK )
+#if defined( HAVE_BFIO_TEST_RWLOCK_HOOK )
 
 	/* Test libbfio_handle_set_track_offsets_read with pthread_rwlock_wrlock failing in libcthreads_read_write_lock_grab_for_write
 	 */
@@ -5865,7 +5865,7 @@ int bfio_test_handle_set_track_offsets_read(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_BFIO_TEST_RWLOCK ) */
+#endif /* defined( HAVE_BFIO_TEST_RWLOCK_HOOK ) */
 
 	/* Clean up
 	 */

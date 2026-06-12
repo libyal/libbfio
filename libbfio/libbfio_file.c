@@ -210,9 +210,9 @@ int libbfio_file_set_name(
      libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	char *full_name                            = NULL;
+	char *full_path                            = NULL;
 	static char *function                      = "libbfio_file_set_name";
-	size_t full_name_size                      = 0;
+	size_t full_path_size                      = 0;
 
 	if( handle == NULL )
 	{
@@ -230,8 +230,8 @@ int libbfio_file_set_name(
 	if( libcpath_path_get_full_path(
 	     name,
 	     name_length,
-	     &full_name,
-	     &full_name_size,
+	     &full_path,
+	     &full_path_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -245,8 +245,8 @@ int libbfio_file_set_name(
 	}
 	if( libbfio_file_io_handle_set_name(
 	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
-	     full_name,
-	     full_name_size - 1,
+	     full_path,
+	     full_path_size - 1,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -258,20 +258,20 @@ int libbfio_file_set_name(
 
 		goto on_error;
 	}
-	if( ( full_name != NULL )
-	 && ( full_name != name ) )
+	if( ( full_path != NULL )
+	 && ( full_path != name ) )
 	{
 		memory_free(
-		 full_name );
+		 full_path );
 	}
 	return( 1 );
 
 on_error:
-	if( ( full_name != NULL )
-	 && ( full_name != name ) )
+	if( ( full_path != NULL )
+	 && ( full_path != name ) )
 	{
 		memory_free(
-		 full_name );
+		 full_path );
 	}
 	return( -1 );
 }
@@ -374,9 +374,9 @@ int libbfio_file_set_name_wide(
      libcerror_error_t **error )
 {
 	libbfio_internal_handle_t *internal_handle = NULL;
-	wchar_t *full_name                         = NULL;
+	wchar_t *full_path                         = NULL;
 	static char *function                      = "libbfio_file_set_name_wide";
-	size_t full_name_size                      = 0;
+	size_t full_path_size                      = 0;
 
 	if( handle == NULL )
 	{
@@ -394,8 +394,8 @@ int libbfio_file_set_name_wide(
 	if( libcpath_path_get_full_path_wide(
 	     name,
 	     name_length,
-	     &full_name,
-	     &full_name_size,
+	     &full_path,
+	     &full_path_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -409,8 +409,8 @@ int libbfio_file_set_name_wide(
 	}
 	if( libbfio_file_io_handle_set_name_wide(
 	     (libbfio_file_io_handle_t *) internal_handle->io_handle,
-	     full_name,
-	     full_name_size - 1,
+	     full_path,
+	     full_path_size - 1,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -422,20 +422,20 @@ int libbfio_file_set_name_wide(
 
 		goto on_error;
 	}
-	if( ( full_name != NULL )
-	 && ( full_name != name ) )
+	if( ( full_path != NULL )
+	 && ( full_path != name ) )
 	{
 		memory_free(
-		 full_name );
+		 full_path );
 	}
 	return( 1 );
 
 on_error:
-	if( ( full_name != NULL )
-	 && ( full_name != name ) )
+	if( ( full_path != NULL )
+	 && ( full_path != name ) )
 	{
 		memory_free(
-		 full_name );
+		 full_path );
 	}
 	return( -1 );
 }
