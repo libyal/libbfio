@@ -290,9 +290,15 @@ package.m4: $(top_srcdir)/configure.ac
 test_inputs_libbfio.at: generate_test_inputs.sh
 	$(SHELL) $(srcdir)/generate_test_inputs.sh $(PACKAGE_NAME) libbfio
 
-test_library: package.m4 test_inputs_libbfio.at test_library.at test_macros.at
+test_library: \
+	package.m4 \
+	test_inputs_libbfio.at \
+	test_library.at \
+	test_macros.at
 
-test_manpages: package.m4 test_manpages.at
+test_manpages: \
+	package.m4 \
+	test_manpages.at
 
 EXTRA_DIST = \
 	$(check_AUTOTESTS:=.at) \
