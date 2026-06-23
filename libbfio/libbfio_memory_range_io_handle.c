@@ -105,7 +105,7 @@ on_error:
 }
 
 /* Frees a memory range IO handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_io_handle_free(
      libbfio_memory_range_io_handle_t **memory_range_io_handle,
@@ -135,7 +135,7 @@ int libbfio_memory_range_io_handle_free(
 }
 
 /* Clones (duplicates) the memory range IO handle and its attributes
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_io_handle_clone(
      libbfio_memory_range_io_handle_t **destination_memory_range_io_handle,
@@ -205,7 +205,7 @@ int libbfio_memory_range_io_handle_clone(
 }
 
 /* Retrieves the range of the memory range IO handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_io_handle_get(
      libbfio_memory_range_io_handle_t *memory_range_io_handle,
@@ -255,7 +255,7 @@ int libbfio_memory_range_io_handle_get(
 }
 
 /* Sets the range of the memory range IO handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_io_handle_set(
      libbfio_memory_range_io_handle_t *memory_range_io_handle,

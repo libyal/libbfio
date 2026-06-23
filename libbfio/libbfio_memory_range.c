@@ -118,7 +118,7 @@ on_error:
 }
 
 /* Retrieves the range of the memory range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_get(
      libbfio_handle_t *handle,
@@ -161,7 +161,7 @@ int libbfio_memory_range_get(
 }
 
 /* Sets the range of the memory range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_memory_range_set(
      libbfio_handle_t *handle,

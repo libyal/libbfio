@@ -374,7 +374,7 @@ int libbfio_file_initialize(
 
 /* Retrieves a name size of the file handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_get_name_size(
@@ -384,7 +384,7 @@ int libbfio_file_get_name_size(
 
 /* Retrieves a name of the file handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_get_name(
@@ -394,7 +394,7 @@ int libbfio_file_get_name(
      libbfio_error_t **error );
 
 /* Sets a name for the file handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_set_name(
@@ -407,7 +407,7 @@ int libbfio_file_set_name(
 
 /* Retrieves a name size of the file handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_get_name_size_wide(
@@ -417,7 +417,7 @@ int libbfio_file_get_name_size_wide(
 
 /* Retrieves a name of the file handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_get_name_wide(
@@ -427,7 +427,7 @@ int libbfio_file_get_name_wide(
      libbfio_error_t **error );
 
 /* Sets a name for the file handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_set_name_wide(
@@ -453,7 +453,7 @@ int libbfio_file_range_initialize(
 
 /* Retrieves a name size of the file range handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_get_name_size(
@@ -463,7 +463,7 @@ int libbfio_file_range_get_name_size(
 
 /* Retrieves a name of the file range handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_get_name(
@@ -473,7 +473,7 @@ int libbfio_file_range_get_name(
      libbfio_error_t **error );
 
 /* Sets a name for the file range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_set_name(
@@ -486,7 +486,7 @@ int libbfio_file_range_set_name(
 
 /* Retrieves a name size of the file range handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_get_name_size_wide(
@@ -496,7 +496,7 @@ int libbfio_file_range_get_name_size_wide(
 
 /* Retrieves a name of the file range handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_get_name_wide(
@@ -506,7 +506,7 @@ int libbfio_file_range_get_name_wide(
      libbfio_error_t **error );
 
 /* Sets a name for the file range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_set_name_wide(
@@ -518,7 +518,7 @@ int libbfio_file_range_set_name_wide(
 #endif /* defined( LIBBFIO_HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Retrieves the range of the file range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_get(
@@ -528,7 +528,7 @@ int libbfio_file_range_get(
      libbfio_error_t **error );
 
 /* Sets the range of the file range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_file_range_set(
@@ -551,7 +551,7 @@ int libbfio_memory_range_initialize(
      libbfio_error_t **error );
 
 /* Retrieves the range of the memory range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_memory_range_get(
@@ -561,7 +561,7 @@ int libbfio_memory_range_get(
      libbfio_error_t **error );
 
 /* Sets the range of the memory range handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBBFIO_EXTERN \
 int libbfio_memory_range_set(

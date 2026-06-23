@@ -920,6 +920,8 @@ int libbfio_internal_pool_move_handle_to_front_of_last_used_list(
 	}
 	if( internal_handle->pool_last_used_list_element != first_list_element )
 	{
+		last_used_list_element = internal_handle->pool_last_used_list_element;
+
 		if( libcdata_list_remove_element(
 		     internal_pool->last_used_list,
 		     last_used_list_element,

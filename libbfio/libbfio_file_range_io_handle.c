@@ -119,7 +119,7 @@ on_error:
 }
 
 /* Frees a file range IO handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_free(
      libbfio_file_range_io_handle_t **file_range_io_handle,
@@ -163,7 +163,7 @@ int libbfio_file_range_io_handle_free(
 }
 
 /* Clones (duplicates) the file range IO handle and its attributes
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_clone(
      libbfio_file_range_io_handle_t **destination_file_range_io_handle,
@@ -264,7 +264,7 @@ on_error:
 
 /* Retrieves the name size of the file range IO handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_get_name_size(
      libbfio_file_range_io_handle_t *file_range_io_handle,
@@ -303,7 +303,7 @@ int libbfio_file_range_io_handle_get_name_size(
 
 /* Retrieves the name of the file range IO handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_get_name(
      libbfio_file_range_io_handle_t *file_range_io_handle,
@@ -343,7 +343,7 @@ int libbfio_file_range_io_handle_get_name(
 }
 
 /* Sets the name for the file range IO handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_set_name(
      libbfio_file_range_io_handle_t *file_range_io_handle,
@@ -386,7 +386,7 @@ int libbfio_file_range_io_handle_set_name(
 
 /* Retrieves the name size of the file range IO handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_get_name_size_wide(
      libbfio_file_range_io_handle_t *file_range_io_handle,
@@ -425,7 +425,7 @@ int libbfio_file_range_io_handle_get_name_size_wide(
 
 /* Retrieves the name of the file range IO handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_get_name_wide(
      libbfio_file_range_io_handle_t *file_range_io_handle,
@@ -465,7 +465,7 @@ int libbfio_file_range_io_handle_get_name_wide(
 }
 
 /* Sets the name for the file range IO handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_set_name_wide(
      libbfio_file_range_io_handle_t *file_range_io_handle,
@@ -507,7 +507,7 @@ int libbfio_file_range_io_handle_set_name_wide(
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Retrieves the range of the file range IO handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_get(
      libbfio_file_range_io_handle_t *file_range_io_handle,
@@ -558,7 +558,7 @@ int libbfio_file_range_io_handle_get(
 
 /* Sets the range of the file range IO handle
  * A range size of 0 represents that the range continues until the end of the file
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_range_io_handle_set(
      libbfio_file_range_io_handle_t *file_range_io_handle,

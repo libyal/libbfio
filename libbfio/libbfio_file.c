@@ -116,7 +116,7 @@ on_error:
 
 /* Retrieves the name size of the file handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_get_name_size(
      libbfio_handle_t *handle,
@@ -158,7 +158,7 @@ int libbfio_file_get_name_size(
 
 /* Retrieves the name of the file handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_get_name(
      libbfio_handle_t *handle,
@@ -201,7 +201,7 @@ int libbfio_file_get_name(
 }
 
 /* Sets the name for the file handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_set_name(
      libbfio_handle_t *handle,
@@ -280,7 +280,7 @@ on_error:
 
 /* Retrieves the name size of the file handle
  * The name size includes the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_get_name_size_wide(
      libbfio_handle_t *handle,
@@ -322,7 +322,7 @@ int libbfio_file_get_name_size_wide(
 
 /* Retrieves the name of the file handle
  * The name size should include the end of string character
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_get_name_wide(
      libbfio_handle_t *handle,
@@ -365,7 +365,7 @@ int libbfio_file_get_name_wide(
 }
 
 /* Sets the name for the file handle
- * Returns 1 if succesful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libbfio_file_set_name_wide(
      libbfio_handle_t *handle,
