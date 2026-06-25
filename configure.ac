@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libbfio],
-  [20260623],
+  [20260625],
   [https://github.com/libyal/libbfio/issues])
 
 AC_CONFIG_SRCDIR(
